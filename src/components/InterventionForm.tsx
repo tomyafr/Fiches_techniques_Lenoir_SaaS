@@ -120,7 +120,7 @@ export const InterventionForm: React.FC<{ onBack: () => void }> = ({ onBack }) =
             }
 
             // 3. Trigger Report Generation (Edge Function)
-            const { data: reportData, error: reportError } = await supabase.functions.invoke('generate-report69', {
+            const { error: reportError } = await supabase.functions.invoke('generate-report69', {
                 body: { intervention_id: intervention.id }
             })
 
