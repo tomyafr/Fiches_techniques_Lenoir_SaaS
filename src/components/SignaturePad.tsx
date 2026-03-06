@@ -1,38 +1,38 @@
-import React, { useRef } from 'react'
+import { forwardRef, useImperativeHandle, useRef } from 'react'
 import SignatureCanvas from 'react-signature-canvas'
 
-interface SignaturePadProps {
-    label: string
-    onSave: (dataUrl: string) => void
-    onClear: () => void
+export interface SignaturePadHandle {
+    clear: () => void;
+    getCanvas: () => HTMLCanvasElement | null;
 }
 
-export const SignaturePad: React.FC<SignaturePadProps> = ({ label, onSave, onClear }) => {
+interface SignaturePadProps {
+    // any props if needed
+}
+
+export const SignaturePad = forwardRef<SignaturePadHandle, SignaturePadProps>((_, ref) => {
     const sigCanvas = useRef<SignatureCanvas>(null)
 
-    const clear = () => {
-        sigCanvas.current?.clear()
-        onClear()
-    }
-
-    const save = () => {
-        if (sigCanvas.current?.isEmpty()) return
-        const dataUrl = sigCanvas.current?.getTrimmedCanvas().toDataURL('image/png')
-        if (dataUrl) onSave(dataUrl)
-    }
+    useImperativeHandle(ref, () => ({
+        clear: () => {
+            sigCanvas.current?.clear()
+        },
+        getCanvas: () => {
+            return sigCanvas.current?.getCanvas() || null
+        }
+    }))
 
     return (
-        <div className="signature-pad-container">
-            <label>{label}</label>
-            <div className="canvas-wrapper">
-                <SignatureCanvas
-                    ref={sigCanvas}
-                    penColor="white"
-                    canvasProps={{ className: 'sigCanvas' }}
-                    onEnd={save}
-                />
-            </div>
-            <button type="button" onClick={clear} className="btn-text">Effacer</button>
+        <div className="signature-pad-container" style={{ position: 'relative' }}>
+            <SignatureCanvas
+                ref={sigCanvas}
+                penColor="black"
+                canvasProps={{
+                    style: { width: '100%', height: '180px', display: 'block' }
+                }}
+            />
         </div>
     )
-}
+})
+
+SignaturePad.displayName = 'SignaturePad'
