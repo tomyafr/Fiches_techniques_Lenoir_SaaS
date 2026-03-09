@@ -667,7 +667,7 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
                             </table>
                         </div>
                     </div>
-                    <div style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0 border:1px solid #000; border-top:none;">PHOTOS ANNEXES</div>
+                    <div style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0; border:1px solid #000; border-top:none;">PHOTOS ANNEXES</div>
 
                 <?php else: ?>
 
