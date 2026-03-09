@@ -50,14 +50,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// Define the schema simply mapping to the docs
-$schemaGlobal = [
-    "Examen d'ensemble" => ["Fixation de l'appareil", "Appareil sale", "Usure importante", "Racleur d'évacuation ok (si présent)"],
-    "Transmission / Motorisation" => ["Tension courroies ou chaînes", "Alignement pignons / poulies", "Graissage chaîne", "Niveau d'huile réducteur", "Echauffement palier/moteur", "Bruit suspect"],
-    "Bande" => ["Tension de la bande", "Déport de la bande", "Etat surface inférieure", "Etat surface supérieure", "Bandes collées sur tassaux", "Usure des tasseaux"],
-    "Armoire / Coffret Electrique" => ["Etat général du coffret", "Test déclenchement défauts", "Bouton d'arrêt d'urgence", "Température interne"],
-    "Séparateurs de Métaux Magnétiques" => ["Tension d'alimentation", "Tension d'excitation", "Valeur d'isolement par rapport à la masse", "Valeur inductive (Gauss)"]
+// Define specific schemas based on Lenoir PDF sheets
+$schemasData = [
+    'APRF' => [
+        "Examen Visuel et Mécanique" => [
+            "Aimants permanent fixe de triage: Satisfaction de fonctionnement",
+            "État et type de la bande",
+            "État des réglettes",
+            "État des boutons étoile (Maintien)"
+        ],
+        "Options & Contrôle d'attraction" => [
+            "Contrôle de l'attraction: Bille diamètre 20",
+            "Contrôle de l'attraction: Écrou M4",
+            "Contrôle de l'attraction: Rond diamètre 6 Lg 50",
+            "Contrôle de l'attraction: Rond diamètre 6 Lg 100",
+            "Structure Caisson Inox (Si option présente)"
+        ],
+        "Vérifications Client (Application)" => [
+            "Validité du type de produit & granulométrie",
+            "Respect distance aimants / bande",
+            "Respect hauteur de couche & Débit / Densité"
+        ]
+    ],
+    'ED-X' => [
+        "Environnement / Aspect général" => [
+            "Accès au séparateur",
+            "Etat général du séparateur"
+        ],
+        "Partie A - Convoyeur" => [
+            "Etat général verrous, grenouillères, poignées",
+            "Etat général carters de protection / portes",
+            "Contrôle visuel étanchéités latérales",
+            "Contrôle état extérieur & intérieur de la bande",
+            "Contrôle tension et déport (rouleaux / détecteurs)",
+            "Contrôle état du racleur de bande & réglage",
+            "Contrôle état tambour moteur et motoréducteur",
+            "Contrôle virole (fibre) et déflecteur (carbone)",
+            "Contrôle courroies (état / tension) et accouplement",
+            "Contrôle & graissage paliers (virole / roue polaire)",
+        ],
+        "Partie B - Caisson de séparation" => [
+            "Démontage / Aspect intérieur",
+            "Contrôle état & mécanisme de réglage volet",
+            "Nettoyage complet intérieur"
+        ],
+        "Partie C - Armoire électrique" => [
+            "Aspect armoire & boutonnerie (Hors tension)",
+            "Test Arrêt d'Urgence",
+            "Vitesse bande (relevée / conforme)",
+            "Vitesse roue polaire (relevée / conforme)",
+            "Contrôle temps de freinage roue polaire",
+            "Vérification des serrages câbles"
+        ]
+    ],
+    'GÉNÉRIQUE' => [
+        "Examen d'ensemble" => ["Fixation de l'appareil", "Appareil sale", "Usure importante", "Racleur d'évacuation"],
+        "Transmission / Motorisation" => ["Tension courroies", "Alignement pignons", "Graissage", "Niveau d'huile"],
+        "Bande" => ["Tension de la bande", "Déport de la bande", "Etat surface inférieure/supérieure"],
+        "Armoire / Coffret Electrique" => ["Etat général du coffret", "Test déclenchement", "Arrêt d'urgence"],
+        "Mesures Magnétiques" => ["Tension d'alimentation", "Tension d'excitation"]
+    ]
 ];
+
+$designation = strtoupper(trim($machine['designation']));
+$schemaGlobal = $schemasData['GÉNÉRIQUE'];
+foreach ($schemasData as $key => $schema) {
+    if ($key !== 'GÉNÉRIQUE' && strpos($designation, $key) !== false) {
+        $schemaGlobal = $schema;
+        break;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
