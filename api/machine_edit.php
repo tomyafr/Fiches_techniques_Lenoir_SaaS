@@ -56,8 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 }
 
 $designation = strtoupper(trim($machine['designation']));
-$isAPRF = strpos($designation, 'APRF') !== false;
-$isEDX = strpos($designation, 'ED-X') !== false || strpos($designation, 'EDX') !== false;
+$isAPRF = strpos($designation, 'APRF') !== false || strpos($designation, 'APRM') !== false;
+$isEDX = strpos($designation, 'ED-X') !== false || strpos($designation, 'EDX') !== false || strpos($designation, 'FOUCAULT') !== false;
+$isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') === false;
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -291,7 +292,7 @@ $isEDX = strpos($designation, 'ED-X') !== false || strpos($designation, 'EDX') !
                             class="pdf-input" style="width:300px" name="mesures[poste]"
                             value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>"></div>
                     <div style="margin-top:15px; color:#000; font-size:20px;">
-                        <?= $isAPRF ? 'Aimant permanent rectangulaire fixe' : ($isEDX ? 'Séparateur à courants de foucault' : 'Fiche de Contrôle :') ?>
+                        <?= $isAPRF ? 'Aimant permanent rectangulaire fixe' : ($isEDX ? 'Séparateur à courants de foucault' : ($isOV ? 'Overband Electromagnétique' : 'Fiche de Contrôle :')) ?>
                         <br />
                         <span
                             style="font-size:26px; font-weight:900; color:#c00;"><?= htmlspecialchars($machine['designation']) ?></span>
@@ -461,6 +462,173 @@ $isEDX = strpos($designation, 'ED-X') !== false || strpos($designation, 'EDX') !
                         <?= renderCheckRow("Contrôle freinage roue polaire / Temps constaté", "edx_arm_frein", $donnees) ?>
                         <?= renderCheckRow("Vérification des serrages câbles", "edx_arm_cable", $donnees) ?>
                     </table>
+
+                <?php elseif ($isOV): ?>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px; padding:10px;">
+                        <div><strong>Temps prévisionnel :</strong> 1,5h</div>
+                        <div><strong>Temps réalisé :</strong> <input type="text" class="pdf-input"
+                                style="width:80px; text-align:center; border-bottom:1px solid #000;"
+                                name="mesures[temps_realise]"
+                                value="<?= htmlspecialchars($mesures['temps_realise'] ?? '') ?>"> h</div>
+                    </div>
+
+                    <?php
+                    function renderOvEtatRadios($key, $donnees)
+                    {
+                        $val = $donnees[$key] ?? '';
+                        return '
+                        <table style="width:100%; height:100%; border-collapse:collapse; text-align:center; line-height:1; min-height:30px;">
+                            <tr>
+                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="pc" ' . ($val == 'pc' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="c" ' . ($val == 'c' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="aa" ' . ($val == 'aa' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="nc" ' . ($val == 'nc' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none;"><input type="radio" name="donnees[' . $key . ']" value="nr" ' . ($val == 'nr' ? 'checked' : '') . '></td>
+                            </tr>
+                        </table>';
+                    }
+                    function renderOvRow($label, $key, $donnees)
+                    {
+                        return '<tr>
+                            <td style="font-weight:bold; font-size:11px;">' . htmlspecialchars($label) . '</td>
+                            <td style="padding:0; vertical-align:middle;">' . renderOvEtatRadios($key, $donnees) . '</td>
+                            <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; border-bottom:1px solid transparent; width:100%; padding:4px; box-sizing:border-box;">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
+                        </tr>';
+                    }
+                    ?>
+
+                    <table class="pdf-table" style="font-size:11px;">
+                        <tr>
+                            <th rowspan="2"
+                                style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0;">
+                                DESIGNATIONS</th>
+                            <th style="text-align:center; padding:0; background:#e0e0e0;">ETAT</th>
+                            <th rowspan="2"
+                                style="width:25%; text-align:center; vertical-align:middle; background:#e0e0e0;">
+                                COMMENTAIRES</th>
+                        </tr>
+                        <tr>
+                            <th style="padding:0; background:#e0e0e0;">
+                                <table style="width:100%; border-collapse:collapse; text-align:center; font-size:9px;">
+                                    <tr>
+                                        <td style="width:20%; border:none; border-right:1px solid #000; padding:2px;">
+                                            Pas<br>concerné</td>
+                                        <td style="width:20%; border:none; border-right:1px solid #000; padding:2px;">
+                                            Correct</td>
+                                        <td style="width:20%; border:none; border-right:1px solid #000; padding:2px;">
+                                            A<br>améliorer</td>
+                                        <td style="width:20%; border:none; border-right:1px solid #000; padding:2px;">
+                                            Pas<br>correct</td>
+                                        <td style="width:20%; border:none; padding:2px;">Nécessite<br>remplacement</td>
+                                    </tr>
+                                </table>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th colspan="3" style="background:#5b9bd5; color:white;">Environnement / Aspect général</th>
+                        </tr>
+                        <?= renderOvRow("Accès au séparateur", "ov_acces", $donnees) ?>
+                        <?= renderOvRow("Etat général du séparateur", "ov_etat_gen", $donnees) ?>
+
+                        <tr>
+                            <th colspan="3" style="background:#5b9bd5; color:white;">Partie A - Le séparateur</th>
+                        </tr>
+                        <?= renderOvRow("Etat de la bande", "ov_bande", $donnees) ?>
+                        <?= renderOvRow("Présence des protections latérales", "ov_pres_prot", $donnees) ?>
+                        <?= renderOvRow("Etat des protections latérales", "ov_etat_prot", $donnees) ?>
+                        <?= renderOvRow("Présences des déflecteurs", "ov_pres_def", $donnees) ?>
+                        <?= renderOvRow("Etat des déflecteurs", "ov_etat_def", $donnees) ?>
+                        <?= renderOvRow("Etat de la boulonnerie", "ov_boulon", $donnees) ?>
+                        <?= renderOvRow("Etat des longerons", "ov_longeron", $donnees) ?>
+                        <?= renderOvRow("Etat des câbles et presse-étoupes", "ov_cables", $donnees) ?>
+                        <?= renderOvRow("Modèle et état du moteur", "ov_moteur", $donnees) ?>
+                        <?= renderOvRow("Etat du bras de couple", "ov_couple", $donnees) ?>
+                        <?= renderOvRow("Etat du contrôleur de rotation", "ov_ctrl", $donnees) ?>
+                        <?= renderOvRow("Etat des galets anti-déport de bande", "ov_galets", $donnees) ?>
+                        <?= renderOvRow("Etat des détecteurs anti-déport de bande", "ov_detect", $donnees) ?>
+                        <?= renderOvRow("Etat des paliers PHUSE tendeurs", "ov_pal_phuse", $donnees) ?>
+                        <?= renderOvRow("Etat des paliers du tambour motorisé", "ov_pal_mot", $donnees) ?>
+                        <?= renderOvRow("Etat du caisson en acier inoxydable", "ov_caisson", $donnees) ?>
+                        <?= renderOvRow("Contrôle des connexions dans la boîte à bornes", "ov_conn", $donnees) ?>
+                        <?= renderOvRow("Mesure de résistance", "ov_resist", $donnees) ?>
+                        <?= renderOvRow("Mesure de l'isolement sous 1000 volts CC", "ov_isol", $donnees) ?>
+                        <?= renderOvRow("Option 1 :", "ov_opt1", $donnees) ?>
+                        <?= renderOvRow("Option 2 :", "ov_opt2", $donnees) ?>
+
+                        <tr>
+                            <th colspan="3" style="background:#5b9bd5; color:white;">Partie B - Les performances</th>
+                        </tr>
+                        <tr>
+                            <td colspan="2"
+                                style="font-weight:bold; font-size:11px; vertical-align:middle; padding-left:10px;">Bille
+                                diamètre 20</td>
+                            <td style="padding:0;"><textarea name="donnees[ov_perf_bille]" class="pdf-textarea"
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"
+                                style="font-weight:bold; font-size:11px; vertical-align:middle; padding-left:10px;">Ecrou M4
+                            </td>
+                            <td style="padding:0;"><textarea name="donnees[ov_perf_ecrou]" class="pdf-textarea"
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"
+                                style="font-weight:bold; font-size:11px; vertical-align:middle; padding-left:10px;">Rond
+                                diamètre 6 longueur 50</td>
+                            <td style="padding:0;"><textarea name="donnees[ov_perf_rond50]" class="pdf-textarea"
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"
+                                style="font-weight:bold; font-size:11px; vertical-align:middle; padding-left:10px;">Rond
+                                diamètre 6 longueur 100</td>
+                            <td style="padding:0;"><textarea name="donnees[ov_perf_rond100]" class="pdf-textarea"
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table class="pdf-table" style="font-size:11px;">
+                        <tr>
+                            <th colspan="6" style="background:#5b9bd5; color:white;">En présence du client / Rappel des
+                                fréquences de nettoyage et des différents points de contrôle</th>
+                        </tr>
+                        <tr>
+                            <th style="width:30%; text-align:center; background:#fff;">Contrôle</th>
+                            <th style="text-align:center; background:#fff;">Quotidien</th>
+                            <th style="text-align:center; background:#fff;">Hebdomadaire</th>
+                            <th style="text-align:center; background:#fff;">Mensuel</th>
+                            <th style="text-align:center; background:#fff;">Annuel</th>
+                            <th style="text-align:center; width:25%; background:#fff;">Commentaires</th>
+                        </tr>
+                        <?php
+                        function renderFreqRow($label, $key, $donnees)
+                        {
+                            $v = $donnees[$key] ?? '';
+                            return '<tr>
+                                <td style="font-weight:bold; font-size:11px;">' . htmlspecialchars($label) . '</td>
+                                <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="q" ' . ($v == 'q' ? 'checked' : '') . '></td>
+                                <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="h" ' . ($v == 'h' ? 'checked' : '') . '></td>
+                                <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="m" ' . ($v == 'm' ? 'checked' : '') . '></td>
+                                <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="a" ' . ($v == 'a' ? 'checked' : '') . '></td>
+                                <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"></textarea></td>
+                            </tr>';
+                        }
+                        ?>
+                        <?= renderFreqRow("Contrôle visuel de la bande", "ov_freq_bande", $donnees) ?>
+                        <?= renderFreqRow("Contrôle visuel des fixations", "ov_freq_fix", $donnees) ?>
+                        <?= renderFreqRow("Contrôle visuel des tambours", "ov_freq_tamb", $donnees) ?>
+                        <?= renderFreqRow("Graissage des paliers", "ov_freq_graiss", $donnees) ?>
+                    </table>
+
+                    <div style="border:1px solid #f29b43; padding:10px; text-align:center; margin-top:20px;">
+                        <img src="/assets/machines/ov_diagram.png"
+                            style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma OV">
+                    </div>
 
                 <?php else: ?>
 
