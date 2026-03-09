@@ -43,9 +43,8 @@ if (isset($_GET['check_pwd'])) {
     exit;
 }
 
-// REDIRECTION AUTOMATIQUE SI DÉJÀ CONNECTÉ
 if (isset($_SESSION['user_id'])) {
-    $target = ($_SESSION['role'] === 'chef' ? 'chef.php' : 'operator.php');
+    $target = ($_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php');
     header('Location: ' . $target);
     exit;
 }
@@ -125,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!empty($user['must_change_password'])) {
                     header('Location: profile.php?force=1');
                 } else {
-                    header('Location: ' . ($user['role'] === 'chef' ? 'chef.php' : 'operator.php'));
+                    header('Location: ' . ($user['role'] === 'admin' ? 'admin.php' : 'technicien.php'));
                 }
                 exit;
             } else {
@@ -204,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     style="filter: brightness(0) saturate(100%) invert(73%) sepia(86%) saturate(1063%) hue-rotate(358deg) brightness(101%) contrast(106%);">
             </div>
             <h1 class="login-title" style="color: #ffb300;">Raoul Lenoir</h1>
-            <p class="login-subtitle">Système de Pointage Industriel</p>
+            <p class="login-subtitle">Fiches Techniques SaaS</p>
         </div>
 
         <form method="POST" class="login-card glass animate-in" autocomplete="off" <?= isset($pendingReqId) ? 'style="display:none;"' : '' ?>>
@@ -264,7 +263,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     style="position:absolute; top:1rem; right:1.5rem; background:none; border:none; color:var(--text-dim); font-size:1.5rem; cursor:pointer;">&times;</button>
                 <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem;">Mot de passe oublié</h3>
                 <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 1.5rem; line-height: 1.4;">
-                    Veuillez inscrire le nouveau mot de passe souhaité. Votre chef d'atelier devra accepter votre
+                    Veuillez inscrire le nouveau mot de passe souhaité. Votre administrateur devra accepter votre
                     demande dans sa boîte de réception.
                 </p>
 
@@ -331,14 +330,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 document.getElementById('statusIcon').innerHTML = '✅';
                                 document.getElementById('statusTitle').innerHTML = 'Mot de passe validé !';
                                 document.getElementById('statusTitle').style.color = 'var(--success)';
-                                document.getElementById('statusDesc').innerHTML = 'Votre demande a été acceptée par le chef d\'atelier. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.';
+                                document.getElementById('statusDesc').innerHTML = 'Votre demande a été acceptée par l\'administrateur. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.';
                                 document.getElementById('successBtn').style.display = 'block';
                             } else if (data.success && data.status === 'rejected') {
                                 clearInterval(pollingInterval);
                                 document.getElementById('statusIcon').innerHTML = '❌';
                                 document.getElementById('statusTitle').innerHTML = 'Demande refusée';
                                 document.getElementById('statusTitle').style.color = 'var(--error)';
-                                document.getElementById('statusDesc').innerHTML = 'Votre demande a été refusée par le chef d\'atelier. Veuillez vous rapprocher de lui.';
+                                document.getElementById('statusDesc').innerHTML = 'Votre demande a été refusée par l\'administrateur. Veuillez vous rapprocher de lui.';
                                 document.getElementById('successBtn').style.display = 'block';
                             }
                         });
