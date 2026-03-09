@@ -248,6 +248,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Connexion Sécurisée →
             </button>
 
+            <!-- Raccourcis de test rapides -->
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button type="button" class="btn btn-ghost"
+                    onclick="document.getElementById('nom').value='TG'; document.getElementById('password').value='password123'; document.querySelector('.login-card').submit();"
+                    style="flex:1; font-size:11px; padding:0.5rem;">🚀 Admin (TG)</button>
+                <button type="button" class="btn btn-ghost"
+                    onclick="document.getElementById('nom').value='LOTITO'; document.getElementById('password').value='password123'; document.querySelector('.login-card').submit();"
+                    style="flex:1; font-size:11px; padding:0.5rem;">🚀 Tech (Lotito)</button>
+            </div>
+
             <button type="button" class="btn btn-ghost" style="width: 100%; margin-top: 1rem; font-size: 0.75rem;"
                 onclick="document.getElementById('forgotModal').style.display='flex'">
                 J'ai oublié mon mot de passe
@@ -394,9 +404,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 this.value = this.value.toUpperCase();
             });
         }
-        
+
         <?php if (!empty($showForgotModal)): ?>
-                document.getElementById('forgotModal').style.display='flex';
+            document.getElementById('forgotModal').style.display = 'flex';
         <?php endif; ?>
     </script>
     <script src="/assets/notifications.js"></script>
