@@ -216,7 +216,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
     <!-- ═══ HEADER MOBILE ═══ -->
     <header class="mobile-header">
         <button class="mobile-logo-btn"
-            onclick="window.location.href='<?= $_SESSION['role'] === 'chef' ? 'chef.php' : 'operator.php' ?>'"
+            onclick="window.location.href='<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>'"
             aria-label="Retour"
             style="background: none; border: none; padding: 0.5rem; display: flex; align-items: center; justify-content: center;">
             <span style="font-size: 1.6rem; color: var(--primary);">&larr;</span>
@@ -237,7 +237,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
         <aside class="sidebar" id="sidebar">
             <div style="margin-bottom: 2.5rem;">
                 <!-- Logo cliquable vers le dashboard -->
-                <a href="<?= $_SESSION['role'] === 'chef' ? 'chef.php' : 'operator.php' ?>" class="brand-icon"
+                <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>" class="brand-icon"
                     style="display: block; width: 180px; height: auto; margin: 0 0 1rem 0;">
                     <img src="/assets/logo-raoul-lenoir.svg" alt="Raoul Lenoir">
                 </a>
@@ -247,7 +247,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
 
             <nav style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 2rem;">
                 <?php if (!$forceChange): ?>
-                    <a href="<?= $_SESSION['role'] === 'chef' ? 'chef.php' : 'operator.php' ?>" class="btn btn-ghost"
+                    <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>" class="btn btn-ghost"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; text-decoration: none; color: inherit;">
                         <span>🏠</span> Tableau de Bord
                     </a>
@@ -319,7 +319,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                     <div>
                         <p style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Rôle</p>
                         <p style="font-size: 1.1rem; font-weight: 700; color: var(--primary);">
-                            <?= $_SESSION['role'] === 'chef' ? 'Administrateur' : 'Opérateur' ?>
+                            <?= $_SESSION['role'] === 'admin' ? 'Administrateur' : 'Technicien' ?>
                         </p>
                     </div>
                 </div>

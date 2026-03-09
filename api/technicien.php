@@ -121,6 +121,10 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
                     <span>➕</span> Nouvelle Fiche
                 </button>
+                <a href="historique.php" class="btn btn-ghost sidebar-link"
+                    style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; text-decoration: none; color: inherit;">
+                    <span>🕒</span> Historique
+                </a>
                 <a href="profile.php" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; text-decoration: none; color: inherit;">
                     <span>👤</span> Mon Profil
@@ -179,7 +183,8 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                                     <span class="date-badge"><?= date('d/m/Y', strtotime($i['date_intervention'])) ?></span>
                                     <p style="font-weight: 700; font-size: 1rem;"><?= htmlspecialchars($i['nom_societe']) ?></p>
                                     <p style="font-size: 0.8rem; color: var(--text-dim);">ARC:
-                                        <?= htmlspecialchars($i['numero_arc']) ?></p>
+                                        <?= htmlspecialchars($i['numero_arc']) ?>
+                                    </p>
                                 </div>
                                 <span style="color: var(--primary);">Éditer →</span>
                             </a>
@@ -202,9 +207,11 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                                 style="padding: 1rem 1.5rem; display: flex; justify-content: space-between;">
                                 <div>
                                     <p style="font-weight: 700; font-size: 0.95rem; opacity:0.8;">
-                                        <?= htmlspecialchars($i['nom_societe']) ?></p>
+                                        <?= htmlspecialchars($i['nom_societe']) ?>
+                                    </p>
                                     <p style="font-size: 0.7rem; color: var(--text-dim);">ARC:
-                                        <?= htmlspecialchars($i['numero_arc']) ?></p>
+                                        <?= htmlspecialchars($i['numero_arc']) ?>
+                                    </p>
                                 </div>
                                 <div>
                                     <span
@@ -274,9 +281,13 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                 <span class="mobile-nav-icon">➕</span>
                 <span class="mobile-nav-label">+ Fiche</span>
             </button>
-            <a href="logout.php" class="mobile-nav-item" style="color: var(--error);">
-                <span class="mobile-nav-icon">⏻</span>
-                <span class="mobile-nav-label">Quitter</span>
+            <a href="historique.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
+                <span class="mobile-nav-icon">🕒</span>
+                <span class="mobile-nav-label">Historique</span>
+            </a>
+            <a href="profile.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
+                <span class="mobile-nav-icon">👤</span>
+                <span class="mobile-nav-label">Profil</span>
             </a>
         </div>
     </nav>

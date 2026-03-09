@@ -646,14 +646,12 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
                         <?= renderFreqRow("Graissage des paliers", "ov_freq_graiss", $donnees) ?>
                     </table>
 
-                    <div
-                        style="border:1px solid #f29b43; padding:10px; margin-top:20px; position:relative; min-height:450px;">
+                    <div style="border:1px solid #f29b43; padding:10px; margin-top:20px; text-align:center;">
                         <img src="/assets/machines/ov_diagram.png"
-                            style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma OV">
+                            style="max-width:100%; height:auto; display:block; margin:0 auto 15px auto;" alt="Schéma OV">
 
                         <!-- Tableau de Légende Gris -->
-                        <div
-                            style="position:absolute; bottom:10px; right:10px; background:white; border:1px solid #000; width:300px;">
+                        <div style="display:inline-block; background:white; border:1px solid #000; width:350px;">
                             <table
                                 style="width:100%; border-collapse:collapse; font-size:10px; text-align:center; color:#000;">
                                 <tr>
