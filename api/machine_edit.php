@@ -299,12 +299,14 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
                             style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
                             N° A.R.C.</td>
                         <td style="width:35%; border:1px solid #000; padding:6px; background:#d9d9d9;">
-                            <?= htmlspecialchars($machine['numero_arc']) ?></td>
+                            <?= htmlspecialchars($machine['numero_arc']) ?>
+                        </td>
                         <td
                             style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
                             Client</td>
                         <td style="width:35%; border:1px solid #000; padding:6px; background:#d9d9d9;">
-                            <?= htmlspecialchars($machine['nom_societe']) ?></td>
+                            <?= htmlspecialchars($machine['nom_societe']) ?>
+                        </td>
                     </tr>
                     <tr>
                         <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N° O.F.
@@ -316,7 +318,8 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
                         <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
                             Désignation</td>
                         <td style="border:1px solid #000; padding:6px; background:#d9d9d9;">
-                            <?= htmlspecialchars($machine['designation']) ?></td>
+                            <?= htmlspecialchars($machine['designation']) ?>
+                        </td>
                     </tr>
                 </table>
 
@@ -643,31 +646,73 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
                         <?= renderFreqRow("Graissage des paliers", "ov_freq_graiss", $donnees) ?>
                     </table>
 
-                    <div style="border:1px solid #f29b43; padding:10px; margin-top:20px; position:relative; min-height:450px;">
-                        <img src="/assets/machines/ov_diagram.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma OV">
-                        
+                    <div
+                        style="border:1px solid #f29b43; padding:10px; margin-top:20px; position:relative; min-height:450px;">
+                        <img src="/assets/machines/ov_diagram.png"
+                            style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma OV">
+
                         <!-- Tableau de Légende Gris -->
-                        <div style="position:absolute; bottom:10px; right:10px; background:white; border:1px solid #000; width:300px;">
-                            <table style="width:100%; border-collapse:collapse; font-size:10px; text-align:center; color:#000;">
+                        <div
+                            style="position:absolute; bottom:10px; right:10px; background:white; border:1px solid #000; width:300px;">
+                            <table
+                                style="width:100%; border-collapse:collapse; font-size:10px; text-align:center; color:#000;">
                                 <tr>
-                                    <th style="border:1px solid #000; background:#d9d9d9; padding:4px; width:20%; font-weight:bold;">Rep.</th>
-                                    <th style="border:1px solid #000; background:#d9d9d9; padding:4px; font-weight:bold;">DESIGNATION</th>
+                                    <th
+                                        style="border:1px solid #000; background:#d9d9d9; padding:4px; width:20%; font-weight:bold;">
+                                        Rep.</th>
+                                    <th style="border:1px solid #000; background:#d9d9d9; padding:4px; font-weight:bold;">
+                                        DESIGNATION</th>
                                 </tr>
-                                <tr><td style="border:1px solid #000; padding:2px;">1</td><td style="border:1px solid #000; padding:2px;">Motoreducteur Rossi</td></tr>
-                                <tr><td style="border:1px solid #000; padding:2px;">2</td><td style="border:1px solid #000; padding:2px;">Motoreducteur Leroy Somer</td></tr>
-                                <tr><td style="border:1px solid #000; padding:2px;">3</td><td style="border:1px solid #000; padding:2px;">Motoreducteur SEW</td></tr>
-                                <tr><td style="border:1px solid #000; padding:2px;">4</td><td style="border:1px solid #000; padding:2px;">Paliers fixes du tambour moteur</td></tr>
-                                <tr><td style="border:1px solid #000; padding:2px;">5</td><td style="border:1px solid #000; padding:2px;">Paliers tendeurs du tambour mené</td></tr>
-                                <tr><td style="border:1px solid #000; padding:2px;">6</td><td style="border:1px solid #000; padding:2px;">Contrôleur de rotation</td></tr>
-                                <tr><td style="border:1px solid #000; padding:2px;">7</td><td style="border:1px solid #000; padding:2px;">Tambour mené</td></tr>
-                                <tr><td style="border:1px solid #000; padding:2px;">8</td><td style="border:1px solid #000; padding:2px;">Tambour moteur</td></tr>
-                                <tr><td style="border:1px solid #000; padding:2px;">9</td><td style="border:1px solid #000; padding:2px;">(Galets)</td></tr>
-                                <tr><td style="border:1px solid #000; padding:2px;">10</td><td style="border:1px solid #000; padding:2px;">(Contrôleurs de déport de bande)</td></tr>
-                                <tr><td style="border:1px solid #000; padding:2px;">11</td><td style="border:1px solid #000; padding:2px;">Bande</td></tr>
+                                <tr>
+                                    <td style="border:1px solid #000; padding:2px;">1</td>
+                                    <td style="border:1px solid #000; padding:2px;">Motoreducteur Rossi</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #000; padding:2px;">2</td>
+                                    <td style="border:1px solid #000; padding:2px;">Motoreducteur Leroy Somer</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #000; padding:2px;">3</td>
+                                    <td style="border:1px solid #000; padding:2px;">Motoreducteur SEW</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #000; padding:2px;">4</td>
+                                    <td style="border:1px solid #000; padding:2px;">Paliers fixes du tambour moteur</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #000; padding:2px;">5</td>
+                                    <td style="border:1px solid #000; padding:2px;">Paliers tendeurs du tambour mené</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #000; padding:2px;">6</td>
+                                    <td style="border:1px solid #000; padding:2px;">Contrôleur de rotation</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #000; padding:2px;">7</td>
+                                    <td style="border:1px solid #000; padding:2px;">Tambour mené</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #000; padding:2px;">8</td>
+                                    <td style="border:1px solid #000; padding:2px;">Tambour moteur</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #000; padding:2px;">9</td>
+                                    <td style="border:1px solid #000; padding:2px;">(Galets)</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #000; padding:2px;">10</td>
+                                    <td style="border:1px solid #000; padding:2px;">(Contrôleurs de déport de bande)</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #000; padding:2px;">11</td>
+                                    <td style="border:1px solid #000; padding:2px;">Bande</td>
+                                </tr>
                             </table>
                         </div>
                     </div>
-                    <div style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0; border:1px solid #000; border-top:none;">PHOTOS ANNEXES</div>
+                    <div
+                        style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0; border:1px solid #000; border-top:none;">
+                        PHOTOS ANNEXES</div>
 
                 <?php else: ?>
 
@@ -706,6 +751,36 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
                         <?= renderCheckRow("Tester bouton Arrêt d'Urgence", "gen_au", $donnees) ?>
                         <?= renderCheckRow("Mesure isolation & Induction", "gen_mesures", $donnees) ?>
                     </table>
+
+                    <?php
+                    // Automatiquement charger le schéma s'il existe (pour dépanner)
+                    $cleanName = strtolower(preg_replace('/[^a-zA-Z0-9-]/', '', $machine['designation']));
+                    // Essayer qq mots clés extraits
+                    $possiblePrefixes = explode(' ', strtolower($machine['designation']));
+                    $foundSchema = null;
+                    $exts = ['png', 'jpg', 'jpeg'];
+
+                    // on fait une petite passe pour trouver l'image
+                    foreach (['sga', 'sgcp', 'sgsa', 'slt', 'spm', 'srm', 'levage', 'pap-tap', 'pm', 'ovap'] as $mkey) {
+                        if (strpos(strtolower($machine['designation']), $mkey) !== false) {
+                            foreach ($exts as $ext) {
+                                $checkPath = __DIR__ . '/../assets/machines/' . $mkey . '_diagram.' . $ext;
+                                if (file_exists($checkPath)) {
+                                    $foundSchema = '/assets/machines/' . $mkey . '_diagram.' . $ext;
+                                    break 2;
+                                }
+                            }
+                        }
+                    }
+
+                    if ($foundSchema):
+                        ?>
+                        <div style="border:1px solid #000; padding:10px; text-align:center; margin-top:20px;">
+                            <div style="font-weight:bold; margin-bottom:10px;">Schéma de Référence (Extrait Word) :</div>
+                            <img src="<?= htmlspecialchars($foundSchema) ?>"
+                                style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma machine">
+                        </div>
+                    <?php endif; ?>
 
                 <?php endif; ?>
 
