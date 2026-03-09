@@ -190,7 +190,7 @@ $machines = $stmtMach->fetchAll();
             </div>
 
             <!-- Bouton pour Finaliser -->
-            <button onclick="document.getElementById('modalSignature').style.display='flex'" class="btn btn-primary"
+            <button onclick="openSignatureModal()" class="btn btn-primary"
                 style="width:100%; margin-top: 2rem; padding: 1rem; font-size: 1rem; background: var(--accent-cyan); color: #fff; border:none;">
                 Terminer et Signer l'intervention ✓
             </button>
@@ -290,24 +290,40 @@ $machines = $stmtMach->fetchAll();
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     <script>
         let padClient, padTech;
-        setTimeout(() => {
-            const canvasC = document.getElementById('canvasClient');
-            const canvasT = document.getElementById('canvasTech');
-            if (canvasC && canvasT && window.SignaturePad) {
-                function resizeCanvas(canvas) {
-                    const ratio = Math.max(window.devicePixelRatio || 1, 1);
-                    canvas.width = canvas.offsetWidth * ratio;
-                    canvas.height = canvas.offsetHeight * ratio;
-                    canvas.getContext("2d").scale(ratio, ratio);
+
+        function resizeCanvas(canvas) {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            // On fixe une hauteur de 200px (la même partout)
+            canvas.style.height = "200px";
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = 200 * ratio; // Fix height as offsetHeight might be flawed
+            canvas.getContext("2d").scale(ratio, ratio);
+        }
+
+        function openSignatureModal() {
+            document.getElementById('modalSignature').style.display = 'flex';
+
+            // On initialise les canvas MAINTENANT que la modale est visible
+            setTimeout(() => {
+                const canvasC = document.getElementById('canvasClient');
+                const canvasT = document.getElementById('canvasTech');
+
+                if (canvasC && canvasT && window.SignaturePad) {
+                    // Ne redimensionne et n'initialise que si ce n'est pas déjà fait
+                    if (!padClient) {
+                        resizeCanvas(canvasC);
+                        padClient = new SignaturePad(canvasC, { penColor: "blue" });
+                    }
+                    if (!padTech) {
+                        resizeCanvas(canvasT);
+                        padTech = new SignaturePad(canvasT, { penColor: "black" });
+                    }
                 }
-                resizeCanvas(canvasC); resizeCanvas(canvasT);
-                padClient = new SignaturePad(canvasC, { penColor: "blue" });
-                padTech = new SignaturePad(canvasT, { penColor: "black" });
-            }
-        }, 500);
+            }, 50); // Petit délai pour laisser le navigateur dessiner la modale
+        }
 
         function savePads() {
-            if (padClient.isEmpty() || padTech.isEmpty()) {
+            if (!padClient || !padTech || padClient.isEmpty() || padTech.isEmpty()) {
                 alert("Veuillez remplir les deux signatures.");
                 event.preventDefault();
                 return;
