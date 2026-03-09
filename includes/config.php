@@ -208,11 +208,14 @@ function requireAuth($role = null)
         header('Location: index.php');
         exit;
     }
-    if ($role && $_SESSION['role'] !== $role) {
-        // Journaliser la tentative d'accès non autorisée
-        logAudit('UNAUTHORIZED_ACCESS', "Role requis: $role, Role actuel: " . ($_SESSION['role'] ?? 'none'));
-        header('Location: index.php');
-        exit;
+    if ($role) {
+        $allowedRoles = is_array($role) ? $role : [$role];
+        if (!in_array($_SESSION['role'], $allowedRoles)) {
+            // Journaliser la tentative d'accès non autorisée
+            logAudit('UNAUTHORIZED_ACCESS', "Role requis: " . implode(',', $allowedRoles) . ", Role actuel: " . ($_SESSION['role'] ?? 'none'));
+            header('Location: index.php');
+            exit;
+        }
     }
     // Vérifier si le changement de mot de passe est obligatoire
     if (isset($_SESSION['must_change_password']) && $_SESSION['must_change_password']) {

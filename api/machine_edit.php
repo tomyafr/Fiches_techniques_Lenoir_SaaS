@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
-requireAuth('technicien');
+requireAuth(['technicien', 'admin']);
 
 $db = getDB();
 $userId = $_SESSION['user_id'];
@@ -11,14 +11,25 @@ if (!$id) {
     exit;
 }
 
-$stmt = $db->prepare('
-    SELECT m.*, i.numero_arc, i.technicien_id, i.date_intervention, c.nom_societe 
-    FROM machines m 
-    JOIN interventions i ON m.intervention_id = i.id 
-    JOIN clients c ON i.client_id = c.id
-    WHERE m.id = ? AND i.technicien_id = ?
-');
-$stmt->execute([$id, $userId]);
+if ($_SESSION['role'] === 'admin') {
+    $stmt = $db->prepare('
+        SELECT m.*, i.numero_arc, i.technicien_id, i.date_intervention, c.nom_societe 
+        FROM machines m 
+        JOIN interventions i ON m.intervention_id = i.id 
+        JOIN clients c ON i.client_id = c.id
+        WHERE m.id = ?
+    ');
+    $stmt->execute([$id]);
+} else {
+    $stmt = $db->prepare('
+        SELECT m.*, i.numero_arc, i.technicien_id, i.date_intervention, c.nom_societe 
+        FROM machines m 
+        JOIN interventions i ON m.intervention_id = i.id 
+        JOIN clients c ON i.client_id = c.id
+        WHERE m.id = ? AND i.technicien_id = ?
+    ');
+    $stmt->execute([$id, $userId]);
+}
 $machine = $stmt->fetch();
 
 if (!$machine) {

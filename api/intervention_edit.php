@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
-requireAuth('technicien');
+requireAuth(['technicien', 'admin']);
 
 $db = getDB();
 $userId = $_SESSION['user_id'];
@@ -12,13 +12,23 @@ if (!$id) {
 }
 
 // Fetch Intervention
-$stmt = $db->prepare('
-    SELECT i.*, c.nom_societe 
-    FROM interventions i 
-    JOIN clients c ON i.client_id = c.id 
-    WHERE i.id = ? AND i.technicien_id = ?
-');
-$stmt->execute([$id, $userId]);
+if ($_SESSION['role'] === 'admin') {
+    $stmt = $db->prepare('
+        SELECT i.*, c.nom_societe 
+        FROM interventions i 
+        JOIN clients c ON i.client_id = c.id 
+        WHERE i.id = ?
+    ');
+    $stmt->execute([$id]);
+} else {
+    $stmt = $db->prepare('
+        SELECT i.*, c.nom_societe 
+        FROM interventions i 
+        JOIN clients c ON i.client_id = c.id 
+        WHERE i.id = ? AND i.technicien_id = ?
+    ');
+    $stmt->execute([$id, $userId]);
+}
 $intervention = $stmt->fetch();
 
 if (!$intervention) {
@@ -47,8 +57,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $db->prepare('UPDATE interventions SET signature_client = ?, signature_technicien = ?, nom_signataire_client = ?, statut = ? WHERE id = ?')
             ->execute([$sigClient, $sigTech, $nomClient, 'Terminee', $id]);
 
-        // redirect
-        header("Location: technicien.php?msg=saved");
+        // redirect based on role
+        if ($_SESSION['role'] === 'admin') {
+            header("Location: admin.php?msg=saved");
+        } else {
+            header("Location: technicien.php?msg=saved");
+        }
         exit;
     }
 }
@@ -89,7 +103,9 @@ $machines = $stmtMach->fetchAll();
 
 <body>
     <header class="mobile-header">
-        <button class="btn btn-ghost" onclick="window.location.href='technicien.php'" style="padding: 0.5rem;">
+        <button class="btn btn-ghost"
+            onclick="window.location.href='<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>'"
+            style="padding: 0.5rem;">
             ← Retour
         </button>
         <span class="mobile-header-title">Fiche ARC</span>
