@@ -78,7 +78,8 @@ function getDB()
                     $db = ltrim($parts['path'], '/');
                     $user = $parts['user'];
                     $pass = $parts['pass'];
-                    $dsn = "pgsql:host=$host;port=5432;dbname=$db;sslmode=require";
+                    $port = isset($parts['port']) ? $parts['port'] : '5432';
+                    $dsn = "pgsql:host=$host;port=$port;dbname=$db;sslmode=require";
                 } else {
                     die('Erreur : Variables de base de données non trouvées.');
                 }
