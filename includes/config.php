@@ -119,6 +119,23 @@ function startSecureSession()
         session_start();
     }
 
+    // Set CSRF token cookie early if not present (Double Submit Cookie pattern for Serverless)
+    if (empty($_COOKIE['csrf_token'])) {
+        $token = bin2hex(random_bytes(32));
+        $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+            || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
+        setcookie('csrf_token', $token, [
+            'expires' => time() + SESSION_TIMEOUT,
+            'path' => '/',
+            'domain' => '',
+            'secure' => $isHttps,
+            'httponly' => true,
+            'samesite' => 'Strict',
+        ]);
+        $_COOKIE['csrf_token'] = $token;
+    }
+
     // Vérification du timeout de session
     if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > SESSION_TIMEOUT) {
         session_unset();
@@ -215,10 +232,7 @@ function requireAuth($role = null)
 function getCsrfToken(): string
 {
     startSecureSession();
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-    return $_SESSION['csrf_token'];
+    return $_COOKIE['csrf_token'] ?? '';
 }
 
 /**
@@ -227,9 +241,10 @@ function getCsrfToken(): string
  */
 function verifyCsrfToken(): void
 {
+    startSecureSession();
     $submitted = $_POST['csrf_token'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
-    $stored = $_SESSION['csrf_token'] ?? '';
-    if (empty($stored) || !hash_equals($stored, $submitted)) {
+    $stored = $_COOKIE['csrf_token'] ?? '';
+    if (empty($stored) || empty($submitted) || !hash_equals($stored, $submitted)) {
         http_response_code(403);
         die('Erreur de sécurité : token CSRF invalide. Veuillez recharger la page.');
     }
