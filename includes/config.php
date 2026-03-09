@@ -91,8 +91,8 @@ function getDB()
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]);
         } catch (PDOException $e) {
-            // Afficher l'erreur (temporaire)
-            die('Erreur de connexion à la base de données: ' . $e->getMessage());
+            // Ne pas exposer le message d'erreur réel en production
+            die('Erreur de connexion à la base de données.');
         }
     }
     return $pdo;
