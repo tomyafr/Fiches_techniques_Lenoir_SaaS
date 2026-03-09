@@ -271,36 +271,54 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
 
         <div class="mobile-wrapper">
             <div class="pdf-page">
-                <!-- Header LENOIR -->
-                <div class="pdf-header">
-                    <div style="display:flex; align-items:center;">
-                        <!-- Mockup logo since the exact lenoir.png is not sure to be black on white readable -->
-                        <h1 style="color:#000; font-size:32px; margin:0; font-style:italic; font-weight:900;">LENOIR-MEC
-                        </h1>
-                    </div>
-                    <div class="pdf-meta">
-                        <div><strong>N° A.R.C. :</strong> <?= htmlspecialchars($machine['numero_arc']) ?></div>
-                        <div><strong>Client :</strong> <?= htmlspecialchars($machine['nom_societe']) ?></div>
-                        <div><strong>Date :</strong> <?= date('d/m/Y', strtotime($machine['date_intervention'])) ?>
-                        </div>
-                    </div>
-                </div>
+                <!-- Header exact LENOIR -->
+                <table
+                    style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:15px; color:#000;">
+                    <tr>
+                        <td style="width:40%; border-right:1px solid #000; padding:15px; vertical-align:bottom;">
+                            <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC"
+                                style="max-width:220px; display:block; margin-bottom:30px;">
+                            <div style="text-align:right; font-weight:bold; color:#0070c0; font-size:16px;">
+                                Poste<input type="text" name="mesures[poste]"
+                                    value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>"
+                                    style="width:100px; border:none; border-bottom:1px solid #0070c0; outline:none; color:#0070c0; background:transparent; font-weight:bold;">
+                            </div>
+                        </td>
+                        <td style="width:60%; text-align:center; vertical-align:middle;">
+                            <span style="font-size:26px; font-weight:bold; color:#000;">
+                                <?= $isAPRF ? 'Aimant permanent rectangulaire fixe APRF' : ($isEDX ? 'Séparateur à courants de foucault ED-X' : ($isOV ? 'Overband Electromagnétique OV' : htmlspecialchars($machine['designation']))) ?>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
 
-                <!-- Title Box -->
-                <div class="pdf-title-box">
-                    <div style="font-size:14px; font-weight:normal; text-align:left;">Poste : <input type="text"
-                            class="pdf-input" style="width:300px" name="mesures[poste]"
-                            value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>"></div>
-                    <div style="margin-top:15px; color:#000; font-size:20px;">
-                        <?= $isAPRF ? 'Aimant permanent rectangulaire fixe' : ($isEDX ? 'Séparateur à courants de foucault' : ($isOV ? 'Overband Electromagnétique' : 'Fiche de Contrôle :')) ?>
-                        <br />
-                        <span
-                            style="font-size:26px; font-weight:900; color:#c00;"><?= htmlspecialchars($machine['designation']) ?></span>
-                    </div>
-                    <div style="font-size:14px; font-weight:bold; margin-top:15px; text-align:right;">N° O.F. : <input
-                            type="text" class="pdf-input" style="width:150px; font-weight:bold;" name="numero_of"
-                            value="<?= htmlspecialchars($machine['numero_of']) ?>"></div>
-                </div>
+                <table
+                    style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000;">
+                    <tr>
+                        <td
+                            style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
+                            N° A.R.C.</td>
+                        <td style="width:35%; border:1px solid #000; padding:6px; background:#d9d9d9;">
+                            <?= htmlspecialchars($machine['numero_arc']) ?></td>
+                        <td
+                            style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
+                            Client</td>
+                        <td style="width:35%; border:1px solid #000; padding:6px; background:#d9d9d9;">
+                            <?= htmlspecialchars($machine['nom_societe']) ?></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N° O.F.
+                        </td>
+                        <td style="border:1px solid #000; padding:6px; background:#d9d9d9;">
+                            <input type="text" name="numero_of" value="<?= htmlspecialchars($machine['numero_of']) ?>"
+                                style="width:100%; border:none; background:transparent; font-size:13px; outline:none;">
+                        </td>
+                        <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
+                            Désignation</td>
+                        <td style="border:1px solid #000; padding:6px; background:#d9d9d9;">
+                            <?= htmlspecialchars($machine['designation']) ?></td>
+                    </tr>
+                </table>
 
                 <?php
                 // HELPER FONCTION : Radio Button pour État (C/A/NC)
@@ -625,10 +643,31 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
                         <?= renderFreqRow("Graissage des paliers", "ov_freq_graiss", $donnees) ?>
                     </table>
 
-                    <div style="border:1px solid #f29b43; padding:10px; text-align:center; margin-top:20px;">
-                        <img src="/assets/machines/ov_diagram.png"
-                            style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma OV">
+                    <div style="border:1px solid #f29b43; padding:10px; margin-top:20px; position:relative; min-height:450px;">
+                        <img src="/assets/machines/ov_diagram.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma OV">
+                        
+                        <!-- Tableau de Légende Gris -->
+                        <div style="position:absolute; bottom:10px; right:10px; background:white; border:1px solid #000; width:300px;">
+                            <table style="width:100%; border-collapse:collapse; font-size:10px; text-align:center; color:#000;">
+                                <tr>
+                                    <th style="border:1px solid #000; background:#d9d9d9; padding:4px; width:20%; font-weight:bold;">Rep.</th>
+                                    <th style="border:1px solid #000; background:#d9d9d9; padding:4px; font-weight:bold;">DESIGNATION</th>
+                                </tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">1</td><td style="border:1px solid #000; padding:2px;">Motoreducteur Rossi</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">2</td><td style="border:1px solid #000; padding:2px;">Motoreducteur Leroy Somer</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">3</td><td style="border:1px solid #000; padding:2px;">Motoreducteur SEW</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">4</td><td style="border:1px solid #000; padding:2px;">Paliers fixes du tambour moteur</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">5</td><td style="border:1px solid #000; padding:2px;">Paliers tendeurs du tambour mené</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">6</td><td style="border:1px solid #000; padding:2px;">Contrôleur de rotation</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">7</td><td style="border:1px solid #000; padding:2px;">Tambour mené</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">8</td><td style="border:1px solid #000; padding:2px;">Tambour moteur</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">9</td><td style="border:1px solid #000; padding:2px;">(Galets)</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">10</td><td style="border:1px solid #000; padding:2px;">(Contrôleurs de déport de bande)</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">11</td><td style="border:1px solid #000; padding:2px;">Bande</td></tr>
+                            </table>
+                        </div>
                     </div>
+                    <div style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0 border:1px solid #000; border-top:none;">PHOTOS ANNEXES</div>
 
                 <?php else: ?>
 
