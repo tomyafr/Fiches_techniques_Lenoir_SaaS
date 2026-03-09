@@ -10,7 +10,44 @@ $messageType = '';
 // Password Requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     verifyCsrfToken();
-    if ($_POST['action'] === 'accept_pwd') {
+    if ($_POST['action'] === 'nouvelle_intervention') {
+        $arc = strtoupper(trim($_POST['numero_arc'] ?? ''));
+        $clientNom = trim($_POST['nom_societe'] ?? '');
+        $contactNom = trim($_POST['contact_nom'] ?? '');
+        $dateInt = $_POST['date_intervention'] ?? date('Y-m-d');
+
+        if (empty($arc) || empty($clientNom)) {
+            $message = 'Le numéro ARC et le client sont obligatoires.';
+            $messageType = 'error';
+        } else {
+            try {
+                $db->beginTransaction();
+
+                // Create or find client
+                $stmtClient = $db->prepare('INSERT INTO clients (nom_societe) VALUES (?) RETURNING id');
+                $stmtClient->execute([$clientNom]);
+                $clientId = $stmtClient->fetchColumn();
+
+                // Create intervention (assigned to the current user who creates it)
+                $stmtInt = $db->prepare('INSERT INTO interventions (numero_arc, client_id, technicien_id, contact_nom, date_intervention) VALUES (?, ?, ?, ?, ?) RETURNING id');
+                $stmtInt->execute([$arc, $clientId, $userId, $contactNom, $dateInt]);
+                $newId = $stmtInt->fetchColumn();
+
+                $db->commit();
+                logAudit('INTERVENTION_CREATED', "ARC: $arc");
+                header('Location: intervention_edit.php?id=' . $newId);
+                exit;
+            } catch (PDOException $e) {
+                $db->rollBack();
+                if ($e->getCode() == 23505) {
+                    $message = 'Ce numéro ARC existe déjà.';
+                } else {
+                    $message = 'Erreur lors de la création.';
+                }
+                $messageType = 'error';
+            }
+        }
+    } elseif ($_POST['action'] === 'accept_pwd') {
         $reqId = (int) ($_POST['req_id'] ?? 0);
         $stmt = $db->prepare("SELECT * FROM password_requests WHERE id = ? AND status = 'pending'");
         $stmt->execute([$reqId]);
@@ -112,7 +149,8 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                     Connecté</p>
                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                     <p style="font-weight: 600; font-size: 0.85rem; margin: 0;">
-                        <?= htmlspecialchars($_SESSION['user_prenom'] . ' ' . $_SESSION['user_nom']) ?></p>
+                        <?= htmlspecialchars($_SESSION['user_prenom'] . ' ' . $_SESSION['user_nom']) ?>
+                    </p>
                 </div>
                 <a href="logout.php" class="btn btn-ghost" style="width: 100%; margin-top: 1rem; color: var(--error);">
                     Se déconnecter
@@ -128,7 +166,11 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                 </div>
             <?php endif; ?>
 
-            <div style="display:flex; justify-content:flex-end; margin-bottom: 2rem;">
+            <div style="display:flex; justify-content:space-between; margin-bottom: 2rem; align-items: center;">
+                <button class="btn btn-primary"
+                    onclick="document.getElementById('newInterventionModal').style.display='flex'">
+                    ➕ NOUVELLE FICHE TECHNIQUE
+                </button>
                 <button onclick="document.getElementById('pwdInboxModal').style.display='flex'" class="btn btn-ghost"
                     style="padding:0.6rem 1rem;">
                     <span>🔔</span> Demandes MDP
@@ -140,6 +182,44 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                     <?php endif; ?>
                 </button>
             </div>
+
+            <!-- Modal Nouvelle Intervention -->
+            <div id="newInterventionModal"
+                style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; backdrop-filter:blur(5px);">
+                <div class="card glass animate-in"
+                    style="width:100%; max-width:500px; padding:2rem; position:relative;">
+                    <button type="button" onclick="document.getElementById('newInterventionModal').style.display='none'"
+                        style="position:absolute; top:1rem; right:1.5rem; background:none; border:none; color:var(--text-dim); font-size:1.5rem; cursor:pointer;">&times;</button>
+                    <h3 style="margin-bottom: 1.5rem;">Nouvelle Fiche Technique</h3>
+                    <form method="POST">
+                        <input type="hidden" name="action" value="nouvelle_intervention">
+                        <?= csrfField() ?>
+                        <div class="form-group">
+                            <label class="label">Numéro ARC *</label>
+                            <input type="text" name="numero_arc" class="input" required placeholder="Ex: ARC-2026-001"
+                                style="text-transform:uppercase;">
+                        </div>
+                        <div class="form-group">
+                            <label class="label">Client (Nom de la société) *</label>
+                            <input type="text" name="nom_societe" class="input" required
+                                placeholder="Nom de l'entreprise">
+                        </div>
+                        <div class="form-group">
+                            <label class="label">Nom du contact sur place</label>
+                            <input type="text" name="contact_nom" class="input" placeholder="Optionnel">
+                        </div>
+                        <div class="form-group">
+                            <label class="label">Date d'intervention</label>
+                            <input type="date" name="date_intervention" class="input" value="<?= date('Y-m-d') ?>"
+                                required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                            Créer et Démarrer la Saisie
+                        </button>
+                    </form>
+                </div>
+            </div>
+
 
             <!-- Modal MDP (idem que précédent) -->
             <div id="pwdInboxModal"
@@ -223,14 +303,17 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                                 <?php foreach ($interventions as $i): ?>
                                     <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
                                         <td style="padding: 1rem; font-weight:bold; color:var(--primary);">
-                                            <?= htmlspecialchars($i['numero_arc']) ?></td>
+                                            <?= htmlspecialchars($i['numero_arc']) ?>
+                                        </td>
                                         <td style="padding: 1rem; font-size:0.85rem;">
-                                            <?= date('d/m/Y', strtotime($i['date_intervention'])) ?></td>
+                                            <?= date('d/m/Y', strtotime($i['date_intervention'])) ?>
+                                        </td>
                                         <td style="padding: 1rem; font-size:0.9rem;"><?= htmlspecialchars($i['nom_societe']) ?>
                                         </td>
                                         <td style="padding: 1rem; font-size:0.9rem;"><?= $i['nb_machines'] ?></td>
                                         <td style="padding: 1rem; font-size:0.85rem; color:var(--text-dim);">
-                                            <?= htmlspecialchars(substr($i['tech_prenom'], 0, 1) . '. ' . $i['tech_nom']) ?></td>
+                                            <?= htmlspecialchars(substr($i['tech_prenom'], 0, 1) . '. ' . $i['tech_nom']) ?>
+                                        </td>
                                         <td style="padding: 1rem;">
                                             <span
                                                 style="font-size:0.7rem; padding:0.2rem 0.6rem; border-radius:20px; font-weight:bold; 
