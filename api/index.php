@@ -251,8 +251,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- Raccourcis de test rapides -->
             <div style="display:flex; gap:10px; margin-top:20px;">
                 <button type="button" class="btn btn-ghost"
-                    onclick="document.getElementById('nom').value='DURAND'; document.getElementById('password').value='password123'; document.querySelector('.login-card').submit();"
-                    style="flex:1; font-size:11px; padding:0.5rem;">🚀 Admin (DURAND)</button>
+                    onclick="document.getElementById('nom').value='TG'; document.getElementById('password').value='password123'; document.querySelector('.login-card').submit();"
+                    style="flex:1; font-size:11px; padding:0.5rem;">🚀 Admin (TG)</button>
                 <button type="button" class="btn btn-ghost"
                     onclick="document.getElementById('nom').value='LOTITO'; document.getElementById('password').value='password123'; document.querySelector('.login-card').submit();"
                     style="flex:1; font-size:11px; padding:0.5rem;">🚀 Tech (Lotito)</button>

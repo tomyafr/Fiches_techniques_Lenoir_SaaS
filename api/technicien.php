@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
-requireAuth('technicien');
+requireAuth(['technicien', 'admin']);
 
 $db = getDB();
 $userId = $_SESSION['user_id'];

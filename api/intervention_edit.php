@@ -168,7 +168,8 @@ $machines = $stmtMach->fetchAll();
         <?php else: ?>
             <div id="machinesList">
                 <?php foreach ($machines as $m): ?>
-                    <div class="machine-card glass" style="display: block; cursor: pointer; position: relative;"
+                    <div class="machine-card glass" id="machine-card-<?= $m['id'] ?>"
+                        style="display: block; cursor: pointer; position: relative; transition: all 0.3s ease;"
                         ondblclick="window.location.href='machine_edit.php?id=<?= $m['id'] ?>';"
                         title="Double-clic pour éditer">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -184,8 +185,7 @@ $machines = $stmtMach->fetchAll();
                             <div style="display: flex; gap: 10px; align-items: center;">
                                 <a href="machine_edit.php?id=<?= $m['id'] ?>" class="btn btn-ghost"
                                     style="padding: 0.5rem; font-size: 0.9rem;">✏️</a>
-                                <button
-                                    onclick="event.stopPropagation(); if(confirm('Supprimer cet équipement ?')) window.location.href='delete_machine.php?id=<?= $m['id'] ?>';"
+                                <button onclick="event.stopPropagation(); deleteMachine(<?= $m['id'] ?>, this);"
                                     class="btn btn-ghost"
                                     style="padding: 0.5rem; font-size: 0.9rem; color: var(--error);">🗑️</button>
                             </div>
@@ -344,14 +344,14 @@ $machines = $stmtMach->fetchAll();
                         resizeCanvas(canvasC);
                         padClient = new SignaturePad(canvasC, { penColor: "blue" });
                         <?php if (!empty($intervention['signature_client'])): ?>
-                        padClient.fromDataURL('<?= $intervention['signature_client'] ?>', { ratio: dpr, width: canvasC.width / dpr, height: canvasC.height / dpr });
+                            padClient.fromDataURL('<?= $intervention['signature_client'] ?>', { ratio: dpr, width: canvasC.width / dpr, height: canvasC.height / dpr });
                         <?php endif; ?>
                     }
                     if (!padTech) {
                         resizeCanvas(canvasT);
                         padTech = new SignaturePad(canvasT, { penColor: "black" });
                         <?php if (!empty($intervention['signature_technicien'])): ?>
-                        padTech.fromDataURL('<?= $intervention['signature_technicien'] ?>', { ratio: dpr, width: canvasT.width / dpr, height: canvasT.height / dpr });
+                            padTech.fromDataURL('<?= $intervention['signature_technicien'] ?>', { ratio: dpr, width: canvasT.width / dpr, height: canvasT.height / dpr });
                         <?php endif; ?>
                     }
                 }
@@ -366,6 +366,38 @@ $machines = $stmtMach->fetchAll();
             }
             document.getElementById('sigClientInput').value = padClient.toDataURL();
             document.getElementById('sigTechInput').value = padTech.toDataURL();
+        }
+
+        function deleteMachine(machineId, btn) {
+            if (!confirm('Supprimer cet équipement ?')) return;
+
+            fetch('delete_machine.php?id=' + machineId, {
+                method: 'GET',
+                credentials: 'same-origin'
+            }).then(function () {
+                const card = document.getElementById('machine-card-' + machineId);
+                if (card) {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateX(50px)';
+                    card.style.maxHeight = card.scrollHeight + 'px';
+                    setTimeout(function () {
+                        card.style.maxHeight = '0';
+                        card.style.padding = '0';
+                        card.style.margin = '0';
+                        card.style.overflow = 'hidden';
+                    }, 200);
+                    setTimeout(function () {
+                        card.remove();
+                        // If no machines left, show the empty state
+                        const list = document.getElementById('machinesList');
+                        if (list && list.children.length === 0) {
+                            location.reload();
+                        }
+                    }, 500);
+                }
+            }).catch(function () {
+                alert('Erreur lors de la suppression.');
+            });
         }
     </script>
 </body>
