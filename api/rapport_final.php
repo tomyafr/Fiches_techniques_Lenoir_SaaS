@@ -105,11 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
             logAudit('RAPPORT_FINALIZED', "ARC: " . $intervention['numero_arc']);
 
-            if ($_SESSION['role'] === 'admin') {
-                header("Location: admin.php?msg=rapport_ok");
-            } else {
-                header("Location: technicien.php?msg=rapport_ok");
-            }
+            header("Location: rapport_final.php?id=" . $id . "&msg=ok");
             exit;
         } catch (Exception $e) {
             $error = "Erreur lors de la sauvegarde : " . $e->getMessage();
@@ -374,9 +370,25 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             <?= csrfField() ?>
             <input type="hidden" name="action" value="save_rapport">
 
+            <?php if (isset($_GET['msg']) && $_GET['msg'] === 'ok'): ?>
+                <div style="background: rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.4); color:#10b981; padding:1.5rem; border-radius:12px; margin-bottom:1.5rem; text-align:center;">
+                    <div style="font-size:2.5rem; margin-bottom:0.5rem;">✅</div>
+                    <h3 style="margin:0 0 0.5rem 0; color:#10b981;">Rapport finalisé avec succès !</h3>
+                    <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1.5rem;">L'intervention ARC <?= htmlspecialchars($intervention['numero_arc']) ?> a été clôturée.</p>
+                    <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
+                        <button type="button" onclick="window.print()" style="padding:0.7rem 1.5rem; background:var(--primary); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">
+                            🖨️ Imprimer / Sauvegarder PDF
+                        </button>
+                        <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>"
+                            style="padding:0.7rem 1.5rem; background:rgba(255,255,255,0.1); color:var(--text); border:1px solid var(--glass-border); border-radius:8px; font-weight:600; text-decoration:none; font-size:0.9rem;">
+                            ← Retour au tableau de bord
+                        </a>
+                    </div>
+                </div>
+            <?php endif; ?>
+
             <?php if (!empty($error)): ?>
-                <div
-                    style="background: rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.4); color:#f43f5e; padding:1rem; border-radius:8px; margin-bottom:1.5rem; font-size:0.85rem;">
+                <div style="background: rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.4); color:#f43f5e; padding:1rem; border-radius:8px; margin-bottom:1.5rem; font-size:0.85rem;">
                     ⚠️ <?= htmlspecialchars($error) ?>
                 </div>
             <?php endif; ?>

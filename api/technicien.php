@@ -207,7 +207,7 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                     <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                         <?php foreach ($terminees as $i): ?>
                             <div class="card glass"
-                                style="padding: 1rem 1.5rem; display: flex; justify-content: space-between;">
+                                style="padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items:center;">
                                 <div>
                                     <p style="font-weight: 700; font-size: 0.95rem; opacity:0.8;">
                                         <?= htmlspecialchars($i['nom_societe']) ?>
@@ -216,7 +216,13 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                                         <?= htmlspecialchars($i['numero_arc']) ?>
                                     </p>
                                 </div>
-                                <div>
+                                <div style="display:flex; align-items:center; gap:0.5rem;">
+                                    <?php if ($i['statut'] === 'Terminee'): ?>
+                                        <a href="rapport_final.php?id=<?= $i['id'] ?>&msg=ok"
+                                            style="font-size:0.75rem; padding:0.3rem 0.6rem; background:rgba(16,185,129,0.1); color:var(--success); border-radius:4px; text-decoration:none; white-space:nowrap;">
+                                            📄 Rapport
+                                        </a>
+                                    <?php endif; ?>
                                     <span
                                         style="font-size: 0.8rem; padding: 0.2rem 0.5rem; background: rgba(16, 185, 129, 0.1); color: var(--success); border-radius: 4px;">
                                         <?= htmlspecialchars($i['statut']) ?>

@@ -448,6 +448,11 @@ $nbClients = count($clientsSet);
                                             </span>
                                         </td>
                                         <td style="text-align:center; white-space:nowrap;">
+                                            <?php if ($i['statut'] === 'Terminee'): ?>
+                                                <a href="rapport_final.php?id=<?= $i['id'] ?>&msg=ok" class="btn btn-ghost"
+                                                    style="padding: 0.35rem 0.6rem; font-size: 0.85rem; color: var(--success);"
+                                                    title="Voir le rapport">📄</a>
+                                            <?php endif; ?>
                                             <a href="intervention_edit.php?id=<?= $i['id'] ?>" class="btn btn-ghost"
                                                 style="padding: 0.35rem 0.6rem; font-size: 0.85rem;"
                                                 title="Modifier l'intervention">✏️</a>
