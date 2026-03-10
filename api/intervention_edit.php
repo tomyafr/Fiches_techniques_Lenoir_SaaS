@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 }
 
 // Fetch Machines
-$stmtMach = $db->prepare('SELECT * FROM machines WHERE intervention_id = ? ORDER BY id ASC');
+$stmtMach = $db->prepare('SELECT * FROM machines WHERE intervention_id = ? ORDER BY id DESC');
 $stmtMach->execute([$id]);
 $machines = $stmtMach->fetchAll();
 
@@ -103,10 +103,9 @@ $machines = $stmtMach->fetchAll();
 
 <body>
     <header class="mobile-header">
-        <button class="btn btn-ghost"
-            onclick="window.location.href='<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>'"
-            style="padding: 0.5rem;">
-            ← Retour
+        <button class="btn btn-ghost" onclick="document.getElementById('modalQuit').style.display='flex'"
+            style="padding: 0.5rem; color: var(--error);">
+            ← Quitter
         </button>
         <span class="mobile-header-title">Fiche ARC</span>
         <span class="mobile-header-user"></span>
@@ -191,8 +190,12 @@ $machines = $stmtMach->fetchAll();
 
             <!-- Bouton pour Finaliser -->
             <button onclick="openSignatureModal()" class="btn btn-primary"
-                style="width:100%; margin-top: 2rem; padding: 1rem; font-size: 1rem; background: var(--accent-cyan); color: #fff; border:none;">
+                style="width:100%; margin-top: 2rem; padding: 1rem; font-size: 1rem; background: var(--accent-cyan); color: #000; font-weight: bold; border:none;">
                 Terminer et Signer l'intervention ✓
+            </button>
+            <button onclick="document.getElementById('modalQuit').style.display='flex'" class="btn btn-ghost"
+                style="width:100%; margin-top: 1rem; padding: 1rem; font-size: 1rem; color: var(--error); border: 1px solid rgba(244, 63, 94, 0.3);">
+                Quitter sans signer ✖
             </button>
         <?php endif; ?>
 
@@ -284,6 +287,28 @@ $machines = $stmtMach->fetchAll();
                 <button type="submit" onclick="savePads()" class="btn btn-primary"
                     style="width: 100%; margin-top:1rem;">Valider Définitivement</button>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL QUIT -->
+    <div id="modalQuit"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; backdrop-filter:blur(5px);">
+        <div class="card glass animate-in"
+            style="width: 100%; max-width: 400px; padding: 2rem; position: relative; border-color: rgba(244,63,94,0.3);">
+            <button onclick="document.getElementById('modalQuit').style.display='none'"
+                style="position:absolute; top:1rem; right:1.5rem; background:none; border:none; color:var(--text-dim); font-size:1.5rem; cursor:pointer;">&times;</button>
+            <h3 style="margin-bottom: 1rem; color: var(--error);">Quitter la fiche ?</h3>
+            <p style="color: var(--text-dim); margin-bottom: 2rem; font-size: 0.9rem;">Êtes-vous sûr de vouloir quitter
+                cette fiche d'expertise ?<br><br>Les machines déjà renseignées seront sauvegardées, mais l'intervention
+                n'est pas encore terminée (signature manquante).</p>
+            <div style="display:flex; gap:1rem;">
+                <button type="button" class="btn btn-ghost" style="flex:1;"
+                    onclick="document.getElementById('modalQuit').style.display='none'">Annuler</button>
+                <button type="button" class="btn"
+                    style="flex:1; background: var(--error); color: #fff; border: none; font-weight: bold;"
+                    onclick="window.location.href='<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>'">Oui,
+                    Quitter</button>
+            </div>
         </div>
     </div>
 
