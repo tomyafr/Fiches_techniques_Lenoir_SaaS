@@ -168,10 +168,11 @@ $machines = $stmtMach->fetchAll();
         <?php else: ?>
             <div id="machinesList">
                 <?php foreach ($machines as $m): ?>
-                    <a href="machine_edit.php?id=<?= $m['id'] ?>" class="machine-card glass"
-                        style="display: block; text-decoration: none; color: inherit;">
+                    <div class="machine-card glass" style="display: block; cursor: pointer; position: relative;"
+                        ondblclick="window.location.href='machine_edit.php?id=<?= $m['id'] ?>';"
+                        title="Double-clic pour éditer">
                         <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <div>
+                            <div onclick="window.location.href='machine_edit.php?id=<?= $m['id'] ?>';">
                                 <h4 style="margin: 0 0 0.3rem 0; font-size: 1.05rem;">
                                     <?= htmlspecialchars($m['designation']) ?>
                                 </h4>
@@ -180,11 +181,16 @@ $machines = $stmtMach->fetchAll();
                                     <?= htmlspecialchars($m['annee_fabrication'] ?: 'N/A') ?>
                                 </p>
                             </div>
-                            <div style="color: var(--primary); font-weight: bold;">
-                                Éditer la fiche →
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <a href="machine_edit.php?id=<?= $m['id'] ?>" class="btn btn-ghost"
+                                    style="padding: 0.5rem; font-size: 0.9rem;">✏️</a>
+                                <button
+                                    onclick="event.stopPropagation(); if(confirm('Supprimer cet équipement ?')) window.location.href='delete_machine.php?id=<?= $m['id'] ?>';"
+                                    class="btn btn-ghost"
+                                    style="padding: 0.5rem; font-size: 0.9rem; color: var(--error);">🗑️</button>
                             </div>
                         </div>
-                    </a>
+                    </div>
                 <?php endforeach; ?>
             </div>
 
@@ -221,6 +227,7 @@ $machines = $stmtMach->fetchAll();
                         <option value="SGA - GA - EXTRA - ÉTROIT SGA">SGA - GA - EXTRA</option>
                         <option value="SGSA">SGSA</option>
                         <option value="ED-X">SÉPARATEUR ED-X</option>
+                        <option value="LEVAGE">SÉPARATEUR LEVAGE</option>
                         <option value="TAMBOUR ROTATIF">TAMBOUR ROTATIF</option>
                         <option value="TUBULAIRES">TUBULAIRES</option>
                     </select>
@@ -259,7 +266,8 @@ $machines = $stmtMach->fetchAll();
 
                 <div class="form-group">
                     <label class="label">Nom du Signataire (Client)</label>
-                    <input type="text" name="nomClient" class="input" placeholder="Nom et prénom..." value="<?= htmlspecialchars($intervention['nom_signataire_client'] ?? '') ?>" required>
+                    <input type="text" name="nomClient" class="input" placeholder="Nom et prénom..."
+                        value="<?= htmlspecialchars($intervention['nom_signataire_client'] ?? '') ?>" required>
                 </div>
 
                 <div class="form-group">
@@ -338,15 +346,13 @@ $machines = $stmtMach->fetchAll();
                     if (!padClient) {
                         resizeCanvas(canvasC);
                         padClient = new SignaturePad(canvasC, { penColor: "blue" });
-                        <?php if (!empty($intervention['signature_client'])): ?>
-                            padClient.fromDataURL('<?= $intervention['signature_client'] ?>', { ratio: 1, width: canvasC.width, height: canvasC.height });
+                        <?php if (!empty($intervention['signature_client'])): ?>                         padClient.fromDataURL('<?= $intervention['signature_client'] ?>', { ratio: 1, width: canvasC.width, height: canvasC.height });
                         <?php endif; ?>
                     }
                     if (!padTech) {
                         resizeCanvas(canvasT);
                         padTech = new SignaturePad(canvasT, { penColor: "black" });
-                        <?php if (!empty($intervention['signature_technicien'])): ?>
-                            padTech.fromDataURL('<?= $intervention['signature_technicien'] ?>', { ratio: 1, width: canvasT.width, height: canvasT.height });
+                        <?php if (!empty($intervention['signature_technicien'])): ?>                         padTech.fromDataURL('<?= $intervention['signature_technicien'] ?>', { ratio: 1, width: canvasT.width, height: canvasT.height });
                         <?php endif; ?>
                     }
                 }

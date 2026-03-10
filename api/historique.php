@@ -413,7 +413,8 @@ $nbClients = count($clientsSet);
                             </thead>
                             <tbody>
                                 <?php foreach ($interventions as $i): ?>
-                                    <tr>
+                                    <tr ondblclick="window.location.href='intervention_edit.php?id=<?= $i['id'] ?>';"
+                                        style="cursor: pointer;" title="Double-clic pour ouvrir">
                                         <?php if ($isAdmin): ?>
                                             <td class="col-tech">
                                                 <div style="display:flex;align-items:center;gap:0.6rem;">
@@ -446,10 +447,15 @@ $nbClients = count($clientsSet);
                                                 <?= $i['statut'] === 'Terminee' ? 'Signée' : 'En Saisie' ?>
                                             </span>
                                         </td>
-                                        <td style="text-align:center;">
+                                        <td style="text-align:center; white-space:nowrap;">
                                             <a href="intervention_edit.php?id=<?= $i['id'] ?>" class="btn btn-ghost"
                                                 style="padding: 0.35rem 0.6rem; font-size: 0.85rem;"
                                                 title="Modifier l'intervention">✏️</a>
+                                            <a href="#"
+                                                onclick="if(confirm('Supprimer cette fiche définitivement ?')) window.location.href='delete_intervention.php?id=<?= $i['id'] ?>';"
+                                                class="btn btn-ghost"
+                                                style="padding: 0.35rem 0.6rem; font-size: 0.85rem; color: var(--error);"
+                                                title="Supprimer">🗑️</a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

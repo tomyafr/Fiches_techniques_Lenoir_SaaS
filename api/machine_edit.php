@@ -59,6 +59,7 @@ $designation = strtoupper(trim($machine['designation']));
 $isAPRF = strpos($designation, 'APRF') !== false || strpos($designation, 'APRM') !== false;
 $isEDX = strpos($designation, 'ED-X') !== false || strpos($designation, 'EDX') !== false || strpos($designation, 'FOUCAULT') !== false;
 $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') === false;
+$isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AIMANT') !== false;
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -286,7 +287,7 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
                         </td>
                         <td style="width:60%; text-align:center; vertical-align:middle;">
                             <span style="font-size:26px; font-weight:bold; color:#000;">
-                                <?= $isAPRF ? 'Aimant permanent rectangulaire fixe APRF' : ($isEDX ? 'Séparateur à courants de foucault ED-X' : ($isOV ? 'Overband Electromagnétique OV' : htmlspecialchars($machine['designation']))) ?>
+                                <?= $isAPRF ? 'Aimant permanent rectangulaire fixe APRF' : ($isEDX ? 'Séparateur à courants de foucault ED-X' : ($isOV ? 'Overband Electromagnétique OV' : ($isLevage ? 'Electroaimants de Levage' : htmlspecialchars($machine['designation'])))) ?>
                             </span>
                         </td>
                     </tr>
@@ -298,28 +299,27 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
                         <td
                             style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
                             N° A.R.C.</td>
-                        <td style="width:35%; border:1px solid #000; padding:6px; background:#d9d9d9;">
-                            <?= htmlspecialchars($machine['numero_arc']) ?>
-                        </td>
+                        <td style="width:35%; border:1px solid #000; padding:6px; font-family:Courier, monospace;">
+                            <?= htmlspecialchars($machine['numero_arc']) ?></td>
                         <td
                             style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
-                            Client</td>
-                        <td style="width:35%; border:1px solid #000; padding:6px; background:#d9d9d9;">
-                            <?= htmlspecialchars($machine['nom_societe']) ?>
+                            Repère</td>
+                        <td style="width:35%; border:1px solid #000; padding:6px;">
+                            <input type="text" name="mesures[repere]" value="<?= htmlspecialchars($mesures['repere'] ?? '') ?>" class="pdf-input">
                         </td>
                     </tr>
                     <tr>
-                        <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N° O.F.
+                        <td
+                            style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
+                            N° O.F.</td>
+                        <td style="width:35%; border:1px solid #000; padding:6px;">
+                            <input type="text" name="numero_of" value="<?= htmlspecialchars($machine['numero_of']) ?>" class="pdf-input">
                         </td>
-                        <td style="border:1px solid #000; padding:6px; background:#d9d9d9;">
-                            <input type="text" name="numero_of" value="<?= htmlspecialchars($machine['numero_of']) ?>"
-                                style="width:100%; border:none; background:transparent; font-size:13px; outline:none;">
-                        </td>
-                        <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
+                        <td
+                            style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
                             Désignation</td>
-                        <td style="border:1px solid #000; padding:6px; background:#d9d9d9;">
-                            <?= htmlspecialchars($machine['designation']) ?>
-                        </td>
+                        <td style="width:35%; border:1px solid #000; padding:6px; font-weight:bold;">
+                            <?= htmlspecialchars($machine['designation']) ?></td>
                     </tr>
                 </table>
 
@@ -343,6 +343,26 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
                         <td class="col-comment"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" placeholder="Détails...">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
                     </tr>';
                 }
+                function renderAprfEtatRadios($key, $donnees)
+                {
+                    $val = $donnees[$key] ?? '';
+                    return '
+                    <table style="width:100%; border-collapse:collapse; text-align:center; height:100%;">
+                        <tr>
+                            <td style="width:33%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="bon" ' . ($val == 'bon' ? 'checked' : '') . '></td>
+                            <td style="width:34%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="r" ' . ($val == 'r' ? 'checked' : '') . '></td>
+                            <td style="width:33%; border:none;"><input type="radio" name="donnees[' . $key . ']" value="hs" ' . ($val == 'hs' ? 'checked' : '') . '></td>
+                        </tr>
+                    </table>';
+                }
+                function renderAprfRow($label, $key, $donnees)
+                {
+                    return '<tr>
+                        <td style="font-weight:normal; font-size:11px;">' . htmlspecialchars($label) . '</td>
+                        <td style="padding:0; vertical-align:middle;">' . renderAprfEtatRadios($key, $donnees) . '</td>
+                        <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
+                    </tr>';
+                }
                 ?>
 
                 <!-- DYNAMIC CONTENT DEPENDING ON MACHINE TYPE -->
@@ -356,28 +376,7 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
                                 value="<?= htmlspecialchars($mesures['temps_realise'] ?? '') ?>"> h</div>
                     </div>
 
-                    <?php
-                    function renderAprfEtatRadios($key, $donnees)
-                    {
-                        $val = $donnees[$key] ?? '';
-                        return '
-                        <table style="width:100%; border-collapse:collapse; text-align:center; height:100%;">
-                            <tr>
-                                <td style="width:33%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="bon" ' . ($val == 'bon' ? 'checked' : '') . '></td>
-                                <td style="width:34%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="r" ' . ($val == 'r' ? 'checked' : '') . '></td>
-                                <td style="width:33%; border:none;"><input type="radio" name="donnees[' . $key . ']" value="hs" ' . ($val == 'hs' ? 'checked' : '') . '></td>
-                            </tr>
-                        </table>';
-                    }
-                    function renderAprfRow($label, $key, $donnees)
-                    {
-                        return '<tr>
-                            <td style="font-weight:normal; font-size:11px;">' . htmlspecialchars($label) . '</td>
-                            <td style="padding:0; vertical-align:middle;">' . renderAprfEtatRadios($key, $donnees) . '</td>
-                            <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
-                        </tr>';
-                    }
-                    ?>
+
 
                     <table class="pdf-table" style="font-size:11px;">
                         <tr>
@@ -931,6 +930,183 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
                     <div
                         style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0; border:1px solid #000; border-top:none;">
                         PHOTOS ANNEXES</div>
+
+                <?php elseif ($isLevage): ?>
+
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px; padding:10px; border:1px solid #000; background:#f9f9f9; color:black;">
+                        <div style="font-size:11px;"><strong>Temps prévisionnel :</strong> 25min/aimant + 25min/palonnier + 30min/armoire</div>
+                        <div style="font-size:11px;"><strong>Temps réalisé :</strong> <input type="text" class="pdf-input"
+                                style="width:80px; text-align:center; border-bottom:1px solid #000;"
+                                name="mesures[temps_realise]"
+                                value="<?= htmlspecialchars($mesures['temps_realise'] ?? '') ?>"> h</div>
+                    </div>
+
+                    <table class="pdf-table" style="font-size:11px; color:black;">
+                        <tr>
+                            <th rowspan="2" style="width:40%; text-align:center; background:#e0e0e0;">DESIGNATIONS</th>
+                            <th style="text-align:center; padding:0; background:#e0e0e0;">ETAT</th>
+                            <th rowspan="2" style="width:30%; text-align:center; background:#e0e0e0;">COMMENTAIRES</th>
+                        </tr>
+                        <tr>
+                            <th style="padding:0; background:#e0e0e0;">
+                                <table style="width:100%; border-collapse:collapse; text-align:center; font-size:10px;">
+                                    <tr>
+                                        <td style="width:33%; border:none; border-right:1px solid #000; padding:2px; font-weight:bold;">Bon</td>
+                                        <td style="width:34%; border:none; border-right:1px solid #000; padding:2px; font-weight:bold;">A remp.<br>sous :</td>
+                                        <td style="width:33%; border:none; padding:2px; font-weight:bold;">H.S.</td>
+                                    </tr>
+                                </table>
+                            </th>
+                        </tr>
+
+                        <!-- Section Main -->
+                        <tr>
+                            <th style="background:#4472c4; color:white; font-weight:bold; padding:4px;" colspan="3">Produit de Levage type : <input type="text" name="mesures[levage_type]" value="<?= htmlspecialchars($mesures['levage_type'] ?? '') ?>" style="background:transparent; border:none; border-bottom:1px solid white; color:white; outline:none; font-weight:bold; width:200px;"></th>
+                        </tr>
+                        <?= renderAprfRow("Satisfaction de fonctionnement", "levage_satisfaction", $donnees) ?>
+                        <?= renderAprfRow("Aspect général", "levage_aspect", $donnees) ?>
+
+                        <!-- Section MECANIQUE -->
+                        <tr>
+                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">MECANIQUE</th>
+                        </tr>
+                        <?= renderAprfRow("Planéité des pôles et du noyau", "levage_planeite", $donnees) ?>
+                        <?= renderAprfRow("Jeu entre bouclier et pôles", "levage_jeu_bouclier", $donnees) ?>
+                        <?= renderAprfRow("Etanchéité de la boite de connexion (Joint/PE)", "levage_etanch_boite", $donnees) ?>
+                        <?= renderAprfRow("Maintien du câble par le PE et le collier STAUFF", "levage_maintien_cable", $donnees) ?>
+                        <?= renderAprfRow("Etat des vis tenant le couvercle", "levage_etat_vis", $donnees) ?>
+                        <?= renderAprfRow("Etat des axes de Levage", "levage_axes", $donnees) ?>
+                        <?= renderAprfRow("Etat des chaines", "levage_chaines", $donnees) ?>
+
+                        <!-- Section ELECTRIQUE HORS TENSION -->
+                        <tr>
+                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">ELECTRIQUE HORS TENSION</th>
+                        </tr>
+                        <tr>
+                            <td colspan="1" style="padding:4px; font-weight:bold;">Isolement sous 1000 Vcc :</td>
+                            <td style="border:1px solid #000; text-align:center;">
+                                <input type="text" name="mesures[levage_isolement]" value="<?= htmlspecialchars($mesures['levage_isolement'] ?? '') ?>" class="pdf-input" style="width:60px;"> M.Ohms
+                            </td>
+                            <td style="padding:4px;"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" style="padding:4px; font-weight:bold;">Résistance à froid :</td>
+                            <td style="border:1px solid #000; border-top:none; text-align:center;">
+                                <input type="text" name="mesures[levage_resistance]" value="<?= htmlspecialchars($mesures['levage_resistance'] ?? '') ?>" class="pdf-input" style="width:60px;"> ohms
+                            </td>
+                            <td style="padding:4px;"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" style="padding:4px; font-weight:bold;">Température de la carcasse :</td>
+                            <td style="border:1px solid #000; border-top:none; text-align:center;">
+                                <input type="text" name="mesures[levage_temp_carcasse]" value="<?= htmlspecialchars($mesures['levage_temp_carcasse'] ?? '') ?>" class="pdf-input" style="width:60px;"> °C
+                            </td>
+                            <td style="padding:4px;"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" style="padding:4px; font-weight:bold;">Température ambiante :</td>
+                            <td style="border:1px solid #000; border-top:none; text-align:center;">
+                                <input type="text" name="mesures[levage_temp_ambiante]" value="<?= htmlspecialchars($mesures['levage_temp_ambiante'] ?? '') ?>" class="pdf-input" style="width:60px;"> °C
+                            </td>
+                            <td style="padding:4px;"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="1" style="padding:4px; font-weight:bold;">Electroaimant arrêté depuis :</td>
+                            <td style="border:1px solid #000; border-top:none; text-align:center;">
+                                <input type="text" name="mesures[levage_arrete_depuis]" value="<?= htmlspecialchars($mesures['levage_arrete_depuis'] ?? '') ?>" class="pdf-input" style="width:60px;"> h
+                            </td>
+                            <td style="padding:4px;"></td>
+                        </tr>
+                        <?= renderAprfRow("Serrage correcte des bornes", "levage_serrage_bornes", $donnees) ?>
+
+                        <!-- Section ELECTRIQUE SOUS TENSION -->
+                        <tr>
+                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">ELECTRIQUE SOUS TENSION</th>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px; font-weight:bold;">Tension :</td>
+                            <td style="padding:0; vertical-align:middle; border:1px solid #000;">
+                                <div style="display:flex; flex-direction:column; align-items:center;">
+                                    <input type="text" name="mesures[levage_tension]" value="<?= htmlspecialchars($mesures['levage_tension'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;">
+                                    <?= renderAprfEtatRadios("levage_tension_stat", $donnees) ?>
+                                </div>
+                            </td>
+                            <td style="padding:4px;">Vcc</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px; font-weight:bold;">Intensité :</td>
+                            <td style="padding:0; vertical-align:middle; border:1px solid #000;">
+                                <div style="display:flex; flex-direction:column; align-items:center;">
+                                    <input type="text" name="mesures[levage_intensite]" value="<?= htmlspecialchars($mesures['levage_intensite'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;">
+                                    <?= renderAprfEtatRadios("levage_intensite_stat", $donnees) ?>
+                                </div>
+                            </td>
+                            <td style="padding:4px;">A</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px; font-weight:bold;">Champ magnétique (centre noyau) :</td>
+                            <td style="padding:0; vertical-align:middle; border:1px solid #000;">
+                                <div style="display:flex; flex-direction:column; align-items:center;">
+                                    <input type="text" name="mesures[levage_champ_centre]" value="<?= htmlspecialchars($mesures['levage_champ_centre'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;">
+                                    <?= renderAprfEtatRadios("levage_champ_centre_stat", $donnees) ?>
+                                </div>
+                            </td>
+                            <td style="padding:4px;">Gauss</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px; font-weight:bold;">Champ magnétique (milieu pôle) :</td>
+                            <td style="padding:0; vertical-align:middle; border:1px solid #000;">
+                                <div style="display:flex; flex-direction:column; align-items:center;">
+                                    <input type="text" name="mesures[levage_champ_pole]" value="<?= htmlspecialchars($mesures['levage_champ_pole'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;">
+                                    <?= renderAprfEtatRadios("levage_champ_pole_stat", $donnees) ?>
+                                </div>
+                            </td>
+                            <td style="padding:4px;">Gauss</td>
+                        </tr>
+
+                        <!-- Section APPLICATION DU CLIENT -->
+                        <tr>
+                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">APPLICATION DU CLIENT</th>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="padding:5px;">
+                                <strong>Produit manipulé :</strong> Brame / Tôle / Paquets / Coils / Profilés | 
+                                Dim. : <input type="text" name="mesures[levage_dimensions]" value="<?= htmlspecialchars($mesures['levage_dimensions'] ?? '') ?>" class="pdf-input" style="width:200px;">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding:5px;"><strong>Charge Maxi par aimant :</strong></td>
+                            <td style="padding:5px;"><input type="text" name="mesures[levage_charge_maxi]" value="<?= htmlspecialchars($mesures['levage_charge_maxi'] ?? '') ?>" class="pdf-input" style="width:100px;"> kg</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding:5px;"><strong>Température Maxi des produits :</strong></td>
+                            <td style="padding:5px;"><input type="text" name="mesures[levage_temp_maxi]" value="<?= htmlspecialchars($mesures['levage_temp_maxi'] ?? '') ?>" class="pdf-input" style="width:100px;"> °C</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding:5px;"><strong>Facteur de marche estimé :</strong></td>
+                            <td style="padding:5px;"><input type="text" name="mesures[levage_facteur_marche]" value="<?= htmlspecialchars($mesures['levage_facteur_marche'] ?? '') ?>" class="pdf-input" style="width:100px;"> %</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="padding:5px;"><strong>Facteur de service h/jour :</strong></td>
+                            <td style="padding:5px;"><input type="text" name="mesures[levage_facteur_service]" value="<?= htmlspecialchars($mesures['levage_facteur_service'] ?? '') ?>" class="pdf-input" style="width:100px;"> h/j</td>
+                        </tr>
+                    </table>
+
+                    <div style="margin-top:20px; border:1px solid #000; padding:10px; color:black;">
+                        <div style="display:flex; justify-content:center; margin-bottom:10px;">
+                            <img src="/assets/machines/levage_diagram.jpeg" style="max-width:100%; height:auto;" alt="Schéma Levage">
+                        </div>
+                        
+                        <div style="display:flex; gap:10px;">
+                            <div style="flex:1; border:1px solid #000; padding:5px; font-size:11px;">
+                                <strong>Diamètre du pôle :</strong> <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:60px;"> mm<br>
+                                <strong>Diamètre du noyau :</strong> <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>" class="pdf-input" style="width:60px;"> mm
+                            </div>
+                            <div style="flex:1; border:1px solid #000; padding:5px; font-size:11px;">
+                                <strong>Epaisseur du pôle :</strong> <input type="text" name="mesures[levage_epaisseur_pole]" value="<?= htmlspecialchars($mesures['levage_epaisseur_pole'] ?? '') ?>" class="pdf-input" style="width:60px;"> mm
+                            </div>
+                        </div>
+                    </div>
 
                 <?php else: ?>
 
