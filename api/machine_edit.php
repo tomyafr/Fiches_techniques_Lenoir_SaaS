@@ -426,7 +426,8 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
                                 Rond diamètre 6 Lg 100
                             </td>
                             <td style="padding:0; vertical-align:middle;">
-                                <?= renderAprfEtatRadios("aprf_attraction", $donnees) ?></td>
+                                <?= renderAprfEtatRadios("aprf_attraction", $donnees) ?>
+                            </td>
                             <td style="padding:0;"><textarea name="donnees[aprf_attraction_comment]" class="pdf-textarea"
                                     style="height:120px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_attraction_comment"] ?? '') ?></textarea>
                             </td>
@@ -450,7 +451,8 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
                                     style="width:40px; text-align:center;" name="mesures[granulometrie]"
                                     value="<?= htmlspecialchars($mesures['granulometrie'] ?? '') ?>"> mm</td>
                             <td style="padding:0; vertical-align:middle;">
-                                <?= renderAprfEtatRadios("aprf_granu", $donnees) ?></td>
+                                <?= renderAprfEtatRadios("aprf_granu", $donnees) ?>
+                            </td>
                             <td style="padding:0;"><textarea name="donnees[aprf_granu_comment]" class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_granu_comment"] ?? '') ?></textarea>
                             </td>
@@ -480,7 +482,8 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
                                     style="width:50px; text-align:center;" name="mesures[debit]"
                                     value="<?= htmlspecialchars($mesures['debit'] ?? '') ?>"> t/h</td>
                             <td style="padding:0; vertical-align:middle;">
-                                <?= renderAprfEtatRadios("aprf_debit", $donnees) ?></td>
+                                <?= renderAprfEtatRadios("aprf_debit", $donnees) ?>
+                            </td>
                             <td style="padding:4px;">Avec densité de <input type="text" class="pdf-input"
                                     style="width:50px; text-align:center;" name="mesures[densite]"
                                     value="<?= htmlspecialchars($mesures['densite'] ?? '') ?>"></td>
@@ -695,7 +698,11 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
 
                     <img src="/assets/machines/edx_diagram.png"
                         style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma ED-X"
-                        onerror="this.style.display=\'none\'">
+                        onerror="this.style.display='none'">
+
+                    <img src="/assets/machines/edx_diagram_2.png"
+                        style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma ED-X (Suite)"
+                        onerror="this.style.display='none'">
 
                 <?php elseif ($isOV): ?>
                     <div style="display:flex; justify-content:space-between; margin-bottom:15px; padding:10px;">
