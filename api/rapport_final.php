@@ -53,60 +53,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     verifyCsrfToken();
 
     if ($_POST['action'] === 'save_rapport') {
-        $contactNom = trim($_POST['contact_nom'] ?? '');
-        $contactFonction = trim($_POST['contact_fonction'] ?? '');
-        $contactEmail = trim($_POST['contact_email'] ?? '');
-        $contactTel = trim($_POST['contact_telephone'] ?? '');
-        $adresse = trim($_POST['adresse'] ?? '');
-        $cp = trim($_POST['code_postal'] ?? '');
-        $ville = trim($_POST['ville'] ?? '');
-        $pays = trim($_POST['pays'] ?? '');
-        $commentaireTech = trim($_POST['commentaire_technicien'] ?? '');
-        $commentaireClient = trim($_POST['commentaire_client'] ?? '');
-        $souhaitRapport = isset($_POST['souhait_rapport_unique']) ? true : false;
-        $souhaitPieces = isset($_POST['souhait_offre_pieces']) ? true : false;
-        $souhaitIntervention = isset($_POST['souhait_pieces_intervention']) ? true : false;
-        $souhaitAucune = isset($_POST['souhait_aucune_offre']) ? true : false;
-        $sigClient = $_POST['sigClient'] ?? null;
-        $sigTech = $_POST['sigTech'] ?? null;
-        $nomSignataire = trim($_POST['nom_signataire'] ?? '');
+        try {
+            $contactNom = trim($_POST['contact_nom'] ?? '');
+            $contactFonction = trim($_POST['contact_fonction'] ?? '');
+            $contactEmail = trim($_POST['contact_email'] ?? '');
+            $contactTel = trim($_POST['contact_telephone'] ?? '');
+            $adresse = trim($_POST['adresse'] ?? '');
+            $cp = trim($_POST['code_postal'] ?? '');
+            $ville = trim($_POST['ville'] ?? '');
+            $pays = trim($_POST['pays'] ?? '');
+            $commentaireTech = trim($_POST['commentaire_technicien'] ?? '');
+            $commentaireClient = trim($_POST['commentaire_client'] ?? '');
 
-        // Update client info
-        $db->prepare('UPDATE clients SET adresse = ?, code_postal = ?, ville = ?, pays = ?,
-            contact_email = ?, contact_telephone = ?, contact_fonction = ? WHERE id = ?')
-            ->execute([$adresse, $cp, $ville, $pays, $contactEmail, $contactTel, $contactFonction, $intervention['client_id']]);
+            // PostgreSQL needs 't'/'f' for boolean columns
+            $souhaitRapport = isset($_POST['souhait_rapport_unique']) ? 't' : 'f';
+            $souhaitPieces = isset($_POST['souhait_offre_pieces']) ? 't' : 'f';
+            $souhaitIntervention = isset($_POST['souhait_pieces_intervention']) ? 't' : 'f';
+            $souhaitAucune = isset($_POST['souhait_aucune_offre']) ? 't' : 'f';
 
-        // Update intervention
-        $db->prepare('UPDATE interventions SET
-            contact_nom = ?, commentaire_technicien = ?, commentaire_client = ?,
-            souhait_rapport_unique = ?, souhait_offre_pieces = ?,
-            souhait_pieces_intervention = ?, souhait_aucune_offre = ?,
-            signature_client = ?, signature_technicien = ?,
-            nom_signataire_client = ?, date_signature = NOW(),
-            statut = ? WHERE id = ?')
-            ->execute([
-                $contactNom,
-                $commentaireTech,
-                $commentaireClient,
-                $souhaitRapport,
-                $souhaitPieces,
-                $souhaitIntervention,
-                $souhaitAucune,
-                $sigClient,
-                $sigTech,
-                $nomSignataire,
-                'Terminee',
-                $id
-            ]);
+            $sigClient = $_POST['sigClient'] ?? null;
+            $sigTech = $_POST['sigTech'] ?? null;
+            $nomSignataire = trim($_POST['nom_signataire'] ?? '');
 
-        logAudit('RAPPORT_FINALIZED', "ARC: " . $intervention['numero_arc']);
+            // Update client info
+            $db->prepare('UPDATE clients SET adresse = ?, code_postal = ?, ville = ?, pays = ?,
+                contact_email = ?, contact_telephone = ?, contact_fonction = ? WHERE id = ?')
+                ->execute([$adresse, $cp, $ville, $pays, $contactEmail, $contactTel, $contactFonction, $intervention['client_id']]);
 
-        if ($_SESSION['role'] === 'admin') {
-            header("Location: admin.php?msg=rapport_ok");
-        } else {
-            header("Location: technicien.php?msg=rapport_ok");
+            // Update intervention
+            $db->prepare('UPDATE interventions SET
+                contact_nom = ?, commentaire_technicien = ?, commentaire_client = ?,
+                souhait_rapport_unique = ?, souhait_offre_pieces = ?,
+                souhait_pieces_intervention = ?, souhait_aucune_offre = ?,
+                signature_client = ?, signature_technicien = ?,
+                nom_signataire_client = ?, date_signature = NOW(),
+                statut = ? WHERE id = ?')
+                ->execute([
+                    $contactNom,
+                    $commentaireTech,
+                    $commentaireClient,
+                    $souhaitRapport,
+                    $souhaitPieces,
+                    $souhaitIntervention,
+                    $souhaitAucune,
+                    $sigClient,
+                    $sigTech,
+                    $nomSignataire,
+                    'Terminee',
+                    $id
+                ]);
+
+            logAudit('RAPPORT_FINALIZED', "ARC: " . $intervention['numero_arc']);
+
+            if ($_SESSION['role'] === 'admin') {
+                header("Location: admin.php?msg=rapport_ok");
+            } else {
+                header("Location: technicien.php?msg=rapport_ok");
+            }
+            exit;
+        } catch (Exception $e) {
+            $error = "Erreur lors de la sauvegarde : " . $e->getMessage();
         }
-        exit;
     }
 }
 
@@ -366,6 +373,13 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
         <form method="POST" id="rapportForm">
             <?= csrfField() ?>
             <input type="hidden" name="action" value="save_rapport">
+
+            <?php if (!empty($error)): ?>
+                <div
+                    style="background: rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.4); color:#f43f5e; padding:1rem; border-radius:8px; margin-bottom:1.5rem; font-size:0.85rem;">
+                    ⚠️ <?= htmlspecialchars($error) ?>
+                </div>
+            <?php endif; ?>
 
             <!-- EN-TÊTE -->
             <div class="rapport-header card glass">
