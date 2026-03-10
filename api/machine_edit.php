@@ -402,7 +402,7 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                     <table style="width:100%; border-collapse:collapse; text-align:center; height:100%;">
                         <tr>
                             <td style="width:33%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #28a745;" name="donnees[' . $key . ']" value="bon" ' . ($val == 'bon' ? 'checked' : '') . '></td>
-                            <td style="width:34%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #ffc107;" name="donnees[' . $key . ']" value="r" ' . ($val == 'r' ? 'checked' : '') . '></td>
+                            <td style="width:34%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #e67e22;" name="donnees[' . $key . ']" value="r" ' . ($val == 'r' ? 'checked' : '') . '></td>
                             <td style="width:33%; border:none;"><input type="radio" style="accent-color: #dc3545;" name="donnees[' . $key . ']" value="hs" ' . ($val == 'hs' ? 'checked' : '') . '></td>
                         </tr>
                     </table>';
@@ -570,7 +570,7 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                             <tr>
                                 <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #6c757d;" name="donnees[' . $key . ']" value="pc" ' . ($val == 'pc' ? 'checked' : '') . '></td>
                                 <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #28a745;" name="donnees[' . $key . ']" value="c" ' . ($val == 'c' ? 'checked' : '') . '></td>
-                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #ffc107;" name="donnees[' . $key . ']" value="aa" ' . ($val == 'aa' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #e67e22;" name="donnees[' . $key . ']" value="aa" ' . ($val == 'aa' ? 'checked' : '') . '></td>
                                 <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #fd7e14;" name="donnees[' . $key . ']" value="nc" ' . ($val == 'nc' ? 'checked' : '') . '></td>
                                 <td style="width:20%; border:none;"><input type="radio" style="accent-color: #dc3545;" name="donnees[' . $key . ']" value="nr" ' . ($val == 'nr' ? 'checked' : '') . '></td>
                             </tr>
@@ -778,7 +778,7 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                             <tr>
                                 <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #6c757d;" name="donnees[' . $key . ']" value="pc" ' . ($val == 'pc' ? 'checked' : '') . '></td>
                                 <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #28a745;" name="donnees[' . $key . ']" value="c" ' . ($val == 'c' ? 'checked' : '') . '></td>
-                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #ffc107;" name="donnees[' . $key . ']" value="aa" ' . ($val == 'aa' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #e67e22;" name="donnees[' . $key . ']" value="aa" ' . ($val == 'aa' ? 'checked' : '') . '></td>
                                 <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #fd7e14;" name="donnees[' . $key . ']" value="nc" ' . ($val == 'nc' ? 'checked' : '') . '></td>
                                 <td style="width:20%; border:none;"><input type="radio" style="accent-color: #dc3545;" name="donnees[' . $key . ']" value="nr" ' . ($val == 'nr' ? 'checked' : '') . '></td>
                             </tr>

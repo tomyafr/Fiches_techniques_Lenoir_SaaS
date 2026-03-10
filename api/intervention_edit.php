@@ -342,17 +342,20 @@ $machines = $stmtMach->fetchAll();
                 const canvasT = document.getElementById('canvasTech');
 
                 if (canvasC && canvasT && window.SignaturePad) {
+                    const dpr = Math.max(window.devicePixelRatio || 1, 1);
                     // Ne redimensionne et n'initialise que si ce n'est pas déjà fait
                     if (!padClient) {
                         resizeCanvas(canvasC);
                         padClient = new SignaturePad(canvasC, { penColor: "blue" });
-                        <?php if (!empty($intervention['signature_client'])): ?>                         padClient.fromDataURL('<?= $intervention['signature_client'] ?>', { ratio: 1, width: canvasC.width, height: canvasC.height });
+                        <?php if (!empty($intervention['signature_client'])): ?>
+                        padClient.fromDataURL('<?= $intervention['signature_client'] ?>', { ratio: dpr, width: canvasC.width / dpr, height: canvasC.height / dpr });
                         <?php endif; ?>
                     }
                     if (!padTech) {
                         resizeCanvas(canvasT);
                         padTech = new SignaturePad(canvasT, { penColor: "black" });
-                        <?php if (!empty($intervention['signature_technicien'])): ?>                         padTech.fromDataURL('<?= $intervention['signature_technicien'] ?>', { ratio: 1, width: canvasT.width, height: canvasT.height });
+                        <?php if (!empty($intervention['signature_technicien'])): ?>
+                        padTech.fromDataURL('<?= $intervention['signature_technicien'] ?>', { ratio: dpr, width: canvasT.width / dpr, height: canvasT.height / dpr });
                         <?php endif; ?>
                     }
                 }
