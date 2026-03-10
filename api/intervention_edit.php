@@ -224,12 +224,8 @@ $machines = $stmtMach->fetchAll();
                         <option value="SÉPARATEUR OV - SÉRIE 30">SÉPARATEUR OV - SÉRIE 30</option>
                         <option value="SÉPARATEUR OVERBAND OV (AUTRES SÉRIES)">OVERBAND OV (AUTRES SÉRIES)</option>
                         <option value="SÉPARATEURS APRF-APRM">SÉPARATEURS APRF-APRM</option>
-                        <option value="SGA - GA - EXTRA - ÉTROIT SGA">SGA - GA - EXTRA</option>
-                        <option value="SGSA">SGSA</option>
                         <option value="ED-X">SÉPARATEUR ED-X</option>
                         <option value="LEVAGE">SÉPARATEUR LEVAGE</option>
-                        <option value="TAMBOUR ROTATIF">TAMBOUR ROTATIF</option>
-                        <option value="TUBULAIRES">TUBULAIRES</option>
                     </select>
                 </div>
 
