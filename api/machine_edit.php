@@ -521,50 +521,46 @@ $heureFin = $mesures['heure_fin'] ?? '';
                     </td>
                 </tr>
                 <tr>
-                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N°
-                        O.F.</td>
-                    <td style="width:35%; border:1px solid #000; padding:6px;">
+                    <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N° O.F.</td>
+                    <td style="border:1px solid #000; padding:6px;">
                         <input type="text" name="numero_of" value="<?= htmlspecialchars($machine['numero_of']) ?>"
                             class="pdf-input">
                     </td>
-                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
-                        Désignation</td>
-                    <td style="width:35%; border:1px solid #000; padding:6px; font-weight:bold;">
+                    <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Désignation
+                    </td>
+                    <td style="border:1px solid #000; padding:6px; font-weight:bold;">
                         <?= htmlspecialchars($machine['designation']) ?>
                     </td>
                 </tr>
                 <tr>
-                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
-                        Date</td>
-                    <td style="width:35%; border:1px solid #000; padding:6px;">
+                    <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Date</td>
+                    <td style="border:1px solid #000; padding:6px;">
                         <input type="text" name="mesures[date_intervention]"
                             value="<?= htmlspecialchars($mesures['date_intervention'] ?? $dateIntervention) ?>"
-                            class="pdf-input" placeholder="DD/MM/YYYY" style="width:90px;">
+                            class="pdf-input" placeholder="DD/MM/YYYY" style="width:85px;">
                     </td>
-                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
-                        Temps prévu</td>
-                    <td style="width:35%; border:1px solid #000; padding:6px; font-weight:bold; color:#0070c0;">
+                    <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">T. prévu</td>
+                    <td style="border:1px solid #000; padding:6px; font-weight:bold; color:#0070c0;">
                         <?= $tempsPrev ?>
                     </td>
                 </tr>
                 <tr>
-                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#e8f4e8;">
-                        Début</td>
-                    <td style="width:35%; border:1px solid #000; padding:6px;">
+                    <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#e8f4e8;">Horaires</td>
+                    <td style="border:1px solid #000; padding:6px;">
                         <input type="time" name="mesures[heure_debut]" id="heureDebut"
                             value="<?= htmlspecialchars($heureDebut) ?>"
-                            style="border:none; outline:none; font-size:13px; background:transparent; width:80px;">
-                    </td>
-                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#e8f4e8;">
-                        Fin</td>
-                    <td
-                        style="width:35%; border:1px solid #000; padding:6px; display:flex; align-items:center; gap:8px;">
+                            style="border:none; outline:none; font-size:13px; background:transparent; width:70px;">
+                        <span style="color:#999; font-size:11px;">→</span>
                         <input type="time" name="mesures[heure_fin]" id="heureFin"
                             value="<?= htmlspecialchars($heureFin) ?>"
-                            style="border:none; outline:none; font-size:13px; background:transparent; width:80px;">
-                        <span id="tempsCalc" style="font-weight:bold; color:#0070c0; font-size:12px;"></span>
+                            style="border:none; outline:none; font-size:13px; background:transparent; width:70px;">
+                    </td>
+                    <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#e8f4e8;">T. réalisé
+                    </td>
+                    <td style="border:1px solid #000; padding:6px;">
+                        <span id="tempsCalc" style="font-weight:bold; color:#0070c0; font-size:14px;"></span>
                         <button type="button" id="btnChrono" onclick="toggleChrono()"
-                            style="background:#28a745; color:white; border:none; border-radius:4px; padding:2px 8px; font-size:11px; cursor:pointer;">▶
+                            style="background:#28a745; color:white; border:none; border-radius:4px; padding:3px 10px; font-size:11px; cursor:pointer; margin-left:8px; vertical-align:middle;">▶
                             Chrono</button>
                     </td>
                 </tr>
@@ -1773,18 +1769,18 @@ $heureFin = $mesures['heure_fin'] ?? '';
         }
 
         // ========== INIT ON PAGE LOAD ==========
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Pastilles
-            document.querySelectorAll('.pastille-group input[type="radio"]:checked').forEach(function(r) {
+            document.querySelectorAll('.pastille-group input[type="radio"]:checked').forEach(function (r) {
                 r.closest('label').classList.add('selected');
             });
             // Auto-grow
-            document.querySelectorAll('.pdf-textarea').forEach(function(ta) {
+            document.querySelectorAll('.pdf-textarea').forEach(function (ta) {
                 if (ta.value) autoGrow(ta);
-                ta.addEventListener('input', function() { autoGrow(this); });
+                ta.addEventListener('input', function () { autoGrow(this); });
             });
             // Photos
-            Object.keys(allPhotos).forEach(function(key) {
+            Object.keys(allPhotos).forEach(function (key) {
                 renderThumbsForKey(key);
             });
             renderAnnexes();
@@ -1805,7 +1801,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
             calcTemps();
 
             // Live chrono update every 30s
-            setInterval(function() { if (chronoRunning) calcTemps(); }, 30000);
+            setInterval(function () { if (chronoRunning) calcTemps(); }, 30000);
         });
     </script>
 </body>
