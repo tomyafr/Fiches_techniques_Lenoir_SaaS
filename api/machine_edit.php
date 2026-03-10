@@ -38,7 +38,7 @@ if (!$machine) {
 
 $donnees = json_decode($machine['donnees_controle'] ?? '{}', true);
 $mesures = json_decode($machine['mesures'] ?? '{}', true);
-$photosData = json_decode($machine['photos'] ?? '{}', true);
+$photosData = json_decode($machine['photos'] ?? '{}', true) ?: [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     verifyCsrfToken();
@@ -1529,8 +1529,8 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                             boutons 📷 sur chaque ligne de contrôle.</p>
                     </div>
 
-                    <input type="hidden" name="photos_json" id="photosJsonInput"
-                        value='<?= htmlspecialchars(json_encode($photosData)) ?>'>
+                    <input type="hidden" name="photos_json" id="photosJsonInput" value="">
+                    <script>var _photosFromDB = <?= json_encode($photosData ?: new stdClass(), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES) ?>;</script>
 
                 </div> <!-- fin .pdf-page -->
             </div> <!-- fin .mobile-wrapper -->
@@ -1544,13 +1544,20 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
         var allPhotos = {};
         var currentPhotoKey = '';
 
-        // Load existing photos from hidden input
-        try {
-            var raw = document.getElementById('photosJsonInput').value;
-            if (raw && raw !== 'null' && raw !== '{}') {
-                allPhotos = JSON.parse(raw);
-            }
-        } catch (e) { allPhotos = {}; }
+        // Load from safely injected PHP variable
+        if (typeof _photosFromDB === 'object' && _photosFromDB !== null && !Array.isArray(_photosFromDB)) {
+            allPhotos = _photosFromDB;
+        }
+
+        function syncPhotos() {
+            document.getElementById('photosJsonInput').value = JSON.stringify(allPhotos);
+        }
+
+        // Sync photos to hidden input BEFORE form submit
+        (function () {
+            var f = document.querySelector('form');
+            if (f) f.addEventListener('submit', function () { syncPhotos(); });
+        })();
 
         function capturePhoto(key) {
             currentPhotoKey = key;
@@ -1602,9 +1609,7 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
             renderAnnexes();
         }
 
-        function syncPhotos() {
-            document.getElementById('photosJsonInput').value = JSON.stringify(allPhotos);
-        }
+        // syncPhotos is defined above
 
         function renderThumbsForKey(key) {
             var container = document.getElementById('thumbs_' + key);
@@ -1631,9 +1636,10 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                     hasPhotos = true;
                     var item = document.createElement('div');
                     item.className = 'photo-annexe-item';
-                    var label = key.replace(/_/g, ' ').replace(/edx |ov |aprf /gi, '').replace(/comment|radio/g, '');
+                    var label = key.replace(/_/g, ' ').replace(/edx |ov |aprf |levage /gi, '').replace(/comment|radio/g, '').trim();
+                    label = label.charAt(0).toUpperCase() + label.slice(1);
                     item.innerHTML = '<img src="' + p.data + '">' +
-                        '<p><strong>' + label + '</strong>' + (p.caption ? '<br>' + p.caption : '') + '</p>';
+                        '<p><strong>' + label + '</strong>' + (p.caption ? '<br><em>' + p.caption + '</em>' : '') + '</p>';
                     grid.appendChild(item);
                 });
             });
@@ -1675,6 +1681,7 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                 renderThumbsForKey(key);
             });
             renderAnnexes();
+            syncPhotos();
         });
     </script>
 </body>
