@@ -1172,31 +1172,26 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                         </tr>
                     </table>
 
-                    <div style="margin-top:20px; border:1px solid #000; padding:10px; color:black;">
-                        <div
-                            style="display:flex; justify-content:center; align-items: flex-end; margin-bottom:10px; gap: 20px;">
-                            <img src="/assets/machines/levage_diagram.png" style="max-height:400px; width:auto;"
-                                alt="Schéma Levage">
-                            <img src="/assets/machines/levage_side_diagram.png"
-                                style="max-height:200px; width:auto; border: 1px solid #ddd;" alt="Vue de côté">
-                        </div>
+                    <div style="margin-top:20px; border:1px solid #000; padding:10px; color:black; position: relative;">
+                        <!-- Main schema enlarged -->
+                        <img src="/assets/machines/levage_diagram.png" style="width:100%; height:auto; display:block;"
+                            alt="Schéma Levage">
 
-                        <div style="display:flex; gap:10px;">
-                            <div style="flex:1; border:1px solid #000; padding:5px; font-size:11px;">
-                                <strong>Diamètre du pôle :</strong> <input type="text" name="mesures[levage_diam_pole]"
-                                    value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input"
-                                    style="width:60px; border-bottom: 1px solid #000;"> mm<br>
-                                <strong>Diamètre du noyau :</strong> <input type="text" name="mesures[levage_diam_noyau]"
-                                    value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>" class="pdf-input"
-                                    style="width:60px; border-bottom: 1px solid #000;"> mm
-                            </div>
-                            <div style="flex:1; border:1px solid #000; padding:5px; font-size:11px;">
-                                <strong>Epaisseur du pôle :</strong> <input type="text"
-                                    name="mesures[levage_epaisseur_pole]"
-                                    value="<?= htmlspecialchars($mesures['levage_epaisseur_pole'] ?? '') ?>"
-                                    class="pdf-input" style="width:60px; border-bottom: 1px solid #000;"> mm
-                            </div>
-                        </div>
+                        <!-- Inputs superimposed on the diagram's "____ mm" spaces -->
+                        <input type="text" name="mesures[levage_diam_pole]"
+                            value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>"
+                            style="position: absolute; top: 12.5%; left: 75%; width: 60px; background: transparent; border: none; font-size: 14px; font-weight: bold; text-align: center; color: #000;"
+                            placeholder="-">
+
+                        <input type="text" name="mesures[levage_diam_noyau]"
+                            value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>"
+                            style="position: absolute; top: 18.5%; left: 75%; width: 60px; background: transparent; border: none; font-size: 14px; font-weight: bold; text-align: center; color: #000;"
+                            placeholder="-">
+
+                        <input type="text" name="mesures[levage_epaisseur_pole]"
+                            value="<?= htmlspecialchars($mesures['levage_epaisseur_pole'] ?? '') ?>"
+                            style="position: absolute; top: 32%; left: 75%; width: 65px; background: transparent; border: none; font-size: 14px; font-weight: bold; text-align: center; color: #000;"
+                            placeholder="-">
                     </div>
 
                 <?php else: ?>
