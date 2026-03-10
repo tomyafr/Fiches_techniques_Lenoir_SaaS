@@ -125,21 +125,24 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; text-decoration: none; color: inherit;">
                     <span>🕒</span> Historique
                 </a>
-                <a href="profile.php" class="btn btn-ghost sidebar-link"
-                    style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; text-decoration: none; color: inherit;">
-                    <span>👤</span> Mon Profil
-                </a>
             </nav>
 
             <div style="margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--glass-border);">
                 <p style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase;">Connecté</p>
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <p style="font-weight: 600; font-size: 0.85rem; margin: 0;">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                    <p
+                        style="font-weight: 600; font-size: 0.85rem; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">
                         <?= htmlspecialchars($_SESSION['user_prenom'] . ' ' . $_SESSION['user_nom']) ?>
                     </p>
                 </div>
-                <a href="logout.php" class="btn btn-ghost" style="width: 100%; margin-top: 1rem; color: var(--error);">
-                    Se déconnecter
+
+                <a href="logout.php" class="btn btn-ghost"
+                    style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; color: var(--error); margin-bottom: 0.4rem;">
+                    <span>🚪</span> Se déconnecter
+                </a>
+                <a href="profile.php" class="btn btn-ghost sidebar-link"
+                    style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
+                    <span>👤</span> Mon Profil
                 </a>
             </div>
         </aside>
@@ -323,6 +326,11 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
             document.getElementById('sidebar').classList.remove('open');
             document.getElementById('sidebarOverlay').classList.remove('open');
         }
+        document.addEventListener("DOMContentLoaded", function () {
+            if (window.location.search.includes('new=1')) {
+                switchTab('nouvelle');
+            }
+        });
     </script>
 </body>
 

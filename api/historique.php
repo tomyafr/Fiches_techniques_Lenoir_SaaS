@@ -264,6 +264,17 @@ $nbClients = count($clientsSet);
                     style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
                     <span>📊</span> Tableau de bord
                 </a>
+                <?php if ($isAdmin): ?>
+                    <a href="admin.php?new=1#" class="btn btn-ghost sidebar-link"
+                        style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
+                        <span>➕</span> Nouvelle Fiche
+                    </a>
+                <?php else: ?>
+                    <a href="technicien.php?new=1#" class="btn btn-ghost sidebar-link"
+                        style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
+                        <span>➕</span> Nouvelle Fiche
+                    </a>
+                <?php endif; ?>
                 <a href="historique.php" class="btn btn-primary sidebar-link"
                     style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
                     <span>🕒</span> Historique
@@ -274,11 +285,26 @@ $nbClients = count($clientsSet);
                         <span>👥</span> Équipe
                     </a>
                 <?php endif; ?>
+            </nav>
+
+            <div style="margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--glass-border);">
+                <p style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase;">Connecté</p>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                    <p
+                        style="font-weight: 600; font-size: 0.85rem; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">
+                        <?= htmlspecialchars($_SESSION['user_prenom'] . ' ' . $_SESSION['user_nom']) ?>
+                    </p>
+                </div>
+
+                <a href="logout.php" class="btn btn-ghost"
+                    style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; color: var(--error); margin-bottom: 0.4rem;">
+                    <span>🚪</span> Se déconnecter
+                </a>
                 <a href="profile.php" class="btn btn-ghost sidebar-link"
-                    style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
+                    style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
                     <span>👤</span> Mon Profil
                 </a>
-            </nav>
+            </div>
         </aside>
 
         <main class="main-content">

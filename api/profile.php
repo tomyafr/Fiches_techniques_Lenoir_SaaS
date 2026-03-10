@@ -247,42 +247,51 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
 
             <nav style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 2rem;">
                 <?php if (!$forceChange): ?>
-                    <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>" class="btn btn-ghost"
-                        style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; text-decoration: none; color: inherit;">
-                        <span>🏠</span> Tableau de Bord
+                    <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>" class="btn btn-ghost sidebar-link"
+                        style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
+                        <span>📊</span> Tableau de bord
                     </a>
+                    
+                    <?php if ($_SESSION['role'] === 'admin'): ?>
+                    <a href="admin.php?new=1#" class="btn btn-ghost sidebar-link"
+                        style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
+                        <span>➕</span> Nouvelle Fiche
+                    </a>
+                    <?php else: ?>
+                    <a href="technicien.php?new=1#" class="btn btn-ghost sidebar-link"
+                        style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
+                        <span>➕</span> Nouvelle Fiche
+                    </a>
+                    <?php endif; ?>
+
+                    <a href="historique.php" class="btn btn-ghost sidebar-link"
+                        style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
+                        <span>🕒</span> Historique
+                    </a>
+                    <?php if ($_SESSION['role'] === 'admin'): ?>
+                    <a href="equipe.php" class="btn btn-ghost sidebar-link"
+                        style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
+                        <span>👥</span> Équipe
+                    </a>
+                    <?php endif; ?>
                 <?php endif; ?>
-                <a href="profile.php" class="btn btn-primary"
-                    style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; text-decoration: none; color: inherit;">
-                    <span>👤</span> Mon Profil
-                </a>
             </nav>
 
             <div style="margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--glass-border);">
-                <p
-                    style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem;">
-                    Connecté</p>
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <?php if (!empty($_SESSION['avatar'])): ?>
-                        <img src="<?= htmlspecialchars($_SESSION['avatar']) ?>"
-                            style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--glass-border);">
-                    <?php else: ?>
-                        <div
-                            style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #000; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem;">
-                            <?= strtoupper(substr($_SESSION['user_prenom'], 0, 1) . substr($_SESSION['user_nom'], 0, 1)) ?>
-                        </div>
-                    <?php endif; ?>
-                    <p
-                        style="font-weight: 600; font-size: 0.85rem; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;">
+                <p style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase;">Connecté</p>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                    <p style="font-weight: 600; font-size: 0.85rem; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">
                         <?= htmlspecialchars($_SESSION['user_prenom'] . ' ' . $_SESSION['user_nom']) ?>
                     </p>
                 </div>
-                <?php if (!$forceChange): ?>
-                    <a href="logout.php" class="btn btn-ghost"
-                        style="width: 100%; margin-top: 1rem; color: var(--error); border-color: rgba(244, 63, 94, 0.15); font-size: 0.75rem; padding: 0.6rem;">
-                        Se déconnecter
-                    </a>
-                <?php endif; ?>
+                
+                <a href="logout.php" class="btn btn-ghost" style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; color: var(--error); margin-bottom: 0.4rem;">
+                    <span>🚪</span> Se déconnecter
+                </a>
+                <a href="profile.php" class="btn btn-primary sidebar-link"
+                    style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
+                    <span>👤</span> Mon Profil
+                </a>
             </div>
         </aside>
 

@@ -54,16 +54,43 @@ $equipe = $stmtUsers->fetchAll();
                 <h2 style="font-size: 1.15rem;"><span class="text-gradient">Raoul Lenoir</span></h2>
                 <p style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Administrateur</p>
             </div>
-            <nav style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 2rem;">
+            <nav style="display:flex;flex-direction:column;gap:0.4rem;margin-bottom:2rem;">
                 <a href="admin.php" class="btn btn-ghost sidebar-link"
-                    style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
+                    style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
                     <span>📊</span> Tableau de bord
                 </a>
-                <a href="equipe.php" class="btn btn-primary sidebar-link"
+                <a href="admin.php?new=1#" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
+                    <span>➕</span> Nouvelle Fiche
+                </a>
+                <a href="historique.php" class="btn btn-ghost sidebar-link"
+                    style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
+                    <span>🕒</span> Historique
+                </a>
+                <a href="equipe.php" class="btn btn-primary sidebar-link"
+                    style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
                     <span>👥</span> Équipe
                 </a>
             </nav>
+
+            <div style="margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--glass-border);">
+                <p style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase;">Connecté</p>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                    <p
+                        style="font-weight: 600; font-size: 0.85rem; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">
+                        <?= htmlspecialchars($_SESSION['user_prenom'] . ' ' . $_SESSION['user_nom']) ?>
+                    </p>
+                </div>
+
+                <a href="logout.php" class="btn btn-ghost"
+                    style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; color: var(--error); margin-bottom: 0.4rem;">
+                    <span>🚪</span> Se déconnecter
+                </a>
+                <a href="profile.php" class="btn btn-ghost sidebar-link"
+                    style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
+                    <span>👤</span> Mon Profil
+                </a>
+            </div>
         </aside>
 
         <main class="main-content">
@@ -78,7 +105,8 @@ $equipe = $stmtUsers->fetchAll();
                             </div>
                             <div>
                                 <h3 style="font-size: 1.15rem; margin-bottom: 0.2rem;">
-                                    <?= htmlspecialchars($membre['prenom'] . ' ' . $membre['nom']) ?></h3>
+                                    <?= htmlspecialchars($membre['prenom'] . ' ' . $membre['nom']) ?>
+                                </h3>
                                 <span
                                     style="font-size: 0.6rem; padding: 0.2rem 0.5rem; border-radius: 4px; background: rgba(255, 179, 0, 0.2); color: var(--primary);">
                                     <?= htmlspecialchars(strtoupper($membre['role'])) ?>
