@@ -155,26 +155,94 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
         }
 
         .pdf-table td.col-comment {
-            width: 35%;
+            width: 45%;
         }
 
-        .radio-box {
+        /* === PASTILLE SYSTEM === */
+        .pastille-group {
             display: inline-flex;
-            flex-direction: column;
+            gap: 4px;
             align-items: center;
-            font-size: 9px;
-            margin: 0 4px;
-            cursor: pointer;
-            color: black;
-            font-weight: bold;
+            flex-shrink: 0;
         }
 
-        .radio-box input {
+        .pastille-group label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
             cursor: pointer;
-            width: 16px;
-            height: 16px;
-            margin-top: 2px;
-            accent-color: #c00;
+            border: 2px solid #ccc;
+            transition: all 0.15s ease;
+            position: relative;
+            font-size: 0;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .pastille-group label:active {
+            transform: scale(0.9);
+        }
+
+        .pastille-group input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+        }
+
+        /* Couleurs pastilles */
+        .pastille-group label.p-na {
+            background: #bbb;
+            border-color: #999;
+        }
+
+        .pastille-group label.p-ok {
+            background: #28a745;
+            border-color: #1e7e34;
+        }
+
+        .pastille-group label.p-aa {
+            background: #e67e22;
+            border-color: #d35400;
+        }
+
+        .pastille-group label.p-nc {
+            background: #dc3545;
+            border-color: #bd2130;
+        }
+
+        .pastille-group label.p-nr {
+            background: #8b0000;
+            border-color: #5a0000;
+        }
+
+        /* Etat sélectionné */
+        .pastille-group label.selected {
+            transform: scale(1.15);
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.25);
+        }
+
+        .pastille-group label.selected::after {
+            content: '\2713';
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+        }
+
+        @media screen and (max-width: 768px) {
+            .pastille-group label {
+                width: 36px;
+                height: 36px;
+            }
+
+            .pastille-group label.selected::after {
+                font-size: 18px;
+            }
         }
 
         .pdf-input {
@@ -192,14 +260,16 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
 
         .pdf-textarea {
             width: 100%;
-            height: 40px;
+            min-height: 30px;
             border: 1px solid transparent;
             background: transparent;
-            resize: vertical;
+            resize: none;
+            overflow: hidden;
             font-family: Arial;
             font-size: 12px;
             outline: none;
             color: black;
+            box-sizing: border-box;
         }
 
         .pdf-textarea:hover,
@@ -376,43 +446,44 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                 <?= $pdfHeader ?>
 
                 <?php
-                // HELPER FONCTION : Radio Button pour État (C/A/NC)
+                // === PASTILLE HELPERS ===
+                function pastille($name, $value, $cssClass, $title, $currentVal)
+                {
+                    $sel = ($currentVal == $value) ? ' selected' : '';
+                    return '<label class="' . $cssClass . $sel . '" title="' . $title . '"><input type="radio" name="donnees[' . $name . ']" value="' . $value . '" ' . ($currentVal == $value ? 'checked' : '') . '></label>';
+                }
                 function renderEtatRadios($key, $donnees)
                 {
                     $val = $donnees[$key] ?? '';
-                    return '
-                    <div style="display:flex; justify-content:center; gap:8px;">
-                        <label class="radio-box" title="Correct">C<br><input type="radio" style="accent-color: #28a745;" name="donnees[' . $key . ']" value="c" ' . ($val == 'c' ? 'checked' : '') . '></label>
-                        <label class="radio-box" title="Non Correct">NC<br><input type="radio" style="accent-color: #dc3545;" name="donnees[' . $key . ']" value="nc" ' . ($val == 'nc' ? 'checked' : '') . '></label>
-                        <label class="radio-box" title="Non Applicable" style="color:#666">N/A<br><input type="radio" style="accent-color: #6c757d;" name="donnees[' . $key . ']" value="na" ' . ($val == 'na' ? 'checked' : '') . '></label>
-                    </div>';
+                    return '<div class="pastille-group">'
+                        . pastille($key, 'c', 'p-ok', 'Correct', $val)
+                        . pastille($key, 'nc', 'p-nc', 'Non correct', $val)
+                        . pastille($key, 'na', 'p-na', 'N/A', $val)
+                        . '</div>';
                 }
                 function renderCheckRow($label, $key, $donnees)
                 {
                     return '<tr>
                         <td style="font-weight:bold; font-size:12px;">' . htmlspecialchars($label) . '</td>
-                        <td class="col-etat">' . renderEtatRadios($key . "_radio", $donnees) . '</td>
-                        <td class="col-comment"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" placeholder="Détails...">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
+                        <td class="col-etat" style="text-align:center;">' . renderEtatRadios($key . "_radio", $donnees) . '</td>
+                        <td class="col-comment"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" placeholder="Détails..." oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
                     </tr>';
                 }
                 function renderAprfEtatRadios($key, $donnees)
                 {
                     $val = $donnees[$key] ?? '';
-                    return '
-                    <table style="width:100%; border-collapse:collapse; text-align:center; height:100%;">
-                        <tr>
-                            <td style="width:33%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #28a745;" name="donnees[' . $key . ']" value="bon" ' . ($val == 'bon' ? 'checked' : '') . '></td>
-                            <td style="width:34%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #e67e22;" name="donnees[' . $key . ']" value="r" ' . ($val == 'r' ? 'checked' : '') . '></td>
-                            <td style="width:33%; border:none;"><input type="radio" style="accent-color: #dc3545;" name="donnees[' . $key . ']" value="hs" ' . ($val == 'hs' ? 'checked' : '') . '></td>
-                        </tr>
-                    </table>';
+                    return '<div class="pastille-group">'
+                        . pastille($key, 'bon', 'p-ok', 'Bon', $val)
+                        . pastille($key, 'r', 'p-aa', 'À remplacer', $val)
+                        . pastille($key, 'hs', 'p-nc', 'HS', $val)
+                        . '</div>';
                 }
                 function renderAprfRow($label, $key, $donnees)
                 {
                     return '<tr>
                         <td style="font-weight:normal; font-size:11px;">' . htmlspecialchars($label) . '</td>
-                        <td style="padding:0; vertical-align:middle;">' . renderAprfEtatRadios($key, $donnees) . '</td>
-                        <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
+                        <td style="padding:2px 4px; vertical-align:middle; text-align:center;">' . renderAprfEtatRadios($key, $donnees) . '</td>
+                        <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
                     </tr>';
                 }
                 ?>
@@ -565,53 +636,37 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                     function renderEdxEtatRadios($key, $donnees)
                     {
                         $val = $donnees[$key] ?? '';
-                        return '
-                        <table style="width:100%; height:100%; border-collapse:collapse; text-align:center; line-height:1; min-height:30px;">
-                            <tr>
-                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #6c757d;" name="donnees[' . $key . ']" value="pc" ' . ($val == 'pc' ? 'checked' : '') . '></td>
-                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #28a745;" name="donnees[' . $key . ']" value="c" ' . ($val == 'c' ? 'checked' : '') . '></td>
-                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #e67e22;" name="donnees[' . $key . ']" value="aa" ' . ($val == 'aa' ? 'checked' : '') . '></td>
-                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #fd7e14;" name="donnees[' . $key . ']" value="nc" ' . ($val == 'nc' ? 'checked' : '') . '></td>
-                                <td style="width:20%; border:none;"><input type="radio" style="accent-color: #dc3545;" name="donnees[' . $key . ']" value="nr" ' . ($val == 'nr' ? 'checked' : '') . '></td>
-                            </tr>
-                        </table>';
+                        return '<div class="pastille-group">'
+                            . pastille($key, 'pc', 'p-na', 'Pas concerné', $val)
+                            . pastille($key, 'c', 'p-ok', 'Correct', $val)
+                            . pastille($key, 'aa', 'p-aa', 'À améliorer', $val)
+                            . pastille($key, 'nc', 'p-nc', 'Pas correct', $val)
+                            . pastille($key, 'nr', 'p-nr', 'Nécessite remplacement', $val)
+                            . '</div>';
                     }
                     function renderEdxRow($label, $key, $donnees)
                     {
                         return '<tr>
                             <td style="font-weight:normal; font-size:11px;">' . htmlspecialchars($label) . '</td>
-                            <td style="padding:0; vertical-align:middle;">' . renderEdxEtatRadios($key, $donnees) . '</td>
-                            <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; border-bottom:1px solid transparent; width:100%; padding:4px; box-sizing:border-box;">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
+                            <td style="padding:2px 4px; vertical-align:middle; text-align:center;">' . renderEdxEtatRadios($key, $donnees) . '</td>
+                            <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
                         </tr>';
                     }
                     ?>
 
                     <table class="pdf-table" style="font-size:11px;">
                         <tr>
-                            <th rowspan="2"
-                                style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0;">
+                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0;">
                                 DESIGNATIONS</th>
-                            <th style="text-align:center; padding:0; background:#e0e0e0;">ETAT</th>
-                            <th rowspan="2"
-                                style="width:25%; text-align:center; vertical-align:middle; background:#e0e0e0;">
-                                COMMENTAIRES</th>
-                        </tr>
-                        <tr>
-                            <th style="padding:0; background:#e0e0e0;">
-                                <table style="width:100%; border-collapse:collapse; text-align:center; font-size:9px;">
-                                    <tr>
-                                        <td style="width:20%; border:none; border-right:1px solid #000; padding:2px;">
-                                            Pas<br>concerné</td>
-                                        <td style="width:20%; border:none; border-right:1px solid #000; padding:2px;">
-                                            Correct</td>
-                                        <td style="width:20%; border:none; border-right:1px solid #000; padding:2px;">
-                                            A<br>améliorer</td>
-                                        <td style="width:20%; border:none; border-right:1px solid #000; padding:2px;">
-                                            Pas<br>correct</td>
-                                        <td style="width:20%; border:none; padding:2px;">Nécessite<br>remplacement</td>
-                                    </tr>
-                                </table>
+                            <th style="text-align:center; background:#e0e0e0; font-size:8px; line-height:1.3; padding:4px;">
+                                <span style="color:#bbb;">●</span>N/A
+                                <span style="color:#28a745;">●</span>OK
+                                <span style="color:#e67e22;">●</span>A.A
+                                <span style="color:#dc3545;">●</span>N.C
+                                <span style="color:#8b0000;">●</span>N.R
                             </th>
+                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0;">
+                                COMMENTAIRES</th>
                         </tr>
                         <tr>
                             <th colspan="3" style="background:#5b9bd5; color:white;">Environnement / Aspect général</th>
@@ -773,53 +828,37 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                     function renderOvEtatRadios($key, $donnees)
                     {
                         $val = $donnees[$key] ?? '';
-                        return '
-                        <table style="width:100%; height:100%; border-collapse:collapse; text-align:center; line-height:1; min-height:30px;">
-                            <tr>
-                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #6c757d;" name="donnees[' . $key . ']" value="pc" ' . ($val == 'pc' ? 'checked' : '') . '></td>
-                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #28a745;" name="donnees[' . $key . ']" value="c" ' . ($val == 'c' ? 'checked' : '') . '></td>
-                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #e67e22;" name="donnees[' . $key . ']" value="aa" ' . ($val == 'aa' ? 'checked' : '') . '></td>
-                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #fd7e14;" name="donnees[' . $key . ']" value="nc" ' . ($val == 'nc' ? 'checked' : '') . '></td>
-                                <td style="width:20%; border:none;"><input type="radio" style="accent-color: #dc3545;" name="donnees[' . $key . ']" value="nr" ' . ($val == 'nr' ? 'checked' : '') . '></td>
-                            </tr>
-                        </table>';
+                        return '<div class="pastille-group">'
+                            . pastille($key, 'pc', 'p-na', 'Pas concerné', $val)
+                            . pastille($key, 'c', 'p-ok', 'Correct', $val)
+                            . pastille($key, 'aa', 'p-aa', 'À améliorer', $val)
+                            . pastille($key, 'nc', 'p-nc', 'Pas correct', $val)
+                            . pastille($key, 'nr', 'p-nr', 'Nécessite remplacement', $val)
+                            . '</div>';
                     }
                     function renderOvRow($label, $key, $donnees)
                     {
                         return '<tr>
                             <td style="font-weight:bold; font-size:11px;">' . htmlspecialchars($label) . '</td>
-                            <td style="padding:0; vertical-align:middle;">' . renderOvEtatRadios($key, $donnees) . '</td>
-                            <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; border-bottom:1px solid transparent; width:100%; padding:4px; box-sizing:border-box;">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
+                            <td style="padding:2px 4px; vertical-align:middle; text-align:center;">' . renderOvEtatRadios($key, $donnees) . '</td>
+                            <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
                         </tr>';
                     }
                     ?>
 
                     <table class="pdf-table" style="font-size:11px;">
                         <tr>
-                            <th rowspan="2"
-                                style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0;">
+                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0;">
                                 DESIGNATIONS</th>
-                            <th style="text-align:center; padding:0; background:#e0e0e0;">ETAT</th>
-                            <th rowspan="2"
-                                style="width:25%; text-align:center; vertical-align:middle; background:#e0e0e0;">
-                                COMMENTAIRES</th>
-                        </tr>
-                        <tr>
-                            <th style="padding:0; background:#e0e0e0;">
-                                <table style="width:100%; border-collapse:collapse; text-align:center; font-size:9px;">
-                                    <tr>
-                                        <td style="width:20%; border:none; border-right:1px solid #000; padding:2px;">
-                                            Pas<br>concerné</td>
-                                        <td style="width:20%; border:none; border-right:1px solid #000; padding:2px;">
-                                            Correct</td>
-                                        <td style="width:20%; border:none; border-right:1px solid #000; padding:2px;">
-                                            A<br>améliorer</td>
-                                        <td style="width:20%; border:none; border-right:1px solid #000; padding:2px;">
-                                            Pas<br>correct</td>
-                                        <td style="width:20%; border:none; padding:2px;">Nécessite<br>remplacement</td>
-                                    </tr>
-                                </table>
+                            <th style="text-align:center; background:#e0e0e0; font-size:8px; line-height:1.3; padding:4px;">
+                                <span style="color:#bbb;">●</span>N/A
+                                <span style="color:#28a745;">●</span>OK
+                                <span style="color:#e67e22;">●</span>A.A
+                                <span style="color:#dc3545;">●</span>N.C
+                                <span style="color:#8b0000;">●</span>N.R
                             </th>
+                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0;">
+                                COMMENTAIRES</th>
                         </tr>
                         <tr>
                             <th colspan="3" style="background:#5b9bd5; color:white;">Environnement / Aspect général</th>
@@ -1397,6 +1436,38 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                 </div> <!-- fin .pdf-page -->
             </div> <!-- fin .mobile-wrapper -->
     </form>
+
+    <script>
+        // Auto-grow textareas
+        function autoGrow(el) {
+            el.style.height = 'auto';
+            el.style.height = el.scrollHeight + 'px';
+        }
+
+        // Pastille click management
+        document.addEventListener('click', function (e) {
+            var label = e.target.closest('.pastille-group label');
+            if (!label) return;
+            var group = label.closest('.pastille-group');
+            group.querySelectorAll('label').forEach(function (l) { l.classList.remove('selected'); });
+            label.classList.add('selected');
+            var radio = label.querySelector('input[type="radio"]');
+            if (radio) radio.checked = true;
+        });
+
+        // Init on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            // Init pastille selected states
+            document.querySelectorAll('.pastille-group input[type="radio"]:checked').forEach(function (r) {
+                r.closest('label').classList.add('selected');
+            });
+            // Init auto-grow for all textareas with content
+            document.querySelectorAll('.pdf-textarea').forEach(function (ta) {
+                if (ta.value) autoGrow(ta);
+                ta.addEventListener('input', function () { autoGrow(this); });
+            });
+        });
+    </script>
 </body>
 
 </html>
