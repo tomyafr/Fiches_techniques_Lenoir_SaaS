@@ -356,65 +356,143 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
                                 value="<?= htmlspecialchars($mesures['temps_realise'] ?? '') ?>"> h</div>
                     </div>
 
-                    <table class="pdf-table">
+                    <?php
+                    function renderAprfEtatRadios($key, $donnees)
+                    {
+                        $val = $donnees[$key] ?? '';
+                        return '
+                        <table style="width:100%; border-collapse:collapse; text-align:center; height:100%;">
+                            <tr>
+                                <td style="width:33%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="bon" ' . ($val == 'bon' ? 'checked' : '') . '></td>
+                                <td style="width:34%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="r" ' . ($val == 'r' ? 'checked' : '') . '></td>
+                                <td style="width:33%; border:none;"><input type="radio" name="donnees[' . $key . ']" value="hs" ' . ($val == 'hs' ? 'checked' : '') . '></td>
+                            </tr>
+                        </table>';
+                    }
+                    function renderAprfRow($label, $key, $donnees)
+                    {
+                        return '<tr>
+                            <td style="font-weight:normal; font-size:11px;">' . htmlspecialchars($label) . '</td>
+                            <td style="padding:0; vertical-align:middle;">' . renderAprfEtatRadios($key, $donnees) . '</td>
+                            <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
+                        </tr>';
+                    }
+                    ?>
+
+                    <table class="pdf-table" style="font-size:11px;">
                         <tr>
-                            <th>Désignations</th>
-                            <th style="text-align:center">Etat<br /><span
-                                    style="font-size:9px;font-weight:normal">C=Correct, NC=Non Correct</span></th>
-                            <th>Commentaires</th>
+                            <th rowspan="2" style="width:40%; text-align:center; background:#e0e0e0;">DESIGNATIONS</th>
+                            <th style="text-align:center; padding:0; background:#e0e0e0;">ETAT</th>
+                            <th rowspan="2" style="width:30%; text-align:center; background:#e0e0e0;">COMMENTAIRES</th>
                         </tr>
-                        <?= renderCheckRow("Aimants permanent fixe de triage type APRF : Satisfaction de fonctionnement", "aprf_satisfaction", $donnees) ?>
-                        <?= renderCheckRow("État et type de la bande", "aprf_bande", $donnees) ?>
-                        <?= renderCheckRow("État des réglettes", "aprf_reglettes", $donnees) ?>
-                        <?= renderCheckRow("État des boutons étoile", "aprf_boutons", $donnees) ?>
+                        <tr>
+                            <th style="padding:0; background:#e0e0e0;">
+                                <table style="width:100%; border-collapse:collapse; text-align:center; font-size:10px;">
+                                    <tr>
+                                        <td
+                                            style="width:33%; border:none; border-right:1px solid #000; padding:2px; font-weight:bold;">
+                                            Bon</td>
+                                        <td
+                                            style="width:34%; border:none; border-right:1px solid #000; padding:2px; font-weight:bold;">
+                                            A remplacer<br>sous :</td>
+                                        <td style="width:33%; border:none; padding:2px; font-weight:bold;">H.S.</td>
+                                    </tr>
+                                </table>
+                            </th>
+                        </tr>
 
                         <tr>
-                            <th colspan="3" style="background:#ddd;">Options (à préciser)</th>
+                            <th colspan="3" style="background:#5b9bd5; color:white;">Aimants permanent fixe de triage type
+                                APRF</th>
                         </tr>
-                        <?= renderCheckRow("AIMANT PERMANENT Caisson Inox", "aprf_inox", $donnees) ?>
+                        <?= renderAprfRow("Satisfaction de fonctionnement", "aprf_satisfaction", $donnees) ?>
+                        <?= renderAprfRow("État et type de la bande", "aprf_bande", $donnees) ?>
+                        <?= renderAprfRow("État des réglettes", "aprf_reglettes", $donnees) ?>
+                        <?= renderAprfRow("État des boutons étoile :", "aprf_boutons", $donnees) ?>
+                        <?= renderAprfRow("Options (à préciser)", "aprf_options", $donnees) ?>
 
                         <tr>
-                            <th colspan="3" style="background:#ddd;">Contrôle de l'attraction sur échantillon</th>
+                            <th colspan="3" style="background:#5b9bd5; color:white;">AIMANT PERMANENT</th>
                         </tr>
-                        <?= renderCheckRow("Bille diamètre 20", "aprf_bille20", $donnees) ?>
-                        <?= renderCheckRow("Écrou M4", "aprf_ecroum4", $donnees) ?>
-                        <?= renderCheckRow("Rond diamètre 6 Lg 50", "aprf_rond50", $donnees) ?>
-                        <?= renderCheckRow("Rond diamètre 6 Lg 100", "aprf_rond100", $donnees) ?>
-                    </table>
+                        <?= renderAprfRow("Caisson Inox", "aprf_inox", $donnees) ?>
 
-                    <div class="pdf-section-title">APPLICATION CLIENT</div>
-                    <table class="pdf-table">
                         <tr>
-                            <td style="width:40%; font-weight:bold;">Type de produit :</td>
-                            <td><input type="text" class="pdf-input" name="mesures[produit]"
+                            <td style="vertical-align:top; font-size:11px;">
+                                Contrôle de l'attraction sur échantillon<br><br>
+                                Bille diamètre 20<br>
+                                Écrou M4<br>
+                                Rond diamètre 6 Lg 50<br>
+                                Rond diamètre 6 Lg 100
+                            </td>
+                            <td style="padding:0; vertical-align:middle;">' . renderAprfEtatRadios("aprf_attraction",
+                                $donnees) . '</td>
+                            <td style="padding:0;"><textarea name="donnees[aprf_attraction_comment]" class="pdf-textarea"
+                                    style="height:120px; border:none; width:100%; box-sizing:border-box; padding:4px;">' . htmlspecialchars($donnees["aprf_attraction_comment"] ?? '') . '</textarea>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <th colspan="3" style="background:#5b9bd5; color:white;">APPLICATION CLIENT</th>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold; padding:8px;">Type de produit : <input type="text"
+                                    class="pdf-input" style="width:auto;" name="mesures[produit]"
                                     value="<?= htmlspecialchars($mesures['produit'] ?? '') ?>"></td>
+                            <td style="padding:0; vertical-align:middle;">' . renderAprfEtatRadios("aprf_prod", $donnees) .
+                                '</td>
+                            <td style="padding:0;"><textarea name="donnees[aprf_prod_comment]" class="pdf-textarea"
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;">' . htmlspecialchars($donnees["aprf_prod_comment"] ?? '') . '</textarea>
+                            </td>
                         </tr>
                         <tr>
-                            <td style="font-weight:bold;">Granulométrie (mm) :</td>
-                            <td><input type="text" class="pdf-input" name="mesures[granulometrie]"
-                                    value="<?= htmlspecialchars($mesures['granulometrie'] ?? '') ?>"></td>
+                            <td style="font-weight:bold; padding:8px;">Granulométrie : <input type="text" class="pdf-input"
+                                    style="width:40px; text-align:center;" name="mesures[granulometrie]"
+                                    value="<?= htmlspecialchars($mesures['granulometrie'] ?? '') ?>"> mm</td>
+                            <td style="padding:0; vertical-align:middle;">' . renderAprfEtatRadios("aprf_granu", $donnees) .
+                                '</td>
+                            <td style="padding:0;"><textarea name="donnees[aprf_granu_comment]" class="pdf-textarea"
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;">' . htmlspecialchars($donnees["aprf_granu_comment"] ?? '') . '</textarea>
+                            </td>
                         </tr>
                         <tr>
-                            <td style="font-weight:bold;">Distance aimants / bande (mm) :</td>
-                            <td><input type="text" class="pdf-input" name="mesures[distance]"
-                                    value="<?= htmlspecialchars($mesures['distance'] ?? '') ?>"></td>
+                            <td style="font-weight:bold; padding:8px;">Distance aimants / bande : <input type="text"
+                                    class="pdf-input" style="width:40px; text-align:center;" name="mesures[distance]"
+                                    value="<?= htmlspecialchars($mesures['distance'] ?? '') ?>"> mm</td>
+                            <td style="padding:0; vertical-align:middle;">' . renderAprfEtatRadios("aprf_dist", $donnees) .
+                                '</td>
+                            <td style="padding:0;"><textarea name="donnees[aprf_dist_comment]" class="pdf-textarea"
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;">' . htmlspecialchars($donnees["aprf_dist_comment"] ?? '') . '</textarea>
+                            </td>
                         </tr>
                         <tr>
-                            <td style="font-weight:bold;">Hauteur de la couche (mm) :</td>
-                            <td><input type="text" class="pdf-input" name="mesures[hauteur]"
-                                    value="<?= htmlspecialchars($mesures['hauteur'] ?? '') ?>"></td>
+                            <td style="font-weight:bold; padding:8px;">Hauteur de la couche : <input type="text"
+                                    class="pdf-input" style="width:40px; text-align:center;" name="mesures[hauteur]"
+                                    value="<?= htmlspecialchars($mesures['hauteur'] ?? '') ?>"> mm</td>
+                            <td style="padding:0; vertical-align:middle;">' . renderAprfEtatRadios("aprf_haut", $donnees) .
+                                '</td>
+                            <td style="padding:0;"><textarea name="donnees[aprf_haut_comment]" class="pdf-textarea"
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;">' . htmlspecialchars($donnees["aprf_haut_comment"] ?? '') . '</textarea>
+                            </td>
                         </tr>
                         <tr>
-                            <td style="font-weight:bold;">Débit (t/h) :</td>
-                            <td><input type="text" class="pdf-input" name="mesures[debit]"
-                                    value="<?= htmlspecialchars($mesures['debit'] ?? '') ?>"></td>
-                        </tr>
-                        <tr>
-                            <td style="font-weight:bold;">Avec densité de :</td>
-                            <td><input type="text" class="pdf-input" name="mesures[densite]"
+                            <td style="font-weight:bold; padding:8px;">Débit : <input type="text" class="pdf-input"
+                                    style="width:50px; text-align:center;" name="mesures[debit]"
+                                    value="<?= htmlspecialchars($mesures['debit'] ?? '') ?>"> t/h</td>
+                            <td style="padding:0; vertical-align:middle;">' . renderAprfEtatRadios("aprf_debit", $donnees) .
+                                '</td>
+                            <td style="padding:4px;">Avec densité de <input type="text" class="pdf-input"
+                                    style="width:50px; text-align:center;" name="mesures[densite]"
                                     value="<?= htmlspecialchars($mesures['densite'] ?? '') ?>"></td>
                         </tr>
                     </table>
+
+                    <div
+                        style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0; border:1px solid #000; border-top:none;">
+                        PHOTOS ANNEXES :</div>
+
+                    <img src="/assets/machines/aprf_diagram.png"
+                        style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma APRF"
+                        onerror="this.style.display=\'none\'">
 
                     <!-- EDX SCHEMA -->
                 <?php elseif ($isEDX): ?>
@@ -427,62 +505,196 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
                                 value="<?= htmlspecialchars($mesures['temps_realise'] ?? '') ?>"> h</div>
                     </div>
 
+                    <?php
+                    function renderEdxEtatRadios($key, $donnees)
+                    {
+                        $val = $donnees[$key] ?? '';
+                        return '
+                        <table style="width:100%; height:100%; border-collapse:collapse; text-align:center; line-height:1; min-height:30px;">
+                            <tr>
+                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="pc" ' . ($val == 'pc' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="c" ' . ($val == 'c' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="aa" ' . ($val == 'aa' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="nc" ' . ($val == 'nc' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none;"><input type="radio" name="donnees[' . $key . ']" value="nr" ' . ($val == 'nr' ? 'checked' : '') . '></td>
+                            </tr>
+                        </table>';
+                    }
+                    function renderEdxRow($label, $key, $donnees)
+                    {
+                        return '<tr>
+                            <td style="font-weight:normal; font-size:11px;">' . htmlspecialchars($label) . '</td>
+                            <td style="padding:0; vertical-align:middle;">' . renderEdxEtatRadios($key, $donnees) . '</td>
+                            <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; border-bottom:1px solid transparent; width:100%; padding:4px; box-sizing:border-box;">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
+                        </tr>';
+                    }
+                    ?>
+
                     <table class="pdf-table" style="font-size:11px;">
                         <tr>
-                            <th>Désignations</th>
-                            <th style="text-align:center">État<br /><span
-                                    style="font-size:9px;font-weight:normal">C=Correct, NC=Non Correct</span></th>
-                            <th>Commentaires</th>
+                            <th rowspan="2"
+                                style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0;">
+                                DESIGNATIONS</th>
+                            <th style="text-align:center; padding:0; background:#e0e0e0;">ETAT</th>
+                            <th rowspan="2"
+                                style="width:25%; text-align:center; vertical-align:middle; background:#e0e0e0;">
+                                COMMENTAIRES</th>
                         </tr>
                         <tr>
-                            <th colspan="3" style="background:#ddd;">Environnement / Aspect général</th>
+                            <th style="padding:0; background:#e0e0e0;">
+                                <table style="width:100%; border-collapse:collapse; text-align:center; font-size:9px;">
+                                    <tr>
+                                        <td style="width:20%; border:none; border-right:1px solid #000; padding:2px;">
+                                            Pas<br>concerné</td>
+                                        <td style="width:20%; border:none; border-right:1px solid #000; padding:2px;">
+                                            Correct</td>
+                                        <td style="width:20%; border:none; border-right:1px solid #000; padding:2px;">
+                                            A<br>améliorer</td>
+                                        <td style="width:20%; border:none; border-right:1px solid #000; padding:2px;">
+                                            Pas<br>correct</td>
+                                        <td style="width:20%; border:none; padding:2px;">Nécessite<br>remplacement</td>
+                                    </tr>
+                                </table>
+                            </th>
                         </tr>
-                        <?= renderCheckRow("Accès au séparateur", "edx_acces", $donnees) ?>
-                        <?= renderCheckRow("Etat général du séparateur", "edx_etat_gen", $donnees) ?>
+                        <tr>
+                            <th colspan="3" style="background:#5b9bd5; color:white;">Environnement / Aspect général</th>
+                        </tr>
+                        <?= renderEdxRow("Accès au séparateur", "edx_acces", $donnees) ?>
+                        <?= renderEdxRow("Etat général du séparateur", "edx_etat_gen", $donnees) ?>
 
                         <tr>
-                            <th colspan="3" style="background:#ddd;">PARTIE A - Convoyeur</th>
+                            <th colspan="3" style="background:#5b9bd5; color:white;">Partie A - Convoyeur</th>
                         </tr>
-                        <?= renderCheckRow("Etat général des verrous", "edx_verrous", $donnees) ?>
-                        <?= renderCheckRow("Etat général des grenouillères", "edx_grenouilles", $donnees) ?>
-                        <?= renderCheckRow("Etat général des poignées de portes", "edx_poignees", $donnees) ?>
-                        <?= renderCheckRow("Etat général des carters de protection/ des portes", "edx_carters", $donnees) ?>
-                        <?= renderCheckRow("Aspect général intérieur séparateur", "edx_int_sep", $donnees) ?>
-                        <?= renderCheckRow("Contrôle visuel des étanchéités latérales", "edx_etanch", $donnees) ?>
-                        <?= renderCheckRow("Contrôle visuel état extérieur de la bande", "edx_bande_ext", $donnees) ?>
-                        <?= renderCheckRow("Contrôle visuel état intérieur de la bande", "edx_bande_int", $donnees) ?>
-                        <?= renderCheckRow("Contrôle de la tension de bande", "edx_tension_bande", $donnees) ?>
-                        <?= renderCheckRow("Contrôle état des rouleaux anti-déport de bande", "edx_rlx_anti", $donnees) ?>
-                        <?= renderCheckRow("Contrôle état des détecteurs de déport de bande", "edx_detecteurs", $donnees) ?>
-                        <?= renderCheckRow("Contrôle état des guides TEFLON / tôle INOX déport de bande", "edx_guides", $donnees) ?>
-                        <?= renderCheckRow("Contrôle état et réglage du racleur de bande", "edx_racleur", $donnees) ?>
-                        <?= renderCheckRow("Contrôle réglage des paliers PHUSE-TENDEURS", "edx_paliers_phuse", $donnees) ?>
-                        <?= renderCheckRow("Contrôle état du tambour moteur", "edx_tambour", $donnees) ?>
-                        <?= renderCheckRow("Contrôle visuel virole fibre roue polaire", "edx_virole", $donnees) ?>
-                        <?= renderCheckRow("Contrôle visuel déflecteur carbone roue polaire", "edx_deflecteur", $donnees) ?>
-                        <?= renderCheckRow("Contrôle visuel état caisson roue polaire", "edx_caisson_roue", $donnees) ?>
-                        <?= renderCheckRow("Contrôle état général des vis de fixation virole fibre", "edx_vis_virole", $donnees) ?>
-                        <?= renderCheckRow("Contrôle état du contrôleur de rotation", "edx_ctrl_rot", $donnees) ?>
-                        <?= renderCheckRow("Contrôle et repère du réglage du 3ème rouleau", "edx_3e_rouleau", $donnees) ?>
+                        <?= renderEdxRow("Etat général des verrous", "edx_verrous", $donnees) ?>
+                        <?= renderEdxRow("Etat général des grenouillères", "edx_grenouilles", $donnees) ?>
+                        <?= renderEdxRow("Etat général des poignées de portes", "edx_poignees", $donnees) ?>
+                        <?= renderEdxRow("Etat général des carters de protection/ des portes", "edx_carters", $donnees) ?>
+                        <?= renderEdxRow("Aspect général intérieur séparateur", "edx_int_sep", $donnees) ?>
+                        <?= renderEdxRow("Contrôle visuel des étanchéités latérales", "edx_etanch", $donnees) ?>
+                        <?= renderEdxRow("Contrôle visuel état extérieur de la bande", "edx_bande_ext", $donnees) ?>
+                        <?= renderEdxRow("Contrôle visuel état intérieur de la bande", "edx_bande_int", $donnees) ?>
+                        <?= renderEdxRow("Contrôle de la tension de bande", "edx_tension_bande", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état des rouleaux anti-déport de bande", "edx_rlx_anti", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état des détecteurs de déport de bande", "edx_detecteurs", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état des guides TEFLON / tôle INOX déport de bande", "edx_guides", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état du racleur de bande", "edx_racleur", $donnees) ?>
+                        <?= renderEdxRow("Contrôle réglage du racleur de bande", "edx_racleur_regl", $donnees) ?>
+                        <?= renderEdxRow("Contrôle réglage des paliers PHUSE-TENDEURS", "edx_paliers_phuse", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état du tambour moteur", "edx_tambour", $donnees) ?>
+                        <?= renderEdxRow("Contrôle visuel fibre virole roue polaire", "edx_virole", $donnees) ?>
+                        <?= renderEdxRow("Contrôle visuel état déflecteur carbone roue polaire", "edx_deflecteur", $donnees) ?>
+                        <?= renderEdxRow("Contrôle visuel état caisson roue polaire", "edx_caisson_roue", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état général des vis de fixation virole fibre", "edx_vis_virole", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état du contrôleur de rotation", "edx_ctrl_rot", $donnees) ?>
+                        <?= renderEdxRow("Contrôle et repère du réglage du 3ème rouleau, ajustement bande", "edx_3e_rouleau", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état des rouleaux \"mines\"", "edx_rlx_mines", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état du motoréducteur entraînement bande", "edx_motor", $donnees) ?>
+                        <?= renderEdxRow("Démontage carter de protection (courroie/accouplement) moteur entraînement roue polaire", "edx_dem_carter", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état des courroies", "edx_courroies", $donnees) ?>
+                        <?= renderEdxRow("Contrôle tension des courroies", "edx_tens_courroies", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état accouplement", "edx_accoupl", $donnees) ?>
+                        <?= renderEdxRow("Contrôle alignement moteur", "edx_align_mot", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état des paliers/roulements de la virole fibre", "edx_pal_fibre", $donnees) ?>
+                        <?= renderEdxRow("Contrôle graissage des paliers/roulements de la virole fibre", "edx_graiss_fibre", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état des paliers/roulements de la roue polaire", "edx_pal_roue", $donnees) ?>
+                        <?= renderEdxRow("Contrôle graissage des paliers/roulements de la roue polaire", "edx_graiss_roue", $donnees) ?>
+                        <?= renderEdxRow("Contrôle induction roue polaire", "edx_induc_roue", $donnees) ?>
+                        <?= renderEdxRow("Etat général des câbles d'alimentation, boîtiers de raccordement, connexion", "edx_cables", $donnees) ?>
+                        <?= renderEdxRow("Nettoyage complet de l'intérieur du séparateur", "edx_nettoyage", $donnees) ?>
+                        <?= renderEdxRow("Remontage des carters de protection/portes", "edx_remontage", $donnees) ?>
 
                         <tr>
-                            <th colspan="3" style="background:#ddd;">PARTIE B - Caisson de séparation</th>
+                            <th colspan="3" style="background:#5b9bd5; color:white;">Partie B - Caisson de séparation</th>
                         </tr>
-                        <?= renderCheckRow("Etat général (verrous, grenouillères, portes, plexis)", "edx_cais_etat", $donnees) ?>
-                        <?= renderCheckRow("Aspect général intérieur du caisson de séparation", "edx_cais_int", $donnees) ?>
-                        <?= renderCheckRow("Contrôle état et mécanisme du volet", "edx_cais_volet", $donnees) ?>
-                        <?= renderCheckRow("Nettoyage complet de l'intérieur du caisson", "edx_cais_net", $donnees) ?>
+                        <?= renderEdxRow("Etat général des verrous", "edx_B_verrous", $donnees) ?>
+                        <?= renderEdxRow("Etat général des grenouillères", "edx_B_grenouilles", $donnees) ?>
+                        <?= renderEdxRow("Etat général des poignées de portes", "edx_B_poignees", $donnees) ?>
+                        <?= renderEdxRow("Etat général des carters de protection/des portes", "edx_B_portes", $donnees) ?>
+                        <?= renderEdxRow("Etat général des plexis", "edx_B_plex", $donnees) ?>
+                        <?= renderEdxRow("Démontage des carters de protection/des portes", "edx_B_dem", $donnees) ?>
+                        <?= renderEdxRow("Aspect général intérieur du caisson de séparation", "edx_B_asp", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état du volet", "edx_B_volet", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état mécanisme réglage volet", "edx_B_meca", $donnees) ?>
+                        <?= renderEdxRow("Contrôles des réglages du volet (archivages des réglages)", "edx_B_reglages", $donnees) ?>
+                        <?= renderEdxRow("Nettoyage complet de l'intérieur du caisson de séparation", "edx_B_net", $donnees) ?>
+                        <?= renderEdxRow("Remontage des carters de protection/portes", "edx_B_rem", $donnees) ?>
 
                         <tr>
-                            <th colspan="3" style="background:#ddd;">PARTIE C - Armoire électrique</th>
+                            <th colspan="3" style="background:#5b9bd5; color:white;">Partie C - Armoire électrique</th>
                         </tr>
-                        <?= renderCheckRow("Aspect général armoire & boutonnerie façade", "edx_arm_aspect", $donnees) ?>
-                        <?= renderCheckRow("Etat général Arrêt d'Urgence", "edx_arm_au", $donnees) ?>
-                        <?= renderCheckRow("Vitesse bande relevée / conforme", "edx_arm_vit_b", $donnees) ?>
-                        <?= renderCheckRow("Vitesse roue polaire relevée / conforme", "edx_arm_vit_r", $donnees) ?>
-                        <?= renderCheckRow("Contrôle freinage roue polaire / Temps constaté", "edx_arm_frein", $donnees) ?>
-                        <?= renderCheckRow("Vérification des serrages câbles", "edx_arm_cable", $donnees) ?>
+                        <tr>
+                            <th colspan="3" style="background:#e0e0e0; font-weight:normal;">Hors Tension</th>
+                        </tr>
+                        <?= renderEdxRow("Aspect général armoire électrique", "edx_C_arm", $donnees) ?>
+                        <?= renderEdxRow("Aspect général boutonnerie façade armoire", "edx_C_bout", $donnees) ?>
+                        <?= renderEdxRow("Etat général AU séparateur", "edx_C_au", $donnees) ?>
+                        <?= renderEdxRow("Ouverture armoire électrique", "edx_C_ouvert", $donnees) ?>
+                        <?= renderEdxRow("Etat général intérieur armoire électrique", "edx_C_int", $donnees) ?>
+
+                        <tr>
+                            <th colspan="3" style="background:#e0e0e0; font-weight:normal;">Sous Tension</th>
+                        </tr>
+                        <?= renderEdxRow("Vitesse bande relevée", "edx_C_vit_b", $donnees) ?>
+                        <?= renderEdxRow("Vitesse bande conforme process", "edx_C_vit_b_conf", $donnees) ?>
+                        <?= renderEdxRow("Nouveaux réglages réalisés", "edx_C_regl1", $donnees) ?>
+                        <?= renderEdxRow("Vitesse roue polaire relevée", "edx_C_vit_r", $donnees) ?>
+                        <?= renderEdxRow("Vitesse roue polaire conforme aux process", "edx_C_vit_r_conf", $donnees) ?>
+                        <?= renderEdxRow("Nouveaux réglages réalisés", "edx_C_regl2", $donnees) ?>
+                        <?= renderEdxRow("Nouveaux réglages volet de séparation", "edx_C_regl3", $donnees) ?>
+                        <?= renderEdxRow("Contrôle freinage roue polaire", "edx_C_frein", $donnees) ?>
+                        <?= renderEdxRow("Temps de freinage constaté", "edx_C_temps", $donnees) ?>
+                        <?= renderEdxRow("Vérification des serrages câbles de l'armoire", "edx_C_cables", $donnees) ?>
+                        <?= renderEdxRow("Fermeture de l'armoire électrique", "edx_C_ferm", $donnees) ?>
                     </table>
+
+                    <div style="margin-top:20px; font-weight:bold; font-size:11px;">Commentaire général :</div>
+                    <textarea name="commentaires" class="pdf-textarea"
+                        style="height:100px; padding:5px; margin-top:5px; border:1px solid #000; width:100%; box-sizing:border-box;"><?= htmlspecialchars($machine['commentaires']) ?></textarea>
+
+                    <table class="pdf-table" style="font-size:11px; margin-top:20px;">
+                        <tr>
+                            <th colspan="6" style="background:#5b9bd5; color:white; font-size:10px;">En présence du client /
+                                Rappel des fréquences de nettoyage et des différents points de contrôle</th>
+                        </tr>
+                        <tr>
+                            <th style="width:40%;">Contrôle</th>
+                            <th style="text-align:center;">Quotidien</th>
+                            <th style="text-align:center;">Hebdomadaire</th>
+                            <th style="text-align:center;">Mensuel</th>
+                            <th style="text-align:center;">Annuel</th>
+                            <th style="width:25%;">Commentaires</th>
+                        </tr>
+                        <?php
+                        function renderFreqRowEdx($label, $key, $donnees)
+                        {
+                            $v = $donnees[$key] ?? '';
+                            return '<tr>
+                                <td style="font-weight:normal; font-size:10px;">' . htmlspecialchars($label) . '</td>
+                                <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="q" ' . ($v == 'q' ? 'checked' : '') . '></td>
+                                <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="h" ' . ($v == 'h' ? 'checked' : '') . '></td>
+                                <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="m" ' . ($v == 'm' ? 'checked' : '') . '></td>
+                                <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="a" ' . ($v == 'a' ? 'checked' : '') . '></td>
+                                <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"></textarea></td>
+                            </tr>';
+                        }
+                        ?>
+                        <?= renderFreqRowEdx("Contrôle visuel de la bande", "edx_freq_bande", $donnees) ?>
+                        <?= renderFreqRowEdx("Contrôle visuel de la virole en fibre époxy", "edx_freq_virole", $donnees) ?>
+                        <?= renderFreqRowEdx("Contrôle visuel du tambour moteur", "edx_freq_tamb", $donnees) ?>
+                        <?= renderFreqRowEdx("Contrôle échauffement des paliers", "edx_freq_pal", $donnees) ?>
+                        <?= renderFreqRowEdx("Graissage des paliers", "edx_freq_graiss", $donnees) ?>
+                        <?= renderFreqRowEdx("Nettoyage de l'intérieur du séparateur - partie convoyage", "edx_freq_net_conv", $donnees) ?>
+                        <?= renderFreqRowEdx("Nettoyage de l'intérieur du séparateur - partie caisson de séparation", "edx_freq_net_cais", $donnees) ?>
+                    </table>
+
+                    <div
+                        style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:20px; border:1px solid #000; border-top:none;">
+                        PHOTOS ANNEXES :</div>
+
+                    <img src="/assets/machines/edx_diagram.png"
+                        style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma ED-X"
+                        onerror="this.style.display=\'none\'">
 
                 <?php elseif ($isOV): ?>
                     <div style="display:flex; justify-content:space-between; margin-bottom:15px; padding:10px;">
