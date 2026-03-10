@@ -87,7 +87,7 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
             color: black;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
             position: relative;
-            padding: 2cm 1.5cm;
+            padding: 1cm;
             box-sizing: border-box;
             border-radius: 4px;
             overflow: hidden;
@@ -137,7 +137,7 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
         .pdf-table th,
         .pdf-table td {
             border: 1px solid #000;
-            padding: 8px 5px;
+            padding: 4px 5px;
             vertical-align: middle;
         }
 
@@ -236,6 +236,11 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
         }
 
         @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0.5cm;
+            }
+
             .top-bar {
                 display: none !important;
             }
@@ -259,8 +264,12 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                 margin: 0;
                 box-shadow: none;
                 page-break-after: always;
-                padding: 1cm;
+                padding: 0;
                 border-radius: 0;
+            }
+
+            .pdf-page:last-child {
+                page-break-after: auto;
             }
         }
 
@@ -1305,6 +1314,7 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                         </div>
                     </div>
 
+                    <?= newPdfPage() ?>
                     <div
                         style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:20px; border:1px solid #000;">
                         PHOTOS ANNEXES</div>
