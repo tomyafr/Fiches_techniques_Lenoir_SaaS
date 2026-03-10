@@ -259,7 +259,7 @@ $machines = $stmtMach->fetchAll();
 
                 <div class="form-group">
                     <label class="label">Nom du Signataire (Client)</label>
-                    <input type="text" name="nomClient" class="input" placeholder="Nom et prénom..." required>
+                    <input type="text" name="nomClient" class="input" placeholder="Nom et prénom..." value="<?= htmlspecialchars($intervention['nom_signataire_client'] ?? '') ?>" required>
                 </div>
 
                 <div class="form-group">
@@ -338,10 +338,16 @@ $machines = $stmtMach->fetchAll();
                     if (!padClient) {
                         resizeCanvas(canvasC);
                         padClient = new SignaturePad(canvasC, { penColor: "blue" });
+                        <?php if (!empty($intervention['signature_client'])): ?>
+                            padClient.fromDataURL('<?= $intervention['signature_client'] ?>', { ratio: 1, width: canvasC.width, height: canvasC.height });
+                        <?php endif; ?>
                     }
                     if (!padTech) {
                         resizeCanvas(canvasT);
                         padTech = new SignaturePad(canvasT, { penColor: "black" });
+                        <?php if (!empty($intervention['signature_technicien'])): ?>
+                            padTech.fromDataURL('<?= $intervention['signature_technicien'] ?>', { ratio: 1, width: canvasT.width, height: canvasT.height });
+                        <?php endif; ?>
                     }
                 }
             }, 50); // Petit délai pour laisser le navigateur dessiner la modale
