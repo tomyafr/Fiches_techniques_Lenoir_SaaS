@@ -1005,7 +1005,9 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                                     value="<?= htmlspecialchars($mesures['levage_isolement'] ?? '') ?>" class="pdf-input"
                                     style="width:60px;"> M.Ohms
                             </td>
-                            <td style="padding:4px;"></td>
+                            <td style="padding:0;"><textarea name="donnees[levage_isolement_comment]" class="pdf-textarea"
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_isolement_comment"] ?? '') ?></textarea>
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="1" style="padding:4px; font-weight:bold;">Résistance à froid :</td>
@@ -1014,7 +1016,9 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                                     value="<?= htmlspecialchars($mesures['levage_resistance'] ?? '') ?>" class="pdf-input"
                                     style="width:60px;"> ohms
                             </td>
-                            <td style="padding:4px;"></td>
+                            <td style="padding:0;"><textarea name="donnees[levage_resistance_comment]" class="pdf-textarea"
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_resistance_comment"] ?? '') ?></textarea>
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="1" style="padding:4px; font-weight:bold;">Température de la carcasse :</td>
@@ -1023,7 +1027,10 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                                     value="<?= htmlspecialchars($mesures['levage_temp_carcasse'] ?? '') ?>"
                                     class="pdf-input" style="width:60px;"> °C
                             </td>
-                            <td style="padding:4px;"></td>
+                            <td style="padding:0;"><textarea name="donnees[levage_temp_carcasse_comment]"
+                                    class="pdf-textarea"
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_temp_carcasse_comment"] ?? '') ?></textarea>
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="1" style="padding:4px; font-weight:bold;">Température ambiante :</td>
@@ -1032,7 +1039,10 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                                     value="<?= htmlspecialchars($mesures['levage_temp_ambiante'] ?? '') ?>"
                                     class="pdf-input" style="width:60px;"> °C
                             </td>
-                            <td style="padding:4px;"></td>
+                            <td style="padding:0;"><textarea name="donnees[levage_temp_ambiante_comment]"
+                                    class="pdf-textarea"
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_temp_ambiante_comment"] ?? '') ?></textarea>
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="1" style="padding:4px; font-weight:bold;">Electroaimant arrêté depuis :</td>
@@ -1041,7 +1051,10 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                                     value="<?= htmlspecialchars($mesures['levage_arrete_depuis'] ?? '') ?>"
                                     class="pdf-input" style="width:60px;"> h
                             </td>
-                            <td style="padding:4px;"></td>
+                            <td style="padding:0;"><textarea name="donnees[levage_arrete_depuis_comment]"
+                                    class="pdf-textarea"
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_arrete_depuis_comment"] ?? '') ?></textarea>
+                            </td>
                         </tr>
                         <?= renderAprfRow("Serrage correcte des bornes", "levage_serrage_bornes", $donnees) ?>
 
@@ -1054,49 +1067,70 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                             <td style="padding:4px; font-weight:bold;">Tension :</td>
                             <td style="padding:0; vertical-align:middle; border:1px solid #000;">
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <input type="text" name="mesures[levage_tension]"
-                                        value="<?= htmlspecialchars($mesures['levage_tension'] ?? '') ?>" class="pdf-input"
-                                        style="width:60px; text-align:center;">
+                                    <div style="display:flex; align-items:center;">
+                                        <input type="text" name="mesures[levage_tension]"
+                                            value="<?= htmlspecialchars($mesures['levage_tension'] ?? '') ?>"
+                                            class="pdf-input" style="width:60px; text-align:center;"> <span
+                                            style="font-size:10px; margin-left:3px;">Vcc</span>
+                                    </div>
                                     <?= renderAprfEtatRadios("levage_tension_stat", $donnees) ?>
                                 </div>
                             </td>
-                            <td style="padding:4px;">Vcc</td>
+                            <td style="padding:0;"><textarea name="donnees[levage_tension_comment]" class="pdf-textarea"
+                                    style="height:60px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_tension_comment"] ?? '') ?></textarea>
+                            </td>
                         </tr>
                         <tr>
                             <td style="padding:4px; font-weight:bold;">Intensité :</td>
                             <td style="padding:0; vertical-align:middle; border:1px solid #000;">
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <input type="text" name="mesures[levage_intensite]"
-                                        value="<?= htmlspecialchars($mesures['levage_intensite'] ?? '') ?>"
-                                        class="pdf-input" style="width:60px; text-align:center;">
+                                    <div style="display:flex; align-items:center;">
+                                        <input type="text" name="mesures[levage_intensite]"
+                                            value="<?= htmlspecialchars($mesures['levage_intensite'] ?? '') ?>"
+                                            class="pdf-input" style="width:60px; text-align:center;"> <span
+                                            style="font-size:10px; margin-left:3px;">A</span>
+                                    </div>
                                     <?= renderAprfEtatRadios("levage_intensite_stat", $donnees) ?>
                                 </div>
                             </td>
-                            <td style="padding:4px;">A</td>
+                            <td style="padding:0;"><textarea name="donnees[levage_intensite_comment]" class="pdf-textarea"
+                                    style="height:60px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_intensite_comment"] ?? '') ?></textarea>
+                            </td>
                         </tr>
                         <tr>
                             <td style="padding:4px; font-weight:bold;">Champ magnétique (centre noyau) :</td>
                             <td style="padding:0; vertical-align:middle; border:1px solid #000;">
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <input type="text" name="mesures[levage_champ_centre]"
-                                        value="<?= htmlspecialchars($mesures['levage_champ_centre'] ?? '') ?>"
-                                        class="pdf-input" style="width:60px; text-align:center;">
+                                    <div style="display:flex; align-items:center;">
+                                        <input type="text" name="mesures[levage_champ_centre]"
+                                            value="<?= htmlspecialchars($mesures['levage_champ_centre'] ?? '') ?>"
+                                            class="pdf-input" style="width:60px; text-align:center;"> <span
+                                            style="font-size:10px; margin-left:3px;">Gauss</span>
+                                    </div>
                                     <?= renderAprfEtatRadios("levage_champ_centre_stat", $donnees) ?>
                                 </div>
                             </td>
-                            <td style="padding:4px;">Gauss</td>
+                            <td style="padding:0;"><textarea name="donnees[levage_champ_centre_comment]"
+                                    class="pdf-textarea"
+                                    style="height:60px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_champ_centre_comment"] ?? '') ?></textarea>
+                            </td>
                         </tr>
                         <tr>
                             <td style="padding:4px; font-weight:bold;">Champ magnétique (milieu pôle) :</td>
                             <td style="padding:0; vertical-align:middle; border:1px solid #000;">
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <input type="text" name="mesures[levage_champ_pole]"
-                                        value="<?= htmlspecialchars($mesures['levage_champ_pole'] ?? '') ?>"
-                                        class="pdf-input" style="width:60px; text-align:center;">
+                                    <div style="display:flex; align-items:center;">
+                                        <input type="text" name="mesures[levage_champ_pole]"
+                                            value="<?= htmlspecialchars($mesures['levage_champ_pole'] ?? '') ?>"
+                                            class="pdf-input" style="width:60px; text-align:center;"> <span
+                                            style="font-size:10px; margin-left:3px;">Gauss</span>
+                                    </div>
                                     <?= renderAprfEtatRadios("levage_champ_pole_stat", $donnees) ?>
                                 </div>
                             </td>
-                            <td style="padding:4px;">Gauss</td>
+                            <td style="padding:0;"><textarea name="donnees[levage_champ_pole_comment]" class="pdf-textarea"
+                                    style="height:60px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_champ_pole_comment"] ?? '') ?></textarea>
+                            </td>
                         </tr>
 
                         <!-- Section APPLICATION DU CLIENT -->
@@ -1139,25 +1173,28 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                     </table>
 
                     <div style="margin-top:20px; border:1px solid #000; padding:10px; color:black;">
-                        <div style="display:flex; justify-content:center; margin-bottom:10px;">
-                            <img src="/assets/machines/levage_diagram.png" style="max-width:100%; height:auto;"
+                        <div
+                            style="display:flex; justify-content:center; align-items: flex-end; margin-bottom:10px; gap: 20px;">
+                            <img src="/assets/machines/levage_diagram.png" style="max-height:400px; width:auto;"
                                 alt="Schéma Levage">
+                            <img src="/assets/machines/levage_side_diagram.png"
+                                style="max-height:200px; width:auto; border: 1px solid #ddd;" alt="Vue de côté">
                         </div>
 
                         <div style="display:flex; gap:10px;">
                             <div style="flex:1; border:1px solid #000; padding:5px; font-size:11px;">
                                 <strong>Diamètre du pôle :</strong> <input type="text" name="mesures[levage_diam_pole]"
                                     value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input"
-                                    style="width:60px;"> mm<br>
+                                    style="width:60px; border-bottom: 1px solid #000;"> mm<br>
                                 <strong>Diamètre du noyau :</strong> <input type="text" name="mesures[levage_diam_noyau]"
                                     value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>" class="pdf-input"
-                                    style="width:60px;"> mm
+                                    style="width:60px; border-bottom: 1px solid #000;"> mm
                             </div>
                             <div style="flex:1; border:1px solid #000; padding:5px; font-size:11px;">
                                 <strong>Epaisseur du pôle :</strong> <input type="text"
                                     name="mesures[levage_epaisseur_pole]"
                                     value="<?= htmlspecialchars($mesures['levage_epaisseur_pole'] ?? '') ?>"
-                                    class="pdf-input" style="width:60px;"> mm
+                                    class="pdf-input" style="width:60px; border-bottom: 1px solid #000;"> mm
                             </div>
                         </div>
                     </div>
