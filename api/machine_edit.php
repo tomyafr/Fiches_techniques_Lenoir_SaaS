@@ -235,6 +235,31 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        @media print {
+            .top-bar {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+
+            .mobile-wrapper {
+                padding: 0;
+                margin: 0;
+            }
+
+            .pdf-page {
+                margin: 0;
+                box-shadow: none;
+                page-break-after: always;
+                padding: 1cm;
+                border-radius: 0;
+            }
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 0;
@@ -249,7 +274,7 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
             }
 
             .pdf-page {
-                margin: 0;
+                margin: 0 0 20px 0;
                 transform-origin: top left;
             }
         }
@@ -271,61 +296,68 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
         </div>
 
         <div class="mobile-wrapper">
-            <div class="pdf-page">
-                <!-- Header exact LENOIR -->
-                <table
-                    style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:15px; color:#000;">
-                    <tr>
-                        <td style="width:40%; border-right:1px solid #000; padding:15px; vertical-align:bottom;">
-                            <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC"
-                                style="max-width:220px; display:block; margin-bottom:30px;">
-                            <div style="text-align:right; font-weight:bold; color:#0070c0; font-size:16px;">
-                                Poste<input type="text" name="mesures[poste]"
-                                    value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>"
-                                    style="width:100px; border:none; border-bottom:1px solid #0070c0; outline:none; color:#0070c0; background:transparent; font-weight:bold;">
-                            </div>
-                        </td>
-                        <td style="width:60%; text-align:center; vertical-align:middle;">
-                            <span style="font-size:26px; font-weight:bold; color:#000;">
-                                <?= $isAPRF ? 'Aimant permanent rectangulaire fixe APRF' : ($isEDX ? 'Séparateur à courants de foucault ED-X' : ($isOV ? 'Overband Electromagnétique OV' : ($isLevage ? 'Electroaimants de Levage' : htmlspecialchars($machine['designation'])))) ?>
-                            </span>
-                        </td>
-                    </tr>
-                </table>
+            <?php
+            ob_start();
+            ?>
+            <!-- Header exact LENOIR -->
+            <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:15px; color:#000;">
+                <tr>
+                    <td style="width:40%; border-right:1px solid #000; padding:15px; vertical-align:bottom;">
+                        <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC"
+                            style="max-width:220px; display:block; margin-bottom:30px;">
+                        <div style="text-align:right; font-weight:bold; color:#0070c0; font-size:16px;">
+                            Poste<input type="text" name="mesures[poste]"
+                                value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>"
+                                style="width:100px; border:none; border-bottom:1px solid #0070c0; outline:none; color:#0070c0; background:transparent; font-weight:bold;">
+                        </div>
+                    </td>
+                    <td style="width:60%; text-align:center; vertical-align:middle;">
+                        <span style="font-size:26px; font-weight:bold; color:#000;">
+                            <?= $isAPRF ? 'Aimant permanent rectangulaire fixe APRF' : ($isEDX ? 'Séparateur à courants de foucault ED-X' : ($isOV ? 'Overband Electromagnétique OV' : ($isLevage ? 'Electroaimants de Levage' : htmlspecialchars($machine['designation'])))) ?>
+                        </span>
+                    </td>
+                </tr>
+            </table>
 
-                <table
-                    style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000;">
-                    <tr>
-                        <td
-                            style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
-                            N° A.R.C.</td>
-                        <td style="width:35%; border:1px solid #000; padding:6px; font-family:Courier, monospace;">
-                            <?= htmlspecialchars($machine['numero_arc']) ?>
-                        </td>
-                        <td
-                            style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
-                            Repère</td>
-                        <td style="width:35%; border:1px solid #000; padding:6px;">
-                            <input type="text" name="mesures[repere]"
-                                value="<?= htmlspecialchars($mesures['repere'] ?? '') ?>" class="pdf-input">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td
-                            style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
-                            N° O.F.</td>
-                        <td style="width:35%; border:1px solid #000; padding:6px;">
-                            <input type="text" name="numero_of" value="<?= htmlspecialchars($machine['numero_of']) ?>"
-                                class="pdf-input">
-                        </td>
-                        <td
-                            style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
-                            Désignation</td>
-                        <td style="width:35%; border:1px solid #000; padding:6px; font-weight:bold;">
-                            <?= htmlspecialchars($machine['designation']) ?>
-                        </td>
-                    </tr>
-                </table>
+            <table
+                style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000;">
+                <tr>
+                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N°
+                        A.R.C.</td>
+                    <td style="width:35%; border:1px solid #000; padding:6px; font-family:Courier, monospace;">
+                        <?= htmlspecialchars($machine['numero_arc']) ?>
+                    </td>
+                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
+                        Repère</td>
+                    <td style="width:35%; border:1px solid #000; padding:6px;">
+                        <input type="text" name="mesures[repere]"
+                            value="<?= htmlspecialchars($mesures['repere'] ?? '') ?>" class="pdf-input">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N°
+                        O.F.</td>
+                    <td style="width:35%; border:1px solid #000; padding:6px;">
+                        <input type="text" name="numero_of" value="<?= htmlspecialchars($machine['numero_of']) ?>"
+                            class="pdf-input">
+                    </td>
+                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
+                        Désignation</td>
+                    <td style="width:35%; border:1px solid #000; padding:6px; font-weight:bold;">
+                        <?= htmlspecialchars($machine['designation']) ?>
+                    </td>
+                </tr>
+            </table>
+            <?php
+            $pdfHeader = ob_get_clean();
+            function newPdfPage()
+            {
+                global $pdfHeader;
+                return '</div><div class="pdf-page">' . $pdfHeader;
+            }
+            ?>
+            <div class="pdf-page">
+                <?= $pdfHeader ?>
 
                 <?php
                 // HELPER FONCTION : Radio Button pour État (C/A/NC)
@@ -493,8 +525,9 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                         </tr>
                     </table>
 
+                    <?= newPdfPage() ?>
                     <div
-                        style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0; border:1px solid #000; border-top:none;">
+                        style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0; border:1px solid #000;">
                         PHOTOS ANNEXES :</div>
 
                     <img src="/assets/machines/aprf_diagram.png"
@@ -610,7 +643,10 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                         <?= renderEdxRow("Etat général des câbles d'alimentation, boîtiers de raccordement, connexion", "edx_cables", $donnees) ?>
                         <?= renderEdxRow("Nettoyage complet de l'intérieur du séparateur", "edx_nettoyage", $donnees) ?>
                         <?= renderEdxRow("Remontage des carters de protection/portes", "edx_remontage", $donnees) ?>
+                    </table>
 
+                    <?= newPdfPage() ?>
+                    <table class="pdf-table" style="font-size:11px;">
                         <tr>
                             <th colspan="3" style="background:#5b9bd5; color:white;">Partie B - Caisson de séparation</th>
                         </tr>
@@ -695,8 +731,9 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                         <?= renderFreqRowEdx("Nettoyage de l'intérieur du séparateur - partie caisson de séparation", "edx_freq_net_cais", $donnees) ?>
                     </table>
 
+                    <?= newPdfPage() ?>
                     <div
-                        style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:20px; border:1px solid #000; border-top:none;">
+                        style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0px; border:1px solid #000;">
                         PHOTOS ANNEXES :</div>
 
                     <img src="/assets/machines/edx_diagram.png"
@@ -869,7 +906,9 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                         <?= renderFreqRow("Graissage des paliers", "ov_freq_graiss", $donnees) ?>
                     </table>
 
-                    <div style="border:1px solid #f29b43; padding:10px; margin-top:20px; text-align:center;">
+                    <?= newPdfPage() ?>
+
+                    <div style="border:1px solid #f29b43; padding:10px; margin-top:0px; text-align:center;">
                         <img src="/assets/machines/ov_diagram.png"
                             style="max-width:100%; height:auto; display:block; margin:0 auto 15px auto;" alt="Schéma OV">
 
@@ -931,8 +970,10 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                             </table>
                         </div>
                     </div>
+
+                    <?= newPdfPage() ?>
                     <div
-                        style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0; border:1px solid #000; border-top:none;">
+                        style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0; border:1px solid #000;">
                         PHOTOS ANNEXES</div>
 
                 <?php elseif ($isLevage): ?>
@@ -1008,7 +1049,8 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                             </td>
                             <td
                                 style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
-                                <?= renderAprfEtatRadios('levage_isolement_stat', $donnees) ?></td>
+                                <?= renderAprfEtatRadios('levage_isolement_stat', $donnees) ?>
+                            </td>
                             <td style="padding:0;"><textarea name="donnees[levage_isolement_comment]" class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_isolement_comment"] ?? '') ?></textarea>
                             </td>
@@ -1023,7 +1065,8 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                             </td>
                             <td
                                 style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
-                                <?= renderAprfEtatRadios('levage_resistance_stat', $donnees) ?></td>
+                                <?= renderAprfEtatRadios('levage_resistance_stat', $donnees) ?>
+                            </td>
                             <td style="padding:0;"><textarea name="donnees[levage_resistance_comment]" class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_resistance_comment"] ?? '') ?></textarea>
                             </td>
@@ -1039,7 +1082,8 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                             </td>
                             <td
                                 style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
-                                <?= renderAprfEtatRadios('levage_temp_carcasse_stat', $donnees) ?></td>
+                                <?= renderAprfEtatRadios('levage_temp_carcasse_stat', $donnees) ?>
+                            </td>
                             <td style="padding:0;"><textarea name="donnees[levage_temp_carcasse_comment]"
                                     class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_temp_carcasse_comment"] ?? '') ?></textarea>
@@ -1056,7 +1100,8 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                             </td>
                             <td
                                 style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
-                                <?= renderAprfEtatRadios('levage_temp_ambiante_stat', $donnees) ?></td>
+                                <?= renderAprfEtatRadios('levage_temp_ambiante_stat', $donnees) ?>
+                            </td>
                             <td style="padding:0;"><textarea name="donnees[levage_temp_ambiante_comment]"
                                     class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_temp_ambiante_comment"] ?? '') ?></textarea>
@@ -1072,14 +1117,18 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                             </td>
                             <td
                                 style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
-                                <?= renderAprfEtatRadios('levage_arrete_depuis_stat', $donnees) ?></td>
+                                <?= renderAprfEtatRadios('levage_arrete_depuis_stat', $donnees) ?>
+                            </td>
                             <td style="padding:0;"><textarea name="donnees[levage_arrete_depuis_comment]"
                                     class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_arrete_depuis_comment"] ?? '') ?></textarea>
                             </td>
                         </tr>
                         <?= renderAprfRow("Serrage correcte des bornes", "levage_serrage_bornes", $donnees) ?>
+                    </table>
 
+                    <?= newPdfPage() ?>
+                    <table class="pdf-table" style="font-size:11px; color:black;">
                         <!-- Section ELECTRIQUE SOUS TENSION -->
                         <tr>
                             <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">
@@ -1095,7 +1144,8 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                             </td>
                             <td
                                 style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
-                                <?= renderAprfEtatRadios('levage_tension_stat', $donnees) ?></td>
+                                <?= renderAprfEtatRadios('levage_tension_stat', $donnees) ?>
+                            </td>
                             <td style="padding:0;"><textarea name="donnees[levage_tension_comment]" class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_tension_comment"] ?? '') ?></textarea>
                             </td>
@@ -1109,7 +1159,8 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                             </td>
                             <td
                                 style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
-                                <?= renderAprfEtatRadios('levage_intensite_stat', $donnees) ?></td>
+                                <?= renderAprfEtatRadios('levage_intensite_stat', $donnees) ?>
+                            </td>
                             <td style="padding:0;"><textarea name="donnees[levage_intensite_comment]" class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_intensite_comment"] ?? '') ?></textarea>
                             </td>
@@ -1124,7 +1175,8 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                             </td>
                             <td
                                 style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
-                                <?= renderAprfEtatRadios('levage_champ_centre_stat', $donnees) ?></td>
+                                <?= renderAprfEtatRadios('levage_champ_centre_stat', $donnees) ?>
+                            </td>
                             <td style="padding:0;"><textarea name="donnees[levage_champ_centre_comment]"
                                     class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_champ_centre_comment"] ?? '') ?></textarea>
@@ -1140,7 +1192,8 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                             </td>
                             <td
                                 style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
-                                <?= renderAprfEtatRadios('levage_champ_pole_stat', $donnees) ?></td>
+                                <?= renderAprfEtatRadios('levage_champ_pole_stat', $donnees) ?>
+                            </td>
                             <td style="padding:0;"><textarea name="donnees[levage_champ_pole_comment]" class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_champ_pole_comment"] ?? '') ?></textarea>
                             </td>
@@ -1220,7 +1273,9 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                         </tr>
                     </table>
 
-                    <div style="margin-top:20px; border:1px solid #000; padding:10px; color:black;">
+                    <?= newPdfPage() ?>
+
+                    <div style="margin-top:0px; border:1px solid #000; padding:10px; color:black;">
                         <!-- Main schema enlarged without absolute positioning inside -->
                         <div style="display:flex; justify-content:center; align-items: flex-end; margin-bottom:10px;">
                             <img src="/assets/machines/levage_diagram.png"
@@ -1241,10 +1296,14 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                                 <strong>Epaisseur du pôle :</strong> <input type="text"
                                     name="mesures[levage_epaisseur_pole]"
                                     value="<?= htmlspecialchars($mesures['levage_epaisseur_pole'] ?? '') ?>"
-                                    class="pdf-input" style="width:60px; border-bottom: 1px solid #000;"> mm
                             </div>
                         </div>
                     </div>
+
+                    <?= newPdfPage() ?>
+                    <div
+                        style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0; border:1px solid #000;">
+                        PHOTOS ANNEXES</div>
 
                 <?php else: ?>
 
@@ -1316,11 +1375,13 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
 
                 <?php endif; ?>
 
+                <?php if (!$isEDX): ?>
                 <div style="margin-top:20px; border: 1px solid #000; padding:10px;">
                     <div style="font-weight:bold; font-size:14px; margin-bottom:5px;">Commentaire général :</div>
                     <textarea name="commentaires" class="pdf-textarea" style="height:80px; font-size:13px;"
                         placeholder="En présence du client / Pièces à proposer..."><?= htmlspecialchars($machine['commentaires'] ?? '') ?></textarea>
                 </div>
+                <?php endif; ?>
 
             </div> <!-- fin .pdf-page -->
         </div> <!-- fin .mobile-wrapper -->
