@@ -1172,26 +1172,30 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                         </tr>
                     </table>
 
-                    <div style="margin-top:20px; border:1px solid #000; padding:10px; color:black; position: relative;">
-                        <!-- Main schema enlarged -->
-                        <img src="/assets/machines/levage_diagram.png" style="width:100%; height:auto; display:block;"
-                            alt="Schéma Levage">
+                    <div style="margin-top:20px; border:1px solid #000; padding:10px; color:black;">
+                        <!-- Main schema enlarged without absolute positioning inside -->
+                        <div style="display:flex; justify-content:center; align-items: flex-end; margin-bottom:10px;">
+                            <img src="/assets/machines/levage_diagram.png"
+                                style="width:100%; max-width:600px; height:auto; display:block;" alt="Schéma Levage">
+                        </div>
 
-                        <!-- Inputs superimposed on the diagram's "____ mm" spaces -->
-                        <input type="text" name="mesures[levage_diam_pole]"
-                            value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>"
-                            style="position: absolute; top: 22%; left: 77%; width: 60px; background: rgba(255,255,255,0.7); border: 1px dashed #777; font-size: 14px; font-weight: bold; text-align: center; color: #000; padding: 2px;"
-                            placeholder="...">
-
-                        <input type="text" name="mesures[levage_diam_noyau]"
-                            value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>"
-                            style="position: absolute; top: 28.5%; left: 77%; width: 60px; background: rgba(255,255,255,0.7); border: 1px dashed #777; font-size: 14px; font-weight: bold; text-align: center; color: #000; padding: 2px;"
-                            placeholder="...">
-
-                        <input type="text" name="mesures[levage_epaisseur_pole]"
-                            value="<?= htmlspecialchars($mesures['levage_epaisseur_pole'] ?? '') ?>"
-                            style="position: absolute; top: 39%; left: 74%; width: 60px; background: rgba(255,255,255,0.7); border: 1px dashed #777; font-size: 14px; font-weight: bold; text-align: center; color: #000; padding: 2px;"
-                            placeholder="...">
+                        <!-- Inputs below the image, standard style "comme les autres" -->
+                        <div style="display:flex; gap:10px;">
+                            <div style="flex:1; border:1px solid #000; padding:5px; font-size:11px;">
+                                <strong>Diamètre du pôle :</strong> <input type="text" name="mesures[levage_diam_pole]"
+                                    value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input"
+                                    style="width:60px; border-bottom: 1px solid #000;"> mm<br>
+                                <strong>Diamètre du noyau :</strong> <input type="text" name="mesures[levage_diam_noyau]"
+                                    value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>" class="pdf-input"
+                                    style="width:60px; border-bottom: 1px solid #000;"> mm
+                            </div>
+                            <div style="flex:1; border:1px solid #000; padding:5px; font-size:11px;">
+                                <strong>Epaisseur du pôle :</strong> <input type="text"
+                                    name="mesures[levage_epaisseur_pole]"
+                                    value="<?= htmlspecialchars($mesures['levage_epaisseur_pole'] ?? '') ?>"
+                                    class="pdf-input" style="width:60px; border-bottom: 1px solid #000;"> mm
+                            </div>
+                        </div>
                     </div>
 
                 <?php else: ?>
