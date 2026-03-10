@@ -1006,7 +1006,9 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                                     style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
                                 M.ohms
                             </td>
-                            <td style="border:1px solid #000; text-align:center;"></td>
+                            <td
+                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <?= renderAprfEtatRadios('levage_isolement_stat', $donnees) ?></td>
                             <td style="padding:0;"><textarea name="donnees[levage_isolement_comment]" class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_isolement_comment"] ?? '') ?></textarea>
                             </td>
@@ -1019,7 +1021,9 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                                     style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
                                 ohms
                             </td>
-                            <td style="border:1px solid #000; text-align:center;"></td>
+                            <td
+                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <?= renderAprfEtatRadios('levage_resistance_stat', $donnees) ?></td>
                             <td style="padding:0;"><textarea name="donnees[levage_resistance_comment]" class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_resistance_comment"] ?? '') ?></textarea>
                             </td>
@@ -1033,7 +1037,9 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                                     style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
                                 °C
                             </td>
-                            <td style="border:1px solid #000; text-align:center;"></td>
+                            <td
+                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <?= renderAprfEtatRadios('levage_temp_carcasse_stat', $donnees) ?></td>
                             <td style="padding:0;"><textarea name="donnees[levage_temp_carcasse_comment]"
                                     class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_temp_carcasse_comment"] ?? '') ?></textarea>
@@ -1048,7 +1054,9 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                                     style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
                                 °C
                             </td>
-                            <td style="border:1px solid #000; text-align:center;"></td>
+                            <td
+                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <?= renderAprfEtatRadios('levage_temp_ambiante_stat', $donnees) ?></td>
                             <td style="padding:0;"><textarea name="donnees[levage_temp_ambiante_comment]"
                                     class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_temp_ambiante_comment"] ?? '') ?></textarea>
@@ -1062,7 +1070,9 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                                     class="pdf-input"
                                     style="width:60px; border-bottom:1px solid #000; text-align:center; margin-left:5px;"> h
                             </td>
-                            <td style="border:1px solid #000; text-align:center;"></td>
+                            <td
+                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <?= renderAprfEtatRadios('levage_arrete_depuis_stat', $donnees) ?></td>
                             <td style="padding:0;"><textarea name="donnees[levage_arrete_depuis_comment]"
                                     class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_arrete_depuis_comment"] ?? '') ?></textarea>
@@ -1083,7 +1093,9 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                                     style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
                                 Vcc
                             </td>
-                            <td style="border:1px solid #000; text-align:center;"></td>
+                            <td
+                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <?= renderAprfEtatRadios('levage_tension_stat', $donnees) ?></td>
                             <td style="padding:0;"><textarea name="donnees[levage_tension_comment]" class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_tension_comment"] ?? '') ?></textarea>
                             </td>
@@ -1095,7 +1107,9 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                                     value="<?= htmlspecialchars($mesures['levage_intensite'] ?? '') ?>" class="pdf-input"
                                     style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;"> A
                             </td>
-                            <td style="border:1px solid #000; text-align:center;"></td>
+                            <td
+                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <?= renderAprfEtatRadios('levage_intensite_stat', $donnees) ?></td>
                             <td style="padding:0;"><textarea name="donnees[levage_intensite_comment]" class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_intensite_comment"] ?? '') ?></textarea>
                             </td>
@@ -1108,7 +1122,9 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                                     style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
                                 Gauss
                             </td>
-                            <td style="border:1px solid #000; text-align:center;"></td>
+                            <td
+                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <?= renderAprfEtatRadios('levage_champ_centre_stat', $donnees) ?></td>
                             <td style="padding:0;"><textarea name="donnees[levage_champ_centre_comment]"
                                     class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_champ_centre_comment"] ?? '') ?></textarea>
@@ -1122,7 +1138,9 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                                     style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
                                 Gauss
                             </td>
-                            <td style="border:1px solid #000; text-align:center;"></td>
+                            <td
+                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <?= renderAprfEtatRadios('levage_champ_pole_stat', $donnees) ?></td>
                             <td style="padding:0;"><textarea name="donnees[levage_champ_pole_comment]" class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_champ_pole_comment"] ?? '') ?></textarea>
                             </td>
