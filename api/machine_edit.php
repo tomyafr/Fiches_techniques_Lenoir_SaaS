@@ -1180,17 +1180,17 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                         <!-- Inputs superimposed on the diagram's "____ mm" spaces -->
                         <input type="text" name="mesures[levage_diam_pole]"
                             value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>"
-                            style="position: absolute; top: 40%; left: 56%; width: 80px; background: rgba(255,255,255,0.4); border: 1px dashed #bbb; font-size: 14px; font-weight: bold; text-align: center; color: #000;"
+                            style="position: absolute; top: 22%; left: 77%; width: 60px; background: rgba(255,255,255,0.7); border: 1px dashed #777; font-size: 14px; font-weight: bold; text-align: center; color: #000; padding: 2px;"
                             placeholder="...">
 
                         <input type="text" name="mesures[levage_diam_noyau]"
                             value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>"
-                            style="position: absolute; top: 49%; left: 56%; width: 80px; background: rgba(255,255,255,0.4); border: 1px dashed #bbb; font-size: 14px; font-weight: bold; text-align: center; color: #000;"
+                            style="position: absolute; top: 28.5%; left: 77%; width: 60px; background: rgba(255,255,255,0.7); border: 1px dashed #777; font-size: 14px; font-weight: bold; text-align: center; color: #000; padding: 2px;"
                             placeholder="...">
 
                         <input type="text" name="mesures[levage_epaisseur_pole]"
                             value="<?= htmlspecialchars($mesures['levage_epaisseur_pole'] ?? '') ?>"
-                            style="position: absolute; top: 74%; left: 66%; width: 90px; background: rgba(255,255,255,0.4); border: 1px dashed #bbb; font-size: 14px; font-weight: bold; text-align: center; color: #000;"
+                            style="position: absolute; top: 39%; left: 74%; width: 60px; background: rgba(255,255,255,0.7); border: 1px dashed #777; font-size: 14px; font-weight: bold; text-align: center; color: #000; padding: 2px;"
                             placeholder="...">
                     </div>
 
