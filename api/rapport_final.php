@@ -351,6 +351,18 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             .sig-clear {
                 display: none !important;
             }
+
+            .rapport-logo {
+                filter: none !important;
+                /* Keep original color in PDF/Print */
+            }
+        }
+
+        @media screen {
+            .rapport-logo {
+                /* Make it white/bright on the dark theme screen */
+                filter: brightness(0) invert(1) opacity(0.9);
+            }
         }
     </style>
 </head>
@@ -371,12 +383,16 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             <input type="hidden" name="action" value="save_rapport">
 
             <?php if (isset($_GET['msg']) && $_GET['msg'] === 'ok'): ?>
-                <div style="background: rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.4); color:#10b981; padding:1.5rem; border-radius:12px; margin-bottom:1.5rem; text-align:center;">
+                <div
+                    style="background: rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.4); color:#10b981; padding:1.5rem; border-radius:12px; margin-bottom:1.5rem; text-align:center;">
                     <div style="font-size:2.5rem; margin-bottom:0.5rem;">✅</div>
                     <h3 style="margin:0 0 0.5rem 0; color:#10b981;">Rapport finalisé avec succès !</h3>
-                    <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1.5rem;">L'intervention ARC <?= htmlspecialchars($intervention['numero_arc']) ?> a été clôturée.</p>
+                    <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1.5rem;">L'intervention ARC
+                        <?= htmlspecialchars($intervention['numero_arc']) ?> a été clôturée.
+                    </p>
                     <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
-                        <button type="button" onclick="window.print()" style="padding:0.7rem 1.5rem; background:var(--primary); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">
+                        <button type="button" onclick="window.print()"
+                            style="padding:0.7rem 1.5rem; background:var(--primary); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">
                             🖨️ Imprimer / Sauvegarder PDF
                         </button>
                         <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>"
@@ -388,14 +404,15 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             <?php endif; ?>
 
             <?php if (!empty($error)): ?>
-                <div style="background: rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.4); color:#f43f5e; padding:1rem; border-radius:8px; margin-bottom:1.5rem; font-size:0.85rem;">
+                <div
+                    style="background: rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.4); color:#f43f5e; padding:1rem; border-radius:8px; margin-bottom:1.5rem; font-size:0.85rem;">
                     ⚠️ <?= htmlspecialchars($error) ?>
                 </div>
             <?php endif; ?>
 
             <!-- EN-TÊTE -->
             <div class="rapport-header card glass">
-                <img src="/assets/logo-raoul-lenoir.png" alt="LENOIR-MEC"
+                <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC" class="rapport-logo"
                     style="height: 60px; width: auto; object-fit: contain; margin: 0 auto 1rem auto; display: block; max-width: 100%;">
                 <h1>Rapport d'expertise sur site</h1>
                 <div class="arc-badge">ARC
