@@ -173,30 +173,52 @@ $machines = $stmtMach->fetchAll();
                 <table style="width:100%; border-collapse:collapse; font-size:0.85rem; min-width:600px;">
                     <thead>
                         <tr style="background: rgba(255,179,0,0.1); text-align:left;">
-                            <th style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700; white-space:nowrap;">N° ARC</th>
-                            <th style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700;">N° OF</th>
-                            <th style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700;">Désignation</th>
-                            <th style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700;">Repère</th>
-                            <th style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700;">Année</th>
-                            <th style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700; text-align:center;">Actions</th>
+                            <th
+                                style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700; white-space:nowrap;">
+                                N° ARC</th>
+                            <th
+                                style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700;">
+                                N° OF</th>
+                            <th
+                                style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700;">
+                                Désignation</th>
+                            <th
+                                style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700;">
+                                Repère</th>
+                            <th
+                                style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700;">
+                                Année</th>
+                            <th
+                                style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700; text-align:center;">
+                                Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($machines as $m):
                             $mMesures = json_decode($m['mesures'] ?? '{}', true);
-                        ?>
-                            <tr id="machine-card-<?= $m['id'] ?>" style="border-top: 1px solid var(--glass-border); cursor:pointer; transition: all 0.3s ease;"
+                            ?>
+                            <tr id="machine-card-<?= $m['id'] ?>"
+                                style="border-top: 1px solid var(--glass-border); cursor:pointer; transition: all 0.3s ease;"
                                 onclick="window.location.href='machine_edit.php?id=<?= $m['id'] ?>';"
-                                onmouseover="this.style.background='rgba(255,179,0,0.05)'" onmouseout="this.style.background=''">
-                                <td style="padding:0.6rem 0.8rem; color:var(--text-dim); font-family:monospace; white-space:nowrap;"><?= htmlspecialchars($intervention['numero_arc']) ?></td>
-                                <td style="padding:0.6rem 0.8rem; white-space:nowrap;"><?= htmlspecialchars($m['numero_of'] ?: '—') ?></td>
-                                <td style="padding:0.6rem 0.8rem; font-weight:600;"><?= htmlspecialchars($m['designation']) ?></td>
+                                onmouseover="this.style.background='rgba(255,179,0,0.05)'"
+                                onmouseout="this.style.background=''">
+                                <td
+                                    style="padding:0.6rem 0.8rem; color:var(--text-dim); font-family:monospace; white-space:nowrap;">
+                                    <?= htmlspecialchars($intervention['numero_arc']) ?></td>
+                                <td style="padding:0.6rem 0.8rem; white-space:nowrap;">
+                                    <?= htmlspecialchars($m['numero_of'] ?: '—') ?></td>
+                                <td style="padding:0.6rem 0.8rem; font-weight:600;"><?= htmlspecialchars($m['designation']) ?>
+                                </td>
                                 <td style="padding:0.6rem 0.8rem;"><?= htmlspecialchars($mMesures['repere'] ?? '—') ?></td>
-                                <td style="padding:0.6rem 0.8rem; text-align:center;"><?= htmlspecialchars($m['annee_fabrication'] ?: '—') ?></td>
-                                <td style="padding:0.6rem 0.8rem; text-align:center; white-space:nowrap;" onclick="event.stopPropagation();">
-                                    <a href="machine_edit.php?id=<?= $m['id'] ?>" style="text-decoration:none; font-size:1rem; margin-right:8px;" title="Éditer">✏️</a>
+                                <td style="padding:0.6rem 0.8rem; text-align:center;">
+                                    <?= htmlspecialchars($m['annee_fabrication'] ?: '—') ?></td>
+                                <td style="padding:0.6rem 0.8rem; text-align:center; white-space:nowrap;"
+                                    onclick="event.stopPropagation();">
+                                    <a href="machine_edit.php?id=<?= $m['id'] ?>"
+                                        style="text-decoration:none; font-size:1rem; margin-right:8px;" title="Éditer">✏️</a>
                                     <button onclick="deleteMachine(<?= $m['id'] ?>, this);"
-                                        style="background:none; border:none; font-size:1rem; cursor:pointer; color:var(--error);" title="Supprimer">🗑️</button>
+                                        style="background:none; border:none; font-size:1rem; cursor:pointer; color:var(--error);"
+                                        title="Supprimer">🗑️</button>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -205,13 +227,13 @@ $machines = $stmtMach->fetchAll();
             </div>
 
             <!-- Bouton pour Finaliser -->
-            <button onclick="openSignatureModal()" class="btn btn-primary"
-                style="width:100%; margin-top: 2rem; padding: 1rem; font-size: 1rem; background: var(--accent-cyan); color: #000; font-weight: bold; border:none;">
-                Terminer et Signer l'intervention ✓
-            </button>
+            <a href="rapport_final.php?id=<?= $id ?>" class="btn btn-primary"
+                style="display:block; width:100%; margin-top: 2rem; padding: 1rem; font-size: 1rem; background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: bold; border:none; text-align:center; text-decoration:none; border-radius:12px;">
+                Finaliser le Rapport ✓
+            </a>
             <button onclick="document.getElementById('modalQuit').style.display='flex'" class="btn btn-ghost"
                 style="width:100%; margin-top: 1rem; padding: 1rem; font-size: 1rem; color: var(--error); border: 1px solid rgba(244, 63, 94, 0.3);">
-                Quitter sans signer ✖
+                Quitter sans finaliser ✖
             </button>
         <?php endif; ?>
 
@@ -231,8 +253,8 @@ $machines = $stmtMach->fetchAll();
                 <div style="display:flex; gap:0.75rem; margin-bottom:1rem;">
                     <div class="form-group" style="flex:1; margin-bottom:0;">
                         <label class="label" style="font-size:0.7rem;">N° A.R.C.</label>
-                        <input type="text" class="input" value="<?= htmlspecialchars($intervention['numero_arc']) ?>" disabled
-                            style="font-family:monospace; opacity:0.7; font-size:0.9rem;">
+                        <input type="text" class="input" value="<?= htmlspecialchars($intervention['numero_arc']) ?>"
+                            disabled style="font-family:monospace; opacity:0.7; font-size:0.9rem;">
                     </div>
                     <div class="form-group" style="flex:1; margin-bottom:0;">
                         <label class="label" style="font-size:0.7rem;">N° OF</label>
@@ -260,12 +282,13 @@ $machines = $stmtMach->fetchAll();
                     </div>
                     <div class="form-group" style="flex:1; margin-bottom:0;">
                         <label class="label" style="font-size:0.7rem;">Année de fabrication</label>
-                        <input type="number" name="annee_fabrication" class="input" placeholder="<?= date('Y') ?>" min="1950"
-                            max="<?= date('Y') ?>">
+                        <input type="number" name="annee_fabrication" class="input" placeholder="<?= date('Y') ?>"
+                            min="1950" max="<?= date('Y') ?>">
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top:0.5rem;">Ajouter cette machine</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top:0.5rem;">Ajouter cette
+                    machine</button>
             </form>
         </div>
     </div>
@@ -399,12 +422,12 @@ $machines = $stmtMach->fetchAll();
             fetch('delete_machine.php?id=' + machineId, {
                 method: 'GET',
                 credentials: 'same-origin'
-            }).then(function() {
+            }).then(function () {
                 var row = document.getElementById('machine-card-' + machineId);
                 if (row) {
                     row.style.opacity = '0';
                     row.style.transition = 'opacity 0.3s ease';
-                    setTimeout(function() {
+                    setTimeout(function () {
                         row.remove();
                         // If no machines remain in tbody, reload to show empty state
                         var tbody = document.querySelector('#machinesList tbody');
@@ -413,7 +436,7 @@ $machines = $stmtMach->fetchAll();
                         }
                     }, 350);
                 }
-            }).catch(function() {
+            }).catch(function () {
                 alert('Erreur lors de la suppression.');
             });
         }
