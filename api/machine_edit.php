@@ -1180,18 +1180,18 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                         <!-- Inputs superimposed on the diagram's "____ mm" spaces -->
                         <input type="text" name="mesures[levage_diam_pole]"
                             value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>"
-                            style="position: absolute; top: 12.5%; left: 75%; width: 60px; background: transparent; border: none; font-size: 14px; font-weight: bold; text-align: center; color: #000;"
-                            placeholder="-">
+                            style="position: absolute; top: 40%; left: 56%; width: 80px; background: rgba(255,255,255,0.4); border: 1px dashed #bbb; font-size: 14px; font-weight: bold; text-align: center; color: #000;"
+                            placeholder="...">
 
                         <input type="text" name="mesures[levage_diam_noyau]"
                             value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>"
-                            style="position: absolute; top: 18.5%; left: 75%; width: 60px; background: transparent; border: none; font-size: 14px; font-weight: bold; text-align: center; color: #000;"
-                            placeholder="-">
+                            style="position: absolute; top: 49%; left: 56%; width: 80px; background: rgba(255,255,255,0.4); border: 1px dashed #bbb; font-size: 14px; font-weight: bold; text-align: center; color: #000;"
+                            placeholder="...">
 
                         <input type="text" name="mesures[levage_epaisseur_pole]"
                             value="<?= htmlspecialchars($mesures['levage_epaisseur_pole'] ?? '') ?>"
-                            style="position: absolute; top: 32%; left: 75%; width: 65px; background: transparent; border: none; font-size: 14px; font-weight: bold; text-align: center; color: #000;"
-                            placeholder="-">
+                            style="position: absolute; top: 74%; left: 66%; width: 90px; background: rgba(255,255,255,0.4); border: 1px dashed #bbb; font-size: 14px; font-weight: bold; text-align: center; color: #000;"
+                            placeholder="...">
                     </div>
 
                 <?php else: ?>
