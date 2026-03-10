@@ -45,9 +45,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $of = trim($_POST['numero_of'] ?? '');
         $designation = trim($_POST['designation'] ?? '');
         $annee = trim($_POST['annee_fabrication'] ?? '');
+        $repere = trim($_POST['repere'] ?? '');
 
+        $initMesures = json_encode(['repere' => $repere]);
         $stmtIns = $db->prepare('INSERT INTO machines (intervention_id, numero_of, designation, annee_fabrication, commentaires, mesures, donnees_controle) VALUES (?, ?, ?, ?, ?, ?, ?)');
-        $stmtIns->execute([$id, $of, $designation, $annee, '', '{}', '{}']);
+        $stmtIns->execute([$id, $of, $designation, $annee, '', $initMesures, '{}']);
         $message = "Machine ajoutée avec succès.";
     } elseif ($_POST['action'] === 'save_signatures') {
         $sigClient = $_POST['sigClient'] ?? null;
@@ -166,32 +168,40 @@ $machines = $stmtMach->fetchAll();
                     class="btn btn-primary">Ajouter la première machine</button>
             </div>
         <?php else: ?>
-            <div id="machinesList">
-                <?php foreach ($machines as $m): ?>
-                    <div class="machine-card glass" id="machine-card-<?= $m['id'] ?>"
-                        style="display: block; cursor: pointer; position: relative; transition: all 0.3s ease;"
-                        ondblclick="window.location.href='machine_edit.php?id=<?= $m['id'] ?>';"
-                        title="Double-clic pour éditer">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <div onclick="window.location.href='machine_edit.php?id=<?= $m['id'] ?>';">
-                                <h4 style="margin: 0 0 0.3rem 0; font-size: 1.05rem;">
-                                    <?= htmlspecialchars($m['designation']) ?>
-                                </h4>
-                                <p style="margin: 0; font-size: 0.8rem; color: var(--text-dim);">OF:
-                                    <?= htmlspecialchars($m['numero_of'] ?: 'N/A') ?> &nbsp;|&nbsp; Année:
-                                    <?= htmlspecialchars($m['annee_fabrication'] ?: 'N/A') ?>
-                                </p>
-                            </div>
-                            <div style="display: flex; gap: 10px; align-items: center;">
-                                <a href="machine_edit.php?id=<?= $m['id'] ?>" class="btn btn-ghost"
-                                    style="padding: 0.5rem; font-size: 0.9rem;">✏️</a>
-                                <button onclick="event.stopPropagation(); deleteMachine(<?= $m['id'] ?>, this);"
-                                    class="btn btn-ghost"
-                                    style="padding: 0.5rem; font-size: 0.9rem; color: var(--error);">🗑️</button>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
+            <!-- PARC MACHINE TABLE -->
+            <div class="card glass" style="padding: 0; overflow-x: auto;" id="machinesList">
+                <table style="width:100%; border-collapse:collapse; font-size:0.85rem; min-width:600px;">
+                    <thead>
+                        <tr style="background: rgba(255,179,0,0.1); text-align:left;">
+                            <th style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700; white-space:nowrap;">N° ARC</th>
+                            <th style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700;">N° OF</th>
+                            <th style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700;">Désignation</th>
+                            <th style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700;">Repère</th>
+                            <th style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700;">Année</th>
+                            <th style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700; text-align:center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($machines as $m):
+                            $mMesures = json_decode($m['mesures'] ?? '{}', true);
+                        ?>
+                            <tr id="machine-card-<?= $m['id'] ?>" style="border-top: 1px solid var(--glass-border); cursor:pointer; transition: all 0.3s ease;"
+                                onclick="window.location.href='machine_edit.php?id=<?= $m['id'] ?>';"
+                                onmouseover="this.style.background='rgba(255,179,0,0.05)'" onmouseout="this.style.background=''">
+                                <td style="padding:0.6rem 0.8rem; color:var(--text-dim); font-family:monospace; white-space:nowrap;"><?= htmlspecialchars($intervention['numero_arc']) ?></td>
+                                <td style="padding:0.6rem 0.8rem; white-space:nowrap;"><?= htmlspecialchars($m['numero_of'] ?: '—') ?></td>
+                                <td style="padding:0.6rem 0.8rem; font-weight:600;"><?= htmlspecialchars($m['designation']) ?></td>
+                                <td style="padding:0.6rem 0.8rem;"><?= htmlspecialchars($mMesures['repere'] ?? '—') ?></td>
+                                <td style="padding:0.6rem 0.8rem; text-align:center;"><?= htmlspecialchars($m['annee_fabrication'] ?: '—') ?></td>
+                                <td style="padding:0.6rem 0.8rem; text-align:center; white-space:nowrap;" onclick="event.stopPropagation();">
+                                    <a href="machine_edit.php?id=<?= $m['id'] ?>" style="text-decoration:none; font-size:1rem; margin-right:8px;" title="Éditer">✏️</a>
+                                    <button onclick="deleteMachine(<?= $m['id'] ?>, this);"
+                                        style="background:none; border:none; font-size:1rem; cursor:pointer; color:var(--error);" title="Supprimer">🗑️</button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
 
             <!-- Bouton pour Finaliser -->
@@ -210,37 +220,52 @@ $machines = $stmtMach->fetchAll();
     <!-- MODAL NEW MACHINE -->
     <div id="modalNewMachine"
         style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; backdrop-filter:blur(5px);">
-        <div class="card glass animate-in" style="width: 100%; max-width: 400px; padding: 2rem; position: relative;">
+        <div class="card glass animate-in" style="width: 100%; max-width: 420px; padding: 2rem; position: relative;">
             <button onclick="document.getElementById('modalNewMachine').style.display='none'"
                 style="position:absolute; top:1rem; right:1.5rem; background:none; border:none; color:var(--text-dim); font-size:1.5rem; cursor:pointer;">&times;</button>
-            <h3 style="margin-bottom: 1.5rem;">Nouvelle Machine</h3>
+            <h3 style="margin-bottom: 1.5rem;">Ajouter une Machine</h3>
             <form method="POST">
                 <?= csrfField() ?>
                 <input type="hidden" name="action" value="ajouter_machine">
 
+                <div style="display:flex; gap:0.75rem; margin-bottom:1rem;">
+                    <div class="form-group" style="flex:1; margin-bottom:0;">
+                        <label class="label" style="font-size:0.7rem;">N° A.R.C.</label>
+                        <input type="text" class="input" value="<?= htmlspecialchars($intervention['numero_arc']) ?>" disabled
+                            style="font-family:monospace; opacity:0.7; font-size:0.9rem;">
+                    </div>
+                    <div class="form-group" style="flex:1; margin-bottom:0;">
+                        <label class="label" style="font-size:0.7rem;">N° OF</label>
+                        <input type="text" name="numero_of" class="input" placeholder="OF-1234">
+                    </div>
+                </div>
+
                 <div class="form-group">
-                    <label class="label">Type de Fiche / Désignation</label>
+                    <label class="label">Type de Fiche / Désignation <span style="color:var(--error);">*</span></label>
                     <select name="designation" class="input" required style="background: rgba(15, 23, 42, 0.6);">
+                        <option value="">— Choisir le type —</option>
                         <option value="SÉPARATEUR OV - SÉRIE 30">SÉPARATEUR OV - SÉRIE 30</option>
                         <option value="SÉPARATEUR OVERBAND OV (AUTRES SÉRIES)">OVERBAND OV (AUTRES SÉRIES)</option>
                         <option value="SÉPARATEURS APRF-APRM">SÉPARATEURS APRF-APRM</option>
                         <option value="ED-X">SÉPARATEUR ED-X</option>
                         <option value="LEVAGE">SÉPARATEUR LEVAGE</option>
+                        <option value="PAP/TAP">PAP / TAP</option>
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label class="label">Numéro OF (Optionnel)</label>
-                    <input type="text" name="numero_of" class="input" placeholder="ex: OF-1234">
+                <div style="display:flex; gap:0.75rem; margin-bottom:1rem;">
+                    <div class="form-group" style="flex:1; margin-bottom:0;">
+                        <label class="label" style="font-size:0.7rem;">Repère</label>
+                        <input type="text" name="repere" class="input" placeholder="ex: SEP-01">
+                    </div>
+                    <div class="form-group" style="flex:1; margin-bottom:0;">
+                        <label class="label" style="font-size:0.7rem;">Année de fabrication</label>
+                        <input type="number" name="annee_fabrication" class="input" placeholder="<?= date('Y') ?>" min="1950"
+                            max="<?= date('Y') ?>">
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="label">Année de fabrication</label>
-                    <input type="number" name="annee_fabrication" class="input" placeholder="2024" min="1950"
-                        max="<?= date('Y') ?>">
-                </div>
-
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Ajouter cette machine</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top:0.5rem;">Ajouter cette machine</button>
             </form>
         </div>
     </div>
@@ -374,28 +399,21 @@ $machines = $stmtMach->fetchAll();
             fetch('delete_machine.php?id=' + machineId, {
                 method: 'GET',
                 credentials: 'same-origin'
-            }).then(function () {
-                const card = document.getElementById('machine-card-' + machineId);
-                if (card) {
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateX(50px)';
-                    card.style.maxHeight = card.scrollHeight + 'px';
-                    setTimeout(function () {
-                        card.style.maxHeight = '0';
-                        card.style.padding = '0';
-                        card.style.margin = '0';
-                        card.style.overflow = 'hidden';
-                    }, 200);
-                    setTimeout(function () {
-                        card.remove();
-                        // If no machines left, show the empty state
-                        const list = document.getElementById('machinesList');
-                        if (list && list.children.length === 0) {
+            }).then(function() {
+                var row = document.getElementById('machine-card-' + machineId);
+                if (row) {
+                    row.style.opacity = '0';
+                    row.style.transition = 'opacity 0.3s ease';
+                    setTimeout(function() {
+                        row.remove();
+                        // If no machines remain in tbody, reload to show empty state
+                        var tbody = document.querySelector('#machinesList tbody');
+                        if (tbody && tbody.children.length === 0) {
                             location.reload();
                         }
-                    }, 500);
+                    }, 350);
                 }
-            }).catch(function () {
+            }).catch(function() {
                 alert('Erreur lors de la suppression.');
             });
         }

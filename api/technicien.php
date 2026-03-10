@@ -234,19 +234,23 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                     <input type="hidden" name="action" value="nouvelle_intervention">
                     <?= csrfField() ?>
                     <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-                        <span style="font-size: 1.2rem;">➕</span> Nouvelle Fiche Technique
+                        <span style="font-size: 1.2rem;">➕</span> Nouvelle Intervention
                     </h3>
 
                     <div class="form-group">
-                        <label class="label">Client (Société)</label>
-                        <input type="text" name="nom_societe" class="input" placeholder="Nom de l'entreprise..."
-                            required>
+                        <label class="label" style="font-size: 1rem; color: var(--primary);">N° A.R.C. <span
+                                style="color: var(--error);">*</span></label>
+                        <p style="font-size: 0.7rem; color: var(--text-dim); margin: 0 0 0.5rem 0;">Référence centrale
+                            de l'intervention – reportée sur toutes les fiches</p>
+                        <input type="text" name="numero_arc" class="input" placeholder="ex: ARC-2026-001"
+                            style="text-transform: uppercase; font-size: 1.1rem; font-weight: bold; border: 2px solid var(--primary); padding: 1rem;"
+                            required autofocus>
                     </div>
 
                     <div class="form-group">
-                        <label class="label">Numéro ARC</label>
-                        <input type="text" name="numero_arc" class="input" placeholder="ex: ARC-2026-X"
-                            style="text-transform: uppercase;" required>
+                        <label class="label">Client (Société) <span style="color: var(--error);">*</span></label>
+                        <input type="text" name="nom_societe" class="input" placeholder="Nom de l'entreprise..."
+                            required>
                     </div>
 
                     <div class="form-group">
@@ -261,7 +265,7 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
 
                     <button type="submit" class="btn btn-primary"
                         style="width: 100%; height: 3.5rem; font-size: 0.95rem;">
-                        Créer la Fiche & Continuer →
+                        Créer l'Intervention & Ajouter les Machines →
                     </button>
                 </form>
             </div>
