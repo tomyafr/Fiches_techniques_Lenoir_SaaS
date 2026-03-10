@@ -396,7 +396,7 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             <!-- EN-TÊTE -->
             <div class="rapport-header card glass">
                 <img src="/assets/logo-raoul-lenoir.png" alt="LENOIR-MEC"
-                    style="width:55%; max-width:280px; margin: 0 auto 1rem auto; display:block;">
+                    style="height: 60px; width: auto; object-fit: contain; margin: 0 auto 1rem auto; display: block; max-width: 100%;">
                 <h1>Rapport d'expertise sur site</h1>
                 <div class="arc-badge">ARC
                     <?= htmlspecialchars($intervention['numero_arc']) ?>
