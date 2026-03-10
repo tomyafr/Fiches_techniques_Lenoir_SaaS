@@ -1125,10 +1125,7 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                             </td>
                         </tr>
                         <?= renderAprfRow("Serrage correcte des bornes", "levage_serrage_bornes", $donnees) ?>
-                    </table>
-
-                    <?= newPdfPage() ?>
-                    <table class="pdf-table" style="font-size:11px; color:black;">
+                        
                         <!-- Section ELECTRIQUE SOUS TENSION -->
                         <tr>
                             <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">
@@ -1295,16 +1292,17 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                             <div style="flex:1; border:1px solid #000; padding:5px; font-size:11px;">
                                 <strong>Epaisseur du pôle :</strong> <input type="text"
                                     name="mesures[levage_epaisseur_pole]"
-                                    value="<?= htmlspecialchars($mesures['levage_epaisseur_pole'] ?? '') ?>" </div>
+                                    value="<?= htmlspecialchars($mesures['levage_epaisseur_pole'] ?? '') ?>"
+                                    class="pdf-input" style="width:60px; border-bottom: 1px solid #000;"> mm
                             </div>
                         </div>
+                    </div>
 
-                        <?= newPdfPage() ?>
-                        <div
-                            style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0; border:1px solid #000;">
-                            PHOTOS ANNEXES</div>
+                    <div
+                        style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:20px; border:1px solid #000;">
+                        PHOTOS ANNEXES</div>
 
-                    <?php else: ?>
+                <?php else: ?>
 
                         <!-- GENERIC SCHEMA -->
                         <div
