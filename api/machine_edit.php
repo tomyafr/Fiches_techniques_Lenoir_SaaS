@@ -62,6 +62,26 @@ $isAPRF = strpos($designation, 'APRF') !== false || strpos($designation, 'APRM')
 $isEDX = strpos($designation, 'ED-X') !== false || strpos($designation, 'EDX') !== false || strpos($designation, 'FOUCAULT') !== false;
 $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') === false;
 $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AIMANT') !== false;
+$isPAP = strpos($designation, 'PAP') !== false || strpos($designation, 'TAP') !== false;
+
+// Temps prévisionnel par type
+if ($isEDX)
+    $tempsPrev = '3h30';
+elseif ($isOV)
+    $tempsPrev = '1h30';
+elseif ($isAPRF)
+    $tempsPrev = '1h00';
+elseif ($isPAP)
+    $tempsPrev = '1h00';
+elseif ($isLevage)
+    $tempsPrev = '1h30';
+else
+    $tempsPrev = '1h00';
+
+$dateIntervention = date('d/m/Y', strtotime($machine['date_intervention']));
+$tempsRealise = $mesures['temps_realise'] ?? '';
+$heureDebut = $mesures['heure_debut'] ?? '';
+$heureFin = $mesures['heure_fin'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -511,6 +531,41 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                         Désignation</td>
                     <td style="width:35%; border:1px solid #000; padding:6px; font-weight:bold;">
                         <?= htmlspecialchars($machine['designation']) ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
+                        Date</td>
+                    <td style="width:35%; border:1px solid #000; padding:6px;">
+                        <input type="text" name="mesures[date_intervention]"
+                            value="<?= htmlspecialchars($mesures['date_intervention'] ?? $dateIntervention) ?>"
+                            class="pdf-input" placeholder="DD/MM/YYYY" style="width:90px;">
+                    </td>
+                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
+                        Temps prévu</td>
+                    <td style="width:35%; border:1px solid #000; padding:6px; font-weight:bold; color:#0070c0;">
+                        <?= $tempsPrev ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#e8f4e8;">
+                        Début</td>
+                    <td style="width:35%; border:1px solid #000; padding:6px;">
+                        <input type="time" name="mesures[heure_debut]" id="heureDebut"
+                            value="<?= htmlspecialchars($heureDebut) ?>"
+                            style="border:none; outline:none; font-size:13px; background:transparent; width:80px;">
+                    </td>
+                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#e8f4e8;">
+                        Fin</td>
+                    <td
+                        style="width:35%; border:1px solid #000; padding:6px; display:flex; align-items:center; gap:8px;">
+                        <input type="time" name="mesures[heure_fin]" id="heureFin"
+                            value="<?= htmlspecialchars($heureFin) ?>"
+                            style="border:none; outline:none; font-size:13px; background:transparent; width:80px;">
+                        <span id="tempsCalc" style="font-weight:bold; color:#0070c0; font-size:12px;"></span>
+                        <button type="button" id="btnChrono" onclick="toggleChrono()"
+                            style="background:#28a745; color:white; border:none; border-radius:4px; padding:2px 8px; font-size:11px; cursor:pointer;">▶
+                            Chrono</button>
                     </td>
                 </tr>
             </table>
@@ -1665,23 +1720,92 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
             if (radio) radio.checked = true;
         });
 
+        // ========== CHRONOMÈTRE & TEMPS ==========
+        var chronoRunning = false;
+
+        function toggleChrono() {
+            var btn = document.getElementById('btnChrono');
+            var debutInput = document.getElementById('heureDebut');
+            var finInput = document.getElementById('heureFin');
+            if (!chronoRunning) {
+                // Start: set heure_debut to now
+                var now = new Date();
+                debutInput.value = pad2(now.getHours()) + ':' + pad2(now.getMinutes());
+                finInput.value = '';
+                btn.textContent = '⏹ Stop';
+                btn.style.background = '#dc3545';
+                chronoRunning = true;
+                calcTemps();
+            } else {
+                // Stop: set heure_fin to now
+                var now2 = new Date();
+                finInput.value = pad2(now2.getHours()) + ':' + pad2(now2.getMinutes());
+                btn.textContent = '▶ Chrono';
+                btn.style.background = '#28a745';
+                chronoRunning = false;
+                calcTemps();
+            }
+        }
+
+        function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+
+        function calcTemps() {
+            var d = document.getElementById('heureDebut').value;
+            var f = document.getElementById('heureFin').value;
+            var span = document.getElementById('tempsCalc');
+            if (d && f) {
+                var dp = d.split(':'), fp = f.split(':');
+                var mins = (parseInt(fp[0]) * 60 + parseInt(fp[1])) - (parseInt(dp[0]) * 60 + parseInt(dp[1]));
+                if (mins < 0) mins += 1440;
+                var h = Math.floor(mins / 60), m = mins % 60;
+                span.textContent = '= ' + h + 'h' + pad2(m);
+            } else if (d && chronoRunning) {
+                // Live display
+                var now = new Date();
+                var dp2 = d.split(':');
+                var mins2 = (now.getHours() * 60 + now.getMinutes()) - (parseInt(dp2[0]) * 60 + parseInt(dp2[1]));
+                if (mins2 < 0) mins2 += 1440;
+                var h2 = Math.floor(mins2 / 60), m2 = mins2 % 60;
+                span.textContent = '⏱ ' + h2 + 'h' + pad2(m2);
+            } else {
+                span.textContent = '';
+            }
+        }
+
         // ========== INIT ON PAGE LOAD ==========
-        document.addEventListener('DOMContentLoaded', function () {
-            // Init pastille selected states
-            document.querySelectorAll('.pastille-group input[type="radio"]:checked').forEach(function (r) {
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pastilles
+            document.querySelectorAll('.pastille-group input[type="radio"]:checked').forEach(function(r) {
                 r.closest('label').classList.add('selected');
             });
-            // Init auto-grow
-            document.querySelectorAll('.pdf-textarea').forEach(function (ta) {
+            // Auto-grow
+            document.querySelectorAll('.pdf-textarea').forEach(function(ta) {
                 if (ta.value) autoGrow(ta);
-                ta.addEventListener('input', function () { autoGrow(this); });
+                ta.addEventListener('input', function() { autoGrow(this); });
             });
-            // Init photo thumbnails from loaded data
-            Object.keys(allPhotos).forEach(function (key) {
+            // Photos
+            Object.keys(allPhotos).forEach(function(key) {
                 renderThumbsForKey(key);
             });
             renderAnnexes();
             syncPhotos();
+
+            // Auto-set heure_debut to now if empty
+            var debutInput = document.getElementById('heureDebut');
+            if (debutInput && !debutInput.value) {
+                var now = new Date();
+                debutInput.value = pad2(now.getHours()) + ':' + pad2(now.getMinutes());
+            }
+
+            // Calc temps on change
+            var hd = document.getElementById('heureDebut');
+            var hf = document.getElementById('heureFin');
+            if (hd) hd.addEventListener('change', calcTemps);
+            if (hf) hf.addEventListener('change', calcTemps);
+            calcTemps();
+
+            // Live chrono update every 30s
+            setInterval(function() { if (chronoRunning) calcTemps(); }, 30000);
         });
     </script>
 </body>
