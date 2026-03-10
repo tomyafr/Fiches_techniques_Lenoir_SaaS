@@ -7,7 +7,7 @@ require_once __DIR__ . '/../includes/config.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RGPD & Confidentialité | Raoul Lenoir</title>
+    <title>RGPD & Confidentialité | LM Expert</title>
     <link rel="stylesheet" href="assets/style.css">
     <script>
         if (localStorage.getItem('theme') === 'light') {

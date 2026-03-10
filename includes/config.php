@@ -1,6 +1,6 @@
 <?php
 // ============================================
-// CONFIGURATION - Pointage Atelier SaaS
+// CONFIGURATION - LM Expert (Lenoir-Mec)
 // ============================================
 
 // Production: désactiver l'affichage des erreurs
@@ -41,7 +41,7 @@ define('BC_TOKEN_URL', 'https://login.microsoftonline.com/' . BC_TENANT_ID . '/o
 define('BC_SCOPE', 'https://api.businesscentral.dynamics.com/.default');
 
 // Application
-define('APP_NAME', 'Pointage Atelier');
+define('APP_NAME', 'LM Expert');
 define('APP_VERSION', '2.1.0');
 define('SESSION_TIMEOUT', 28800); // 8 heures
 

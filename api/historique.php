@@ -103,7 +103,7 @@ $nbClients = count($clientsSet);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Historique des Interventions | Raoul Lenoir</title>
+    <title>Historique des Interventions | LM Expert</title>
     <link rel="stylesheet" href="/assets/style.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#020617">

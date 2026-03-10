@@ -102,7 +102,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Espace Admin | Raoul Lenoir</title>
+    <title>Espace Admin | LM Expert</title>
     <link rel="stylesheet" href="/assets/style.css">
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/assets/icon-192.png">

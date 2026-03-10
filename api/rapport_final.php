@@ -369,8 +369,8 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
 
             <!-- EN-TÊTE -->
             <div class="rapport-header card glass">
-                <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC"
-                    style="max-width:180px; margin: 0 auto 1rem auto; display:block; filter: brightness(0) invert(1); opacity:0.8;">
+                <img src="/assets/logo-raoul-lenoir.png" alt="LENOIR-MEC"
+                    style="max-width:220px; margin: 0 auto 1rem auto; display:block;">
                 <h1>Rapport d'expertise sur site</h1>
                 <div class="arc-badge">ARC
                     <?= htmlspecialchars($intervention['numero_arc']) ?>
@@ -566,21 +566,21 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             resizeCanvas(canvasT);
             padTech = new SignaturePad(canvasT, { penColor: 'black' });
             <?php if (!empty($intervention['signature_technicien'])): ?>
-                    padTech.fromDataURL('<?= $intervention['signature_technicien'] ?>', {
-                        ratio: dpr,
-                        width: canvasT.width / dpr,
-                        height: canvasT.height / dpr
-                    });
+                padTech.fromDataURL('<?= $intervention['signature_technicien'] ?>', {
+                    ratio: dpr,
+                    width: canvasT.width / dpr,
+                    height: canvasT.height / dpr
+                });
             <?php endif; ?>
 
-                resizeCanvas(canvasC);
+            resizeCanvas(canvasC);
             padClient = new SignaturePad(canvasC, { penColor: 'blue' });
             <?php if (!empty($intervention['signature_client'])): ?>
-                    padClient.fromDataURL('<?= $intervention['signature_client'] ?>', {
-                        ratio: dpr,
-                        width: canvasC.width / dpr,
-                        height: canvasC.height / dpr
-                    });
+                padClient.fromDataURL('<?= $intervention['signature_client'] ?>', {
+                    ratio: dpr,
+                    width: canvasC.width / dpr,
+                    height: canvasC.height / dpr
+                });
             <?php endif; ?>
         }
 

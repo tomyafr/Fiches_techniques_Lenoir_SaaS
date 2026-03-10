@@ -1,7 +1,7 @@
 {
-    "name": "Raoul Lenoir — Pointage Industriel",
-    "short_name": "Pointage RL",
-    "description": "Système de pointage intelligent par Ordre de Fabrication — Raoul Lenoir SAS",
+    "name": "LM Expert — Lenoir-Mec Expertise Terrain",
+    "short_name": "LM Expert",
+    "description": "Application d'expertise et de contrôle d'équipements magnétiques sur site — Lenoir-Mec",
     "start_url": "/index.php",
     "display": "standalone",
     "background_color": "#020617",

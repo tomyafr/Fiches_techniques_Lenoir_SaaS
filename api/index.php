@@ -171,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Connexion | Raoul Lenoir</title>
+    <title>Connexion | LM Expert</title>
     <!-- ── PWA & Icons ── -->
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png">
@@ -202,8 +202,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <img src="/assets/logo-raoul-lenoir.svg" alt="Raoul Lenoir"
                     style="filter: brightness(0) saturate(100%) invert(73%) sepia(86%) saturate(1063%) hue-rotate(358deg) brightness(101%) contrast(106%);">
             </div>
-            <h1 class="login-title" style="color: #ffb300;">Raoul Lenoir</h1>
-            <p class="login-subtitle">Fiches Techniques SaaS</p>
+            <h1 class="login-title" style="color: #ffb300;">LM Expert</h1>
+            <p class="login-subtitle">Expertise Terrain · Lenoir-Mec</p>
         </div>
 
         <form method="POST" class="login-card glass animate-in" autocomplete="off" <?= isset($pendingReqId) ? 'style="display:none;"' : '' ?>>
