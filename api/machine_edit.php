@@ -251,6 +251,10 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                 margin: 0;
             }
 
+            tr {
+                page-break-inside: avoid;
+            }
+
             .pdf-page {
                 margin: 0;
                 box-shadow: none;
@@ -290,9 +294,13 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
         <div class="top-bar">
             <button type="button" class="btn btn-ghost"
                 onclick="window.location.href='intervention_edit.php?id=<?= $machine['intervention_id'] ?>'"
-                style="color:white; border-color:white;">← REVENIR À L'INTERVENTION</button>
-            <button type="submit" class="btn btn-primary" style="background:#e6b12a; color:#000;">ENREGISTRER LA
-                FICHE</button>
+                style="color:white; border-color:white;">← REVENIR</button>
+            <div style="display:flex; gap:10px;">
+                <button type="button" class="btn btn-ghost" onclick="window.print()"
+                    style="background:#2b2d31; color:white; border:1px solid #444;">🖨️ IMPRIMER / PDF</button>
+                <button type="submit" class="btn btn-primary" style="background:#e6b12a; color:#000;">ENREGISTRER LA
+                    FICHE</button>
+            </div>
         </div>
 
         <div class="mobile-wrapper">
