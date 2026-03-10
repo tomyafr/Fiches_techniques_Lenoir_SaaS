@@ -366,9 +366,9 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                     $val = $donnees[$key] ?? '';
                     return '
                     <div style="display:flex; justify-content:center; gap:8px;">
-                        <label class="radio-box" title="Correct">C<br><input type="radio" name="donnees[' . $key . ']" value="c" ' . ($val == 'c' ? 'checked' : '') . '></label>
-                        <label class="radio-box" title="Non Correct">NC<br><input type="radio" name="donnees[' . $key . ']" value="nc" ' . ($val == 'nc' ? 'checked' : '') . '></label>
-                        <label class="radio-box" title="Non Applicable" style="color:#666">N/A<br><input type="radio" name="donnees[' . $key . ']" value="na" ' . ($val == 'na' ? 'checked' : '') . '></label>
+                        <label class="radio-box" title="Correct">C<br><input type="radio" style="accent-color: #28a745;" name="donnees[' . $key . ']" value="c" ' . ($val == 'c' ? 'checked' : '') . '></label>
+                        <label class="radio-box" title="Non Correct">NC<br><input type="radio" style="accent-color: #dc3545;" name="donnees[' . $key . ']" value="nc" ' . ($val == 'nc' ? 'checked' : '') . '></label>
+                        <label class="radio-box" title="Non Applicable" style="color:#666">N/A<br><input type="radio" style="accent-color: #6c757d;" name="donnees[' . $key . ']" value="na" ' . ($val == 'na' ? 'checked' : '') . '></label>
                     </div>';
                 }
                 function renderCheckRow($label, $key, $donnees)
@@ -385,9 +385,9 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                     return '
                     <table style="width:100%; border-collapse:collapse; text-align:center; height:100%;">
                         <tr>
-                            <td style="width:33%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="bon" ' . ($val == 'bon' ? 'checked' : '') . '></td>
-                            <td style="width:34%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="r" ' . ($val == 'r' ? 'checked' : '') . '></td>
-                            <td style="width:33%; border:none;"><input type="radio" name="donnees[' . $key . ']" value="hs" ' . ($val == 'hs' ? 'checked' : '') . '></td>
+                            <td style="width:33%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #28a745;" name="donnees[' . $key . ']" value="bon" ' . ($val == 'bon' ? 'checked' : '') . '></td>
+                            <td style="width:34%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #ffc107;" name="donnees[' . $key . ']" value="r" ' . ($val == 'r' ? 'checked' : '') . '></td>
+                            <td style="width:33%; border:none;"><input type="radio" style="accent-color: #dc3545;" name="donnees[' . $key . ']" value="hs" ' . ($val == 'hs' ? 'checked' : '') . '></td>
                         </tr>
                     </table>';
                 }
@@ -552,11 +552,11 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                         return '
                         <table style="width:100%; height:100%; border-collapse:collapse; text-align:center; line-height:1; min-height:30px;">
                             <tr>
-                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="pc" ' . ($val == 'pc' ? 'checked' : '') . '></td>
-                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="c" ' . ($val == 'c' ? 'checked' : '') . '></td>
-                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="aa" ' . ($val == 'aa' ? 'checked' : '') . '></td>
-                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="nc" ' . ($val == 'nc' ? 'checked' : '') . '></td>
-                                <td style="width:20%; border:none;"><input type="radio" name="donnees[' . $key . ']" value="nr" ' . ($val == 'nr' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #6c757d;" name="donnees[' . $key . ']" value="pc" ' . ($val == 'pc' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #28a745;" name="donnees[' . $key . ']" value="c" ' . ($val == 'c' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #ffc107;" name="donnees[' . $key . ']" value="aa" ' . ($val == 'aa' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #fd7e14;" name="donnees[' . $key . ']" value="nc" ' . ($val == 'nc' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none;"><input type="radio" style="accent-color: #dc3545;" name="donnees[' . $key . ']" value="nr" ' . ($val == 'nr' ? 'checked' : '') . '></td>
                             </tr>
                         </table>';
                     }
@@ -760,11 +760,11 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                         return '
                         <table style="width:100%; height:100%; border-collapse:collapse; text-align:center; line-height:1; min-height:30px;">
                             <tr>
-                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="pc" ' . ($val == 'pc' ? 'checked' : '') . '></td>
-                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="c" ' . ($val == 'c' ? 'checked' : '') . '></td>
-                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="aa" ' . ($val == 'aa' ? 'checked' : '') . '></td>
-                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="nc" ' . ($val == 'nc' ? 'checked' : '') . '></td>
-                                <td style="width:20%; border:none;"><input type="radio" name="donnees[' . $key . ']" value="nr" ' . ($val == 'nr' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #6c757d;" name="donnees[' . $key . ']" value="pc" ' . ($val == 'pc' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #28a745;" name="donnees[' . $key . ']" value="c" ' . ($val == 'c' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #ffc107;" name="donnees[' . $key . ']" value="aa" ' . ($val == 'aa' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none; border-right:1px solid #000;"><input type="radio" style="accent-color: #fd7e14;" name="donnees[' . $key . ']" value="nc" ' . ($val == 'nc' ? 'checked' : '') . '></td>
+                                <td style="width:20%; border:none;"><input type="radio" style="accent-color: #dc3545;" name="donnees[' . $key . ']" value="nr" ' . ($val == 'nr' ? 'checked' : '') . '></td>
                             </tr>
                         </table>';
                     }
@@ -1295,96 +1295,95 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                             <div style="flex:1; border:1px solid #000; padding:5px; font-size:11px;">
                                 <strong>Epaisseur du pôle :</strong> <input type="text"
                                     name="mesures[levage_epaisseur_pole]"
-                                    value="<?= htmlspecialchars($mesures['levage_epaisseur_pole'] ?? '') ?>"
+                                    value="<?= htmlspecialchars($mesures['levage_epaisseur_pole'] ?? '') ?>" </div>
                             </div>
                         </div>
-                    </div>
 
-                    <?= newPdfPage() ?>
-                    <div
-                        style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0; border:1px solid #000;">
-                        PHOTOS ANNEXES</div>
+                        <?= newPdfPage() ?>
+                        <div
+                            style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0; border:1px solid #000;">
+                            PHOTOS ANNEXES</div>
 
-                <?php else: ?>
+                    <?php else: ?>
 
-                    <!-- GENERIC SCHEMA -->
-                    <div
-                        style="background:#fff3cd; color:#856404; padding:15px; margin-bottom:20px; font-weight:bold; border:1px solid #ffeeba; text-align:center;">
-                        Cette machine (<?= htmlspecialchars($machine['designation']) ?>) n'a pas encore de modèle PDF
-                        numérisé sur mesure (comme APRF ou ED-X). Voici la grille générique.
-                    </div>
+                        <!-- GENERIC SCHEMA -->
+                        <div
+                            style="background:#fff3cd; color:#856404; padding:15px; margin-bottom:20px; font-weight:bold; border:1px solid #ffeeba; text-align:center;">
+                            Cette machine (<?= htmlspecialchars($machine['designation']) ?>) n'a pas encore de modèle PDF
+                            numérisé sur mesure (comme APRF ou ED-X). Voici la grille générique.
+                        </div>
 
-                    <table class="pdf-table">
-                        <tr>
-                            <th>Point de Contrôle / Désignation</th>
-                            <th style="text-align:center">État</th>
-                            <th>Commentaires / Valeurs Mesurées</th>
-                        </tr>
-                        <tr>
-                            <th colspan="3" style="background:#ddd;">Examen de l'appareil</th>
-                        </tr>
-                        <?= renderCheckRow("Fixation de l'appareil", "gen_fixation", $donnees) ?>
-                        <?= renderCheckRow("Appareil sale / Nettoyage", "gen_sale", $donnees) ?>
-                        <?= renderCheckRow("Usure importante des pièces", "gen_usure", $donnees) ?>
+                        <table class="pdf-table">
+                            <tr>
+                                <th>Point de Contrôle / Désignation</th>
+                                <th style="text-align:center">État</th>
+                                <th>Commentaires / Valeurs Mesurées</th>
+                            </tr>
+                            <tr>
+                                <th colspan="3" style="background:#ddd;">Examen de l'appareil</th>
+                            </tr>
+                            <?= renderCheckRow("Fixation de l'appareil", "gen_fixation", $donnees) ?>
+                            <?= renderCheckRow("Appareil sale / Nettoyage", "gen_sale", $donnees) ?>
+                            <?= renderCheckRow("Usure importante des pièces", "gen_usure", $donnees) ?>
 
-                        <tr>
-                            <th colspan="3" style="background:#ddd;">Transmission & Motorisation</th>
-                        </tr>
-                        <?= renderCheckRow("Tension courroies ou chaînes", "gen_tension", $donnees) ?>
-                        <?= renderCheckRow("Alignement pignons / poulies", "gen_align", $donnees) ?>
-                        <?= renderCheckRow("Graissage chaîne / Niveau d'huile", "gen_huile", $donnees) ?>
-                        <?= renderCheckRow("Échauffement ou Bruit suspect", "gen_bruit", $donnees) ?>
+                            <tr>
+                                <th colspan="3" style="background:#ddd;">Transmission & Motorisation</th>
+                            </tr>
+                            <?= renderCheckRow("Tension courroies ou chaînes", "gen_tension", $donnees) ?>
+                            <?= renderCheckRow("Alignement pignons / poulies", "gen_align", $donnees) ?>
+                            <?= renderCheckRow("Graissage chaîne / Niveau d'huile", "gen_huile", $donnees) ?>
+                            <?= renderCheckRow("Échauffement ou Bruit suspect", "gen_bruit", $donnees) ?>
 
-                        <tr>
-                            <th colspan="3" style="background:#ddd;">Contrôles électriques & Divers</th>
-                        </tr>
-                        <?= renderCheckRow("Test déclenchement défauts", "gen_defauts", $donnees) ?>
-                        <?= renderCheckRow("Tester bouton Arrêt d'Urgence", "gen_au", $donnees) ?>
-                        <?= renderCheckRow("Mesure isolation & Induction", "gen_mesures", $donnees) ?>
-                    </table>
+                            <tr>
+                                <th colspan="3" style="background:#ddd;">Contrôles électriques & Divers</th>
+                            </tr>
+                            <?= renderCheckRow("Test déclenchement défauts", "gen_defauts", $donnees) ?>
+                            <?= renderCheckRow("Tester bouton Arrêt d'Urgence", "gen_au", $donnees) ?>
+                            <?= renderCheckRow("Mesure isolation & Induction", "gen_mesures", $donnees) ?>
+                        </table>
 
-                    <?php
-                    // Automatiquement charger le schéma s'il existe (pour dépanner)
-                    $cleanName = strtolower(preg_replace('/[^a-zA-Z0-9-]/', '', $machine['designation']));
-                    // Essayer qq mots clés extraits
-                    $possiblePrefixes = explode(' ', strtolower($machine['designation']));
-                    $foundSchema = null;
-                    $exts = ['png', 'jpg', 'jpeg'];
+                        <?php
+                        // Automatiquement charger le schéma s'il existe (pour dépanner)
+                        $cleanName = strtolower(preg_replace('/[^a-zA-Z0-9-]/', '', $machine['designation']));
+                        // Essayer qq mots clés extraits
+                        $possiblePrefixes = explode(' ', strtolower($machine['designation']));
+                        $foundSchema = null;
+                        $exts = ['png', 'jpg', 'jpeg'];
 
-                    // on fait une petite passe pour trouver l'image
-                    foreach (['sga', 'sgcp', 'sgsa', 'slt', 'spm', 'srm', 'levage', 'pap-tap', 'pm', 'ovap'] as $mkey) {
-                        if (strpos(strtolower($machine['designation']), $mkey) !== false) {
-                            foreach ($exts as $ext) {
-                                $checkPath = __DIR__ . '/../assets/machines/' . $mkey . '_diagram.' . $ext;
-                                if (file_exists($checkPath)) {
-                                    $foundSchema = '/assets/machines/' . $mkey . '_diagram.' . $ext;
-                                    break 2;
+                        // on fait une petite passe pour trouver l'image
+                        foreach (['sga', 'sgcp', 'sgsa', 'slt', 'spm', 'srm', 'levage', 'pap-tap', 'pm', 'ovap'] as $mkey) {
+                            if (strpos(strtolower($machine['designation']), $mkey) !== false) {
+                                foreach ($exts as $ext) {
+                                    $checkPath = __DIR__ . '/../assets/machines/' . $mkey . '_diagram.' . $ext;
+                                    if (file_exists($checkPath)) {
+                                        $foundSchema = '/assets/machines/' . $mkey . '_diagram.' . $ext;
+                                        break 2;
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    if ($foundSchema):
-                        ?>
-                        <div style="border:1px solid #000; padding:10px; text-align:center; margin-top:20px;">
-                            <div style="font-weight:bold; margin-bottom:10px;">Schéma de Référence (Extrait Word) :</div>
-                            <img src="<?= htmlspecialchars($foundSchema) ?>"
-                                style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma machine">
+                        if ($foundSchema):
+                            ?>
+                            <div style="border:1px solid #000; padding:10px; text-align:center; margin-top:20px;">
+                                <div style="font-weight:bold; margin-bottom:10px;">Schéma de Référence (Extrait Word) :</div>
+                                <img src="<?= htmlspecialchars($foundSchema) ?>"
+                                    style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma machine">
+                            </div>
+                        <?php endif; ?>
+
+                    <?php endif; ?>
+
+                    <?php if (!$isEDX): ?>
+                        <div style="margin-top:20px; border: 1px solid #000; padding:10px;">
+                            <div style="font-weight:bold; font-size:14px; margin-bottom:5px;">Commentaire général :</div>
+                            <textarea name="commentaires" class="pdf-textarea" style="height:80px; font-size:13px;"
+                                placeholder="En présence du client / Pièces à proposer..."><?= htmlspecialchars($machine['commentaires'] ?? '') ?></textarea>
                         </div>
                     <?php endif; ?>
 
-                <?php endif; ?>
-
-                <?php if (!$isEDX): ?>
-                <div style="margin-top:20px; border: 1px solid #000; padding:10px;">
-                    <div style="font-weight:bold; font-size:14px; margin-bottom:5px;">Commentaire général :</div>
-                    <textarea name="commentaires" class="pdf-textarea" style="height:80px; font-size:13px;"
-                        placeholder="En présence du client / Pièces à proposer..."><?= htmlspecialchars($machine['commentaires'] ?? '') ?></textarea>
-                </div>
-                <?php endif; ?>
-
-            </div> <!-- fin .pdf-page -->
-        </div> <!-- fin .mobile-wrapper -->
+                </div> <!-- fin .pdf-page -->
+            </div> <!-- fin .mobile-wrapper -->
     </form>
 </body>
 
