@@ -38,6 +38,7 @@ if (!$machine) {
 
 $donnees = json_decode($machine['donnees_controle'] ?? '{}', true);
 $mesures = json_decode($machine['mesures'] ?? '{}', true);
+$photosData = json_decode($machine['photos'] ?? '{}', true);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     verifyCsrfToken();
@@ -46,9 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $commentaire = trim($_POST['commentaires'] ?? '');
         $postDonnees = $_POST['donnees'] ?? [];
         $postMesures = $_POST['mesures'] ?? [];
+        $postPhotos = $_POST['photos_json'] ?? '{}';
 
-        $db->prepare('UPDATE machines SET numero_of = ?, commentaires = ?, donnees_controle = ?, mesures = ? WHERE id = ?')
-            ->execute([$of, $commentaire, json_encode($postDonnees), json_encode($postMesures), $id]);
+        $db->prepare('UPDATE machines SET numero_of = ?, commentaires = ?, donnees_controle = ?, mesures = ?, photos = ? WHERE id = ?')
+            ->execute([$of, $commentaire, json_encode($postDonnees), json_encode($postMesures), $postPhotos, $id]);
 
         header('Location: intervention_edit.php?id=' . $machine['intervention_id'] . '&msg=saved');
         exit;
@@ -243,6 +245,83 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
             .pastille-group label.selected::after {
                 font-size: 18px;
             }
+        }
+
+        /* === PHOTO SYSTEM === */
+        .photo-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            background: #5b9bd5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 10px;
+            cursor: pointer;
+            vertical-align: middle;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        .photo-btn:active {
+            transform: scale(0.95);
+        }
+
+        .photo-thumbs {
+            display: inline-flex;
+            gap: 4px;
+            vertical-align: middle;
+            flex-wrap: wrap;
+        }
+
+        .photo-thumb-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
+        .photo-thumb-wrap img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .photo-thumb-wrap .photo-del {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            line-height: 16px;
+            text-align: center;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .photo-annexe-item {
+            text-align: center;
+            max-width: 200px;
+        }
+
+        .photo-annexe-item img {
+            width: 180px;
+            height: 135px;
+            object-fit: cover;
+            border: 1px solid #000;
+        }
+
+        .photo-annexe-item p {
+            font-size: 10px;
+            margin: 3px 0 0 0;
+            color: #333;
         }
 
         .pdf-input {
@@ -461,12 +540,19 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                         . pastille($key, 'na', 'p-na', 'N/A', $val)
                         . '</div>';
                 }
+                function photoCamBtn($key)
+                {
+                    return '<div style="display:flex; align-items:center; gap:4px; margin-top:2px;">
+                        <button type="button" class="photo-btn" onclick="capturePhoto(\'' . $key . '\')">📷</button>
+                        <span class="photo-thumbs" id="thumbs_' . $key . '"></span>
+                    </div>';
+                }
                 function renderCheckRow($label, $key, $donnees)
                 {
                     return '<tr>
                         <td style="font-weight:bold; font-size:12px;">' . htmlspecialchars($label) . '</td>
                         <td class="col-etat" style="text-align:center;">' . renderEtatRadios($key . "_radio", $donnees) . '</td>
-                        <td class="col-comment"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" placeholder="Détails..." oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
+                        <td class="col-comment"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" placeholder="Détails..." oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key) . '</td>
                     </tr>';
                 }
                 function renderAprfEtatRadios($key, $donnees)
@@ -483,7 +569,7 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                     return '<tr>
                         <td style="font-weight:normal; font-size:11px;">' . htmlspecialchars($label) . '</td>
                         <td style="padding:2px 4px; vertical-align:middle; text-align:center;">' . renderAprfEtatRadios($key, $donnees) . '</td>
-                        <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
+                        <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key) . '</td>
                     </tr>';
                 }
                 ?>
@@ -649,7 +735,7 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                         return '<tr>
                             <td style="font-weight:normal; font-size:11px;">' . htmlspecialchars($label) . '</td>
                             <td style="padding:2px 4px; vertical-align:middle; text-align:center;">' . renderEdxEtatRadios($key, $donnees) . '</td>
-                            <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
+                            <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key) . '</td>
                         </tr>';
                     }
                     ?>
@@ -841,7 +927,7 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                         return '<tr>
                             <td style="font-weight:bold; font-size:11px;">' . htmlspecialchars($label) . '</td>
                             <td style="padding:2px 4px; vertical-align:middle; text-align:center;">' . renderOvEtatRadios($key, $donnees) . '</td>
-                            <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
+                            <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key) . '</td>
                         </tr>';
                     }
                     ?>
@@ -1428,23 +1514,141 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                     <?php if (!$isEDX): ?>
                         <div style="margin-top:20px; border: 1px solid #000; padding:10px;">
                             <div style="font-weight:bold; font-size:14px; margin-bottom:5px;">Commentaire général :</div>
-                            <textarea name="commentaires" class="pdf-textarea" style="height:80px; font-size:13px;"
+                            <textarea name="commentaires" class="pdf-textarea" style="min-height:80px; font-size:13px;"
                                 placeholder="En présence du client / Pièces à proposer..."><?= htmlspecialchars($machine['commentaires'] ?? '') ?></textarea>
                         </div>
                     <?php endif; ?>
+
+                    <!-- PHOTOS ANNEXES -->
+                    <div
+                        style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:20px; border:1px solid #000;">
+                        PHOTOS ANNEXES</div>
+                    <div id="photosAnnexesGrid"
+                        style="border:1px solid #000; border-top:none; padding:10px; min-height:60px; display:flex; flex-wrap:wrap; gap:10px;">
+                        <p style="color:#999; font-size:11px; margin:0;" id="noPhotosMsg">Aucune photo. Utilisez les
+                            boutons 📷 sur chaque ligne de contrôle.</p>
+                    </div>
+
+                    <input type="hidden" name="photos_json" id="photosJsonInput"
+                        value='<?= htmlspecialchars(json_encode($photosData)) ?>'>
 
                 </div> <!-- fin .pdf-page -->
             </div> <!-- fin .mobile-wrapper -->
     </form>
 
+    <!-- Hidden file input for camera capture -->
+    <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none">
+
     <script>
-        // Auto-grow textareas
+        // ========== PHOTO SYSTEM ==========
+        var allPhotos = {};
+        var currentPhotoKey = '';
+
+        // Load existing photos from hidden input
+        try {
+            var raw = document.getElementById('photosJsonInput').value;
+            if (raw && raw !== 'null' && raw !== '{}') {
+                allPhotos = JSON.parse(raw);
+            }
+        } catch (e) { allPhotos = {}; }
+
+        function capturePhoto(key) {
+            currentPhotoKey = key;
+            document.getElementById('cameraInput').click();
+        }
+
+        document.getElementById('cameraInput').addEventListener('change', function (e) {
+            var file = e.target.files[0];
+            if (!file) return;
+            compressImage(file, 1200, 0.8, function (base64) {
+                if (!allPhotos[currentPhotoKey]) allPhotos[currentPhotoKey] = [];
+                var caption = prompt('Commentaire photo (optionnel) :', '') || '';
+                allPhotos[currentPhotoKey].push({ data: base64, caption: caption });
+                syncPhotos();
+                renderThumbsForKey(currentPhotoKey);
+                renderAnnexes();
+            });
+            // Reset so same file can be re-selected
+            e.target.value = '';
+        });
+
+        function compressImage(file, maxWidth, quality, callback) {
+            var reader = new FileReader();
+            reader.onload = function (ev) {
+                var img = new Image();
+                img.onload = function () {
+                    var w = img.width, h = img.height;
+                    if (w > maxWidth) {
+                        h = Math.round(h * maxWidth / w);
+                        w = maxWidth;
+                    }
+                    var canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    callback(canvas.toDataURL('image/jpeg', quality));
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function deletePhoto(key, index) {
+            if (!confirm('Supprimer cette photo ?')) return;
+            allPhotos[key].splice(index, 1);
+            if (allPhotos[key].length === 0) delete allPhotos[key];
+            syncPhotos();
+            renderThumbsForKey(key);
+            renderAnnexes();
+        }
+
+        function syncPhotos() {
+            document.getElementById('photosJsonInput').value = JSON.stringify(allPhotos);
+        }
+
+        function renderThumbsForKey(key) {
+            var container = document.getElementById('thumbs_' + key);
+            if (!container) return;
+            container.innerHTML = '';
+            var photos = allPhotos[key] || [];
+            photos.forEach(function (p, i) {
+                var wrap = document.createElement('span');
+                wrap.className = 'photo-thumb-wrap';
+                wrap.innerHTML = '<img src="' + p.data + '" title="' + (p.caption || '') + '">' +
+                    '<button type="button" class="photo-del" onclick="deletePhoto(\'' + key + '\',' + i + ')">×</button>';
+                container.appendChild(wrap);
+            });
+        }
+
+        function renderAnnexes() {
+            var grid = document.getElementById('photosAnnexesGrid');
+            var msg = document.getElementById('noPhotosMsg');
+            grid.innerHTML = '';
+            var hasPhotos = false;
+            var keys = Object.keys(allPhotos);
+            keys.forEach(function (key) {
+                allPhotos[key].forEach(function (p) {
+                    hasPhotos = true;
+                    var item = document.createElement('div');
+                    item.className = 'photo-annexe-item';
+                    var label = key.replace(/_/g, ' ').replace(/edx |ov |aprf /gi, '').replace(/comment|radio/g, '');
+                    item.innerHTML = '<img src="' + p.data + '">' +
+                        '<p><strong>' + label + '</strong>' + (p.caption ? '<br>' + p.caption : '') + '</p>';
+                    grid.appendChild(item);
+                });
+            });
+            if (!hasPhotos) {
+                grid.innerHTML = '<p style="color:#999; font-size:11px; margin:0;" id="noPhotosMsg">Aucune photo.</p>';
+            }
+        }
+
+        // ========== TEXTAREA AUTO-GROW ==========
         function autoGrow(el) {
             el.style.height = 'auto';
             el.style.height = el.scrollHeight + 'px';
         }
 
-        // Pastille click management
+        // ========== PASTILLE CLICK MANAGEMENT ==========
         document.addEventListener('click', function (e) {
             var label = e.target.closest('.pastille-group label');
             if (!label) return;
@@ -1455,17 +1659,22 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
             if (radio) radio.checked = true;
         });
 
-        // Init on page load
+        // ========== INIT ON PAGE LOAD ==========
         document.addEventListener('DOMContentLoaded', function () {
             // Init pastille selected states
             document.querySelectorAll('.pastille-group input[type="radio"]:checked').forEach(function (r) {
                 r.closest('label').classList.add('selected');
             });
-            // Init auto-grow for all textareas with content
+            // Init auto-grow
             document.querySelectorAll('.pdf-textarea').forEach(function (ta) {
                 if (ta.value) autoGrow(ta);
                 ta.addEventListener('input', function () { autoGrow(this); });
             });
+            // Init photo thumbnails from loaded data
+            Object.keys(allPhotos).forEach(function (key) {
+                renderThumbsForKey(key);
+            });
+            renderAnnexes();
         });
     </script>
 </body>

@@ -2,7 +2,8 @@
   "functions": {
     "api/*.php": {
       "runtime": "vercel-php@0.7.2",
-      "excludeFiles": "{assets/**,*.sql,*.md,.htaccess}"
+      "excludeFiles": "{assets/**,*.sql,*.md,.htaccess}",
+      "maxDuration": 30
     }
   },
   "routes": [
