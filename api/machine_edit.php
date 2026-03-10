@@ -999,58 +999,70 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                                 ELECTRIQUE HORS TENSION</th>
                         </tr>
                         <tr>
-                            <td colspan="1" style="padding:4px; font-weight:bold;">Isolement sous 1000 Vcc :</td>
-                            <td style="border:1px solid #000; text-align:center;">
+                            <td style="padding:4px; font-weight:bold;">
+                                Isolement sous 1000 Vcc :
                                 <input type="text" name="mesures[levage_isolement]"
                                     value="<?= htmlspecialchars($mesures['levage_isolement'] ?? '') ?>" class="pdf-input"
-                                    style="width:60px;"> M.Ohms
+                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                M.ohms
                             </td>
+                            <td style="border:1px solid #000; text-align:center;"></td>
                             <td style="padding:0;"><textarea name="donnees[levage_isolement_comment]" class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_isolement_comment"] ?? '') ?></textarea>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="1" style="padding:4px; font-weight:bold;">Résistance à froid :</td>
-                            <td style="border:1px solid #000; border-top:none; text-align:center;">
+                            <td style="padding:4px; font-weight:bold;">
+                                Résistance à froid :
                                 <input type="text" name="mesures[levage_resistance]"
                                     value="<?= htmlspecialchars($mesures['levage_resistance'] ?? '') ?>" class="pdf-input"
-                                    style="width:60px;"> ohms
+                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                ohms
                             </td>
+                            <td style="border:1px solid #000; text-align:center;"></td>
                             <td style="padding:0;"><textarea name="donnees[levage_resistance_comment]" class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_resistance_comment"] ?? '') ?></textarea>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="1" style="padding:4px; font-weight:bold;">Température de la carcasse :</td>
-                            <td style="border:1px solid #000; border-top:none; text-align:center;">
+                            <td style="padding:4px; font-weight:bold;">
+                                Température de la carcasse :
                                 <input type="text" name="mesures[levage_temp_carcasse]"
                                     value="<?= htmlspecialchars($mesures['levage_temp_carcasse'] ?? '') ?>"
-                                    class="pdf-input" style="width:60px;"> °C
+                                    class="pdf-input"
+                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                °C
                             </td>
+                            <td style="border:1px solid #000; text-align:center;"></td>
                             <td style="padding:0;"><textarea name="donnees[levage_temp_carcasse_comment]"
                                     class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_temp_carcasse_comment"] ?? '') ?></textarea>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="1" style="padding:4px; font-weight:bold;">Température ambiante :</td>
-                            <td style="border:1px solid #000; border-top:none; text-align:center;">
+                            <td style="padding:4px; font-weight:bold;">
+                                Température ambiante :
                                 <input type="text" name="mesures[levage_temp_ambiante]"
                                     value="<?= htmlspecialchars($mesures['levage_temp_ambiante'] ?? '') ?>"
-                                    class="pdf-input" style="width:60px;"> °C
+                                    class="pdf-input"
+                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                °C
                             </td>
+                            <td style="border:1px solid #000; text-align:center;"></td>
                             <td style="padding:0;"><textarea name="donnees[levage_temp_ambiante_comment]"
                                     class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_temp_ambiante_comment"] ?? '') ?></textarea>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="1" style="padding:4px; font-weight:bold;">Electroaimant arrêté depuis :</td>
-                            <td style="border:1px solid #000; border-top:none; text-align:center;">
+                            <td style="padding:4px; font-weight:bold;">
+                                Electroaimant arrêté depuis
                                 <input type="text" name="mesures[levage_arrete_depuis]"
                                     value="<?= htmlspecialchars($mesures['levage_arrete_depuis'] ?? '') ?>"
-                                    class="pdf-input" style="width:60px;"> h
+                                    class="pdf-input"
+                                    style="width:60px; border-bottom:1px solid #000; text-align:center; margin-left:5px;"> h
                             </td>
+                            <td style="border:1px solid #000; text-align:center;"></td>
                             <td style="padding:0;"><textarea name="donnees[levage_arrete_depuis_comment]"
                                     class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_arrete_depuis_comment"] ?? '') ?></textarea>
@@ -1064,72 +1076,55 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                                 ELECTRIQUE SOUS TENSION</th>
                         </tr>
                         <tr>
-                            <td style="padding:4px; font-weight:bold;">Tension :</td>
-                            <td style="padding:0; vertical-align:middle; border:1px solid #000;">
-                                <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div style="display:flex; align-items:center;">
-                                        <input type="text" name="mesures[levage_tension]"
-                                            value="<?= htmlspecialchars($mesures['levage_tension'] ?? '') ?>"
-                                            class="pdf-input" style="width:60px; text-align:center;"> <span
-                                            style="font-size:10px; margin-left:3px;">Vcc</span>
-                                    </div>
-                                    <?= renderAprfEtatRadios("levage_tension_stat", $donnees) ?>
-                                </div>
+                            <td style="padding:4px; font-weight:bold;">
+                                Tension :
+                                <input type="text" name="mesures[levage_tension]"
+                                    value="<?= htmlspecialchars($mesures['levage_tension'] ?? '') ?>" class="pdf-input"
+                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                Vcc
                             </td>
+                            <td style="border:1px solid #000; text-align:center;"></td>
                             <td style="padding:0;"><textarea name="donnees[levage_tension_comment]" class="pdf-textarea"
-                                    style="height:60px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_tension_comment"] ?? '') ?></textarea>
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_tension_comment"] ?? '') ?></textarea>
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding:4px; font-weight:bold;">Intensité :</td>
-                            <td style="padding:0; vertical-align:middle; border:1px solid #000;">
-                                <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div style="display:flex; align-items:center;">
-                                        <input type="text" name="mesures[levage_intensite]"
-                                            value="<?= htmlspecialchars($mesures['levage_intensite'] ?? '') ?>"
-                                            class="pdf-input" style="width:60px; text-align:center;"> <span
-                                            style="font-size:10px; margin-left:3px;">A</span>
-                                    </div>
-                                    <?= renderAprfEtatRadios("levage_intensite_stat", $donnees) ?>
-                                </div>
+                            <td style="padding:4px; font-weight:bold;">
+                                Intensité :
+                                <input type="text" name="mesures[levage_intensite]"
+                                    value="<?= htmlspecialchars($mesures['levage_intensite'] ?? '') ?>" class="pdf-input"
+                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;"> A
                             </td>
+                            <td style="border:1px solid #000; text-align:center;"></td>
                             <td style="padding:0;"><textarea name="donnees[levage_intensite_comment]" class="pdf-textarea"
-                                    style="height:60px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_intensite_comment"] ?? '') ?></textarea>
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_intensite_comment"] ?? '') ?></textarea>
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding:4px; font-weight:bold;">Champ magnétique (centre noyau) :</td>
-                            <td style="padding:0; vertical-align:middle; border:1px solid #000;">
-                                <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div style="display:flex; align-items:center;">
-                                        <input type="text" name="mesures[levage_champ_centre]"
-                                            value="<?= htmlspecialchars($mesures['levage_champ_centre'] ?? '') ?>"
-                                            class="pdf-input" style="width:60px; text-align:center;"> <span
-                                            style="font-size:10px; margin-left:3px;">Gauss</span>
-                                    </div>
-                                    <?= renderAprfEtatRadios("levage_champ_centre_stat", $donnees) ?>
-                                </div>
+                            <td style="padding:4px; font-weight:bold;">
+                                Champ magnétique au centre du noyau :
+                                <input type="text" name="mesures[levage_champ_centre]"
+                                    value="<?= htmlspecialchars($mesures['levage_champ_centre'] ?? '') ?>" class="pdf-input"
+                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                Gauss
                             </td>
+                            <td style="border:1px solid #000; text-align:center;"></td>
                             <td style="padding:0;"><textarea name="donnees[levage_champ_centre_comment]"
                                     class="pdf-textarea"
-                                    style="height:60px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_champ_centre_comment"] ?? '') ?></textarea>
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_champ_centre_comment"] ?? '') ?></textarea>
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding:4px; font-weight:bold;">Champ magnétique (milieu pôle) :</td>
-                            <td style="padding:0; vertical-align:middle; border:1px solid #000;">
-                                <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div style="display:flex; align-items:center;">
-                                        <input type="text" name="mesures[levage_champ_pole]"
-                                            value="<?= htmlspecialchars($mesures['levage_champ_pole'] ?? '') ?>"
-                                            class="pdf-input" style="width:60px; text-align:center;"> <span
-                                            style="font-size:10px; margin-left:3px;">Gauss</span>
-                                    </div>
-                                    <?= renderAprfEtatRadios("levage_champ_pole_stat", $donnees) ?>
-                                </div>
+                            <td style="padding:4px; font-weight:bold;">
+                                Champ magnétique au milieu du pôle :
+                                <input type="text" name="mesures[levage_champ_pole]"
+                                    value="<?= htmlspecialchars($mesures['levage_champ_pole'] ?? '') ?>" class="pdf-input"
+                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                Gauss
                             </td>
+                            <td style="border:1px solid #000; text-align:center;"></td>
                             <td style="padding:0;"><textarea name="donnees[levage_champ_pole_comment]" class="pdf-textarea"
-                                    style="height:60px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_champ_pole_comment"] ?? '') ?></textarea>
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_champ_pole_comment"] ?? '') ?></textarea>
                             </td>
                         </tr>
 
@@ -1139,36 +1134,71 @@ $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AI
                                 APPLICATION DU CLIENT</th>
                         </tr>
                         <tr>
-                            <td colspan="3" style="padding:5px;">
-                                <strong>Produit manipulé :</strong> Brame / Tôle / Paquets / Coils / Profilés |
-                                Dim. : <input type="text" name="mesures[levage_dimensions]"
+                            <td style="padding:4px; font-weight:bold;">
+                                Type de produit manipulé : Brame / Tôle / Paquets / Coils / Profilés
+                            </td>
+                            <td style="border:1px solid #000; text-align:center;"></td>
+                            <td style="padding:4px; font-weight:bold; text-align:left;">
+                                Dimensions :
+                                <input type="text" name="mesures[levage_dimensions]"
                                     value="<?= htmlspecialchars($mesures['levage_dimensions'] ?? '') ?>" class="pdf-input"
-                                    style="width:200px;">
+                                    style="width:120px; border-bottom:1px solid #000; margin-left:5px;">
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2" style="padding:5px;"><strong>Charge Maxi par aimant :</strong></td>
-                            <td style="padding:5px;"><input type="text" name="mesures[levage_charge_maxi]"
+                            <td style="padding:4px; font-weight:bold;">
+                                Charge Maxi par aimant :
+                                <input type="text" name="mesures[levage_charge_maxi]"
                                     value="<?= htmlspecialchars($mesures['levage_charge_maxi'] ?? '') ?>" class="pdf-input"
-                                    style="width:100px;"> kg</td>
+                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                kg
+                            </td>
+                            <td style="border:1px solid #000; text-align:center;"></td>
+                            <td style="padding:0;"><textarea name="donnees[levage_charge_maxi_comment]" class="pdf-textarea"
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_charge_maxi_comment"] ?? '') ?></textarea>
+                            </td>
                         </tr>
                         <tr>
-                            <td colspan="2" style="padding:5px;"><strong>Température Maxi des produits :</strong></td>
-                            <td style="padding:5px;"><input type="text" name="mesures[levage_temp_maxi]"
+                            <td style="padding:4px; font-weight:bold;">
+                                Température Maxi des produits :
+                                <input type="text" name="mesures[levage_temp_maxi]"
                                     value="<?= htmlspecialchars($mesures['levage_temp_maxi'] ?? '') ?>" class="pdf-input"
-                                    style="width:100px;"> °C</td>
+                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                °C
+                            </td>
+                            <td style="border:1px solid #000; text-align:center;"></td>
+                            <td style="padding:0;"><textarea name="donnees[levage_temp_maxi_comment]" class="pdf-textarea"
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_temp_maxi_comment"] ?? '') ?></textarea>
+                            </td>
                         </tr>
                         <tr>
-                            <td colspan="2" style="padding:5px;"><strong>Facteur de marche estimé :</strong></td>
-                            <td style="padding:5px;"><input type="text" name="mesures[levage_facteur_marche]"
+                            <td style="padding:4px; font-weight:bold;">
+                                Estimation du facteur de marche :
+                                <input type="text" name="mesures[levage_facteur_marche]"
                                     value="<?= htmlspecialchars($mesures['levage_facteur_marche'] ?? '') ?>"
-                                    class="pdf-input" style="width:100px;"> %</td>
+                                    class="pdf-input"
+                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;"> %
+                            </td>
+                            <td style="border:1px solid #000; text-align:center;"></td>
+                            <td style="padding:0;"><textarea name="donnees[levage_facteur_marche_comment]"
+                                    class="pdf-textarea"
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_facteur_marche_comment"] ?? '') ?></textarea>
+                            </td>
                         </tr>
                         <tr>
-                            <td colspan="2" style="padding:5px;"><strong>Facteur de service h/jour :</strong></td>
-                            <td style="padding:5px;"><input type="text" name="mesures[levage_facteur_service]"
+                            <td style="padding:4px; font-weight:bold;">
+                                Facteur de service :
+                                <input type="text" name="mesures[levage_facteur_service]"
                                     value="<?= htmlspecialchars($mesures['levage_facteur_service'] ?? '') ?>"
-                                    class="pdf-input" style="width:100px;"> h/j</td>
+                                    class="pdf-input"
+                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                h/jour
+                            </td>
+                            <td style="border:1px solid #000; text-align:center;"></td>
+                            <td style="padding:0;"><textarea name="donnees[levage_facteur_service_comment]"
+                                    class="pdf-textarea"
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_facteur_service_comment"] ?? '') ?></textarea>
+                            </td>
                         </tr>
                     </table>
 
