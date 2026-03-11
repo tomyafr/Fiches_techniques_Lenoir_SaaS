@@ -423,6 +423,7 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                         nomSociete: <?= json_encode($intervention['nom_societe'] ?? '') ?>,
                         dateInt: <?= json_encode(date('d/m/Y', strtotime($intervention['date_intervention'] ?? 'now'))) ?>,
                         csrfToken: <?= json_encode(getCsrfToken()) ?>,
+                        techName: <?= json_encode($techName) ?>,
                         arc: <?= json_encode($intervention['numero_arc'] ?? '') ?>,
                         pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>, 
                         machinesIds: [<?= implode(',', array_column($machines, 'id')) ?>],
@@ -1182,16 +1183,103 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             pbF.className = 'html2pdf__page-break';
             container.appendChild(pbF);
 
-            // --- 4. PAGE DE FIN ---
+            // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC) ---
             const endPage = document.createElement('div');
             endPage.className = 'pdf-page';
-            endPage.style.display = 'flex';
-            endPage.style.justifyContent = 'center';
-            endPage.style.alignItems = 'center';
-            endPage.style.padding = '0';
+            endPage.style.padding = '15mm 15mm 30mm 15mm';
             endPage.style.position = 'relative';
-            endPage.style.paddingBottom = '30mm';
-            endPage.innerHTML = `<img src="/assets/machines/99-page de fin_diagram.png" style="width:100%; height:100%; object-fit:contain;">`;
+
+            // Get data for the end page
+            const souhaitRapport = originalRapport.querySelector('[name="souhait_rapport_unique"]').checked;
+            const souhaitPieces = originalRapport.querySelector('[name="souhait_offre_pieces"]').checked;
+            const souhaitIntervention = originalRapport.querySelector('[name="souhait_pieces_intervention"]').checked;
+            const souhaitAucune = originalRapport.querySelector('[name="souhait_aucune_offre"]').checked;
+            const nomSignataire = originalRapport.querySelector('[name="nom_signataire"]').value || '_____';
+            const techName = window.LM_RAPPORT.techName || '<?= $techName ?>';
+            const dateStr = window.LM_RAPPORT.dateInt;
+
+            const sigTechImg = document.getElementById('canvasTech').toDataURL();
+            const sigClientImg = document.getElementById('canvasClient').toDataURL();
+
+            endPage.innerHTML = `
+                <div style="font-family: Arial, sans-serif; font-size: 11px; color: #000;">
+                    
+                    <!-- LE CLIENT SOUHAITE -->
+                    <div style="background-color: #e0f2fe; padding: 10px; border: 2px solid #000; margin-bottom: -2px;">
+                        <div style="font-weight: bold; margin-bottom: 8px; font-size: 13px;">LE CLIENT SOUHAITE :</div>
+                        <div style="margin-bottom: 5px;">${souhaitRapport ? '☑' : '☐'} Ce Rapport d'expertise</div>
+                        <div style="margin-bottom: 5px;">${souhaitPieces ? '☑' : '☐'} Une offre de Pièces de Rechange</div>
+                        <div style="margin-bottom: 5px;">${souhaitIntervention ? '☑' : '☐'} Une offre de PR + intervention mise en place</div>
+                        <div>${souhaitAucune ? '☑' : '☐'} Aucune offre</div>
+                    </div>
+
+                    <!-- SIGNATURES GRID -->
+                    <table style="width: 100%; border-collapse: collapse; table-layout: fixed;">
+                        <tr style="height: 120px;">
+                            <td style="border: 2px solid #000; padding: 5px; vertical-align: top; width: 33%;">
+                                <div style="font-weight: bold; text-decoration: underline;">Contrôleur</div>
+                                <div style="margin-top: 10px;">Nom : <strong>${techName}</strong></div>
+                            </td>
+                            <td style="border: 2px solid #000; padding: 5px; vertical-align: top; width: 25%;">
+                                <div style="font-weight: bold; text-decoration: underline;">Date :</div>
+                                <div style="margin-top: 10px; text-align: center; font-size: 14px;">${dateStr}</div>
+                            </td>
+                            <td style="border: 2px solid #000; padding: 5px; vertical-align: top;">
+                                <div style="font-weight: bold; text-decoration: underline;">Signature</div>
+                                <div style="text-align: center; margin-top: 5px;">
+                                    <img src="${sigTechImg}" style="max-height: 80px; max-width: 90%; object-fit: contain;">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr style="height: 120px;">
+                            <td style="border: 2px solid #000; padding: 5px; vertical-align: top;">
+                                <div style="font-weight: bold; text-decoration: underline;">Client</div>
+                                <div style="margin-top: 10px;">Nom : <strong>${nomSignataire}</strong></div>
+                            </td>
+                            <td style="border: 2px solid #000; padding: 5px; vertical-align: top;">
+                                <div style="font-weight: bold; text-decoration: underline;">Date :</div>
+                                <div style="margin-top: 10px; text-align: center; font-size: 14px;">${dateStr}</div>
+                            </td>
+                            <td style="border: 2px solid #000; padding: 5px; vertical-align: top;">
+                                <div style="font-weight: bold; text-decoration: underline;">Signature</div>
+                                <div style="text-align: center; margin-top: 5px;">
+                                    <img src="${sigClientImg}" style="max-height: 80px; max-width: 90%; object-fit: contain;">
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- CONTACTS ORANGE -->
+                    <div style="margin-top: 30px; border: 2px solid #000; padding: 20px; text-align: center;">
+                        <div style="background-color: #ffedd5; padding: 15px; margin-bottom: 20px;">
+                            <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px;">POUR TOUTE INFORMATION TECHNIQUE SUR CE RAPPORT</div>
+                            <div style="font-size: 14px;">➤ <strong>Soufyane SALAH</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Chargé d'Affaires</span></div>
+                        </div>
+                        
+                        <div style="background-color: #ffedd5; padding: 15px; margin-bottom: 20px;">
+                            <div style="font-weight: bold; font-size: 13px; margin-bottom: 5px;">POUR LA PLANIFICATION D'UNE VÉRIFICATION PÉRIODIQUE</div>
+                            <div style="font-size: 14px; ">➤ <strong>Sophie NIAY</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Responsable Service Clients</span></div>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">UNE SEULE ADRESSE COMMUNE :</div>
+                            <div style="font-size: 14px; margin-bottom: 15px; color: #1e40af;">contact@raoul-lenoir.com</div>
+                            
+                            <div style="margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 20px;">
+                                <div style="text-align: left;">
+                                    <div style="font-weight: bold; margin-bottom: 5px;">Découvrez nos activités sur :</div>
+                                    <div style="font-weight: bold; font-size: 14px; border-bottom: 2px solid #000;">www.lenoir-mec.com</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://www.lenoir-mec.com" style="width: 80px; height: 80px;">
+                                    <div style="font-size: 8px; margin-top: 4px;">Visitez notre site !</div>
+                                    <div style="font-size: 9px; font-weight: bold;">www.raoul-lenoir.com</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
             endPage.appendChild(createPdfFooter());
             container.appendChild(endPage);
 
