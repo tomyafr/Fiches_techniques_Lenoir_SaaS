@@ -491,10 +491,10 @@ $heureFin = $mesures['heure_fin'] ?? '';
                     <td style="width:40%; border-right:1px solid #000; padding:15px; vertical-align:bottom;">
                         <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC"
                             style="max-width:220px; display:block; margin-bottom:30px;">
-                        <div style="text-align:right; font-weight:bold; color:#0070c0; font-size:16px;">
+                        <div style="text-align:right; font-weight:bold; color:#1B4F72; font-size:16px;">
                             Poste<input type="text" name="mesures[poste]"
                                 value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>"
-                                style="width:100px; border:none; border-bottom:1px solid #0070c0; outline:none; color:#0070c0; background:transparent; font-weight:bold;">
+                                style="width:100px; border:none; border-bottom:1px solid #1B4F72; outline:none; color:#1B4F72; background:transparent; font-weight:bold;">
                         </div>
                     </td>
                     <td style="width:60%; text-align:center; vertical-align:middle;">
@@ -558,7 +558,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                     <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#e8f4e8;">T. réalisé
                     </td>
                     <td style="border:1px solid #000; padding:6px;">
-                        <span id="tempsCalc" style="font-weight:bold; color:#0070c0; font-size:14px;"></span>
+                        <span id="tempsCalc" style="font-weight:bold; color:#1B4F72; font-size:14px;"></span>
                         <button type="button" id="btnChrono" onclick="toggleChrono()"
                             style="background:#28a745; color:white; border:none; border-radius:4px; padding:3px 10px; font-size:11px; cursor:pointer; margin-left:8px; vertical-align:middle;">▶
                             Chrono</button>
