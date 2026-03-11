@@ -423,7 +423,18 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                         nomSociete: <?= json_encode($intervention['nom_societe'] ?? '') ?>,
                         dateInt: <?= json_encode(date('d/m/Y', strtotime($intervention['date_intervention'] ?? 'now'))) ?>,
                         csrfToken: <?= json_encode(getCsrfToken()) ?>,
-                        pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>, machinesIds: [<?= implode(',', array_column($machines, 'id')) ?>]
+                        arc: <?= json_encode($intervention['numero_arc'] ?? '') ?>,
+                        pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>, 
+                        machinesIds: [<?= implode(',', array_column($machines, 'id')) ?>],
+                        machinesData: <?= json_encode(array_values(array_map(function($m) use ($intervention) {
+                            $mes = json_decode($m['mesures'] ?? '{}', true);
+                            return [
+                                'arc' => $intervention['numero_arc'],
+                                'of' => $m['numero_of'] ?? '',
+                                'designation' => $m['designation'] ?? '',
+                                'annee' => $mes['annee'] ?? ''
+                            ];
+                        }, $machines))) ?>
                     };
                 </script>
             <?php endif; ?>
@@ -696,8 +707,26 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             return new Promise(r => setTimeout(r, 200));
         }
 
+        // helper: create footer
+        function createPdfFooter() {
+            const f = document.createElement('div');
+            f.style.position = 'absolute';
+            f.style.bottom = '15mm';
+            f.style.left = '0';
+            f.style.width = '100%';
+            f.style.paddingLeft = '15mm';
+            f.style.paddingRight = '15mm';
+            f.style.boxSizing = 'border-box';
+            f.style.textAlign = 'center';
+            f.style.fontSize = '9px';
+            f.style.fontWeight = 'bold';
+            f.style.borderTop = '2px solid #000';
+            f.style.paddingTop = '5px';
+            f.innerHTML = `Établissement Raoul LENOIR – Z.I du Béarn – 54400 COSNES ET ROMAIN (France)<br>Tél : +33 (0)3 82 25 23 00 – Fax : +33 (0)3 82 24 59 19 – E-mail: contact@raoul-lenoir.com – Web: www.lenoir-mec.com<br>S.A au capital de 5.728.967€ – RCS BRIEY – Siret 383 141 546 000 17 – TVA FR 11 383 141 546 – APE 2822Z`;
+            return f;
+        }
+
         async function buildFullPdfContainer() {
-            // Conteneur détaché du DOM : il ne faut pas l'insérer dans body
             const container = document.createElement('div');
             container.id = 'pdf-full-wrapper';
             container.style.width = '210mm';
@@ -712,11 +741,13 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                     min-height: 29.7cm;
                     background: white;
                     color: black;
-                    padding: 10mm;
+                    padding: 15mm;
+                    padding-bottom: 30mm;
                     box-sizing: border-box;
                     margin: 0;
                     font-family: Arial, sans-serif;
                     font-size: 13px;
+                    position: relative; 
                 }
                 .html2pdf__page-break {
                     height: 0;
@@ -727,7 +758,6 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                 .pdf-table th, .pdf-table td { border: 1px solid #000; padding: 4px; vertical-align: middle; }
                 .pdf-table th { background-color: #f0f0f0; text-align: left; text-transform: uppercase; }
                 
-                /* PASTILLES: On masque celles non sélectionnées et on met en valeur celle cochée */
                 .pastille-group { display: inline-flex; gap: 4px; align-items: center; }
                 .pastille-group label {
                     display: flex; align-items: center; justify-content: center;
@@ -745,84 +775,192 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                 }
 
                 .pdf-input { border: none; border-bottom: 1px dashed #000; background: transparent; font-size: 13px; font-family: Arial; padding: 2px; width: 100%; color: black; outline:none; }
-                
-                /* Rendu des commentaires pour qu'ils soient lisibles sans ascenceur */
                 .pdf-textarea-rendered { 
                     width: 100%; font-family: Arial; font-size: 11px; color: black; white-space: pre-wrap; word-wrap: break-word; padding:4px; 
                 }
-                
-                /* Surcharges rapport final (Couverture et Signatures) */
-                .rapport-page-cloned { padding: 1.5cm; }
-                .rapport-page-cloned .card.glass {
-                    border: 1px solid #000 !important;
-                    background: white !important;
-                    box-shadow: none !important;
-                }
-                .rapport-page-cloned .label { color: #000 !important; font-weight: bold; margin-bottom: 0.2rem; }
-                .rapport-page-cloned .input { background: white !important; color: black !important; border-bottom: 1px solid #000 !important; border-top: none; border-left: none; border-right: none; border-radius: 0; padding-left: 0; }
-                .rapport-page-cloned .rapport-header { border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 20px;}
-                .rapport-page-cloned .rapport-header h1 { color: #000; font-size: 1.5rem; }
-                .rapport-page-cloned .section-title { color: #000; border-bottom: 1px solid #000; font-weight: bold; margin-bottom:15px; margin-top:20px; font-size:1.1rem; }
-                .rapport-page-cloned .machines-recap { display: flex; flex-direction: column; gap: 5px; margin-bottom: 1rem; }
-                .rapport-page-cloned .machines-recap .machine-tag { background: none; border: 1px solid transparent; color: #000; display: block; padding: 5px 0; font-size: 1rem;}
                 
                 img { max-width: 100%; }
             `;
             container.appendChild(styleNode);
 
+            // Fetch data from form for Page 1
+            const numArc = window.LM_RAPPORT.arc;
+            const nomSociete = document.querySelector('[name="nom_societe_display"]')?.value || window.LM_RAPPORT.nomSociete;
+            const adresse = document.querySelector('[name="adresse"]')?.value || '';
+            const cp = document.querySelector('[name="code_postal"]')?.value || '';
+            const ville = document.querySelector('[name="ville"]')?.value || '';
+            const pays = document.querySelector('[name="pays"]')?.value || '';
+            
+            const contactNom = document.querySelector('[name="contact_nom"]')?.value || '';
+            const contactFonction = document.querySelector('[name="contact_fonction"]')?.value || '';
+            const contactTel = document.querySelector('[name="contact_telephone"]')?.value || '';
+            const contactEmail = document.querySelector('[name="contact_email"]')?.value || '';
+            
+            const nomParts = contactNom.trim().split(' ');
+            const cNom = nomParts.length > 0 ? nomParts[0] : '';
+            const cPrenom = nomParts.length > 1 ? nomParts.slice(1).join(' ') : '';
+            
+            const commentaire = document.querySelector('[name="commentaire_technicien"]')?.value || '';
+            
+            const techName = "<?= htmlspecialchars($techName) ?>";
+            const dateExp = window.LM_RAPPORT.dateInt;
+            const sigTechData = document.getElementById('canvasTech')?.toDataURL() || '';
+
+            // Generate HTML lines for machines
+            const machinesTrs = window.LM_RAPPORT.machinesData.map(m => `
+                <tr style="border-bottom:1px solid #000;">
+                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.arc}</td>
+                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.of}</td>
+                    <td style="padding:6px; border-right:1px solid #000;">${m.designation}</td>
+                    <td style="padding:6px; text-align:center;">${m.annee}</td>
+                </tr>
+            `).join('');
+
             // --- 1. PAGE RAPPORT FINAL (COUVERTURE + INFOS) ---
             const rapportCloneWrapper = document.createElement('div');
-            rapportCloneWrapper.className = 'pdf-page rapport-page-cloned';
+            rapportCloneWrapper.className = 'pdf-page';
+            // Layout exact as requested
+            rapportCloneWrapper.innerHTML = `
+                <!-- HEADER -->
+                <div style="border: 2px solid #000; margin-bottom: 20px;">
+                    <div style="display:flex; padding:15px; align-items:center;">
+                        <div style="flex:1;">
+                            <img src="/assets/lenoir_logo_doc.png" style="height:60px;">
+                            <div style="font-weight:bold; font-size:16px; margin-top:5px; color:#1e3a8a;">MAGNETIC SYSTEMS</div>
+                        </div>
+                        <div style="flex:2; text-align:right; color:#1e3a8a; font-weight:bold; font-size:13px; line-height:1.4;">
+                            Le spécialiste des applications<br>
+                            magnétiques pour la séparation<br>
+                            et le levage industriel<br>
+                            <br>
+                            <span style="font-size:16px; text-decoration:underline;">LISTING DES EXPERTISES</span>
+                        </div>
+                    </div>
+                    <div style="background-color:#0ea5e9; color:white; text-align:center; padding:15px; border-top:2px solid #000;">
+                        <h1 style="margin:0; font-size:24px; text-transform:uppercase; letter-spacing:1px;">RAPPORT D'EXPERTISE SUR SITE</h1>
+                        <div style="font-size:18px; font-weight:bold; margin-top:8px;">N° ARC : ${numArc}</div>
+                    </div>
+                </div>
 
-            const originalRapport = document.querySelector('.rapport-page');
-            const clone = originalRapport.cloneNode(true);
+                <!-- COORDONNEES DU CLIENT -->
+                <div style="background-color:#0284c7; color:white; padding:8px 15px; font-weight:bold; border:2px solid #000; border-bottom:none; text-transform:uppercase; font-size:14px;">
+                    COORDONNÉES DU CLIENT
+                </div>
+                <table style="width:100%; border-collapse:collapse; border:2px solid #000; margin-bottom:20px; font-size:13px;">
+                    <tr>
+                        <td style="width:50%; padding:15px; border-right:1px solid #000; vertical-align:top;">
+                            <div style="margin-bottom:10px; font-weight:bold; font-size:14px; text-decoration:underline;">SOCIÉTÉ</div>
+                            <table style="width:100%">
+                                <tr><td style="width:80px; padding-bottom:5px;">Nom:</td><td style="font-weight:bold; padding-bottom:5px;">${nomSociete}</td></tr>
+                                <tr><td style="padding-bottom:5px;">Adresse:</td><td style="padding-bottom:5px;">${adresse}</td></tr>
+                                <tr><td style="padding-bottom:5px;">CP:</td><td style="padding-bottom:5px;">${cp}</td></tr>
+                                <tr><td style="padding-bottom:5px;">Ville:</td><td style="padding-bottom:5px;">${ville}</td></tr>
+                                <tr><td style="padding-bottom:5px;">Pays:</td><td style="padding-bottom:5px;">${pays}</td></tr>
+                            </table>
+                        </td>
+                        <td style="width:50%; padding:15px; vertical-align:top;">
+                            <div style="margin-bottom:10px; font-weight:bold; font-size:14px; text-decoration:underline;">CONTACT SUR SITE</div>
+                            <table style="width:100%">
+                                <tr><td style="width:80px; padding-bottom:5px;">Nom:</td><td style="font-weight:bold; padding-bottom:5px;">${cNom}</td></tr>
+                                <tr><td style="padding-bottom:5px;">Prénom:</td><td style="padding-bottom:5px;">${cPrenom}</td></tr>
+                                <tr><td style="padding-bottom:5px;">Fonction:</td><td style="padding-bottom:5px;">${contactFonction}</td></tr>
+                                <tr><td style="padding-bottom:5px;">Téléphone:</td><td style="padding-bottom:5px;">${contactTel}</td></tr>
+                                <tr><td style="padding-bottom:5px;">Courriel:</td><td style="padding-bottom:5px;">${contactEmail}</td></tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
 
-            // Nettoyage absolu du clone (on supprime les parties non voulues sur la couverture)
-            clone.querySelectorAll('.mobile-header, .btn-final, .sig-clear, #successBanner, #btnSendEmail, #btnDownloadPDF, a, button').forEach(el => el.remove());
+                <!-- PARC MACHINE -->
+                <div style="background-color:#0284c7; color:white; padding:8px 15px; font-weight:bold; border:2px solid #000; border-bottom:none; text-transform:uppercase; font-size:14px;">
+                    PARC MACHINE
+                </div>
+                <table style="width:100%; border-collapse:collapse; border:2px solid #000; margin-bottom:20px; font-size:13px; text-align:left;">
+                    <thead>
+                        <tr style="border-bottom:2px solid #000; background-color:#f8fafc;">
+                            <th style="padding:8px; border-right:1px solid #000; width:15%; text-align:center;">N° A.R.C</th>
+                            <th style="padding:8px; border-right:1px solid #000; width:15%; text-align:center;">N° O.F.</th>
+                            <th style="padding:8px; border-right:1px solid #000; width:55%;">Désignation du matériel</th>
+                            <th style="padding:8px; width:15%; text-align:center;">Année</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${machinesTrs}
+                    </tbody>
+                </table>
 
-            // Pour la couverture, on va séparer le rapport en deux : 
-            // - Couverture = Logo, en-tête, listes machines, Infos Client
-            // - Fin = Commentaires tech, souhaits, commentaires clients, signatures
+                <!-- COMMENTAIRE TECHNICIEN -->
+                <div style="border:2px solid #000; margin-bottom:20px;">
+                    <div style="background-color:#f8fafc; border-bottom:1px solid #000; padding:8px 15px; font-weight:bold;">
+                        Commentaire :
+                    </div>
+                    <div style="padding:15px; min-height:180px; font-size:13px; white-space:pre-wrap;">${commentaire}</div>
+                </div>
 
-            // Diviser le clone
-            const cloneCouverture = clone.cloneNode(true);
-            const cloneFin = clone.cloneNode(true);
-
-            // Dans la couverture, on supprime tout à partir de "Commentaire technicien"
-            const allSectionsCouv = cloneCouverture.querySelectorAll('.section-title');
-            let foundComm = false;
-            allSectionsCouv.forEach(sec => {
-                if (sec.textContent.includes('Commentaire / Observations') || foundComm) {
-                    foundComm = true;
-                    // On supprime la section et son contenu suivant... c'est complexe de trouver le suivant
-                }
-            });
-            // Méthode simple : supprimer par conteneurs explicites
-            const elementsToRemoveFromCover = Array.from(cloneCouverture.children).slice(5);
-            // On conserve: form csrf(0), header(1), recap machines title(2), recap(3), info client title(4), card info client(5).
-            // Le index 6 et + = le reste.
-            const enfantsCouv = Array.from(cloneCouverture.querySelector('form').children);
-            let idxStartFin = -1;
-            enfantsCouv.forEach((el, index) => {
-                if (el.classList && el.classList.contains('section-title') && el.textContent.includes('Observations')) {
-                    idxStartFin = index;
-                }
-            });
-
-            if (idxStartFin > -1) {
-                // Remove elements from Cover
-                for (let i = idxStartFin; i < enfantsCouv.length; i++) {
-                    enfantsCouv[i].remove();
-                }
-            }
-
-            // Fixer les inputs texte de la couverture
-            const couvInputs = cloneCouverture.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]');
-            couvInputs.forEach(inp => { const val = inp.value; inp.setAttribute('value', val); inp.value = val; });
-
-            rapportCloneWrapper.appendChild(cloneCouverture);
+                <!-- SIGNATURES -->
+                <table style="width:100%; border-collapse:collapse; border:2px solid #000; font-size:13px; margin-bottom: 30px;">
+                    <tr>
+                        <td style="width:50%; padding:15px; border-right:1px solid #000; vertical-align:top;">
+                            <div style="margin-bottom:10px;"><strong>Technicien sur site :</strong> ${techName}</div>
+                            <div><strong>Date d'expertise :</strong> ${dateExp}</div>
+                        </td>
+                        <td style="width:50%; padding:15px; text-align:center; vertical-align:middle;">
+                            <img src="/assets/lenoir_logo_doc.png" style="height:35px; margin-bottom:10px;"><br>
+                            <img src="${sigTechData}" style="max-height:80px; max-width:90%; border:1px dashed #ccc; padding:5px;">
+                        </td>
+                    </tr>
+                </table>
+            `;
+            rapportCloneWrapper.appendChild(createPdfFooter());
             container.appendChild(rapportCloneWrapper);
 
+            // --- 1.5 PAGE PRÉAMBULE ---
+            let moisProchainText = "";
+            let villePreambule = ville || "[VILLE DU CLIENT]";
+            if (dateExp && dateExp.includes('/')) {
+                const parts = dateExp.split('/');
+                if (parts.length === 3) {
+                    const mIndex = parseInt(parts[1], 10) - 1;
+                    const y = parseInt(parts[2], 10) + 1;
+                    const moisNoms = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+                    if (mIndex >= 0 && mIndex < 12) {
+                        moisProchainText = moisNoms[mIndex] + ' ' + y;
+                    }
+                }
+            }
+            if (!moisProchainText) moisProchainText = "[MOIS PROCHAIN]";
+
+            const pbPreambule = document.createElement('div');
+            pbPreambule.className = 'html2pdf__page-break';
+            container.appendChild(pbPreambule);
+
+            const preambulePage = document.createElement('div');
+            preambulePage.className = 'pdf-page';
+            preambulePage.innerHTML = `
+                <div style="font-size: 15px; line-height: 1.6; color: black; font-family: Arial, sans-serif; padding-top: 40px;">
+                    <h2 style="color: #f97316; text-decoration: underline; font-size: 22px; text-transform: uppercase; margin-bottom: 40px;">PRÉAMBULE :</h2>
+                    
+                    <p style="margin-bottom: 25px;">
+                        Ce rapport est établi suite à une expertise effectuée le ${dateExp}<br>
+                        sur votre site de ${villePreambule}.
+                    </p>
+                    
+                    <p style="margin-bottom: 25px;">
+                        Nos expertises permettent de vous accompagner dans votre démarche<br>
+                        ISO 22000 :2005 et HACCP. Notre analyse est suivie de conclusions<br>
+                        ou recommandations que nous vous invitons à suivre pour la<br>
+                        pérennité et la qualité de votre production.
+                    </p>
+                    
+                    <p style="margin-bottom: 25px;">
+                        Dans le cadre de notre prestation annuelle, la prochaine expertise<br>
+                        aura lieu en ${moisProchainText}. Nous vous contacterons pour établir<br>
+                        une date appropriée à vos impératifs de production.
+                    </p>
+                </div>
+            `;
+            preambulePage.appendChild(createPdfFooter());
+            container.appendChild(preambulePage);
 
             // --- 2. FETCH & APPEND MACHINES ---
             if (window.LM_RAPPORT && window.LM_RAPPORT.machinesIds) {
@@ -833,20 +971,18 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(html, 'text/html');
 
-                        // Récupérer toutes les pdf-page de cette machine
                         const pages = doc.querySelectorAll('.pdf-page');
                         let isFirstMachinePage = true;
                         pages.forEach(p => {
-                            // PAGE BREAK avant chaque page
                             const pbReq = document.createElement('div');
                             pbReq.className = 'html2pdf__page-break';
                             container.appendChild(pbReq);
 
-                            // Afficher la désignation en gros sur la première page de chaque machine
                             if (isFirstMachinePage) {
                                 const hHeader = document.createElement('div');
                                 hHeader.style.padding = "10px";
-                                hHeader.style.backgroundColor = "#eee";
+                                hHeader.style.backgroundColor = "#0284c7";
+                                hHeader.style.color = "white";
                                 hHeader.style.border = "2px solid #000";
                                 hHeader.style.fontWeight = "bold";
                                 hHeader.style.textAlign = "center";
@@ -857,26 +993,27 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                                 isFirstMachinePage = false;
                             }
 
-                            // Fixer la pastille active
                             p.querySelectorAll('input[type="radio"]:checked').forEach(r => {
                                 const lbl = r.closest('label');
                                 if (lbl) lbl.classList.add('selected');
                             });
 
-                            // Fixer textes input
                             p.querySelectorAll('input[type="text"], input[type="time"]').forEach(inp => {
-                                inp.setAttribute('value', inp.value);
+                                inp.outerHTML = `<span style="border-bottom:1px dashed black; display:inline-block; min-width:30px; padding:0 3px;">${inp.value}</span>`;
                             });
-                            // Extraire le texte des textarea -> Transformer en div lisible
+
                             p.querySelectorAll('textarea').forEach(ta => {
                                 const div = document.createElement('div');
                                 div.className = 'pdf-textarea-rendered';
                                 div.style.minHeight = ta.style.height || '25px';
-                                div.textContent = ta.innerHTML || ta.value;
+                                div.textContent = ta.value || ta.innerHTML;
                                 ta.parentNode.insertBefore(div, ta);
                                 ta.remove();
                             });
-
+                            
+                            p.style.position = 'relative';
+                            p.style.paddingBottom = '30mm';
+                            p.appendChild(createPdfFooter());
                             container.appendChild(p);
                         });
                     } catch (err) {
@@ -885,43 +1022,81 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                 }
             }
 
-
-            // PAGE BREAK FINAL AVANT LA DERNIERE PAGE DE CONCLUSION
             const pbFin = document.createElement('div');
             pbFin.className = 'html2pdf__page-break';
             container.appendChild(pbFin);
 
-            // --- 3. PAGE RAPPORT FINAL (CONCLUSION) ---
+            // --- 3. PAGE RAPPORT FINAL (CONCLUSION ET SIGNATURE CLIENT) ---
             const rapportCloneWrapperFin = document.createElement('div');
-            rapportCloneWrapperFin.className = 'pdf-page rapport-page-cloned';
-
+            rapportCloneWrapperFin.className = 'pdf-page';
+            
+            const originalRapport = document.querySelector('.rapport-page');
+            const cloneFin = originalRapport.cloneNode(true);
+            
             const enfantsFin = Array.from(cloneFin.querySelector('form').children);
+            let idxStartFin = -1;
+            enfantsFin.forEach((el, index) => {
+                if (el.classList && el.classList.contains('section-title') && el.textContent.includes('client souhaite')) {
+                    idxStartFin = index;
+                }
+            });
+            
             if (idxStartFin > -1) {
-                // Remove elements from Fin (everything before the start of the final section)
                 for (let i = 0; i < idxStartFin; i++) {
-                    if (!enfantsFin[i].name && enfantsFin[i].nodeName !== "INPUT") { // Garder potentiellement csrf, etc. 
+                    if (!enfantsFin[i].name && enfantsFin[i].nodeName !== "INPUT") { 
                         enfantsFin[i].remove();
                     }
                 }
             }
 
-            // Remettre le logo en haut
             const headerFin = document.createElement('div');
-            headerFin.className = 'rapport-header';
-            headerFin.innerHTML = `<img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC" style="height: 60px; object-fit: contain; margin: 0 auto 1rem auto; display: block;">`;
+            headerFin.innerHTML = `
+                <div style="border: 2px solid #000; margin-bottom: 20px;">
+                    <div style="display:flex; padding:15px; align-items:center;">
+                        <div style="flex:1;">
+                            <img src="/assets/lenoir_logo_doc.png" style="height:60px;">
+                        </div>
+                        <div style="flex:2; text-align:right; color:#1e3a8a; font-weight:bold; font-size:13px; line-height:1.4;">
+                            <span style="font-size:16px; text-decoration:underline;">CONCLUSION D'EXPERTISE</span>
+                        </div>
+                    </div>
+                </div>
+            `;
             cloneFin.querySelector('form').insertBefore(headerFin, cloneFin.querySelector('form').firstChild);
 
-            // Remplacer Textareas de la conclusion par des div stylisées
-            const origTexteareasFin = originalRapport.querySelectorAll('textarea'); // on utilise l'original pour la valeur
+            // Additional cleanup
+            cloneFin.querySelectorAll('.mobile-header, .btn-final, .sig-clear, #successBanner, #btnSendEmail, #btnDownloadPDF, a, button').forEach(el => el.remove());
+
+            // Section titles styles
+            cloneFin.querySelectorAll('.section-title').forEach(sec => {
+                sec.style.backgroundColor = '#0284c7';
+                sec.style.color = 'white';
+                sec.style.padding = '8px 15px';
+                sec.style.fontWeight = 'bold';
+                sec.style.border = '2px solid #000';
+                sec.style.fontSize = '14px';
+                sec.style.marginTop = '20px';
+                sec.style.marginBottom = '15px';
+            });
+
+            // Card glass removal
+            cloneFin.querySelectorAll('.card.glass').forEach(card => {
+                card.style.background = 'white';
+                card.style.border = '2px solid #000';
+                card.style.boxShadow = 'none';
+                card.style.padding = '15px';
+            });
+
+            const origTexteareasFin = originalRapport.querySelectorAll('textarea'); 
             const cloneTextareasFin = cloneFin.querySelectorAll('textarea');
             cloneTextareasFin.forEach((ta, i) => {
-                const realTa = origTexteareasFin[i];
+                const realTa = Array.from(origTexteareasFin).find(t => t.name === ta.name);
                 if (realTa) {
                     const div = document.createElement('div');
                     div.className = 'pdf-textarea-rendered';
                     div.style.border = '1px solid #000';
                     div.style.padding = '10px';
-                    div.style.minHeight = ta.classList.contains('large') ? '150px' : '80px';
+                    div.style.minHeight = ta.classList.contains('small') ? '80px' : '150px';
                     div.style.fontSize = "13px";
                     div.textContent = realTa.value;
                     ta.parentNode.insertBefore(div, ta);
@@ -929,54 +1104,52 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                 ta.remove();
             });
 
-            // Remplacer checkbox de "Le client souhaite" par un affichage Unicode ✓ ou ☐
             const origCheckFin = originalRapport.querySelectorAll('.checkbox-group input[type="checkbox"]');
             const cloneCheckFin = cloneFin.querySelectorAll('.checkbox-group input[type="checkbox"]');
             cloneCheckFin.forEach((chk, i) => {
+                const realChk = Array.from(origCheckFin).find(c => c.name === chk.name);
                 const span = document.createElement('span');
-                // ✅ ☑ ☐
-                span.innerHTML = (origCheckFin[i] && origCheckFin[i].checked) ? '☑' : '☐';
+                span.innerHTML = (realChk && realChk.checked) ? '☑' : '☐';
                 span.style.fontSize = '1.3rem';
                 span.style.marginRight = '8px';
                 span.style.lineHeight = '1';
                 span.style.verticalAlign = 'middle';
                 chk.parentNode.insertBefore(span, chk);
-                // Mettre le texte en gras si coché
-                if (origCheckFin[i] && origCheckFin[i].checked) {
+                if (realChk && realChk.checked) {
                     chk.parentNode.style.fontWeight = "bold";
                 }
                 chk.remove();
             });
 
             const finInputs = cloneFin.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]');
-            finInputs.forEach(inp => { const val = inp.value; inp.setAttribute('value', val); inp.value = val; });
+            finInputs.forEach(inp => { 
+                const realInp = originalRapport.querySelector(`[name="${inp.name}"]`) || inp;
+                const val = realInp.value; 
+                inp.outerHTML = `<span style="border-bottom:1px dashed black; display:inline-block; min-width:30px; font-weight:bold;">${val}</span>`;
+            });
 
-            // Recopier les vraies signatures
-            const origCanvasTech = document.getElementById('canvasTech');
             const origCanvasClient = document.getElementById('canvasClient');
-            if (origCanvasTech) {
-                const imgTech = document.createElement('img');
-                imgTech.src = origCanvasTech.toDataURL();
-                imgTech.style.width = '100%';
-                imgTech.style.maxHeight = '150px';
-                imgTech.style.objectFit = 'contain';
-                const cCloneT = cloneFin.querySelector('#canvasTech');
-                if (cCloneT) cCloneT.parentNode.replaceChild(imgTech, cCloneT);
-            }
             if (origCanvasClient) {
                 const imgClient = document.createElement('img');
                 imgClient.src = origCanvasClient.toDataURL();
                 imgClient.style.width = '100%';
-                imgClient.style.maxHeight = '150px';
+                imgClient.style.maxHeight = '120px';
                 imgClient.style.objectFit = 'contain';
+                imgClient.style.border = '1px dashed #ccc';
                 const cCloneC = cloneFin.querySelector('#canvasClient');
                 if (cCloneC) cCloneC.parentNode.replaceChild(imgClient, cCloneC);
             }
+            
+            // remove tech signature from Conclusion page to avoid duplicates, as it was already added to pg 1
+            const techZone = cloneFin.querySelector('#canvasTech');
+            if(techZone && techZone.closest('.sig-zone')){
+               techZone.closest('.sig-zone').remove();
+            }
 
             rapportCloneWrapperFin.appendChild(cloneFin);
+            rapportCloneWrapperFin.appendChild(createPdfFooter());
             container.appendChild(rapportCloneWrapperFin);
 
-            // PAGE BREAK FINAL
             const pbF = document.createElement('div');
             pbF.className = 'html2pdf__page-break';
             container.appendChild(pbF);
@@ -988,7 +1161,10 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             endPage.style.justifyContent = 'center';
             endPage.style.alignItems = 'center';
             endPage.style.padding = '0';
+            endPage.style.position = 'relative';
+            endPage.style.paddingBottom = '30mm';
             endPage.innerHTML = `<img src="/assets/machines/99-page de fin_diagram.png" style="width:100%; height:100%; object-fit:contain;">`;
+            endPage.appendChild(createPdfFooter());
             container.appendChild(endPage);
 
             await waitForImages(container);
