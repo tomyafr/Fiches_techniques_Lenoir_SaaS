@@ -423,16 +423,16 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                         nomSociete: <?= json_encode($intervention['nom_societe'] ?? '') ?>,
                         dateInt: <?= json_encode(date('d/m/Y', strtotime($intervention['date_intervention'] ?? 'now'))) ?>,
                         csrfToken: <?= json_encode(getCsrfToken()) ?>,
-                        pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>
-                    };
-                </script>
+                        pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>,                   machinesIds: [<?= implode(',', array_column($machines, 'id')) ?>]
+                        };
+                    </script>
             <?php endif; ?>
 
             <?php if (!empty($error)): ?>
-                <div
-                    style="background: rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.4); color:#f43f5e; padding:1rem; border-radius:8px; margin-bottom:1.5rem; font-size:0.85rem;">
-                    ⚠️ <?= htmlspecialchars($error) ?>
-                </div>
+                    <div
+                        style="background: rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.4); color:#f43f5e; padding:1rem; border-radius:8px; margin-bottom:1.5rem; font-size:0.85rem;">
+                        ⚠️ <?= htmlspecialchars($error) ?>
+                    </div>
             <?php endif; ?>
 
             <!-- EN-TÊTE -->
@@ -451,16 +451,16 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             </div>
             <div class="machines-recap">
                 <?php foreach ($machines as $m): ?>
-                    <span class="machine-tag">
-                        ⚙️
-                        <?= htmlspecialchars($m['designation']) ?>
-                        <?php $mm = json_decode($m['mesures'] ?? '{}', true); ?>
-                        <?php if (!empty($mm['repere'])): ?>
-                            <small style="opacity:0.7">–
-                                <?= htmlspecialchars($mm['repere']) ?>
-                            </small>
-                        <?php endif; ?>
-                    </span>
+                        <span class="machine-tag">
+                            ⚙️
+                            <?= htmlspecialchars($m['designation']) ?>
+                            <?php $mm = json_decode($m['mesures'] ?? '{}', true); ?>
+                            <?php if (!empty($mm['repere'])): ?>
+                                    <small style="opacity:0.7">–
+                                        <?= htmlspecialchars($mm['repere']) ?>
+                                    </small>
+                            <?php endif; ?>
+                        </span>
                 <?php endforeach; ?>
             </div>
 
@@ -636,21 +636,21 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             resizeCanvas(canvasT);
             padTech = new SignaturePad(canvasT, { penColor: 'black' });
             <?php if (!empty($intervention['signature_technicien'])): ?>
-                padTech.fromDataURL('<?= $intervention['signature_technicien'] ?>', {
-                    ratio: dpr,
-                    width: canvasT.width / dpr,
-                    height: canvasT.height / dpr
-                });
+                    padTech.fromDataURL('<?= $intervention['signature_technicien'] ?>', {
+                        ratio: dpr,
+                        width: canvasT.width / dpr,
+                        height: canvasT.height / dpr
+                    });
             <?php endif; ?>
 
             resizeCanvas(canvasC);
             padClient = new SignaturePad(canvasC, { penColor: 'blue' });
             <?php if (!empty($intervention['signature_client'])): ?>
-                padClient.fromDataURL('<?= $intervention['signature_client'] ?>', {
-                    ratio: dpr,
-                    width: canvasC.width / dpr,
-                    height: canvasC.height / dpr
-                });
+                    padClient.fromDataURL('<?= $intervention['signature_client'] ?>', {
+                        ratio: dpr,
+                        width: canvasC.width / dpr,
+                        height: canvasC.height / dpr
+                    });
             <?php endif; ?>
         }
 
@@ -679,39 +679,199 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
         });
 
         // ══════════════════════════════════════════════════════════════════
+        // CRÉATION DU CONTENEUR COMPLET POUR LE PDF (ASYNCHRONE)
+        // ══════════════════════════════════════════════════════════════════
+        async function buildFullPdfContainer() {
+            let container = document.getElementById('pdf-full-wrapper');
+            if (container) {
+                container.innerHTML = ''; // Reset if exists
+            } else {
+                container = document.createElement('div');
+                container.id = 'pdf-full-wrapper';
+                // Invisible on screen
+                container.style.position = 'absolute';
+                container.style.left = '-9999px';
+                container.style.top = '0';
+                container.style.width = '210mm'; 
+                document.body.appendChild(container);
+            }
+
+            // --- 0. INJECTER LES VRAIS STYLES DE L'APPLI (pour les machines) ---
+            const styleNode = document.createElement('style');
+            styleNode.textContent = `
+                .pdf-page {
+                    width: 21cm;
+                    min-height: 29.7cm;
+                    background: white;
+                    color: black;
+                    padding: 1cm;
+                    box-sizing: border-box;
+                    margin: 0;
+                    margin-bottom: 0px !important;
+                    page-break-after: always;
+                    font-family: Arial, sans-serif;
+                    font-size: 13px;
+                }
+                .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; color: black; font-size: 11px; }
+                .pdf-table th, .pdf-table td { border: 1px solid #000; padding: 4px; vertical-align: middle; }
+                .pdf-table th { background-color: #f0f0f0; text-align: left; text-transform: uppercase; }
+                .pastille-group { display: inline-flex; gap: 4px; align-items: center; }
+                .pastille-group label {
+                    display: flex; align-items: center; justify-content: center;
+                    width: 28px; height: 28px; border-radius: 50%;
+                    border: 2px solid #ccc; font-size: 0; position: relative;
+                }
+                .pastille-group label.p-na { background: #bbb; border-color: #999; }
+                .pastille-group label.p-ok { background: #28a745; border-color: #1e7e34; }
+                .pastille-group label.p-aa { background: #e67e22; border-color: #d35400; }
+                .pastille-group label.p-nc { background: #dc3545; border-color: #bd2130; }
+                .pastille-group label.p-nr { background: #8b0000; border-color: #5a0000; }
+                .pastille-group label.selected { transform: scale(1.15); box-shadow: 0 0 0 3px rgba(0,0,0,0.25); border-width:0; }
+                .pastille-group label.selected::after {
+                    content: '✓'; color: white; font-size: 16px; font-weight: bold; line-height: 1;
+                }
+                .pdf-input { border: none; border-bottom: 1px dashed #000; background: transparent; font-size: 13px; font-family: Arial; padding: 2px; width: 100%; color: black; }
+                .pdf-textarea { width: 100%; min-height: 30px; border: 1px solid transparent; background: transparent; resize: none; overflow: hidden; font-family: Arial; font-size: 12px; color: black; box-sizing: border-box; }
+                .rapport-page-cloned {
+                    padding: 1.5rem;
+                    background: white;
+                    color: black;
+                }
+                /* Surcharges rapport final */
+                .rapport-page-cloned .card.glass {
+                    border: 1px solid #ddd !important;
+                    background: white !important;
+                    box-shadow: none !important;
+                }
+                .rapport-page-cloned .rapport-textarea { background: white !important; color: black !important; border: 1px solid #ccc !important; }
+                .rapport-page-cloned .checkbox-item { background: transparent !important; color: black !important; border: none !important; }
+                .rapport-page-cloned .label { color: #555 !important; }
+                .rapport-page-cloned .input { background: white !important; color: black !important; border: 1px solid #ccc !important; }
+                
+                img { max-width: 100%; }
+            `;
+            container.appendChild(styleNode);
+
+            // --- 1. PAGE DE CONTACT (COVER) ---
+            const coverPage = document.createElement('div');
+            coverPage.className = 'pdf-page';
+            coverPage.style.display = 'flex';
+            coverPage.style.justifyContent = 'center';
+            coverPage.style.alignItems = 'center';
+            coverPage.style.padding = '0';
+            coverPage.innerHTML = `<img src="/assets/machines/1-page de contact_diagram.png" style="width:100%; height:100%; object-fit:contain;">`;
+            container.appendChild(coverPage);
+
+            // --- 2. PAGE RAPPORT FINAL (INFOS) ---
+            const rapportCloneWrapper = document.createElement('div');
+            rapportCloneWrapper.className = 'pdf-page rapport-page-cloned';
+            
+            const originalRapport = document.querySelector('.rapport-page');
+            const clone = originalRapport.cloneNode(true);
+            
+            // Nettoyage du clone
+            clone.querySelectorAll('.mobile-header, .btn-final, .sig-clear, #successBanner, #btnSendEmail, #btnDownloadPDF').forEach(el => el.remove());
+            
+            // Recopier le contenu des textarea
+            const origTextareas = originalRapport.querySelectorAll('textarea');
+            const cloneTextareas = clone.querySelectorAll('textarea');
+            origTextareas.forEach((ta, i) => { cloneTextareas[i].textContent = ta.value; cloneTextareas[i].value = ta.value; });
+
+            // Recopier les checkbox/radios
+            const origCheck = originalRapport.querySelectorAll('input[type="checkbox"], input[type="radio"]');
+            const cloneCheck = clone.querySelectorAll('input[type="checkbox"], input[type="radio"]');
+            origCheck.forEach((chk, i) => { if(chk.checked) cloneCheck[i].setAttribute('checked', 'checked'); });
+
+            // Recopier les vraies signatures du canvas
+            const origCanvasTech = document.getElementById('canvasTech');
+            const origCanvasClient = document.getElementById('canvasClient');
+            if (origCanvasTech) {
+                const imgTech = document.createElement('img');
+                imgTech.src = origCanvasTech.toDataURL();
+                imgTech.style.width = '100%';
+                imgTech.style.maxHeight = '150px';
+                imgTech.style.objectFit = 'contain';
+                const cCloneT = clone.querySelector('#canvasTech');
+                if(cCloneT) cCloneT.parentNode.replaceChild(imgTech, cCloneT);
+            }
+            if (origCanvasClient) {
+                const imgClient = document.createElement('img');
+                imgClient.src = origCanvasClient.toDataURL();
+                imgClient.style.width = '100%';
+                imgClient.style.maxHeight = '150px';
+                imgClient.style.objectFit = 'contain';
+                const cCloneC = clone.querySelector('#canvasClient');
+                if(cCloneC) cCloneC.parentNode.replaceChild(imgClient, cCloneC);
+            }
+
+            rapportCloneWrapper.appendChild(clone);
+            container.appendChild(rapportCloneWrapper);
+
+            // --- 3. FETCH & APPEND MACHINES ---
+            if (window.LM_RAPPORT && window.LM_RAPPORT.machinesIds) {
+                for (const mId of window.LM_RAPPORT.machinesIds) {
+                    try {
+                        const res = await fetch('machine_edit.php?id=' + mId);
+                        const html = await res.text();
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        
+                        // Récupérer toutes les pdf-page de cette machine
+                        const pages = doc.querySelectorAll('.pdf-page');
+                        pages.forEach(p => {
+                            // Fixer le radio button "selected" pour l'affichage statique CSS
+                            p.querySelectorAll('input[type="radio"]:checked').forEach(r => {
+                                const lbl = r.closest('label');
+                                if (lbl) lbl.classList.add('selected');
+                            });
+                            // Extraire le texte des textarea pour le formattage
+                            p.querySelectorAll('textarea').forEach(ta => {
+                                ta.textContent = ta.innerHTML || ta.value;
+                            });
+
+                            container.appendChild(p);
+                        });
+                    } catch(err) {
+                        console.error('Erreur fetch machine ' + mId, err);
+                    }
+                }
+            }
+
+            // --- 4. PAGE DE FIN ---
+            const endPage = document.createElement('div');
+            endPage.className = 'pdf-page';
+            endPage.style.display = 'flex';
+            endPage.style.justifyContent = 'center';
+            endPage.style.alignItems = 'center';
+            endPage.style.padding = '0';
+            endPage.innerHTML = `<img src="/assets/machines/99-page de fin_diagram.png" style="width:100%; height:100%; object-fit:contain;">`;
+            container.appendChild(endPage);
+
+            return container;
+        }
+
+        // ══════════════════════════════════════════════════════════════════
         // GÉNÉRATION PDF (html2pdf.js)
         // ══════════════════════════════════════════════════════════════════
         async function genererPDFBase64() {
-            const element = document.querySelector('.rapport-page');
-            if (!element || !window.html2pdf) {
-                throw new Error('html2pdf.js non disponible');
-            }
+            if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
 
-            // Masquer les éléments non nécessaires dans le PDF
-            const hiddenEls = document.querySelectorAll('.mobile-header, .btn-final, .sig-clear, #successBanner, #btnSendEmail, #btnDownloadPDF');
-            hiddenEls.forEach(el => el.style.display = 'none');
+            const container = await buildFullPdfContainer();
 
             const opt = {
-                margin: [10, 10, 10, 10],
+                margin: 0, // Les marges sont gérées par `.pdf-page` padding: 1cm
                 filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
-                image: { type: 'jpeg', quality: 0.92 },
+                image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            const worker = html2pdf().set(opt).from(element);
+            const worker = html2pdf().set(opt).from(container);
             const pdfBlob = await worker.outputPdf('blob');
 
-            // Restaurer les éléments
-            hiddenEls.forEach(el => el.style.display = '');
-
-            // Convertir Blob → base64 (sans le préfixe data:...)
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
-                reader.onload = () => {
-                    const b64 = reader.result.split(',')[1];
-                    resolve(b64);
-                };
+                reader.onload = () => resolve(reader.result.split(',')[1]);
                 reader.onerror = reject;
                 reader.readAsDataURL(pdfBlob);
             });
@@ -722,20 +882,19 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
         // ══════════════════════════════════════════════════════════════════
         async function telechargerPDF() {
             const btn = document.getElementById('btnDownloadPDF');
-            if (btn) { btn.disabled = true; btn.textContent = '⏳ Génération…'; }
+            if (btn) { btn.disabled = true; btn.textContent = '⏳ Génération du rapport complet...'; }
             try {
-                const element = document.querySelector('.rapport-page');
+                const container = await buildFullPdfContainer();
+                
                 const opt = {
-                    margin: [10, 10, 10, 10],
+                    margin: 0, 
                     filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
-                    image: { type: 'jpeg', quality: 0.92 },
+                    image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true, logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
-                const hiddenEls = document.querySelectorAll('.mobile-header, .btn-final, .sig-clear, #successBanner');
-                hiddenEls.forEach(el => el.style.display = 'none');
-                await html2pdf().set(opt).from(element).save();
-                hiddenEls.forEach(el => el.style.display = '');
+                
+                await html2pdf().set(opt).from(container).save();
             } catch (e) {
                 alert('Erreur génération PDF : ' + e.message);
             }
