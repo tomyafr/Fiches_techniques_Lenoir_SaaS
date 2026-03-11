@@ -402,8 +402,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
 
         @media screen {
             .rapport-logo {
-                /* Make it white/bright on the dark theme screen */
-                filter: brightness(0) invert(1) opacity(0.9);
+                /* Keep original colors even on screen */
+                filter: none;
+                opacity: 1;
             }
         }
     </style>
@@ -503,7 +504,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
 
             <!-- EN-TÊTE -->
             <div class="rapport-header card glass">
-                <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC" class="rapport-logo"
+                <img src="/assets/logo-raoul-lenoir.svg" alt="LENOIR-MEC" class="rapport-logo"
                     style="height: 60px; width: auto; object-fit: contain; margin: 0 auto 1rem auto; display: block; max-width: 100%;">
                 <h1>Rapport d'expertise sur site</h1>
                 <div class="arc-badge">ARC
