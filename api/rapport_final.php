@@ -340,6 +340,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
             width: 100%;
             cursor: crosshair;
             display: block;
+            touch-action: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .btn-final {
@@ -685,45 +687,74 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
     <script>
         let padClient, padTech;
 
-        function resizeCanvas(canvas) {
+        function resizeCanvas(canvas, pad = null) {
             const ratio = Math.max(window.devicePixelRatio || 1, 1);
-            canvas.style.height = '200px';
-            canvas.width = canvas.offsetWidth * ratio;
+            const containerWidth = canvas.offsetWidth || canvas.parentElement.offsetWidth || 600;
+            
+            canvas.width = containerWidth * ratio;
             canvas.height = 200 * ratio;
-            canvas.getContext('2d').scale(ratio, ratio);
+            canvas.style.height = '200px';
+            
+            const context = canvas.getContext('2d');
+            context.scale(ratio, ratio);
+            
+            if (pad) {
+                pad.clear(); // Réinitialise pour éviter les distorsions si on redimensionne
+            }
         }
 
         function initSignatures() {
             const canvasC = document.getElementById('canvasClient');
             const canvasT = document.getElementById('canvasTech');
-            if (!canvasC || !canvasT || !window.SignaturePad) return;
+            
+            if (!window.SignaturePad) {
+                console.error("SignaturePad library not loaded");
+                return;
+            }
+            if (!canvasC || !canvasT) return;
 
             const dpr = Math.max(window.devicePixelRatio || 1, 1);
 
+            // Tech Pad
             resizeCanvas(canvasT);
-            padTech = new SignaturePad(canvasT, { penColor: 'black' });
+            padTech = new SignaturePad(canvasT, { 
+                penColor: 'black',
+                throttle: 16,
+                minWidth: 1.5,
+                maxWidth: 4.5
+            });
             <?php if (!empty($intervention['signature_technicien'])): ?>
-                padTech.fromDataURL('<?= $intervention['signature_technicien'] ?>', {
-                    ratio: dpr,
-                    width: canvasT.width / dpr,
-                    height: canvasT.height / dpr
-                });
+                try {
+                    padTech.fromDataURL('<?= $intervention['signature_technicien'] ?>', {
+                        ratio: dpr,
+                        width: canvasT.width / dpr,
+                        height: canvasT.height / dpr
+                    });
+                } catch(e) { console.error("Error loading tech sig:", e); }
             <?php endif; ?>
 
+            // Client Pad
             resizeCanvas(canvasC);
-            padClient = new SignaturePad(canvasC, { penColor: 'blue' });
+            padClient = new SignaturePad(canvasC, { 
+                penColor: 'blue',
+                throttle: 16,
+                minWidth: 1.5,
+                maxWidth: 4.5
+            });
             <?php if (!empty($intervention['signature_client'])): ?>
-                padClient.fromDataURL('<?= $intervention['signature_client'] ?>', {
-                    ratio: dpr,
-                    width: canvasC.width / dpr,
-                    height: canvasC.height / dpr
-                });
+                try {
+                    padClient.fromDataURL('<?= $intervention['signature_client'] ?>', {
+                        ratio: dpr,
+                        width: canvasC.width / dpr,
+                        height: canvasC.height / dpr
+                    });
+                } catch(e) { console.error("Error loading client sig:", e); }
             <?php endif; ?>
         }
 
         function validateAndSubmit() {
             if (!padClient || !padTech) {
-                alert('Erreur: les zones de signature ne sont pas initialisées.');
+                alert('Erreur: les zones de signature ne sont pas prêtes. Veuillez rafraîchir la page.');
                 return false;
             }
             if (padTech.isEmpty()) {
@@ -734,13 +765,21 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
                 alert('Veuillez faire signer le client.');
                 return false;
             }
+            
+            // On s'assure que le contenu est bien capturé avant submit
             document.getElementById('sigTechInput').value = padTech.toDataURL();
             document.getElementById('sigClientInput').value = padClient.toDataURL();
             return true;
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            initSignatures();
+        window.addEventListener('resize', () => {
+            const cT = document.getElementById('canvasTech');
+            const cC = document.getElementById('canvasClient');
+            if (cT && padTech) resizeCanvas(cT);
+            if (cC && padClient) resizeCanvas(cC);
+        });
+
+        document.addEventListener('DOMContentLoaded', initSignatures);
             // L'envoi email est déclenché manuellement par le technicien
             // via le bouton "📧 Envoyer PDF par email" — pas d'envoi automatique.
         });
