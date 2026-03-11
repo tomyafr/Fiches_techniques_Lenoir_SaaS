@@ -794,17 +794,15 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
             styleNode.textContent = `
                 .pdf-page {
                     width: 21cm;
-                    min-height: 5cm; /* Permettre l'enchaînement si contenu court */
+                    min-height: 100px; 
                     background: white;
                     color: black;
-                    padding: 15mm;
-                    padding-bottom: 25mm; /* Un peu moins de padding bas */
+                    padding: 10mm 15mm 25mm 15mm;
                     box-sizing: border-box;
                     margin: 0;
                     font-family: Arial, sans-serif;
                     font-size: 13px;
                     position: relative; 
-                    page-break-after: auto; 
                 }
                 .html2pdf__page-break {
                     height: 1px;
@@ -1102,16 +1100,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
                                 return; // Skip empty pages
                             }
 
-                            // Only add a page break if it's NOT the very first machine page (after preamble)
-                            // or if it's the second page of a machine.
-                            // However, each machine should ideally start on a new page.
-                            // Ne forcer un saut de page QUE pour la première page d'une NOUVELLE machine
-                            // Si la machine a plusieurs segments (pIdx > 0), on les laisse s'enchaîner
+                            // Chaque machine commence sur une nouvelle page
                             if (pIdx === 0) {
-                                const pbReq = document.createElement('div');
-                                pbReq.className = 'html2pdf__page-break';
-                                container.appendChild(pbReq);
-                            } 
+                                p.style.pageBreakBefore = 'always';
+                                p.style.marginTop = '0';
+                            }
 
                             if (pIdx === 0) {
                                 // Ajout d'une numérotation simple en haut de la fiche
@@ -1119,7 +1112,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
                                 hNum.style.textAlign = 'right';
                                 hNum.style.fontSize = '10px';
                                 hNum.style.fontWeight = 'bold';
-                                hNum.style.marginBottom = '5px';
+                                hNum.style.margin = '0 0 5px 0';
+                                hNum.style.padding = '0';
                                 hNum.innerText = `FICHE ${mIdx + 1} / ${totalMachines}`;
                                 p.insertBefore(hNum, p.firstChild);
                             }
