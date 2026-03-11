@@ -1268,16 +1268,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
                             <div style="font-weight: bold; margin-bottom: 5px;">UNE SEULE ADRESSE COMMUNE :</div>
                             <div style="font-size: 14px; margin-bottom: 15px; color: #1B4F72;">contact@raoul-lenoir.com</div>
                             
-                            <div style="margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 20px;">
-                                <div style="text-align: left;">
-                                    <div style="font-weight: bold; margin-bottom: 5px;">Découvrez nos activités sur :</div>
-                                    <div style="font-weight: bold; font-size: 14px; border-bottom: 2px solid #000;">www.lenoir-mec.com</div>
-                                </div>
-                                <div style="text-align: center;">
-                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://www.lenoir-mec.com" style="width: 80px; height: 80px;">
-                                    <div style="font-size: 8px; margin-top: 4px;">Visitez notre site !</div>
-                                    <div style="font-size: 9px; font-weight: bold;">www.raoul-lenoir.com</div>
-                                </div>
+                            <div style="font-weight: bold; font-size: 14px; margin-top: 30px;">Découvrez nos activités sur www.lenoir-mec.com</div>
+                            
+                            <div style="margin-top: 20px; text-align: center;">
+                                <div style="font-size: 11px; margin-bottom: 5px;">Visitez notre site !</div>
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://www.lenoir-mec.com" style="width: 90px; height: 90px; display: block; margin: 0 auto;">
+                                <div style="font-size: 11px; font-weight: bold; margin-top: 8px;">www.raoul-lenoir.com</div>
                             </div>
                         </div>
                     </div>
