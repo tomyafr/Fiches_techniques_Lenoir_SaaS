@@ -793,27 +793,38 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
             styleNode.textContent = `
                 .pdf-page {
                     width: 21cm;
-                    min-height: 10cm; /* Avoid forcing full page if content is small */
+                    min-height: 5cm; /* Permettre l'enchaînement si contenu court */
                     background: white;
                     color: black;
                     padding: 15mm;
-                    padding-bottom: 30mm;
+                    padding-bottom: 25mm; /* Un peu moins de padding bas */
                     box-sizing: border-box;
                     margin: 0;
                     font-family: Arial, sans-serif;
                     font-size: 13px;
                     position: relative; 
-                    page-break-after: auto; /* Natural flow */
+                    page-break-after: auto; 
                 }
                 .html2pdf__page-break {
                     height: 1px;
+                    width: 100%;
                     overflow: hidden;
                     page-break-before: always !important;
                     break-before: page !important;
-                    margin-top: -1px;
+                    display: block;
+                    clear: both;
                 }
-                .pdf-table, .card, .pdf-section {
+                .pdf-table-container, .card, .pdf-section, .sig-zone, .photo-annexe-item {
                     page-break-inside: avoid !important;
+                }
+                .pdf-table { 
+                    page-break-inside: auto !important; 
+                }
+                .pdf-table tr { 
+                    page-break-inside: avoid !important; 
+                }
+                .pdf-section {
+                    margin-bottom: 15px;
                 }
                 .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; color: black; font-size: 11px; }
                 .pdf-table th, .pdf-table td { border: 1px solid #000; padding: 4px; vertical-align: middle; }
@@ -975,67 +986,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
             rapportCloneWrapper.appendChild(createPdfFooter());
             container.appendChild(rapportCloneWrapper);
 
-            // --- 1.2 PAGE SYNTHÈSE DE L'INTERVENTION ---
-            const pbSynth = document.createElement('div');
-            pbSynth.className = 'html2pdf__page-break';
-            container.appendChild(pbSynth);
-
-            const synthPage = document.createElement('div');
-            synthPage.className = 'pdf-page';
+            // --- 1.2 PAGE SYNTHÈSE + PRÉAMBULE (FUSIONNÉS POUR ÉCONOMISER DES PAGES) ---
+            const synthPreambulePage = document.createElement('div');
+            synthPreambulePage.className = 'pdf-page';
             const s = window.LM_RAPPORT.synth;
             
-            synthPage.innerHTML = `
-                <div style="padding-top: 20px;">
-                    <div style="border: 2px solid #000; padding: 25px; color: #000; background: #fff;">
-                        <h2 style="text-align: center; margin-top: 0; margin-bottom: 25px; text-decoration: underline; font-size: 18px; text-transform: uppercase;">SYNTHÈSE DE L'INTERVENTION</h2>
-                        
-                        <div style="margin-bottom: 20px; font-size: 14px; line-height: 1.8;">
-                            <div><strong>Technicien :</strong> ${s.tech}</div>
-                            <div><strong>Date :</strong> ${s.date}</div>
-                            <div><strong>Durée totale :</strong> ${s.duree}</div>
-                            <div><strong>Équipements contrôlés :</strong> ${s.nbMachines}</div>
-                        </div>
-
-                        <div style="margin: 30px 0; font-size: 14px;">
-                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                                <span style="display: inline-block; width: 14px; height: 14px; background: #28a745; margin-right: 10px;"></span>
-                                <strong>${s.ok} points conformes</strong>
-                            </div>
-                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                                <span style="display: inline-block; width: 14px; height: 14px; background: #e67e22; margin-right: 10px;"></span>
-                                <strong>${s.aa} points à améliorer</strong>
-                            </div>
-                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                                <span style="display: inline-block; width: 14px; height: 14px; background: #dc3545; margin-right: 10px;"></span>
-                                <strong>${s.nc} point${s.nc > 1 ? 's' : ''} non conforme${s.nc > 1 ? 's' : ''}</strong>
-                            </div>
-                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                                <span style="display: inline-block; width: 14px; height: 14px; background: #8b0000; margin-right: 10px;"></span>
-                                <strong>${s.nr} remplacement${s.nr > 1 ? 's' : ''} nécessaire${s.nr > 1 ? 's' : ''}</strong>
-                            </div>
-                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                                <span style="display: inline-block; width: 14px; height: 14px; background: #ccc; margin-right: 10px;"></span>
-                                <strong>${s.na} non concernés</strong>
-                            </div>
-                        </div>
-
-                        <div style="margin-top: 40px; text-align: center;">
-                            <div style="font-weight: bold; font-size: 16px; margin-bottom: 15px; text-transform: uppercase;">SCORE DE CONFORMITÉ : ${s.score}%</div>
-                            <div style="width: 100%; height: 25px; background: #f1f5f9; border: 1px solid #000; position: relative; overflow: hidden;">
-                                <div style="width: ${s.score}%; height: 100%; background: linear-gradient(to right, #ef4444, #f59e0b, #22c55e);"></div>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-top: 5px; font-size: 10px; font-weight: bold;">
-                                <span>0% (Critique)</span>
-                                <span>100% (Conforme)</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            synthPage.appendChild(createPdfFooter());
-            container.appendChild(synthPage);
-
-            // --- 1.5 PAGE PRÉAMBULE ---
+            // Calcul mois prochain pour le préambule
             let moisProchainText = "";
             let villePreambule = ville || "[VILLE DU CLIENT]";
             if (dateExp && dateExp.includes('/')) {
@@ -1051,37 +1007,64 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
             }
             if (!moisProchainText) moisProchainText = "[MOIS PROCHAIN]";
 
-            const pbPreambule = document.createElement('div');
-            pbPreambule.className = 'html2pdf__page-break';
-            container.appendChild(pbPreambule);
+            synthPreambulePage.innerHTML = `
+                <div style="padding-top: 10px;">
+                    <div style="border: 2px solid #000; padding: 20px; color: #000; background: #fff; margin-bottom: 30px; page-break-inside: avoid;">
+                        <h2 style="text-align: center; margin-top: 0; margin-bottom: 20px; text-decoration: underline; font-size: 16px; text-transform: uppercase;">SYNTHÈSE DE L'INTERVENTION</h2>
+                        
+                        <div style="margin-bottom: 15px; font-size: 13px; line-height: 1.6;">
+                            <div><strong>Technicien :</strong> ${s.tech}</div>
+                            <div><strong>Date :</strong> ${s.date}</div>
+                            <div><strong>Durée totale :</strong> ${s.duree}</div>
+                            <div><strong>Équipements contrôlés :</strong> ${s.nbMachines}</div>
+                        </div>
 
-            const preambulePage = document.createElement('div');
-            preambulePage.className = 'pdf-page';
-            preambulePage.innerHTML = `
-                <div style="font-size: 15px; line-height: 1.6; color: black; font-family: Arial, sans-serif; padding-top: 40px;">
-                    <h2 style="color: #f97316; text-decoration: underline; font-size: 22px; text-transform: uppercase; margin-bottom: 40px;">PRÉAMBULE :</h2>
-                    
-                    <p style="margin-bottom: 25px;">
-                        Ce rapport est établi suite à une expertise effectuée le ${dateExp}<br>
-                        sur votre site de ${villePreambule}.
-                    </p>
-                    
-                    <p style="margin-bottom: 25px;">
-                        Nos expertises permettent de vous accompagner dans votre démarche<br>
-                        ISO 22000 :2005 et HACCP. Notre analyse est suivie de conclusions<br>
-                        ou recommandations que nous vous invitons à suivre pour la<br>
-                        pérennité et la qualité de votre production.
-                    </p>
-                    
-                    <p style="margin-bottom: 25px;">
-                        Dans le cadre de notre prestation annuelle, la prochaine expertise<br>
-                        aura lieu en ${moisProchainText}. Nous vous contacterons pour établir<br>
-                        une date appropriée à vos impératifs de production.
-                    </p>
+                        <div style="margin: 20px 0; font-size: 13px;">
+                            <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                <span style="display: inline-block; width: 12px; height: 12px; background: #28a745; margin-right: 10px;"></span>
+                                <strong>${s.ok} points conformes</strong>
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                <span style="display: inline-block; width: 12px; height: 12px; background: #e67e22; margin-right: 10px;"></span>
+                                <strong>${s.aa} points à améliorer</strong>
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                <span style="display: inline-block; width: 12px; height: 12px; background: #dc3545; margin-right: 10px;"></span>
+                                <strong>${s.nc} point${s.nc > 1 ? 's' : ''} non conforme${s.nc > 1 ? 's' : ''}</strong>
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                <span style="display: inline-block; width: 12px; height: 12px; background: #8b0000; margin-right: 10px;"></span>
+                                <strong>${s.nr} remplacement${s.nr > 1 ? 's' : ''} nécessaire${s.nr > 1 ? 's' : ''}</strong>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 25px; text-align: center;">
+                            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; text-transform: uppercase;">SCORE DE CONFORMITÉ : ${s.score}%</div>
+                            <div style="width: 100%; height: 20px; background: #f1f5f9; border: 1px solid #000; position: relative; overflow: hidden;">
+                                <div style="width: ${s.score}%; height: 100%; background: linear-gradient(to right, #ef4444, #f59e0b, #22c55e);"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 13px; line-height: 1.5; color: black; font-family: Arial, sans-serif; page-break-inside: avoid;">
+                        <h2 style="color: #f97316; text-decoration: underline; font-size: 16px; text-transform: uppercase; margin-bottom: 15px;">PRÉAMBULE :</h2>
+                        
+                        <p style="margin-bottom: 12px;">
+                            Ce rapport est établi suite à une expertise effectuée le ${dateExp} sur votre site de ${villePreambule}.
+                        </p>
+                        
+                        <p style="margin-bottom: 12px;">
+                            Nos expertises permettent de vous accompagner dans votre démarche ISO 22000 :2005 et HACCP. Notre analyse est suivie de conclusions ou recommandations que nous vous invitons à suivre pour la pérennité et la qualité de votre production.
+                        </p>
+                        
+                        <p style="margin-bottom: 12px;">
+                            Dans le cadre de notre prestation annuelle, la prochaine expertise aura lieu en ${moisProchainText}. Nous vous contacterons pour établir une date appropriée à vos impératifs de production.
+                        </p>
+                    </div>
                 </div>
             `;
-            preambulePage.appendChild(createPdfFooter());
-            container.appendChild(preambulePage);
+            synthPreambulePage.appendChild(createPdfFooter());
+            container.appendChild(synthPreambulePage);
 
             // --- 2. FETCH & APPEND MACHINES ---
             if (window.LM_RAPPORT && window.LM_RAPPORT.machinesIds) {
@@ -1116,20 +1099,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
                             // Only add a page break if it's NOT the very first machine page (after preamble)
                             // or if it's the second page of a machine.
                             // However, each machine should ideally start on a new page.
+                            // Ne forcer un saut de page QUE pour la première page d'une NOUVELLE machine
+                            // Si la machine a plusieurs segments (pIdx > 0), on les laisse s'enchaîner
                             if (pIdx === 0) {
                                 const pbReq = document.createElement('div');
                                 pbReq.className = 'html2pdf__page-break';
                                 container.appendChild(pbReq);
-                            } else {
-                                // For internal machine pages, check if they are really needed
-                                // If Page 2 of a machine is nearly empty, we might want to skip it
-                                // but the easiest is to just let them follow if pIdx > 0 and they are not full.
-                                // However, machine_edit.php forces them as .pdf-page.
-                                // We keep the break if it's a new .pdf-page to keep footers consistent.
-                                const pbReq = document.createElement('div');
-                                pbReq.className = 'html2pdf__page-break';
-                                container.appendChild(pbReq);
-                            }
+                            } 
 
                             if (pIdx === 0) {
                                 const hHeader = document.createElement('div');
@@ -1185,8 +1161,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
                 }
             }
 
+            // Page de fin : On ne force plus systématiquement le saut de page
+            // si le contenu précédent est court. On laisse html2pdf gérer ou on met un petit espacement.
             const pbFin = document.createElement('div');
-            pbFin.className = 'html2pdf__page-break';
+            pbFin.style.height = '20px';
             container.appendChild(pbFin);
 
             // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC + SIGNATURES + OBSERVATIONS) ---
