@@ -383,17 +383,30 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             <input type="hidden" name="action" value="save_rapport">
 
             <?php if (isset($_GET['msg']) && $_GET['msg'] === 'ok'): ?>
-                <div
+                <div id="successBanner"
                     style="background: rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.4); color:#10b981; padding:1.5rem; border-radius:12px; margin-bottom:1.5rem; text-align:center;">
                     <div style="font-size:2.5rem; margin-bottom:0.5rem;">✅</div>
                     <h3 style="margin:0 0 0.5rem 0; color:#10b981;">Rapport finalisé avec succès !</h3>
-                    <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1.5rem;">L'intervention ARC
+                    <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1rem;">L'intervention ARC
                         <?= htmlspecialchars($intervention['numero_arc']) ?> a été clôturée.
                     </p>
+
+                    <!-- Toast email (injecté par JS) -->
+                    <div id="emailToast"
+                        style="display:none; margin-bottom:1rem; padding:0.75rem 1rem; border-radius:8px; font-size:0.85rem; font-weight:600;">
+                    </div>
+
                     <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
-                        <button type="button" onclick="window.print()"
+                        <!-- Bouton Envoyer PDF par email -->
+                        <button type="button" id="btnSendEmail" onclick="lancerEnvoiEmail()"
+                            style="padding:0.7rem 1.5rem; background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem;">
+                            <span id="btnSendEmailIcon">📧</span>
+                            <span id="btnSendEmailLabel">Envoyer PDF par email</span>
+                        </button>
+                        <!-- Bouton Télécharger PDF -->
+                        <button type="button" id="btnDownloadPDF" onclick="telechargerPDF()"
                             style="padding:0.7rem 1.5rem; background:var(--primary); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">
-                            🖨️ Imprimer / Sauvegarder PDF
+                            ⬇️ Télécharger le PDF
                         </button>
                         <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>"
                             style="padding:0.7rem 1.5rem; background:rgba(255,255,255,0.1); color:var(--text); border:1px solid var(--glass-border); border-radius:8px; font-weight:600; text-decoration:none; font-size:0.9rem;">
@@ -401,6 +414,18 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                         </a>
                     </div>
                 </div>
+
+                <!-- Données PHP exposées pour le JS -->
+                <script>
+                    window.LM_RAPPORT = {
+                        interventionId: <?= (int) $id ?>,
+                        clientEmail: <?= json_encode($intervention['contact_email'] ?? $intervention['c_email'] ?? '') ?>,
+                        nomSociete: <?= json_encode($intervention['nom_societe'] ?? '') ?>,
+                        dateInt: <?= json_encode(date('d/m/Y', strtotime($intervention['date_intervention'] ?? 'now'))) ?>,
+                        csrfToken: <?= json_encode(getCsrfToken()) ?>,
+                        pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>
+                    };
+                </script>
             <?php endif; ?>
 
             <?php if (!empty($error)): ?>
@@ -587,6 +612,8 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
         </form>
     </div>
 
+    <!-- html2pdf.js pour génération PDF côté client -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     <script>
         let padClient, padTech;
@@ -647,7 +674,264 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
 
         document.addEventListener('DOMContentLoaded', function () {
             initSignatures();
+            // Si on vient de finaliser, lancer l'envoi email auto
+            if (window.LM_RAPPORT) {
+                lancerEnvoiEmail(true);
+            }
         });
+
+        // ══════════════════════════════════════════════════════════════════
+        // GÉNÉRATION PDF (html2pdf.js)
+        // ══════════════════════════════════════════════════════════════════
+        async function genererPDFBase64() {
+            const element = document.querySelector('.rapport-page');
+            if (!element || !window.html2pdf) {
+                throw new Error('html2pdf.js non disponible');
+            }
+
+            // Masquer les éléments non nécessaires dans le PDF
+            const hiddenEls = document.querySelectorAll('.mobile-header, .btn-final, .sig-clear, #successBanner, #btnSendEmail, #btnDownloadPDF');
+            hiddenEls.forEach(el => el.style.display = 'none');
+
+            const opt = {
+                margin      : [10, 10, 10, 10],
+                filename    : window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
+                image       : { type: 'jpeg', quality: 0.92 },
+                html2canvas : { scale: 2, useCORS: true, logging: false },
+                jsPDF       : { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            const worker = html2pdf().set(opt).from(element);
+            const pdfBlob = await worker.outputPdf('blob');
+
+            // Restaurer les éléments
+            hiddenEls.forEach(el => el.style.display = '');
+
+            // Convertir Blob → base64 (sans le préfixe data:...)
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const b64 = reader.result.split(',')[1];
+                    resolve(b64);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(pdfBlob);
+            });
+        }
+
+        // ══════════════════════════════════════════════════════════════════
+        // TÉLÉCHARGEMENT PDF
+        // ══════════════════════════════════════════════════════════════════
+        async function telechargerPDF() {
+            const btn = document.getElementById('btnDownloadPDF');
+            if (btn) { btn.disabled = true; btn.textContent = '⏳ Génération…'; }
+            try {
+                const element = document.querySelector('.rapport-page');
+                const opt = {
+                    margin      : [10, 10, 10, 10],
+                    filename    : window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
+                    image       : { type: 'jpeg', quality: 0.92 },
+                    html2canvas : { scale: 2, useCORS: true, logging: false },
+                    jsPDF       : { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+                const hiddenEls = document.querySelectorAll('.mobile-header, .btn-final, .sig-clear, #successBanner');
+                hiddenEls.forEach(el => el.style.display = 'none');
+                await html2pdf().set(opt).from(element).save();
+                hiddenEls.forEach(el => el.style.display = '');
+            } catch(e) {
+                alert('Erreur génération PDF : ' + e.message);
+            }
+            if (btn) { btn.disabled = false; btn.textContent = '⬇️ Télécharger le PDF'; }
+        }
+
+        // ══════════════════════════════════════════════════════════════════
+        // TOAST UI
+        // ══════════════════════════════════════════════════════════════════
+        function afficherToast(message, type = 'success') {
+            const toast = document.getElementById('emailToast');
+            if (!toast) return;
+            toast.textContent = message;
+            if (type === 'success') {
+                toast.style.background    = 'rgba(16,185,129,0.2)';
+                toast.style.border        = '1px solid rgba(16,185,129,0.5)';
+                toast.style.color         = '#10b981';
+            } else if (type === 'warning') {
+                toast.style.background    = 'rgba(245,158,11,0.2)';
+                toast.style.border        = '1px solid rgba(245,158,11,0.5)';
+                toast.style.color         = '#f59e0b';
+            } else {
+                toast.style.background    = 'rgba(244,63,94,0.2)';
+                toast.style.border        = '1px solid rgba(244,63,94,0.5)';
+                toast.style.color         = '#f43f5e';
+            }
+            toast.style.display = 'block';
+            // Scroll vers le toast
+            toast.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // ══════════════════════════════════════════════════════════════════
+        // FILE D'ATTENTE HORS-LIGNE (IndexedDB)
+        // ══════════════════════════════════════════════════════════════════
+        const DB_NAME    = 'LMEmailQueue';
+        const DB_VERSION = 1;
+        const STORE_NAME = 'pendingEmails';
+
+        function ouvrirIDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(DB_NAME, DB_VERSION);
+                req.onupgradeneeded = e => {
+                    e.target.result.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                };
+                req.onsuccess = e => resolve(e.target.result);
+                req.onerror   = e => reject(e.target.error);
+            });
+        }
+
+        async function sauvegarderEnFile(payload) {
+            const db    = await ouvrirIDB();
+            const tx    = db.transaction(STORE_NAME, 'readwrite');
+            const store = tx.objectStore(STORE_NAME);
+            store.add({ ...payload, queued_at: Date.now() });
+            return new Promise((res, rej) => {
+                tx.oncomplete = res;
+                tx.onerror    = rej;
+            });
+        }
+
+        async function rejouerFileDAttente() {
+            const db    = await ouvrirIDB();
+            const tx    = db.transaction(STORE_NAME, 'readwrite');
+            const store = tx.objectStore(STORE_NAME);
+            const req   = store.getAll();
+            req.onsuccess = async () => {
+                const items = req.result;
+                for (const item of items) {
+                    try {
+                        const res = await envoyerParAPI(item.intervention_id, item.pdf_data, item.client_email, item.csrf_token);
+                        if (res.success) {
+                            // Supprimer de la file
+                            db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME).delete(item.id);
+                            console.log('[LM] Email rejoué avec succès :', item.client_email);
+                        }
+                    } catch(e) {
+                        console.warn('[LM] Rejouer échoué :', e);
+                    }
+                }
+            };
+        }
+
+        // Écouter la reconnexion réseau
+        window.addEventListener('online', () => {
+            console.log('[LM] Connexion rétablie – rejouer la file d\'attente email');
+            rejouerFileDAttente();
+        });
+
+        // ══════════════════════════════════════════════════════════════════
+        // APPEL API ENVOI EMAIL
+        // ══════════════════════════════════════════════════════════════════
+        async function envoyerParAPI(interventionId, pdfBase64, clientEmail, csrfToken) {
+            const formData = new FormData();
+            formData.append('intervention_id', interventionId);
+            formData.append('pdf_data',        pdfBase64);
+            formData.append('client_email',    clientEmail);
+            formData.append('csrf_token',      csrfToken);
+
+            const resp = await fetch('/envoyer_rapport.php', {
+                method      : 'POST',
+                body        : formData,
+                credentials : 'same-origin',
+            });
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            return resp.json();
+        }
+
+        // ══════════════════════════════════════════════════════════════════
+        // FONCTION PRINCIPALE : LANCER L'ENVOI EMAIL
+        // ══════════════════════════════════════════════════════════════════
+        async function lancerEnvoiEmail(auto = false) {
+            if (!window.LM_RAPPORT) return;
+
+            const { interventionId, clientEmail, csrfToken, nomSociete } = window.LM_RAPPORT;
+
+            if (!clientEmail) {
+                afficherToast('⚠️ Aucun email client renseigné. Veuillez reprendre le formulaire.', 'error');
+                return;
+            }
+
+            const btn   = document.getElementById('btnSendEmail');
+            const icon  = document.getElementById('btnSendEmailIcon');
+            const label = document.getElementById('btnSendEmailLabel');
+
+            if (btn) btn.disabled = true;
+            if (icon)  icon.textContent  = '⏳';
+            if (label) label.textContent = 'Génération du PDF…';
+
+            let pdfBase64;
+            try {
+                pdfBase64 = await genererPDFBase64();
+            } catch(e) {
+                if (btn) btn.disabled = false;
+                if (icon)  icon.textContent  = '📧';
+                if (label) label.textContent = 'Envoyer PDF par email';
+                afficherToast('❌ Erreur génération PDF : ' + e.message, 'error');
+                return;
+            }
+
+            if (icon)  icon.textContent  = '📤';
+            if (label) label.textContent = 'Envoi en cours…';
+
+            // Hors-ligne : mettre en file d'attente
+            if (!navigator.onLine) {
+                try {
+                    await sauvegarderEnFile({
+                        intervention_id : interventionId,
+                        pdf_data        : pdfBase64,
+                        client_email    : clientEmail,
+                        csrf_token      : csrfToken,
+                    });
+                    afficherToast('📶 Hors-ligne – email mis en file d\'attente. Il sera envoyé automatiquement à la reconnexion.', 'warning');
+                } catch(e) {
+                    afficherToast('❌ Impossible de mettre l\'email en file d\'attente.', 'error');
+                }
+                if (btn) btn.disabled = false;
+                if (icon)  icon.textContent  = '📧';
+                if (label) label.textContent = 'Envoyer PDF par email';
+                return;
+            }
+
+            // En ligne : envoi direct
+            try {
+                const result = await envoyerParAPI(interventionId, pdfBase64, clientEmail, csrfToken);
+                if (result.success) {
+                    afficherToast('✅ Rapport envoyé avec succès à ' + result.email, 'success');
+                    if (btn)  btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+                    if (icon)  icon.textContent  = '✅';
+                    if (label) label.textContent = 'Email envoyé !';
+                    btn.disabled = true; // Ne pas renvoyer
+                } else {
+                    afficherToast('❌ ' + (result.message || 'Erreur envoi email'), 'error');
+                    if (btn) btn.disabled = false;
+                    if (icon)  icon.textContent  = '🔄';
+                    if (label) label.textContent = 'Réessayer l\'envoi';
+                }
+            } catch(e) {
+                // Réseau coupé pendant l'envoi
+                try {
+                    await sauvegarderEnFile({
+                        intervention_id : interventionId,
+                        pdf_data        : pdfBase64,
+                        client_email    : clientEmail,
+                        csrf_token      : csrfToken,
+                    });
+                    afficherToast('📶 Connexion perdue – email mis en file d\'attente. Il sera envoyé à la reconnexion.', 'warning');
+                } catch(qe) {
+                    afficherToast('❌ Erreur réseau et impossible de mettre en file : ' + e.message, 'error');
+                }
+                if (btn) btn.disabled = false;
+                if (icon)  icon.textContent  = '🔄';
+                if (label) label.textContent = 'Réessayer l\'envoi';
+            }
+        }
     </script>
 </body>
 
