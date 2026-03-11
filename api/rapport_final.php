@@ -847,7 +847,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
 
                 .pdf-input { border: none; border-bottom: 1px dashed #000; background: transparent; font-size: 13px; font-family: Arial; padding: 2px; width: 100%; color: black; outline:none; }
                 .pdf-textarea-rendered { 
-                    width: 100%; font-family: Arial; font-size: 11px; color: black; white-space: pre-wrap; word-wrap: break-word; padding:4px; 
+                    width: 100%; font-family: Arial; font-size: 9pt; color: black; white-space: pre-wrap; word-wrap: break-word; padding:4px; box-sizing: border-box;
                 }
                 
                 img { max-width: 100%; }
@@ -1140,8 +1140,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
                                     const div = document.createElement('div');
                                     div.className = 'pdf-textarea-rendered';
                                     div.style.minHeight = '15px';
-                                    div.style.fontSize = '9pt';
-                                    div.style.color = 'black';
                                     div.textContent = val;
                                     ta.parentNode.insertBefore(div, ta);
                                 }
