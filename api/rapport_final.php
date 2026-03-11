@@ -761,18 +761,17 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                 .pastille-group { display: inline-flex; gap: 4px; align-items: center; }
                 .pastille-group label {
                     display: flex; align-items: center; justify-content: center;
-                    width: 24px; height: 24px; border-radius: 50%;
-                    border: 1px solid #ddd !important; background: transparent !important; opacity: 0.15; font-size: 0; position: relative;
+                    width: 18px; height: 18px; border-radius: 50%;
+                    border: 1px solid #ccc !important; background: transparent !important; font-size: 0; position: relative;
                 }
-                .pastille-group label.selected { opacity: 1; border-width: 2px !important; }
-                .pastille-group label.selected.p-na { background: #bbb !important; border-color: #999 !important; }
-                .pastille-group label.selected.p-ok { background: #28a745 !important; border-color: #1e7e34 !important; }
-                .pastille-group label.selected.p-aa { background: #e67e22 !important; border-color: #d35400 !important; }
-                .pastille-group label.selected.p-nc { background: #dc3545 !important; border-color: #bd2130 !important; }
-                .pastille-group label.selected.p-nr { background: #8b0000 !important; border-color: #5a0000 !important; }
-                .pastille-group label.selected::after {
-                    content: '✓'; color: white; font-size: 14px; font-weight: bold; line-height: 1;
-                }
+                /* Only the selected label gets a background color */
+                .pastille-group label.selected.p-na { background: #bbb !important; border-color: #999 !important; opacity: 1; }
+                .pastille-group label.selected.p-ok { background: #28a745 !important; border-color: #1e7e34 !important; opacity: 1; }
+                .pastille-group label.selected.p-aa { background: #e67e22 !important; border-color: #d35400 !important; opacity: 1; }
+                .pastille-group label.selected.p-nc { background: #dc3545 !important; border-color: #bd2130 !important; opacity: 1; }
+                .pastille-group label.selected.p-nr { background: #8b0000 !important; border-color: #5a0000 !important; opacity: 1; }
+                /* Non selected labels are subtle empty circles */
+                .pastille-group label:not(.selected) { opacity: 0.3; border: 1px solid #ccc !important; }
 
                 .pdf-input { border: none; border-bottom: 1px dashed #000; background: transparent; font-size: 13px; font-family: Arial; padding: 2px; width: 100%; color: black; outline:none; }
                 .pdf-textarea-rendered { 
@@ -837,51 +836,51 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                         </div>
                     </div>
                     <div style="background-color:#0ea5e9; color:white; text-align:center; padding:15px; border-top:2px solid #000;">
-                        <h1 style="margin:0; font-size:24px; text-transform:uppercase; letter-spacing:1px;">RAPPORT D'EXPERTISE SUR SITE</h1>
-                        <div style="font-size:18px; font-weight:bold; margin-top:8px;">N° ARC : ${numArc}</div>
+                        <h1 style="margin:0; font-size:20px; text-transform:uppercase; letter-spacing:1px;">RAPPORT D'EXPERTISE SUR SITE</h1>
+                        <div style="font-size:16px; font-weight:bold; margin-top:8px;">N° ARC : ${numArc}</div>
                     </div>
                 </div>
 
                 <!-- COORDONNEES DU CLIENT -->
-                <div style="background-color:#0284c7; color:white; padding:8px 15px; font-weight:bold; border:2px solid #000; border-bottom:none; text-transform:uppercase; font-size:14px;">
+                <div style="background-color:#0284c7; color:white; padding:6px 15px; font-weight:bold; border:2px solid #000; border-bottom:none; text-transform:uppercase; font-size:12px;">
                     COORDONNÉES DU CLIENT
                 </div>
-                <table style="width:100%; border-collapse:collapse; border:2px solid #000; margin-bottom:20px; font-size:13px;">
+                <table style="width:100%; border-collapse:collapse; border:2px solid #000; margin-bottom:15px; font-size:12px;">
                     <tr>
-                        <td style="width:50%; padding:15px; border-right:1px solid #000; vertical-align:top;">
-                            <div style="margin-bottom:10px; font-weight:bold; font-size:14px; text-decoration:underline;">SOCIÉTÉ</div>
+                        <td style="width:50%; padding:10px; border-right:1px solid #000; vertical-align:top;">
+                            <div style="margin-bottom:8px; font-weight:bold; font-size:13px; text-decoration:underline;">SOCIÉTÉ</div>
                             <table style="width:100%">
-                                <tr><td style="width:80px; padding-bottom:5px;">Nom:</td><td style="font-weight:bold; padding-bottom:5px;">${nomSociete}</td></tr>
-                                <tr><td style="padding-bottom:5px;">Adresse:</td><td style="padding-bottom:5px;">${adresse}</td></tr>
-                                <tr><td style="padding-bottom:5px;">CP:</td><td style="padding-bottom:5px;">${cp}</td></tr>
-                                <tr><td style="padding-bottom:5px;">Ville:</td><td style="padding-bottom:5px;">${ville}</td></tr>
-                                <tr><td style="padding-bottom:5px;">Pays:</td><td style="padding-bottom:5px;">${pays}</td></tr>
+                                <tr><td style="width:80px; padding-bottom:3px;">Nom:</td><td style="font-weight:bold; padding-bottom:3px;">${nomSociete || '_____'}</td></tr>
+                                <tr><td style="padding-bottom:3px;">Adresse:</td><td style="padding-bottom:3px;">${adresse || '_____'}</td></tr>
+                                <tr><td style="padding-bottom:3px;">CP:</td><td style="padding-bottom:3px;">${cp || '_____'}</td></tr>
+                                <tr><td style="padding-bottom:3px;">Ville:</td><td style="padding-bottom:3px;">${ville || '_____'}</td></tr>
+                                <tr><td style="padding-bottom:3px;">Pays:</td><td style="padding-bottom:3px;">${pays || 'France'}</td></tr>
                             </table>
                         </td>
-                        <td style="width:50%; padding:15px; vertical-align:top;">
-                            <div style="margin-bottom:10px; font-weight:bold; font-size:14px; text-decoration:underline;">CONTACT SUR SITE</div>
+                        <td style="width:50%; padding:10px; vertical-align:top;">
+                            <div style="margin-bottom:8px; font-weight:bold; font-size:13px; text-decoration:underline;">CONTACT SUR SITE</div>
                             <table style="width:100%">
-                                <tr><td style="width:80px; padding-bottom:5px;">Nom:</td><td style="font-weight:bold; padding-bottom:5px;">${cNom}</td></tr>
-                                <tr><td style="padding-bottom:5px;">Prénom:</td><td style="padding-bottom:5px;">${cPrenom}</td></tr>
-                                <tr><td style="padding-bottom:5px;">Fonction:</td><td style="padding-bottom:5px;">${contactFonction}</td></tr>
-                                <tr><td style="padding-bottom:5px;">Téléphone:</td><td style="padding-bottom:5px;">${contactTel}</td></tr>
-                                <tr><td style="padding-bottom:5px;">Courriel:</td><td style="padding-bottom:5px;">${contactEmail}</td></tr>
+                                <tr><td style="width:80px; padding-bottom:3px;">Nom:</td><td style="font-weight:bold; padding-bottom:3px;">${cNom || '_____'}</td></tr>
+                                <tr><td style="padding-bottom:3px;">Prénom:</td><td style="padding-bottom:3px;">${cPrenom || '_____'}</td></tr>
+                                <tr><td style="padding-bottom:3px;">Fonction:</td><td style="padding-bottom:3px;">${contactFonction || '_____'}</td></tr>
+                                <tr><td style="padding-bottom:3px;">Téléphone:</td><td style="padding-bottom:3px;">${contactTel || '_____'}</td></tr>
+                                <tr><td style="padding-bottom:3px;">Courriel:</td><td style="padding-bottom:3px;">${contactEmail || '_____'}</td></tr>
                             </table>
                         </td>
                     </tr>
                 </table>
 
                 <!-- PARC MACHINE -->
-                <div style="background-color:#0284c7; color:white; padding:8px 15px; font-weight:bold; border:2px solid #000; border-bottom:none; text-transform:uppercase; font-size:14px;">
+                <div style="background-color:#0284c7; color:white; padding:6px 15px; font-weight:bold; border:2px solid #000; border-bottom:none; text-transform:uppercase; font-size:12px;">
                     PARC MACHINE
                 </div>
-                <table style="width:100%; border-collapse:collapse; border:2px solid #000; margin-bottom:20px; font-size:13px; text-align:left;">
+                <table style="width:100%; border-collapse:collapse; border:2px solid #000; margin-bottom:15px; font-size:11px; text-align:left;">
                     <thead>
                         <tr style="border-bottom:2px solid #000; background-color:#f8fafc;">
-                            <th style="padding:8px; border-right:1px solid #000; width:15%; text-align:center;">N° A.R.C</th>
-                            <th style="padding:8px; border-right:1px solid #000; width:15%; text-align:center;">N° O.F.</th>
-                            <th style="padding:8px; border-right:1px solid #000; width:55%;">Désignation du matériel</th>
-                            <th style="padding:8px; width:15%; text-align:center;">Année</th>
+                            <th style="padding:6px; border-right:1px solid #000; width:15%; text-align:center;">N° A.R.C</th>
+                            <th style="padding:6px; border-right:1px solid #000; width:15%; text-align:center;">N° O.F.</th>
+                            <th style="padding:6px; border-right:1px solid #000; width:55%;">Désignation du matériel</th>
+                            <th style="padding:6px; width:15%; text-align:center;">Année</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -890,23 +889,24 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                 </table>
 
                 <!-- COMMENTAIRE TECHNICIEN -->
-                <div style="border:2px solid #000; margin-bottom:20px;">
-                    <div style="background-color:#f8fafc; border-bottom:1px solid #000; padding:8px 15px; font-weight:bold;">
+                ${commentaire ? `
+                <div style="border:2px solid #000; margin-bottom:15px;">
+                    <div style="background-color:#f8fafc; border-bottom:1px solid #000; padding:6px 15px; font-weight:bold; font-size:12px;">
                         Commentaire :
                     </div>
-                    <div style="padding:15px; min-height:180px; font-size:13px; white-space:pre-wrap;">${commentaire}</div>
-                </div>
+                    <div style="padding:10px; min-height:80px; font-size:12px; white-space:pre-wrap;">${commentaire}</div>
+                </div>` : ''}
 
                 <!-- SIGNATURES -->
-                <table style="width:100%; border-collapse:collapse; border:2px solid #000; font-size:13px; margin-bottom: 30px;">
+                <table style="width:100%; border-collapse:collapse; border:2px solid #000; font-size:12px; margin-bottom: 20px;">
                     <tr>
-                        <td style="width:50%; padding:15px; border-right:1px solid #000; vertical-align:top;">
-                            <div style="margin-bottom:10px;"><strong>Technicien sur site :</strong> ${techName}</div>
+                        <td style="width:50%; padding:10px; border-right:1px solid #000; vertical-align:top;">
+                            <div style="margin-bottom:8px;"><strong>Technicien sur site :</strong> ${techName}</div>
                             <div><strong>Date d'expertise :</strong> ${dateExp}</div>
                         </td>
-                        <td style="width:50%; padding:15px; text-align:center; vertical-align:middle;">
-                            <img src="/assets/lenoir_logo_doc.png" style="height:35px; margin-bottom:10px;"><br>
-                            <img src="${sigTechData}" style="max-height:80px; max-width:90%; border:1px dashed #ccc; padding:5px;">
+                        <td style="width:50%; padding:10px; text-align:center; vertical-align:middle;">
+                            <div style="font-size:10px; color:#666; margin-bottom:5px;">Signature Lenoir</div>
+                            <img src="${sigTechData}" style="max-height:60px; max-width:90%; border:1px dashed #ccc; padding:3px;">
                         </td>
                     </tr>
                 </table>
@@ -972,25 +972,42 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                         const doc = parser.parseFromString(html, 'text/html');
 
                         const pages = doc.querySelectorAll('.pdf-page');
-                        let isFirstMachinePage = true;
-                        pages.forEach(p => {
+                        pages.forEach((p, pIdx) => {
+                            // Bug 5: Check if page is empty or only diagram
+                            const hasPhotos = p.querySelectorAll('.photo-annexe-item img').length > 0;
+                            const photoSection = Array.from(p.querySelectorAll('div')).find(div => div.textContent.includes('PHOTOS ANNEXES'));
+                            
+                            if (photoSection && !hasPhotos) {
+                                // Remove section and subsequent images/diagrams if no photos
+                                photoSection.remove();
+                                p.querySelectorAll('img[alt="Schéma APRF"], img[alt="Schéma EDX"]').forEach(img => img.remove());
+                            }
+
+                            // Bug 1 & 2 & 3: Clean up machine fiche
+                            p.querySelectorAll('.photo-btn, .photo-thumbs, #btnChrono').forEach(el => el.remove());
+                            
+                            // If it's a diagram/photo page and it's empty after cleanup, skip it
+                            const contentText = p.textContent.trim();
+                            if ((pIdx > 0) && contentText.length < 50 && !hasPhotos && !p.querySelector('img')) {
+                                return; // Skip empty pages
+                            }
+
                             const pbReq = document.createElement('div');
                             pbReq.className = 'html2pdf__page-break';
                             container.appendChild(pbReq);
 
-                            if (isFirstMachinePage) {
+                            if (pIdx === 0) {
                                 const hHeader = document.createElement('div');
-                                hHeader.style.padding = "10px";
+                                hHeader.style.padding = "8px";
                                 hHeader.style.backgroundColor = "#0284c7";
                                 hHeader.style.color = "white";
                                 hHeader.style.border = "2px solid #000";
                                 hHeader.style.fontWeight = "bold";
                                 hHeader.style.textAlign = "center";
-                                hHeader.style.marginBottom = "20px";
-                                hHeader.style.fontSize = "16px";
-                                hHeader.innerText = "FICHE TECHNIQUE MACHINE - ID " + mId;
+                                hHeader.style.marginBottom = "15px";
+                                hHeader.style.fontSize = "14px";
+                                hHeader.innerText = "FICHE TECHNIQUE MACHINE - " + (p.querySelector('span[style*="font-size:26px"]')?.textContent.trim() || mId);
                                 p.insertBefore(hHeader, p.firstChild);
-                                isFirstMachinePage = false;
                             }
 
                             p.querySelectorAll('input[type="radio"]:checked').forEach(r => {
@@ -999,20 +1016,31 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                             });
 
                             p.querySelectorAll('input[type="text"], input[type="time"]').forEach(inp => {
-                                inp.outerHTML = `<span style="border-bottom:1px dashed black; display:inline-block; min-width:30px; padding:0 3px;">${inp.value}</span>`;
+                                let val = inp.value || '';
+                                // Bug 4: Handle "Poste"
+                                if (inp.name === 'mesures[poste]' && !val) val = '_____';
+                                else if (!val) val = '_____';
+                                
+                                inp.outerHTML = `<span style="border-bottom:1px dashed black; display:inline-block; min-width:30px; padding:0 3px; font-weight:bold;">${val}</span>`;
                             });
 
                             p.querySelectorAll('textarea').forEach(ta => {
-                                const div = document.createElement('div');
-                                div.className = 'pdf-textarea-rendered';
-                                div.style.minHeight = ta.style.height || '25px';
-                                div.textContent = ta.value || ta.innerHTML;
-                                ta.parentNode.insertBefore(div, ta);
+                                const val = ta.value || ta.innerHTML;
+                                if (val.trim()) {
+                                    const div = document.createElement('div');
+                                    div.className = 'pdf-textarea-rendered';
+                                    div.style.minHeight = '15px';
+                                    div.style.fontSize = '9pt';
+                                    div.style.color = 'black';
+                                    div.textContent = val;
+                                    ta.parentNode.insertBefore(div, ta);
+                                }
                                 ta.remove();
                             });
                             
                             p.style.position = 'relative';
                             p.style.paddingBottom = '30mm';
+                            p.style.minHeight = 'auto'; // Help chaining
                             p.appendChild(createPdfFooter());
                             container.appendChild(p);
                         });
@@ -1065,7 +1093,7 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             cloneFin.querySelector('form').insertBefore(headerFin, cloneFin.querySelector('form').firstChild);
 
             // Additional cleanup
-            cloneFin.querySelectorAll('.mobile-header, .btn-final, .sig-clear, #successBanner, #btnSendEmail, #btnDownloadPDF, a, button').forEach(el => el.remove());
+            cloneFin.querySelectorAll('.mobile-header, .btn-final, .sig-clear, #successBanner, #btnSendEmail, #btnDownloadPDF, a, button, .photo-btn, .photo-thumbs, #btnChrono').forEach(el => el.remove());
 
             // Section titles styles
             cloneFin.querySelectorAll('.section-title').forEach(sec => {
@@ -1091,12 +1119,12 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             const cloneTextareasFin = cloneFin.querySelectorAll('textarea');
             cloneTextareasFin.forEach((ta, i) => {
                 const realTa = Array.from(origTexteareasFin).find(t => t.name === ta.name);
-                if (realTa) {
+                if (realTa && realTa.value.trim()) {
                     const div = document.createElement('div');
                     div.className = 'pdf-textarea-rendered';
                     div.style.border = '1px solid #000';
                     div.style.padding = '10px';
-                    div.style.minHeight = ta.classList.contains('small') ? '80px' : '150px';
+                    div.style.minHeight = ta.classList.contains('small') ? '60px' : '100px';
                     div.style.fontSize = "13px";
                     div.textContent = realTa.value;
                     ta.parentNode.insertBefore(div, ta);
@@ -1124,7 +1152,7 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             const finInputs = cloneFin.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]');
             finInputs.forEach(inp => { 
                 const realInp = originalRapport.querySelector(`[name="${inp.name}"]`) || inp;
-                const val = realInp.value; 
+                const val = realInp.value || '_____'; 
                 inp.outerHTML = `<span style="border-bottom:1px dashed black; display:inline-block; min-width:30px; font-weight:bold;">${val}</span>`;
             });
 
