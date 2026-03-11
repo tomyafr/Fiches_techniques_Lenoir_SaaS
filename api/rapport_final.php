@@ -423,16 +423,16 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                         nomSociete: <?= json_encode($intervention['nom_societe'] ?? '') ?>,
                         dateInt: <?= json_encode(date('d/m/Y', strtotime($intervention['date_intervention'] ?? 'now'))) ?>,
                         csrfToken: <?= json_encode(getCsrfToken()) ?>,
-                        pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>,                   machinesIds: [<?= implode(',', array_column($machines, 'id')) ?>]
-                        };
-                    </script>
+                        pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>, machinesIds: [<?= implode(',', array_column($machines, 'id')) ?>]
+                    };
+                </script>
             <?php endif; ?>
 
             <?php if (!empty($error)): ?>
-                    <div
-                        style="background: rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.4); color:#f43f5e; padding:1rem; border-radius:8px; margin-bottom:1.5rem; font-size:0.85rem;">
-                        ⚠️ <?= htmlspecialchars($error) ?>
-                    </div>
+                <div
+                    style="background: rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.4); color:#f43f5e; padding:1rem; border-radius:8px; margin-bottom:1.5rem; font-size:0.85rem;">
+                    ⚠️ <?= htmlspecialchars($error) ?>
+                </div>
             <?php endif; ?>
 
             <!-- EN-TÊTE -->
@@ -451,16 +451,16 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             </div>
             <div class="machines-recap">
                 <?php foreach ($machines as $m): ?>
-                        <span class="machine-tag">
-                            ⚙️
-                            <?= htmlspecialchars($m['designation']) ?>
-                            <?php $mm = json_decode($m['mesures'] ?? '{}', true); ?>
-                            <?php if (!empty($mm['repere'])): ?>
-                                    <small style="opacity:0.7">–
-                                        <?= htmlspecialchars($mm['repere']) ?>
-                                    </small>
-                            <?php endif; ?>
-                        </span>
+                    <span class="machine-tag">
+                        ⚙️
+                        <?= htmlspecialchars($m['designation']) ?>
+                        <?php $mm = json_decode($m['mesures'] ?? '{}', true); ?>
+                        <?php if (!empty($mm['repere'])): ?>
+                            <small style="opacity:0.7">–
+                                <?= htmlspecialchars($mm['repere']) ?>
+                            </small>
+                        <?php endif; ?>
+                    </span>
                 <?php endforeach; ?>
             </div>
 
@@ -636,21 +636,21 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             resizeCanvas(canvasT);
             padTech = new SignaturePad(canvasT, { penColor: 'black' });
             <?php if (!empty($intervention['signature_technicien'])): ?>
-                    padTech.fromDataURL('<?= $intervention['signature_technicien'] ?>', {
-                        ratio: dpr,
-                        width: canvasT.width / dpr,
-                        height: canvasT.height / dpr
-                    });
+                padTech.fromDataURL('<?= $intervention['signature_technicien'] ?>', {
+                    ratio: dpr,
+                    width: canvasT.width / dpr,
+                    height: canvasT.height / dpr
+                });
             <?php endif; ?>
 
             resizeCanvas(canvasC);
             padClient = new SignaturePad(canvasC, { penColor: 'blue' });
             <?php if (!empty($intervention['signature_client'])): ?>
-                    padClient.fromDataURL('<?= $intervention['signature_client'] ?>', {
-                        ratio: dpr,
-                        width: canvasC.width / dpr,
-                        height: canvasC.height / dpr
-                    });
+                padClient.fromDataURL('<?= $intervention['signature_client'] ?>', {
+                    ratio: dpr,
+                    width: canvasC.width / dpr,
+                    height: canvasC.height / dpr
+                });
             <?php endif; ?>
         }
 
@@ -681,7 +681,7 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
         // ══════════════════════════════════════════════════════════════════
         // CRÉATION DU CONTENEUR COMPLET POUR LE PDF (ASYNCHRONE)
         // ══════════════════════════════════════════════════════════════════
-        
+
         // Helper : Attendre que toutes les images soient chargées
         async function waitForImages(element) {
             const images = element.querySelectorAll('img');
@@ -689,7 +689,7 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                 if (img.complete) return Promise.resolve();
                 return new Promise(resolve => {
                     img.onload = resolve;
-                    img.onerror = resolve; 
+                    img.onerror = resolve;
                 });
             });
             await Promise.all(promises);
@@ -698,10 +698,9 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
 
         async function buildFullPdfContainer() {
             // Conteneur détaché du DOM : il ne faut pas l'insérer dans body
-            // html2pdf s'occupe de le placer dans un iframe invisible avec toutes les CSS.
             const container = document.createElement('div');
             container.id = 'pdf-full-wrapper';
-            container.style.width = '210mm'; 
+            container.style.width = '210mm';
             container.style.backgroundColor = 'white';
             container.style.color = 'black';
 
@@ -727,86 +726,232 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                 .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; color: black; font-size: 11px; }
                 .pdf-table th, .pdf-table td { border: 1px solid #000; padding: 4px; vertical-align: middle; }
                 .pdf-table th { background-color: #f0f0f0; text-align: left; text-transform: uppercase; }
-                /* Système pastilles conservé pour le rendu statique */
+                
+                /* PASTILLES: On masque celles non sélectionnées et on met en valeur celle cochée */
                 .pastille-group { display: inline-flex; gap: 4px; align-items: center; }
                 .pastille-group label {
                     display: flex; align-items: center; justify-content: center;
-                    width: 28px; height: 28px; border-radius: 50%;
-                    border: 2px solid #ccc; font-size: 0; position: relative;
+                    width: 24px; height: 24px; border-radius: 50%;
+                    border: 1px solid #ddd !important; background: transparent !important; opacity: 0.15; font-size: 0; position: relative;
                 }
-                .pastille-group label.p-na { background: #bbb; border-color: #999; }
-                .pastille-group label.p-ok { background: #28a745; border-color: #1e7e34; }
-                .pastille-group label.p-aa { background: #e67e22; border-color: #d35400; }
-                .pastille-group label.p-nc { background: #dc3545; border-color: #bd2130; }
-                .pastille-group label.p-nr { background: #8b0000; border-color: #5a0000; }
-                .pastille-group label.selected { transform: scale(1.15); box-shadow: 0 0 0 3px rgba(0,0,0,0.25); border-width:0; }
+                .pastille-group label.selected { opacity: 1; border-width: 2px !important; }
+                .pastille-group label.selected.p-na { background: #bbb !important; border-color: #999 !important; }
+                .pastille-group label.selected.p-ok { background: #28a745 !important; border-color: #1e7e34 !important; }
+                .pastille-group label.selected.p-aa { background: #e67e22 !important; border-color: #d35400 !important; }
+                .pastille-group label.selected.p-nc { background: #dc3545 !important; border-color: #bd2130 !important; }
+                .pastille-group label.selected.p-nr { background: #8b0000 !important; border-color: #5a0000 !important; }
                 .pastille-group label.selected::after {
-                    content: '✓'; color: white; font-size: 16px; font-weight: bold; line-height: 1;
+                    content: '✓'; color: white; font-size: 14px; font-weight: bold; line-height: 1;
                 }
+
                 .pdf-input { border: none; border-bottom: 1px dashed #000; background: transparent; font-size: 13px; font-family: Arial; padding: 2px; width: 100%; color: black; outline:none; }
-                .pdf-textarea { width: 100%; min-height: 30px; border: 1px solid transparent; background: transparent; resize: none; overflow: hidden; font-family: Arial; font-size: 12px; color: black; box-sizing: border-box; outline:none; }
                 
-                /* Surcharges rapport final */
+                /* Rendu des commentaires pour qu'ils soient lisibles sans ascenceur */
+                .pdf-textarea-rendered { 
+                    width: 100%; font-family: Arial; font-size: 11px; color: black; white-space: pre-wrap; word-wrap: break-word; padding:4px; 
+                }
+                
+                /* Surcharges rapport final (Couverture et Signatures) */
                 .rapport-page-cloned { padding: 1.5cm; }
                 .rapport-page-cloned .card.glass {
                     border: 1px solid #000 !important;
                     background: white !important;
                     box-shadow: none !important;
                 }
-                .rapport-page-cloned .rapport-textarea { background: white !important; color: black !important; border: 1px solid #000 !important; margin:0; }
-                .rapport-page-cloned .checkbox-item { background: transparent !important; color: black !important; border: none !important; }
-                .rapport-page-cloned .checkbox-item input[type="checkbox"] { filter: invert(1); }
                 .rapport-page-cloned .label { color: #000 !important; font-weight: bold; margin-bottom: 0.2rem; }
                 .rapport-page-cloned .input { background: white !important; color: black !important; border-bottom: 1px solid #000 !important; border-top: none; border-left: none; border-right: none; border-radius: 0; padding-left: 0; }
                 .rapport-page-cloned .rapport-header { border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 20px;}
-                .rapport-page-cloned .rapport-header h1 { color: #000; }
-                .rapport-page-cloned .section-title { color: #000; border-bottom: 1px solid #000; font-weight: bold; margin-bottom:15px; }
-                .rapport-page-cloned .machines-recap .machine-tag { background: #eee; border: 1px solid #000; color: #000; display: inline-block; padding: 5px 10px; border-radius:4px; margin: 3px;}
+                .rapport-page-cloned .rapport-header h1 { color: #000; font-size: 1.5rem; }
+                .rapport-page-cloned .section-title { color: #000; border-bottom: 1px solid #000; font-weight: bold; margin-bottom:15px; margin-top:20px; font-size:1.1rem; }
+                .rapport-page-cloned .machines-recap { display: flex; flex-direction: column; gap: 5px; margin-bottom: 1rem; }
+                .rapport-page-cloned .machines-recap .machine-tag { background: none; border: 1px solid transparent; color: #000; display: block; padding: 5px 0; font-size: 1rem;}
                 
                 img { max-width: 100%; }
             `;
             container.appendChild(styleNode);
 
-            // --- 1. PAGE DE CONTACT (COVER) ---
-            const coverPage = document.createElement('div');
-            coverPage.className = 'pdf-page';
-            coverPage.style.display = 'flex';
-            coverPage.style.justifyContent = 'center';
-            coverPage.style.alignItems = 'center';
-            coverPage.style.padding = '0';
-            coverPage.innerHTML = `<img src="/assets/machines/1-page de contact_diagram.png" style="width:100%; height:100%; object-fit:contain;">`;
-            container.appendChild(coverPage);
-
-            // PAGE BREAK
-            const pb1 = document.createElement('div');
-            pb1.className = 'html2pdf__page-break';
-            container.appendChild(pb1);
-
-            // --- 2. PAGE RAPPORT FINAL (INFOS) ---
+            // --- 1. PAGE RAPPORT FINAL (COUVERTURE + INFOS) ---
             const rapportCloneWrapper = document.createElement('div');
             rapportCloneWrapper.className = 'pdf-page rapport-page-cloned';
-            
+
             const originalRapport = document.querySelector('.rapport-page');
             const clone = originalRapport.cloneNode(true);
-            
-            // Nettoyage absolu du clone
+
+            // Nettoyage absolu du clone (on supprime les parties non voulues sur la couverture)
             clone.querySelectorAll('.mobile-header, .btn-final, .sig-clear, #successBanner, #btnSendEmail, #btnDownloadPDF, a, button').forEach(el => el.remove());
-            
-            // Recopier le contenu des textarea
-            const origTextareas = originalRapport.querySelectorAll('textarea');
-            const cloneTextareas = clone.querySelectorAll('textarea');
-            origTextareas.forEach((ta, i) => { cloneTextareas[i].textContent = ta.value; cloneTextareas[i].value = ta.value; });
 
-            // Recopier les checkbox/radios
-            const origCheck = originalRapport.querySelectorAll('input[type="checkbox"], input[type="radio"]');
-            const cloneCheck = clone.querySelectorAll('input[type="checkbox"], input[type="radio"]');
-            origCheck.forEach((chk, i) => { if(chk.checked) cloneCheck[i].setAttribute('checked', 'checked'); });
+            // Pour la couverture, on va séparer le rapport en deux : 
+            // - Couverture = Logo, en-tête, listes machines, Infos Client
+            // - Fin = Commentaires tech, souhaits, commentaires clients, signatures
 
-            // Fixer les inputs text
-            const cloneInputs = clone.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]');
-            cloneInputs.forEach(inp => { const val = inp.value; inp.setAttribute('value', val); inp.value = val; });
+            // Diviser le clone
+            const cloneCouverture = clone.cloneNode(true);
+            const cloneFin = clone.cloneNode(true);
 
-            // Recopier les vraies signatures du canvas
+            // Dans la couverture, on supprime tout à partir de "Commentaire technicien"
+            const allSectionsCouv = cloneCouverture.querySelectorAll('.section-title');
+            let foundComm = false;
+            allSectionsCouv.forEach(sec => {
+                if (sec.textContent.includes('Commentaire / Observations') || foundComm) {
+                    foundComm = true;
+                    // On supprime la section et son contenu suivant... c'est complexe de trouver le suivant
+                }
+            });
+            // Méthode simple : supprimer par conteneurs explicites
+            const elementsToRemoveFromCover = Array.from(cloneCouverture.children).slice(5);
+            // On conserve: form csrf(0), header(1), recap machines title(2), recap(3), info client title(4), card info client(5).
+            // Le index 6 et + = le reste.
+            const enfantsCouv = Array.from(cloneCouverture.querySelector('form').children);
+            let idxStartFin = -1;
+            enfantsCouv.forEach((el, index) => {
+                if (el.classList && el.classList.contains('section-title') && el.textContent.includes('Observations')) {
+                    idxStartFin = index;
+                }
+            });
+
+            if (idxStartFin > -1) {
+                // Remove elements from Cover
+                for (let i = idxStartFin; i < enfantsCouv.length; i++) {
+                    enfantsCouv[i].remove();
+                }
+            }
+
+            // Fixer les inputs texte de la couverture
+            const couvInputs = cloneCouverture.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]');
+            couvInputs.forEach(inp => { const val = inp.value; inp.setAttribute('value', val); inp.value = val; });
+
+            rapportCloneWrapper.appendChild(cloneCouverture);
+            container.appendChild(rapportCloneWrapper);
+
+
+            // --- 2. FETCH & APPEND MACHINES ---
+            if (window.LM_RAPPORT && window.LM_RAPPORT.machinesIds) {
+                for (const mId of window.LM_RAPPORT.machinesIds) {
+                    try {
+                        const res = await fetch('machine_edit.php?id=' + mId);
+                        const html = await res.text();
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+
+                        // Récupérer toutes les pdf-page de cette machine
+                        const pages = doc.querySelectorAll('.pdf-page');
+                        let isFirstMachinePage = true;
+                        pages.forEach(p => {
+                            // PAGE BREAK avant chaque page
+                            const pbReq = document.createElement('div');
+                            pbReq.className = 'html2pdf__page-break';
+                            container.appendChild(pbReq);
+
+                            // Afficher la désignation en gros sur la première page de chaque machine
+                            if (isFirstMachinePage) {
+                                const hHeader = document.createElement('div');
+                                hHeader.style.padding = "10px";
+                                hHeader.style.backgroundColor = "#eee";
+                                hHeader.style.border = "2px solid #000";
+                                hHeader.style.fontWeight = "bold";
+                                hHeader.style.textAlign = "center";
+                                hHeader.style.marginBottom = "20px";
+                                hHeader.style.fontSize = "16px";
+                                hHeader.innerText = "FICHE TECHNIQUE MACHINE - ID " + mId;
+                                p.insertBefore(hHeader, p.firstChild);
+                                isFirstMachinePage = false;
+                            }
+
+                            // Fixer la pastille active
+                            p.querySelectorAll('input[type="radio"]:checked').forEach(r => {
+                                const lbl = r.closest('label');
+                                if (lbl) lbl.classList.add('selected');
+                            });
+
+                            // Fixer textes input
+                            p.querySelectorAll('input[type="text"], input[type="time"]').forEach(inp => {
+                                inp.setAttribute('value', inp.value);
+                            });
+                            // Extraire le texte des textarea -> Transformer en div lisible
+                            p.querySelectorAll('textarea').forEach(ta => {
+                                const div = document.createElement('div');
+                                div.className = 'pdf-textarea-rendered';
+                                div.style.minHeight = ta.style.height || '25px';
+                                div.textContent = ta.innerHTML || ta.value;
+                                ta.parentNode.insertBefore(div, ta);
+                                ta.remove();
+                            });
+
+                            container.appendChild(p);
+                        });
+                    } catch (err) {
+                        console.error('Erreur fetch machine ' + mId, err);
+                    }
+                }
+            }
+
+
+            // PAGE BREAK FINAL AVANT LA DERNIERE PAGE DE CONCLUSION
+            const pbFin = document.createElement('div');
+            pbFin.className = 'html2pdf__page-break';
+            container.appendChild(pbFin);
+
+            // --- 3. PAGE RAPPORT FINAL (CONCLUSION) ---
+            const rapportCloneWrapperFin = document.createElement('div');
+            rapportCloneWrapperFin.className = 'pdf-page rapport-page-cloned';
+
+            const enfantsFin = Array.from(cloneFin.querySelector('form').children);
+            if (idxStartFin > -1) {
+                // Remove elements from Fin (everything before the start of the final section)
+                for (let i = 0; i < idxStartFin; i++) {
+                    if (!enfantsFin[i].name && enfantsFin[i].nodeName !== "INPUT") { // Garder potentiellement csrf, etc. 
+                        enfantsFin[i].remove();
+                    }
+                }
+            }
+
+            // Remettre le logo en haut
+            const headerFin = document.createElement('div');
+            headerFin.className = 'rapport-header';
+            headerFin.innerHTML = `<img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC" style="height: 60px; object-fit: contain; margin: 0 auto 1rem auto; display: block;">`;
+            cloneFin.querySelector('form').insertBefore(headerFin, cloneFin.querySelector('form').firstChild);
+
+            // Remplacer Textareas de la conclusion par des div stylisées
+            const origTexteareasFin = originalRapport.querySelectorAll('textarea'); // on utilise l'original pour la valeur
+            const cloneTextareasFin = cloneFin.querySelectorAll('textarea');
+            cloneTextareasFin.forEach((ta, i) => {
+                const realTa = origTexteareasFin[i];
+                if (realTa) {
+                    const div = document.createElement('div');
+                    div.className = 'pdf-textarea-rendered';
+                    div.style.border = '1px solid #000';
+                    div.style.padding = '10px';
+                    div.style.minHeight = ta.classList.contains('large') ? '150px' : '80px';
+                    div.style.fontSize = "13px";
+                    div.textContent = realTa.value;
+                    ta.parentNode.insertBefore(div, ta);
+                }
+                ta.remove();
+            });
+
+            // Remplacer checkbox de "Le client souhaite" par un affichage Unicode ✓ ou ☐
+            const origCheckFin = originalRapport.querySelectorAll('.checkbox-group input[type="checkbox"]');
+            const cloneCheckFin = cloneFin.querySelectorAll('.checkbox-group input[type="checkbox"]');
+            cloneCheckFin.forEach((chk, i) => {
+                const span = document.createElement('span');
+                // ✅ ☑ ☐
+                span.innerHTML = (origCheckFin[i] && origCheckFin[i].checked) ? '☑' : '☐';
+                span.style.fontSize = '1.3rem';
+                span.style.marginRight = '8px';
+                span.style.lineHeight = '1';
+                span.style.verticalAlign = 'middle';
+                chk.parentNode.insertBefore(span, chk);
+                // Mettre le texte en gras si coché
+                if (origCheckFin[i] && origCheckFin[i].checked) {
+                    chk.parentNode.style.fontWeight = "bold";
+                }
+                chk.remove();
+            });
+
+            const finInputs = cloneFin.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]');
+            finInputs.forEach(inp => { const val = inp.value; inp.setAttribute('value', val); inp.value = val; });
+
+            // Recopier les vraies signatures
             const origCanvasTech = document.getElementById('canvasTech');
             const origCanvasClient = document.getElementById('canvasClient');
             if (origCanvasTech) {
@@ -815,8 +960,8 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                 imgTech.style.width = '100%';
                 imgTech.style.maxHeight = '150px';
                 imgTech.style.objectFit = 'contain';
-                const cCloneT = clone.querySelector('#canvasTech');
-                if(cCloneT) cCloneT.parentNode.replaceChild(imgTech, cCloneT);
+                const cCloneT = cloneFin.querySelector('#canvasTech');
+                if (cCloneT) cCloneT.parentNode.replaceChild(imgTech, cCloneT);
             }
             if (origCanvasClient) {
                 const imgClient = document.createElement('img');
@@ -824,50 +969,12 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                 imgClient.style.width = '100%';
                 imgClient.style.maxHeight = '150px';
                 imgClient.style.objectFit = 'contain';
-                const cCloneC = clone.querySelector('#canvasClient');
-                if(cCloneC) cCloneC.parentNode.replaceChild(imgClient, cCloneC);
+                const cCloneC = cloneFin.querySelector('#canvasClient');
+                if (cCloneC) cCloneC.parentNode.replaceChild(imgClient, cCloneC);
             }
 
-            rapportCloneWrapper.appendChild(clone);
-            container.appendChild(rapportCloneWrapper);
-
-            // --- 3. FETCH & APPEND MACHINES ---
-            if (window.LM_RAPPORT && window.LM_RAPPORT.machinesIds) {
-                for (const mId of window.LM_RAPPORT.machinesIds) {
-                    try {
-                        const res = await fetch('machine_edit.php?id=' + mId);
-                        const html = await res.text();
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(html, 'text/html');
-                        
-                        // Récupérer toutes les pdf-page de cette machine
-                        const pages = doc.querySelectorAll('.pdf-page');
-                        pages.forEach(p => {
-                            // PAGE BREAK avant chaque page machine
-                            const pbReq = document.createElement('div');
-                            pbReq.className = 'html2pdf__page-break';
-                            container.appendChild(pbReq);
-
-                            // Fixer la pastille active
-                            p.querySelectorAll('input[type="radio"]:checked').forEach(r => {
-                                const lbl = r.closest('label');
-                                if (lbl) lbl.classList.add('selected');
-                            });
-                            // Fixer textes input et textareas
-                            p.querySelectorAll('input[type="text"], input[type="time"]').forEach(inp => {
-                                inp.setAttribute('value', inp.value);
-                            });
-                            p.querySelectorAll('textarea').forEach(ta => {
-                                ta.textContent = ta.innerHTML || ta.value;
-                            });
-
-                            container.appendChild(p);
-                        });
-                    } catch(err) {
-                        console.error('Erreur fetch machine ' + mId, err);
-                    }
-                }
-            }
+            rapportCloneWrapperFin.appendChild(cloneFin);
+            container.appendChild(rapportCloneWrapperFin);
 
             // PAGE BREAK FINAL
             const pbF = document.createElement('div');
@@ -897,7 +1004,7 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             const container = await buildFullPdfContainer();
 
             const opt = {
-                margin: 0, 
+                margin: 0,
                 filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
@@ -923,15 +1030,15 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             if (btn) { btn.disabled = true; btn.textContent = '⏳ Génération du rapport complet...'; }
             try {
                 const container = await buildFullPdfContainer();
-                
+
                 const opt = {
-                    margin: 0, 
+                    margin: 0,
                     filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true, logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
-                
+
                 await html2pdf().set(opt).from(container).save();
             } catch (e) {
                 alert('Erreur génération PDF : ' + e.message);

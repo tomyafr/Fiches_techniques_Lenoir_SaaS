@@ -586,9 +586,11 @@ $heureFin = $mesures['heure_fin'] ?? '';
                 {
                     $val = $donnees[$key] ?? '';
                     return '<div class="pastille-group">'
+                        . pastille($key, 'pc', 'p-na', 'Pas concerné / NA', $val)
                         . pastille($key, 'c', 'p-ok', 'Correct', $val)
+                        . pastille($key, 'aa', 'p-aa', 'À améliorer', $val)
                         . pastille($key, 'nc', 'p-nc', 'Non correct', $val)
-                        . pastille($key, 'na', 'p-na', 'N/A', $val)
+                        . pastille($key, 'nr', 'p-nr', 'Non réparé / À revoir', $val)
                         . '</div>';
                 }
                 function photoCamBtn($key)
