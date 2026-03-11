@@ -849,7 +849,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
                 .pdf-textarea-rendered { 
                     width: 100%; font-family: Arial; font-size: 9pt; color: black; white-space: pre-wrap; word-wrap: break-word; padding:4px; box-sizing: border-box;
                 }
+                .no-print-pdf { display: none !important; }
                 
+                .photo-annexe-item { text-align: center; max-width: 200px; margin-bottom: 10px; }
+                .photo-annexe-item img { width: 180px; height: 135px; object-fit: cover; border: 1px solid #000; }
+                .photo-annexe-item p { font-size: 8pt; margin: 3px 0 0 0; color: #000; line-height: 1.2; }
+
                 img { max-width: 100%; }
             `;
             container.appendChild(styleNode);
@@ -1079,18 +1084,16 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
 
                         const pages = doc.querySelectorAll('.pdf-page');
                         pages.forEach((p, pIdx) => {
-                            // Bug 5: Check if page is empty or only diagram
+                            // Bug 5 & New Fix: Remove empty photos section
                             const hasPhotos = p.querySelectorAll('.photo-annexe-item img').length > 0;
-                            const photoSection = Array.from(p.querySelectorAll('div')).find(div => div.textContent.includes('PHOTOS ANNEXES'));
-                            
-                            if (photoSection && !hasPhotos) {
-                                // Remove section and subsequent images/diagrams if no photos
-                                photoSection.remove();
-                                p.querySelectorAll('img[alt="Schéma APRF"], img[alt="Schéma EDX"]').forEach(img => img.remove());
-                            }
+                            p.querySelectorAll('.photos-annexes-wrapper').forEach(wrapper => {
+                                if (!wrapper.querySelector('.photo-annexe-item')) {
+                                    wrapper.remove();
+                                }
+                            });
 
                             // Bug 1 & 2 & 3: Clean up machine fiche
-                            p.querySelectorAll('.photo-btn, .photo-thumbs, #btnChrono').forEach(el => el.remove());
+                            p.querySelectorAll('.photo-btn, .photo-thumbs, #btnChrono, .no-print-pdf').forEach(el => el.remove());
                             
                             // If it's a diagram/photo page and it's empty after cleanup, skip it
                             const contentText = p.textContent.trim();

@@ -752,9 +752,6 @@ $heureFin = $mesures['heure_fin'] ?? '';
                     </table>
 
                     <div class="pdf-section" style="margin-top:20px;">
-                        <div style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0; border:1px solid #000;">
-                            PHOTOS ANNEXES :</div>
-
                         <img src="/assets/machines/aprf_diagram.png"
                             style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma APRF"
                             onerror="this.style.display='none'">
@@ -942,9 +939,6 @@ $heureFin = $mesures['heure_fin'] ?? '';
                     </table>
 
                     <div class="pdf-section" style="margin-top:20px;">
-                        <div style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0px; border:1px solid #000;">
-                            PHOTOS ANNEXES :</div>
-
                         <img src="/assets/machines/edx_diagram.png"
                             style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma ED-X"
                             onerror="this.style.display='none'">
@@ -1113,10 +1107,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                         </div>
                     </div>
 
-                    <div class="pdf-section" style="margin-top:20px;">
-                        <div style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0; border:1px solid #000;">
-                            PHOTOS ANNEXES</div>
-                    </div>
+                    <!-- Photo section removed here, handled globally at bottom -->
 
                 <?php elseif ($isLevage): ?>
 
@@ -1438,9 +1429,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                                     class="pdf-input" style="width:60px; border-bottom: 1px solid #000;"> mm
                             </div>
                         </div>
-                        <div
-                            style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:20px; border:1px solid #000;">
-                            PHOTOS ANNEXES</div>
+                        <!-- Handled globally -->
 
                     <?php else: ?>
 
@@ -1520,14 +1509,34 @@ $heureFin = $mesures['heure_fin'] ?? '';
                         </div>
                     <?php endif; ?>
 
-                    <div class="pdf-section" style="margin-top:20px;">
+                    <div class="pdf-section photos-annexes-wrapper" style="margin-top:20px;">
                         <div
                             style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; border:1px solid #000;">
                             PHOTOS ANNEXES</div>
                         <div id="photosAnnexesGrid"
                             style="border:1px solid #000; border-top:none; padding:10px; min-height:60px; display:flex; flex-wrap:wrap; gap:10px;">
-                            <p style="color:#999; font-size:11px; margin:0;" id="noPhotosMsg">Aucune photo. Utilisez les
-                                boutons 📷 sur chaque ligne de contrôle.</p>
+                            <?php if (empty($photosData)): ?>
+                                <p style="color:#999; font-size:11px; margin:0;" id="noPhotosMsg" class="no-print-pdf">Aucune photo. Utilisez les boutons 📷 sur chaque ligne de contrôle.</p>
+                            <?php else: ?>
+                                <?php foreach ($photosData as $key => $photos): ?>
+                                    <?php foreach ($photos as $p): ?>
+                                        <div class="photo-annexe-item">
+                                            <img src="<?= htmlspecialchars($p['data']) ?>">
+                                            <?php 
+                                            $label = str_replace('_', ' ', $key);
+                                            $label = preg_replace('/edx |ov |aprf |levage /i', '', $label);
+                                            $label = str_replace(['comment', 'radio'], '', $label);
+                                            $label = ucfirst(trim($label));
+                                            ?>
+                                            <p><strong><?= htmlspecialchars($label) ?></strong>
+                                            <?php if (!empty($p['caption'])): ?>
+                                                <br><em><?= htmlspecialchars($p['caption']) ?></em>
+                                            <?php endif; ?>
+                                            </p>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
 
