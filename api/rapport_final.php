@@ -674,10 +674,8 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
 
         document.addEventListener('DOMContentLoaded', function () {
             initSignatures();
-            // Si on vient de finaliser, lancer l'envoi email auto
-            if (window.LM_RAPPORT) {
-                lancerEnvoiEmail(true);
-            }
+            // L'envoi email est déclenché manuellement par le technicien
+            // via le bouton "📧 Envoyer PDF par email" — pas d'envoi automatique.
         });
 
         // ══════════════════════════════════════════════════════════════════
@@ -694,11 +692,11 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             hiddenEls.forEach(el => el.style.display = 'none');
 
             const opt = {
-                margin      : [10, 10, 10, 10],
-                filename    : window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
-                image       : { type: 'jpeg', quality: 0.92 },
-                html2canvas : { scale: 2, useCORS: true, logging: false },
-                jsPDF       : { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                margin: [10, 10, 10, 10],
+                filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
+                image: { type: 'jpeg', quality: 0.92 },
+                html2canvas: { scale: 2, useCORS: true, logging: false },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
             const worker = html2pdf().set(opt).from(element);
@@ -728,17 +726,17 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             try {
                 const element = document.querySelector('.rapport-page');
                 const opt = {
-                    margin      : [10, 10, 10, 10],
-                    filename    : window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
-                    image       : { type: 'jpeg', quality: 0.92 },
-                    html2canvas : { scale: 2, useCORS: true, logging: false },
-                    jsPDF       : { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    margin: [10, 10, 10, 10],
+                    filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
+                    image: { type: 'jpeg', quality: 0.92 },
+                    html2canvas: { scale: 2, useCORS: true, logging: false },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
                 const hiddenEls = document.querySelectorAll('.mobile-header, .btn-final, .sig-clear, #successBanner');
                 hiddenEls.forEach(el => el.style.display = 'none');
                 await html2pdf().set(opt).from(element).save();
                 hiddenEls.forEach(el => el.style.display = '');
-            } catch(e) {
+            } catch (e) {
                 alert('Erreur génération PDF : ' + e.message);
             }
             if (btn) { btn.disabled = false; btn.textContent = '⬇️ Télécharger le PDF'; }
@@ -752,17 +750,17 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             if (!toast) return;
             toast.textContent = message;
             if (type === 'success') {
-                toast.style.background    = 'rgba(16,185,129,0.2)';
-                toast.style.border        = '1px solid rgba(16,185,129,0.5)';
-                toast.style.color         = '#10b981';
+                toast.style.background = 'rgba(16,185,129,0.2)';
+                toast.style.border = '1px solid rgba(16,185,129,0.5)';
+                toast.style.color = '#10b981';
             } else if (type === 'warning') {
-                toast.style.background    = 'rgba(245,158,11,0.2)';
-                toast.style.border        = '1px solid rgba(245,158,11,0.5)';
-                toast.style.color         = '#f59e0b';
+                toast.style.background = 'rgba(245,158,11,0.2)';
+                toast.style.border = '1px solid rgba(245,158,11,0.5)';
+                toast.style.color = '#f59e0b';
             } else {
-                toast.style.background    = 'rgba(244,63,94,0.2)';
-                toast.style.border        = '1px solid rgba(244,63,94,0.5)';
-                toast.style.color         = '#f43f5e';
+                toast.style.background = 'rgba(244,63,94,0.2)';
+                toast.style.border = '1px solid rgba(244,63,94,0.5)';
+                toast.style.color = '#f43f5e';
             }
             toast.style.display = 'block';
             // Scroll vers le toast
@@ -772,7 +770,7 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
         // ══════════════════════════════════════════════════════════════════
         // FILE D'ATTENTE HORS-LIGNE (IndexedDB)
         // ══════════════════════════════════════════════════════════════════
-        const DB_NAME    = 'LMEmailQueue';
+        const DB_NAME = 'LMEmailQueue';
         const DB_VERSION = 1;
         const STORE_NAME = 'pendingEmails';
 
@@ -783,26 +781,26 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                     e.target.result.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
                 };
                 req.onsuccess = e => resolve(e.target.result);
-                req.onerror   = e => reject(e.target.error);
+                req.onerror = e => reject(e.target.error);
             });
         }
 
         async function sauvegarderEnFile(payload) {
-            const db    = await ouvrirIDB();
-            const tx    = db.transaction(STORE_NAME, 'readwrite');
+            const db = await ouvrirIDB();
+            const tx = db.transaction(STORE_NAME, 'readwrite');
             const store = tx.objectStore(STORE_NAME);
             store.add({ ...payload, queued_at: Date.now() });
             return new Promise((res, rej) => {
                 tx.oncomplete = res;
-                tx.onerror    = rej;
+                tx.onerror = rej;
             });
         }
 
         async function rejouerFileDAttente() {
-            const db    = await ouvrirIDB();
-            const tx    = db.transaction(STORE_NAME, 'readwrite');
+            const db = await ouvrirIDB();
+            const tx = db.transaction(STORE_NAME, 'readwrite');
             const store = tx.objectStore(STORE_NAME);
-            const req   = store.getAll();
+            const req = store.getAll();
             req.onsuccess = async () => {
                 const items = req.result;
                 for (const item of items) {
@@ -813,7 +811,7 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                             db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME).delete(item.id);
                             console.log('[LM] Email rejoué avec succès :', item.client_email);
                         }
-                    } catch(e) {
+                    } catch (e) {
                         console.warn('[LM] Rejouer échoué :', e);
                     }
                 }
@@ -832,14 +830,14 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
         async function envoyerParAPI(interventionId, pdfBase64, clientEmail, csrfToken) {
             const formData = new FormData();
             formData.append('intervention_id', interventionId);
-            formData.append('pdf_data',        pdfBase64);
-            formData.append('client_email',    clientEmail);
-            formData.append('csrf_token',      csrfToken);
+            formData.append('pdf_data', pdfBase64);
+            formData.append('client_email', clientEmail);
+            formData.append('csrf_token', csrfToken);
 
             const resp = await fetch('/envoyer_rapport.php', {
-                method      : 'POST',
-                body        : formData,
-                credentials : 'same-origin',
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin',
             });
             if (!resp.ok) throw new Error('HTTP ' + resp.status);
             return resp.json();
@@ -858,43 +856,43 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                 return;
             }
 
-            const btn   = document.getElementById('btnSendEmail');
-            const icon  = document.getElementById('btnSendEmailIcon');
+            const btn = document.getElementById('btnSendEmail');
+            const icon = document.getElementById('btnSendEmailIcon');
             const label = document.getElementById('btnSendEmailLabel');
 
             if (btn) btn.disabled = true;
-            if (icon)  icon.textContent  = '⏳';
+            if (icon) icon.textContent = '⏳';
             if (label) label.textContent = 'Génération du PDF…';
 
             let pdfBase64;
             try {
                 pdfBase64 = await genererPDFBase64();
-            } catch(e) {
+            } catch (e) {
                 if (btn) btn.disabled = false;
-                if (icon)  icon.textContent  = '📧';
+                if (icon) icon.textContent = '📧';
                 if (label) label.textContent = 'Envoyer PDF par email';
                 afficherToast('❌ Erreur génération PDF : ' + e.message, 'error');
                 return;
             }
 
-            if (icon)  icon.textContent  = '📤';
+            if (icon) icon.textContent = '📤';
             if (label) label.textContent = 'Envoi en cours…';
 
             // Hors-ligne : mettre en file d'attente
             if (!navigator.onLine) {
                 try {
                     await sauvegarderEnFile({
-                        intervention_id : interventionId,
-                        pdf_data        : pdfBase64,
-                        client_email    : clientEmail,
-                        csrf_token      : csrfToken,
+                        intervention_id: interventionId,
+                        pdf_data: pdfBase64,
+                        client_email: clientEmail,
+                        csrf_token: csrfToken,
                     });
                     afficherToast('📶 Hors-ligne – email mis en file d\'attente. Il sera envoyé automatiquement à la reconnexion.', 'warning');
-                } catch(e) {
+                } catch (e) {
                     afficherToast('❌ Impossible de mettre l\'email en file d\'attente.', 'error');
                 }
                 if (btn) btn.disabled = false;
-                if (icon)  icon.textContent  = '📧';
+                if (icon) icon.textContent = '📧';
                 if (label) label.textContent = 'Envoyer PDF par email';
                 return;
             }
@@ -904,31 +902,31 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                 const result = await envoyerParAPI(interventionId, pdfBase64, clientEmail, csrfToken);
                 if (result.success) {
                     afficherToast('✅ Rapport envoyé avec succès à ' + result.email, 'success');
-                    if (btn)  btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
-                    if (icon)  icon.textContent  = '✅';
+                    if (btn) btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+                    if (icon) icon.textContent = '✅';
                     if (label) label.textContent = 'Email envoyé !';
                     btn.disabled = true; // Ne pas renvoyer
                 } else {
                     afficherToast('❌ ' + (result.message || 'Erreur envoi email'), 'error');
                     if (btn) btn.disabled = false;
-                    if (icon)  icon.textContent  = '🔄';
+                    if (icon) icon.textContent = '🔄';
                     if (label) label.textContent = 'Réessayer l\'envoi';
                 }
-            } catch(e) {
+            } catch (e) {
                 // Réseau coupé pendant l'envoi
                 try {
                     await sauvegarderEnFile({
-                        intervention_id : interventionId,
-                        pdf_data        : pdfBase64,
-                        client_email    : clientEmail,
-                        csrf_token      : csrfToken,
+                        intervention_id: interventionId,
+                        pdf_data: pdfBase64,
+                        client_email: clientEmail,
+                        csrf_token: csrfToken,
                     });
                     afficherToast('📶 Connexion perdue – email mis en file d\'attente. Il sera envoyé à la reconnexion.', 'warning');
-                } catch(qe) {
+                } catch (qe) {
                     afficherToast('❌ Erreur réseau et impossible de mettre en file : ' + e.message, 'error');
                 }
                 if (btn) btn.disabled = false;
-                if (icon)  icon.textContent  = '🔄';
+                if (icon) icon.textContent = '🔄';
                 if (label) label.textContent = 'Réessayer l\'envoi';
             }
         }
