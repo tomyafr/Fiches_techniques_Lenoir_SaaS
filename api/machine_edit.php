@@ -640,7 +640,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
 
 
 
-                    <table class="pdf-table" style="font-size:11px;">
+                    <table class="pdf-table controles" style="font-size:11px;">
                         <tr>
                             <th rowspan="2" style="width:40%; text-align:center; background:#e0e0e0;">DESIGNATIONS</th>
                             <th style="text-align:center; padding:0; background:#e0e0e0;">ETAT</th>
@@ -790,7 +790,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                     }
                     ?>
 
-                    <table class="pdf-table" style="font-size:11px;">
+                    <table class="pdf-table controles" style="font-size:11px;">
                         <tr>
                             <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0;">
                                 DESIGNATIONS</th>
@@ -853,7 +853,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                     </table>
 
                     <?= newPdfPage() ?>
-                    <table class="pdf-table" style="font-size:11px;">
+                    <table class="pdf-table controles" style="font-size:11px;">
                         <tr>
                             <th colspan="3" style="background:#5b9bd5; color:white;">Partie B - Caisson de séparation</th>
                         </tr>
@@ -902,7 +902,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                     <textarea name="commentaires" class="pdf-textarea"
                         style="height:100px; padding:5px; margin-top:5px; border:1px solid #000; width:100%; box-sizing:border-box;"><?= htmlspecialchars($machine['commentaires']) ?></textarea>
 
-                    <table class="pdf-table" style="font-size:11px; margin-top:20px;">
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:20px;">
                         <tr>
                             <th colspan="6" style="background:#5b9bd5; color:white; font-size:10px;">En présence du client /
                                 Rappel des fréquences de nettoyage et des différents points de contrôle</th>
@@ -925,7 +925,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                                 <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="h" ' . ($v == 'h' ? 'checked' : '') . '></td>
                                 <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="m" ' . ($v == 'm' ? 'checked' : '') . '></td>
                                 <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="a" ' . ($v == 'a' ? 'checked' : '') . '></td>
-                                <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"></textarea></td>
+                                <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
                             </tr>';
                         }
                         ?>
@@ -979,7 +979,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                     }
                     ?>
 
-                    <table class="pdf-table" style="font-size:11px;">
+                    <table class="pdf-table controles" style="font-size:11px;">
                         <tr>
                             <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0;">
                                 DESIGNATIONS</th>
@@ -1032,7 +1032,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                                 style="font-weight:bold; font-size:11px; vertical-align:middle; padding-left:10px;">Bille
                                 diamètre 20</td>
                             <td style="padding:0;"><textarea name="donnees[ov_perf_bille]" class="pdf-textarea"
-                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"></textarea>
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["ov_perf_bille"] ?? "") ?></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -1040,7 +1040,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                                 style="font-weight:bold; font-size:11px; vertical-align:middle; padding-left:10px;">Ecrou M4
                             </td>
                             <td style="padding:0;"><textarea name="donnees[ov_perf_ecrou]" class="pdf-textarea"
-                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"></textarea>
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["ov_perf_ecrou"] ?? "") ?></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -1048,7 +1048,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                                 style="font-weight:bold; font-size:11px; vertical-align:middle; padding-left:10px;">Rond
                                 diamètre 6 longueur 50</td>
                             <td style="padding:0;"><textarea name="donnees[ov_perf_rond50]" class="pdf-textarea"
-                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"></textarea>
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["ov_perf_rond50"] ?? "") ?></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -1056,12 +1056,12 @@ $heureFin = $mesures['heure_fin'] ?? '';
                                 style="font-weight:bold; font-size:11px; vertical-align:middle; padding-left:10px;">Rond
                                 diamètre 6 longueur 100</td>
                             <td style="padding:0;"><textarea name="donnees[ov_perf_rond100]" class="pdf-textarea"
-                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"></textarea>
+                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["ov_perf_rond100"] ?? "") ?></textarea>
                             </td>
                         </tr>
                     </table>
 
-                    <table class="pdf-table" style="font-size:11px;">
+                    <table class="pdf-table controles" style="font-size:11px;">
                         <tr>
                             <th colspan="6" style="background:#5b9bd5; color:white;">En présence du client / Rappel des
                                 fréquences de nettoyage et des différents points de contrôle</th>
@@ -1084,7 +1084,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                                 <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="h" ' . ($v == 'h' ? 'checked' : '') . '></td>
                                 <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="m" ' . ($v == 'm' ? 'checked' : '') . '></td>
                                 <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="a" ' . ($v == 'a' ? 'checked' : '') . '></td>
-                                <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"></textarea></td>
+                                <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
                             </tr>';
                         }
                         ?>
@@ -1121,7 +1121,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                                 value="<?= htmlspecialchars($mesures['temps_realise'] ?? '') ?>"> h</div>
                     </div>
 
-                    <table class="pdf-table" style="font-size:11px; color:black;">
+                    <table class="pdf-table controles" style="font-size:11px; color:black;">
                         <tr>
                             <th rowspan="2" style="width:40%; text-align:center; background:#e0e0e0;">DESIGNATIONS</th>
                             <th style="text-align:center; padding:0; background:#e0e0e0;">ETAT</th>
@@ -1440,7 +1440,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                             numérisé sur mesure (comme APRF ou ED-X). Voici la grille générique.
                         </div>
 
-                        <table class="pdf-table">
+                        <table class="pdf-table controles">
                             <tr>
                                 <th>Point de Contrôle / Désignation</th>
                                 <th style="text-align:center">État</th>
