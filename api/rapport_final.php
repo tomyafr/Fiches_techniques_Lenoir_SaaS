@@ -693,18 +693,19 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                 });
             });
             await Promise.all(promises);
-            // Petit délai supplémentaire pour s'assurer du rendu
             return new Promise(r => setTimeout(r, 200));
         }
 
         async function buildFullPdfContainer() {
-            // Création d'un conteneur détaché du DOM principal
+            // Conteneur détaché du DOM : il ne faut pas l'insérer dans body
+            // html2pdf s'occupe de le placer dans un iframe invisible avec toutes les CSS.
             const container = document.createElement('div');
             container.id = 'pdf-full-wrapper';
             container.style.width = '210mm'; 
             container.style.backgroundColor = 'white';
+            container.style.color = 'black';
 
-            // --- 0. INJECTER LES VRAIS STYLES DE L'APPLI (pour les machines) ---
+            // --- 0. STYLES SPÉCIFIQUES ---
             const styleNode = document.createElement('style');
             styleNode.textContent = `
                 .pdf-page {
@@ -712,16 +713,21 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                     min-height: 29.7cm;
                     background: white;
                     color: black;
-                    padding: 1cm;
+                    padding: 10mm;
                     box-sizing: border-box;
                     margin: 0;
-                    page-break-after: always;
                     font-family: Arial, sans-serif;
                     font-size: 13px;
+                }
+                .html2pdf__page-break {
+                    height: 0;
+                    page-break-before: always !important;
+                    break-before: page !important;
                 }
                 .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; color: black; font-size: 11px; }
                 .pdf-table th, .pdf-table td { border: 1px solid #000; padding: 4px; vertical-align: middle; }
                 .pdf-table th { background-color: #f0f0f0; text-align: left; text-transform: uppercase; }
+                /* Système pastilles conservé pour le rendu statique */
                 .pastille-group { display: inline-flex; gap: 4px; align-items: center; }
                 .pastille-group label {
                     display: flex; align-items: center; justify-content: center;
@@ -737,28 +743,26 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                 .pastille-group label.selected::after {
                     content: '✓'; color: white; font-size: 16px; font-weight: bold; line-height: 1;
                 }
-                .pdf-input { border: none; border-bottom: 1px dashed #000; background: transparent; font-size: 13px; font-family: Arial; padding: 2px; width: 100%; color: black; }
-                .pdf-textarea { width: 100%; min-height: 30px; border: 1px solid transparent; background: transparent; resize: none; overflow: hidden; font-family: Arial; font-size: 12px; color: black; box-sizing: border-box; }
-                .rapport-page-cloned {
-                    padding: 1cm;
-                    background: white;
-                    color: black;
-                }
+                .pdf-input { border: none; border-bottom: 1px dashed #000; background: transparent; font-size: 13px; font-family: Arial; padding: 2px; width: 100%; color: black; outline:none; }
+                .pdf-textarea { width: 100%; min-height: 30px; border: 1px solid transparent; background: transparent; resize: none; overflow: hidden; font-family: Arial; font-size: 12px; color: black; box-sizing: border-box; outline:none; }
+                
                 /* Surcharges rapport final */
+                .rapport-page-cloned { padding: 1.5cm; }
                 .rapport-page-cloned .card.glass {
                     border: 1px solid #000 !important;
                     background: white !important;
                     box-shadow: none !important;
                 }
-                .rapport-page-cloned .rapport-textarea { background: white !important; color: black !important; border: 1px solid #000 !important; }
-                .rapport-page-cloned .checkbox-item { background: transparent !important; color: black !important; border: 1px solid #000 !important; }
-                .rapport-page-cloned .checkbox-item input[type="checkbox"] { filter: invert(1); } /* Pour que la checkbox apparaisse bien sur fond blanc si theme sombre de base */
-                .rapport-page-cloned .label { color: #000 !important; font-weight: bold; }
-                .rapport-page-cloned .input { background: white !important; color: black !important; border-bottom: 1px solid #000 !important; border-top: none; border-left: none; border-right: none; }
-                .rapport-page-cloned .rapport-header { border-bottom: 3px solid #000; }
+                .rapport-page-cloned .rapport-textarea { background: white !important; color: black !important; border: 1px solid #000 !important; margin:0; }
+                .rapport-page-cloned .checkbox-item { background: transparent !important; color: black !important; border: none !important; }
+                .rapport-page-cloned .checkbox-item input[type="checkbox"] { filter: invert(1); }
+                .rapport-page-cloned .label { color: #000 !important; font-weight: bold; margin-bottom: 0.2rem; }
+                .rapport-page-cloned .input { background: white !important; color: black !important; border-bottom: 1px solid #000 !important; border-top: none; border-left: none; border-right: none; border-radius: 0; padding-left: 0; }
+                .rapport-page-cloned .rapport-header { border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 20px;}
                 .rapport-page-cloned .rapport-header h1 { color: #000; }
-                .rapport-page-cloned .section-title { color: #000; border-bottom: 1px solid #000; font-weight: bold; }
-                .rapport-page-cloned .machines-recap .machine-tag { background: none; border: 1px solid #000; color: #000; }
+                .rapport-page-cloned .section-title { color: #000; border-bottom: 1px solid #000; font-weight: bold; margin-bottom:15px; }
+                .rapport-page-cloned .machines-recap .machine-tag { background: #eee; border: 1px solid #000; color: #000; display: inline-block; padding: 5px 10px; border-radius:4px; margin: 3px;}
+                
                 img { max-width: 100%; }
             `;
             container.appendChild(styleNode);
@@ -773,16 +777,19 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             coverPage.innerHTML = `<img src="/assets/machines/1-page de contact_diagram.png" style="width:100%; height:100%; object-fit:contain;">`;
             container.appendChild(coverPage);
 
+            // PAGE BREAK
+            const pb1 = document.createElement('div');
+            pb1.className = 'html2pdf__page-break';
+            container.appendChild(pb1);
+
             // --- 2. PAGE RAPPORT FINAL (INFOS) ---
             const rapportCloneWrapper = document.createElement('div');
-            // Assigner les CSS
-            rapportCloneWrapper.style.cssText = "width:21cm; min-height:29.7cm; background:white; color:black; padding:1cm; box-sizing:border-box; margin:0; page-break-after:always;";
+            rapportCloneWrapper.className = 'pdf-page rapport-page-cloned';
             
             const originalRapport = document.querySelector('.rapport-page');
             const clone = originalRapport.cloneNode(true);
-            clone.classList.add('rapport-page-cloned');
             
-            // Nettoyage du clone
+            // Nettoyage absolu du clone
             clone.querySelectorAll('.mobile-header, .btn-final, .sig-clear, #successBanner, #btnSendEmail, #btnDownloadPDF, a, button').forEach(el => el.remove());
             
             // Recopier le contenu des textarea
@@ -795,12 +802,9 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             const cloneCheck = clone.querySelectorAll('input[type="checkbox"], input[type="radio"]');
             origCheck.forEach((chk, i) => { if(chk.checked) cloneCheck[i].setAttribute('checked', 'checked'); });
 
-            // Remplacer les champs inputs par leur valeur textuelle pour le PDF
+            // Fixer les inputs text
             const cloneInputs = clone.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]');
-            cloneInputs.forEach(inp => {
-                const val = inp.value;
-                inp.setAttribute('value', val);
-            });
+            cloneInputs.forEach(inp => { const val = inp.value; inp.setAttribute('value', val); inp.value = val; });
 
             // Recopier les vraies signatures du canvas
             const origCanvasTech = document.getElementById('canvasTech');
@@ -839,22 +843,23 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                         // Récupérer toutes les pdf-page de cette machine
                         const pages = doc.querySelectorAll('.pdf-page');
                         pages.forEach(p => {
-                            // Fixer le radio button "selected" pour l'affichage statique CSS
+                            // PAGE BREAK avant chaque page machine
+                            const pbReq = document.createElement('div');
+                            pbReq.className = 'html2pdf__page-break';
+                            container.appendChild(pbReq);
+
+                            // Fixer la pastille active
                             p.querySelectorAll('input[type="radio"]:checked').forEach(r => {
                                 const lbl = r.closest('label');
                                 if (lbl) lbl.classList.add('selected');
                             });
-                            // Fixer les inputs text
+                            // Fixer textes input et textareas
                             p.querySelectorAll('input[type="text"], input[type="time"]').forEach(inp => {
                                 inp.setAttribute('value', inp.value);
                             });
-                            // Extraire le texte des textarea pour le formattage
                             p.querySelectorAll('textarea').forEach(ta => {
                                 ta.textContent = ta.innerHTML || ta.value;
                             });
-
-                            // Forcer la style page-break
-                            p.style.cssText = "width:21cm; min-height:29.7cm; background:white; color:black; padding:1cm; box-sizing:border-box; margin:0; page-break-after:always;";
 
                             container.appendChild(p);
                         });
@@ -864,6 +869,11 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                 }
             }
 
+            // PAGE BREAK FINAL
+            const pbF = document.createElement('div');
+            pbF.className = 'html2pdf__page-break';
+            container.appendChild(pbF);
+
             // --- 4. PAGE DE FIN ---
             const endPage = document.createElement('div');
             endPage.className = 'pdf-page';
@@ -871,26 +881,11 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             endPage.style.justifyContent = 'center';
             endPage.style.alignItems = 'center';
             endPage.style.padding = '0';
-            endPage.style.pageBreakAfter = 'auto'; // Dernière page, pas besoin de saut
             endPage.innerHTML = `<img src="/assets/machines/99-page de fin_diagram.png" style="width:100%; height:100%; object-fit:contain;">`;
             container.appendChild(endPage);
 
-            // Mettre le wrapper temporairement de manière transparente dans body pour que html2canvas mesure correctement
-            container.style.position = 'absolute';
-            container.style.top = '0';
-            container.style.left = '0';
-            container.style.zIndex = '-9999';
-            document.body.appendChild(container);
-
             await waitForImages(container);
-
             return container;
-        }
-
-        function removePdfContainer(container) {
-            if (container && container.parentNode) {
-                container.parentNode.removeChild(container);
-            }
         }
 
         // ══════════════════════════════════════════════════════════════════
@@ -905,15 +900,12 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                 margin: 0, 
                 filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: container.scrollWidth, windowHeight: container.scrollHeight },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: 'css' }
+                html2canvas: { scale: 2, useCORS: true, logging: false },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
             const worker = html2pdf().set(opt).from(container);
             const pdfBlob = await worker.outputPdf('blob');
-            
-            removePdfContainer(container);
 
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -929,24 +921,21 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
         async function telechargerPDF() {
             const btn = document.getElementById('btnDownloadPDF');
             if (btn) { btn.disabled = true; btn.textContent = '⏳ Génération du rapport complet...'; }
-            let container = null;
             try {
-                container = await buildFullPdfContainer();
+                const container = await buildFullPdfContainer();
                 
                 const opt = {
                     margin: 0, 
                     filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: container.scrollWidth, windowHeight: container.scrollHeight },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: 'css' }
+                    html2canvas: { scale: 2, useCORS: true, logging: false },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
                 
                 await html2pdf().set(opt).from(container).save();
             } catch (e) {
                 alert('Erreur génération PDF : ' + e.message);
             } finally {
-                removePdfContainer(container);
                 if (btn) { btn.disabled = false; btn.textContent = '⬇️ Télécharger le PDF'; }
             }
         }
