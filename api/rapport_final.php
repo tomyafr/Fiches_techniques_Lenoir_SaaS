@@ -114,6 +114,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 }
 
 $now = date('d/m/Y') . ' à ' . date('H:i');
+
+// --- CALCUL DES STATISTIQUES POUR LA SYNTHÈSE ---
+$totalOk = 0;
+$totalAmeliorer = 0;
+$totalNonConforme = 0;
+$totalRemplacer = 0;
+$totalNA = 0;
+$totalMinutes = 0;
+
+foreach ($machines as $m) {
+    $donnees = json_decode($m['donnees_controle'] ?? '{}', true);
+    $mesures = json_decode($m['mesures'] ?? '{}', true);
+    
+    // Durée réalisée par machine
+    $t = $mesures['temps_realise'] ?? '';
+    if (preg_match('/(\d+)\s*h\s*(\d*)/i', $t, $mt)) {
+        $totalMinutes += (int)$mt[1] * 60 + (int)($mt[2] ?: 0);
+    } elseif (is_numeric($t)) {
+        $totalMinutes += (int)$t;
+    }
+    
+    // États de contrôle
+    foreach ($donnees as $k => $v) {
+        // Filtrer les clés qui correspondent à un état (finissant par _radio, _stat ou clés APRF/EDX spécifiques)
+        if (strpos($k, '_radio') !== false || strpos($k, '_stat') !== false || 
+            preg_match('/^(aprf|edx|ov|levage|pap)_(?!.*comment).*/', $k)) {
+            
+            if ($v === 'c' || $v === 'bon' || $v === 'OK') $totalOk++;
+            elseif ($v === 'aa' || $v === 'r' || $v === 'A améliorer') $totalAmeliorer++;
+            elseif ($v === 'nc' || $v === 'hs' || $v === 'Non conforme') $totalNonConforme++;
+            elseif ($v === 'nr' || $v === 'A remplacer') $totalRemplacer++;
+            elseif ($v === 'pc' || $v === 'N/A') $totalNA++;
+        }
+    }
+}
+$h_synth = floor($totalMinutes / 60);
+$m_synth = $totalMinutes % 60;
+$dureeSynth = ($h_synth > 0 ? $h_synth.'h' : '') . str_pad($m_synth, 2, '0', STR_PAD_LEFT);
+if ($totalMinutes == 0) $dureeSynth = "_____";
+
+$denom = $totalOk + $totalAmeliorer + $totalNonConforme + $totalRemplacer;
+$scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -425,6 +467,18 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                         csrfToken: <?= json_encode(getCsrfToken()) ?>,
                         techName: <?= json_encode($techName) ?>,
                         arc: <?= json_encode($intervention['numero_arc'] ?? '') ?>,
+                        synth: {
+                            tech: <?= json_encode($techName) ?>,
+                            date: <?= json_encode(date('d/m/Y', strtotime($intervention['date_intervention'] ?? 'now'))) ?>,
+                            duree: <?= json_encode($dureeSynth) ?>,
+                            nbMachines: <?= count($machines) ?>,
+                            ok: <?= $totalOk ?>,
+                            aa: <?= $totalAmeliorer ?>,
+                            nc: <?= $totalNonConforme ?>,
+                            nr: <?= $totalRemplacer ?>,
+                            na: <?= $totalNA ?>,
+                            score: <?= $scoreConformite ?>
+                        },
                         pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>, 
                         machinesIds: [<?= implode(',', array_column($machines, 'id')) ?>],
                         machinesData: <?= json_encode(array_values(array_map(function($m) use ($intervention) {
@@ -915,6 +969,66 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             rapportCloneWrapper.appendChild(createPdfFooter());
             container.appendChild(rapportCloneWrapper);
 
+            // --- 1.2 PAGE SYNTHÈSE DE L'INTERVENTION ---
+            const pbSynth = document.createElement('div');
+            pbSynth.className = 'html2pdf__page-break';
+            container.appendChild(pbSynth);
+
+            const synthPage = document.createElement('div');
+            synthPage.className = 'pdf-page';
+            const s = window.LM_RAPPORT.synth;
+            
+            synthPage.innerHTML = `
+                <div style="padding-top: 20px;">
+                    <div style="border: 2px solid #000; padding: 25px; color: #000; background: #fff;">
+                        <h2 style="text-align: center; margin-top: 0; margin-bottom: 25px; text-decoration: underline; font-size: 18px; text-transform: uppercase;">SYNTHÈSE DE L'INTERVENTION</h2>
+                        
+                        <div style="margin-bottom: 20px; font-size: 14px; line-height: 1.8;">
+                            <div><strong>Technicien :</strong> ${s.tech}</div>
+                            <div><strong>Date :</strong> ${s.date}</div>
+                            <div><strong>Durée totale :</strong> ${s.duree}</div>
+                            <div><strong>Équipements contrôlés :</strong> ${s.nbMachines}</div>
+                        </div>
+
+                        <div style="margin: 30px 0; font-size: 14px;">
+                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                <span style="display: inline-block; width: 14px; height: 14px; background: #28a745; margin-right: 10px;"></span>
+                                <strong>${s.ok} points conformes</strong>
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                <span style="display: inline-block; width: 14px; height: 14px; background: #e67e22; margin-right: 10px;"></span>
+                                <strong>${s.aa} points à améliorer</strong>
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                <span style="display: inline-block; width: 14px; height: 14px; background: #dc3545; margin-right: 10px;"></span>
+                                <strong>${s.nc} point${s.nc > 1 ? 's' : ''} non conforme${s.nc > 1 ? 's' : ''}</strong>
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                <span style="display: inline-block; width: 14px; height: 14px; background: #8b0000; margin-right: 10px;"></span>
+                                <strong>${s.nr} remplacement${s.nr > 1 ? 's' : ''} nécessaire${s.nr > 1 ? 's' : ''}</strong>
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                <span style="display: inline-block; width: 14px; height: 14px; background: #ccc; margin-right: 10px;"></span>
+                                <strong>${s.na} non concernés</strong>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 40px; text-align: center;">
+                            <div style="font-weight: bold; font-size: 16px; margin-bottom: 15px; text-transform: uppercase;">SCORE DE CONFORMITÉ : ${s.score}%</div>
+                            <div style="width: 100%; height: 25px; background: #f1f5f9; border: 1px solid #000; position: relative; overflow: hidden;">
+                                <div style="width: ${s.score}%; height: 100%; background: linear-gradient(to right, #ef4444, #f59e0b, #22c55e);"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 5px; font-size: 10px; font-weight: bold;">
+                                <span>0% (Critique)</span>
+                                <span>100% (Conforme)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            synthPage.appendChild(createPdfFooter());
+            container.appendChild(synthPage);
+
             // --- 1.5 PAGE PRÉAMBULE ---
             let moisProchainText = "";
             let villePreambule = ville || "[VILLE DU CLIENT]";
@@ -1055,148 +1169,27 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             pbFin.className = 'html2pdf__page-break';
             container.appendChild(pbFin);
 
-            // --- 3. PAGE RAPPORT FINAL (CONCLUSION ET SIGNATURE CLIENT) ---
-            const rapportCloneWrapperFin = document.createElement('div');
-            rapportCloneWrapperFin.className = 'pdf-page';
-            
-            const originalRapport = document.querySelector('.rapport-page');
-            const cloneFin = originalRapport.cloneNode(true);
-            
-            const enfantsFin = Array.from(cloneFin.querySelector('form').children);
-            let idxStartFin = -1;
-            enfantsFin.forEach((el, index) => {
-                if (el.classList && el.classList.contains('section-title') && el.textContent.includes('client souhaite')) {
-                    idxStartFin = index;
-                }
-            });
-            
-            if (idxStartFin > -1) {
-                for (let i = 0; i < idxStartFin; i++) {
-                    if (!enfantsFin[i].name && enfantsFin[i].nodeName !== "INPUT") { 
-                        enfantsFin[i].remove();
-                    }
-                }
-            }
+            // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC + SIGNATURES + OBSERVATIONS) ---
+            const pbFin = document.createElement('div');
+            pbFin.className = 'html2pdf__page-break';
+            container.appendChild(pbFin);
 
-            const headerFin = document.createElement('div');
-            headerFin.innerHTML = `
-                <div style="border: 2px solid #000; margin-bottom: 20px;">
-                    <div style="display:flex; padding:15px; align-items:center;">
-                        <div style="flex:1;">
-                            <img src="/assets/lenoir_logo_doc.png" style="height:60px;">
-                        </div>
-                        <div style="flex:2; text-align:right; color:#1e3a8a; font-weight:bold; font-size:13px; line-height:1.4;">
-                            <span style="font-size:16px; text-decoration:underline;">CONCLUSION D'EXPERTISE</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            cloneFin.querySelector('form').insertBefore(headerFin, cloneFin.querySelector('form').firstChild);
-
-            // Additional cleanup
-            cloneFin.querySelectorAll('.mobile-header, .btn-final, .sig-clear, #successBanner, #btnSendEmail, #btnDownloadPDF, a, button, .photo-btn, .photo-thumbs, #btnChrono').forEach(el => el.remove());
-
-            // Section titles styles
-            cloneFin.querySelectorAll('.section-title').forEach(sec => {
-                sec.style.backgroundColor = '#0284c7';
-                sec.style.color = 'white';
-                sec.style.padding = '8px 15px';
-                sec.style.fontWeight = 'bold';
-                sec.style.border = '2px solid #000';
-                sec.style.fontSize = '14px';
-                sec.style.marginTop = '20px';
-                sec.style.marginBottom = '15px';
-            });
-
-            // Card glass removal
-            cloneFin.querySelectorAll('.card.glass').forEach(card => {
-                card.style.background = 'white';
-                card.style.border = '2px solid #000';
-                card.style.boxShadow = 'none';
-                card.style.padding = '15px';
-            });
-
-            const origTexteareasFin = originalRapport.querySelectorAll('textarea'); 
-            const cloneTextareasFin = cloneFin.querySelectorAll('textarea');
-            cloneTextareasFin.forEach((ta, i) => {
-                const realTa = Array.from(origTexteareasFin).find(t => t.name === ta.name);
-                if (realTa && realTa.value.trim()) {
-                    const div = document.createElement('div');
-                    div.className = 'pdf-textarea-rendered';
-                    div.style.border = '1px solid #000';
-                    div.style.padding = '10px';
-                    div.style.minHeight = ta.classList.contains('small') ? '60px' : '100px';
-                    div.style.fontSize = "13px";
-                    div.textContent = realTa.value;
-                    ta.parentNode.insertBefore(div, ta);
-                }
-                ta.remove();
-            });
-
-            const origCheckFin = originalRapport.querySelectorAll('.checkbox-group input[type="checkbox"]');
-            const cloneCheckFin = cloneFin.querySelectorAll('.checkbox-group input[type="checkbox"]');
-            cloneCheckFin.forEach((chk, i) => {
-                const realChk = Array.from(origCheckFin).find(c => c.name === chk.name);
-                const span = document.createElement('span');
-                span.innerHTML = (realChk && realChk.checked) ? '☑' : '☐';
-                span.style.fontSize = '1.3rem';
-                span.style.marginRight = '8px';
-                span.style.lineHeight = '1';
-                span.style.verticalAlign = 'middle';
-                chk.parentNode.insertBefore(span, chk);
-                if (realChk && realChk.checked) {
-                    chk.parentNode.style.fontWeight = "bold";
-                }
-                chk.remove();
-            });
-
-            const finInputs = cloneFin.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]');
-            finInputs.forEach(inp => { 
-                const realInp = originalRapport.querySelector(`[name="${inp.name}"]`) || inp;
-                const val = realInp.value || '_____'; 
-                inp.outerHTML = `<span style="border-bottom:1px dashed black; display:inline-block; min-width:30px; font-weight:bold;">${val}</span>`;
-            });
-
-            const origCanvasClient = document.getElementById('canvasClient');
-            if (origCanvasClient) {
-                const imgClient = document.createElement('img');
-                imgClient.src = origCanvasClient.toDataURL();
-                imgClient.style.width = '100%';
-                imgClient.style.maxHeight = '120px';
-                imgClient.style.objectFit = 'contain';
-                imgClient.style.border = '1px dashed #ccc';
-                const cCloneC = cloneFin.querySelector('#canvasClient');
-                if (cCloneC) cCloneC.parentNode.replaceChild(imgClient, cCloneC);
-            }
-            
-            // remove tech signature from Conclusion page to avoid duplicates, as it was already added to pg 1
-            const techZone = cloneFin.querySelector('#canvasTech');
-            if(techZone && techZone.closest('.sig-zone')){
-               techZone.closest('.sig-zone').remove();
-            }
-
-            rapportCloneWrapperFin.appendChild(cloneFin);
-            rapportCloneWrapperFin.appendChild(createPdfFooter());
-            container.appendChild(rapportCloneWrapperFin);
-
-            const pbF = document.createElement('div');
-            pbF.className = 'html2pdf__page-break';
-            container.appendChild(pbF);
-
-            // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC) ---
             const endPage = document.createElement('div');
             endPage.className = 'pdf-page';
             endPage.style.padding = '15mm 15mm 30mm 15mm';
             endPage.style.position = 'relative';
 
-            // Get data for the end page
+            const originalRapport = document.getElementById('rapportForm');
             const souhaitRapport = originalRapport.querySelector('[name="souhait_rapport_unique"]').checked;
             const souhaitPieces = originalRapport.querySelector('[name="souhait_offre_pieces"]').checked;
             const souhaitIntervention = originalRapport.querySelector('[name="souhait_pieces_intervention"]').checked;
             const souhaitAucune = originalRapport.querySelector('[name="souhait_aucune_offre"]').checked;
             const nomSignataire = originalRapport.querySelector('[name="nom_signataire"]').value || '_____';
-            const techName = window.LM_RAPPORT.techName || '<?= $techName ?>';
+            const techNameLabel = "<?= htmlspecialchars($techName) ?>";
             const dateStr = window.LM_RAPPORT.dateInt;
+
+            const commentaryTech = originalRapport.querySelector('[name="commentaire_technicien"]')?.value || '';
+            const commentaryClient = originalRapport.querySelector('[name="commentaire_client"]')?.value || '';
 
             const sigTechImg = document.getElementById('canvasTech').toDataURL();
             const sigClientImg = document.getElementById('canvasClient').toDataURL();
@@ -1204,6 +1197,19 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
             endPage.innerHTML = `
                 <div style="font-family: Arial, sans-serif; font-size: 11px; color: #000;">
                     
+                    <!-- OBSERVATIONS GÉNÉRALES -->
+                    ${commentaryTech ? `
+                    <div style="border: 2px solid #000; margin-bottom: 20px;">
+                        <div style="background-color: #f8fafc; border-bottom: 2px solid #000; padding: 6px 15px; font-weight: bold; font-size: 13px;">OBSERVATIONS DU TECHNICIEN :</div>
+                        <div style="padding: 10px; min-height: 80px; font-size: 13px; white-space: pre-wrap;">${commentaryTech}</div>
+                    </div>` : ''}
+
+                    ${commentaryClient ? `
+                    <div style="border: 1px solid #000; border-bottom: 2px solid #000; margin-bottom: 20px;">
+                        <div style="background-color: #f8fafc; border-bottom: 1px solid #000; padding: 6px 15px; font-weight: bold; font-size: 12px;">COMMENTAIRE CLIENT :</div>
+                        <div style="padding: 10px; font-size: 12px; white-space: pre-wrap;">${commentaryClient}</div>
+                    </div>` : ''}
+
                     <!-- LE CLIENT SOUHAITE -->
                     <div style="background-color: #e0f2fe; padding: 10px; border: 2px solid #000; margin-bottom: -2px;">
                         <div style="font-weight: bold; margin-bottom: 8px; font-size: 13px;">LE CLIENT SOUHAITE :</div>
@@ -1218,7 +1224,7 @@ $now = date('d/m/Y') . ' à ' . date('H:i');
                         <tr style="height: 120px;">
                             <td style="border: 2px solid #000; padding: 5px; vertical-align: top; width: 33%;">
                                 <div style="font-weight: bold; text-decoration: underline;">Contrôleur</div>
-                                <div style="margin-top: 10px;">Nom : <strong>${techName}</strong></div>
+                                <div style="margin-top: 10px;">Nom : <strong>${techNameLabel}</strong></div>
                             </td>
                             <td style="border: 2px solid #000; padding: 5px; vertical-align: top; width: 25%;">
                                 <div style="font-weight: bold; text-decoration: underline;">Date :</div>
