@@ -751,7 +751,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                         </tr>
                     </table>
 
-                    <?= newPdfPage() ?>
+                    <div style="margin-top:20px;"></div>
                     <div
                         style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0; border:1px solid #000;">
                         PHOTOS ANNEXES :</div>
@@ -941,7 +941,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                         <?= renderFreqRowEdx("Nettoyage de l'intérieur du séparateur - partie caisson de séparation", "edx_freq_net_cais", $donnees) ?>
                     </table>
 
-                    <?= newPdfPage() ?>
+                    <div style="margin-top:20px;"></div>
                     <div
                         style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0px; border:1px solid #000;">
                         PHOTOS ANNEXES :</div>
@@ -1100,7 +1100,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                         <?= renderFreqRow("Graissage des paliers", "ov_freq_graiss", $donnees) ?>
                     </table>
 
-                    <?= newPdfPage() ?>
+                    <div style="margin-top:20px;"></div>
 
                     <div style="border:1px solid #f29b43; padding:10px; margin-top:0px; text-align:center;">
                         <img src="/assets/machines/ov_diagram.png"
@@ -1165,7 +1165,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                         </div>
                     </div>
 
-                    <?= newPdfPage() ?>
+                    <div style="margin-top:20px;"></div>
                     <div
                         style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; margin-top:0; border:1px solid #000;">
                         PHOTOS ANNEXES</div>
@@ -1464,7 +1464,7 @@ $heureFin = $mesures['heure_fin'] ?? '';
                         </tr>
                     </table>
 
-                    <?= newPdfPage() ?>
+                    <div style="margin-top:20px;"></div>
 
                     <div style="margin-top:0px; border:1px solid #000; padding:10px; color:black;">
                         <!-- Main schema enlarged without absolute positioning inside -->

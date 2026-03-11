@@ -793,7 +793,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
             styleNode.textContent = `
                 .pdf-page {
                     width: 21cm;
-                    min-height: 29.7cm;
+                    min-height: 10cm; /* Avoid forcing full page if content is small */
                     background: white;
                     color: black;
                     padding: 15mm;
@@ -803,11 +803,17 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
                     font-family: Arial, sans-serif;
                     font-size: 13px;
                     position: relative; 
+                    page-break-after: auto; /* Natural flow */
                 }
                 .html2pdf__page-break {
-                    height: 0;
+                    height: 1px;
+                    overflow: hidden;
                     page-break-before: always !important;
                     break-before: page !important;
+                    margin-top: -1px;
+                }
+                .pdf-table, .card, .pdf-section {
+                    page-break-inside: avoid !important;
                 }
                 .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; color: black; font-size: 11px; }
                 .pdf-table th, .pdf-table td { border: 1px solid #000; padding: 4px; vertical-align: middle; }
@@ -1107,9 +1113,23 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
                                 return; // Skip empty pages
                             }
 
-                            const pbReq = document.createElement('div');
-                            pbReq.className = 'html2pdf__page-break';
-                            container.appendChild(pbReq);
+                            // Only add a page break if it's NOT the very first machine page (after preamble)
+                            // or if it's the second page of a machine.
+                            // However, each machine should ideally start on a new page.
+                            if (pIdx === 0) {
+                                const pbReq = document.createElement('div');
+                                pbReq.className = 'html2pdf__page-break';
+                                container.appendChild(pbReq);
+                            } else {
+                                // For internal machine pages, check if they are really needed
+                                // If Page 2 of a machine is nearly empty, we might want to skip it
+                                // but the easiest is to just let them follow if pIdx > 0 and they are not full.
+                                // However, machine_edit.php forces them as .pdf-page.
+                                // We keep the break if it's a new .pdf-page to keep footers consistent.
+                                const pbReq = document.createElement('div');
+                                pbReq.className = 'html2pdf__page-break';
+                                container.appendChild(pbReq);
+                            }
 
                             if (pIdx === 0) {
                                 const hHeader = document.createElement('div');
@@ -1170,9 +1190,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
             container.appendChild(pbFin);
 
             // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC + SIGNATURES + OBSERVATIONS) ---
-            const pbFin = document.createElement('div');
-            pbFin.className = 'html2pdf__page-break';
-            container.appendChild(pbFin);
 
             const endPage = document.createElement('div');
             endPage.className = 'pdf-page';
