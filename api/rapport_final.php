@@ -1068,7 +1068,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
 
             // --- 2. FETCH & APPEND MACHINES ---
             if (window.LM_RAPPORT && window.LM_RAPPORT.machinesIds) {
-                for (const mId of window.LM_RAPPORT.machinesIds) {
+                const totalMachines = window.LM_RAPPORT.machinesIds.length;
+                for (let mIdx = 0; mIdx < totalMachines; mIdx++) {
+                    const mId = window.LM_RAPPORT.machinesIds[mIdx];
                     try {
                         const res = await fetch('machine_edit.php?id=' + mId);
                         const html = await res.text();
@@ -1108,17 +1110,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
                             } 
 
                             if (pIdx === 0) {
-                                const hHeader = document.createElement('div');
-                                hHeader.style.padding = "8px";
-                                hHeader.style.backgroundColor = "#0284c7";
-                                hHeader.style.color = "white";
-                                hHeader.style.border = "2px solid #000";
-                                hHeader.style.fontWeight = "bold";
-                                hHeader.style.textAlign = "center";
-                                hHeader.style.marginBottom = "15px";
-                                hHeader.style.fontSize = "14px";
-                                hHeader.innerText = "FICHE TECHNIQUE MACHINE - " + (p.querySelector('span[style*="font-size:26px"]')?.textContent.trim() || mId);
-                                p.insertBefore(hHeader, p.firstChild);
+                                // Ajout d'une numérotation simple en haut de la fiche
+                                const hNum = document.createElement('div');
+                                hNum.style.textAlign = 'right';
+                                hNum.style.fontSize = '10px';
+                                hNum.style.fontWeight = 'bold';
+                                hNum.style.marginBottom = '5px';
+                                hNum.innerText = `FICHE ${mIdx + 1} / ${totalMachines}`;
+                                p.insertBefore(hNum, p.firstChild);
                             }
 
                             p.querySelectorAll('input[type="radio"]:checked').forEach(r => {
