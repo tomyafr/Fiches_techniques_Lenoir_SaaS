@@ -44,13 +44,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     verifyCsrfToken();
     if ($_POST['action'] === 'save_machine') {
         $of = trim($_POST['numero_of'] ?? '');
+        $annee = trim($_POST['annee_fabrication'] ?? '');
         $commentaire = trim($_POST['commentaires'] ?? '');
         $postDonnees = $_POST['donnees'] ?? [];
         $postMesures = $_POST['mesures'] ?? [];
         $postPhotos = $_POST['photos_json'] ?? '{}';
 
-        $db->prepare('UPDATE machines SET numero_of = ?, commentaires = ?, donnees_controle = ?, mesures = ?, photos = ? WHERE id = ?')
-            ->execute([$of, $commentaire, json_encode($postDonnees), json_encode($postMesures), $postPhotos, $id]);
+        $db->prepare('UPDATE machines SET numero_of = ?, annee_fabrication = ?, commentaires = ?, donnees_controle = ?, mesures = ?, photos = ? WHERE id = ?')
+            ->execute([$of, $annee, $commentaire, json_encode($postDonnees), json_encode($postMesures), $postPhotos, $id]);
 
         header('Location: intervention_edit.php?id=' . $machine['intervention_id'] . '&msg=saved');
         exit;
@@ -82,6 +83,34 @@ $dateIntervention = date('d/m/Y', strtotime($machine['date_intervention']));
 $tempsRealise = $mesures['temps_realise'] ?? '';
 $heureDebut = $mesures['heure_debut'] ?? '';
 $heureFin = $mesures['heure_fin'] ?? '';
+
+// --- BUG-020: Fréquences recommandées Lenoir-Mec ---
+$recoFreq = [];
+if ($isEDX) {
+    $recoFreq = [
+        'edx_freq_bande' => 'h',
+        'edx_freq_virole' => 'h',
+        'edx_freq_tamb' => 'h',
+        'edx_freq_pal' => 'q',
+        'edx_freq_graiss' => 'm',
+        'edx_freq_net_conv' => 'h',
+        'edx_freq_net_cais' => 'h'
+    ];
+} elseif ($isOV) {
+    $recoFreq = [
+        'ov_freq_bande' => 'h',
+        'ov_freq_fix' => 'h',
+        'ov_freq_tamb' => 'q',
+        'ov_freq_graiss' => 'h'
+    ];
+}
+
+// Pre-remplissage des fréquences si vides (BUG-020)
+foreach ($recoFreq as $rfk => $rfv) {
+    if (!isset($donnees[$rfk]) || $donnees[$rfk] === '') {
+        $donnees[$rfk] = $rfv;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -473,11 +502,14 @@ $heureFin = $mesures['heure_fin'] ?? '';
             <button type="button" class="btn btn-ghost"
                 onclick="window.location.href='intervention_edit.php?id=<?= $machine['intervention_id'] ?>'"
                 style="color:white; border-color:white;">← REVENIR</button>
-            <div style="display:flex; gap:10px;">
+            <div style="display:flex; gap:10px; align-items:center;">
+                <label style="color:white; font-size:0.8rem; display:flex; align-items:center; gap:5px; cursor:pointer; background:rgba(255,255,255,0.1); padding:5px 10px; border-radius:5px;">
+                    <input type="checkbox" name="mesures[excluded]" value="1" <?= ($mesures['excluded'] ?? false) ? 'checked' : '' ?>>
+                    Exclure du rapport
+                </label>
                 <button type="button" class="btn btn-ghost" onclick="window.print()"
-                    style="background:#2b2d31; color:white; border:1px solid #444;">🖨️ IMPRIMER / PDF</button>
-                <button type="submit" class="btn btn-primary" style="background:#e6b12a; color:#000;">ENREGISTRER LA
-                    FICHE</button>
+                    style="background:#2b2d31; color:white; border:1px solid #444;">🖨️ IMPRIMER</button>
+                <button type="submit" class="btn btn-primary" style="background:#e6b12a; color:#000;">ENREGISTRER</button>
             </div>
         </div>
 
@@ -521,14 +553,20 @@ $heureFin = $mesures['heure_fin'] ?? '';
                     </td>
                 </tr>
                 <tr>
-                    <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N° O.F.</td>
+                    <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N° O.F. <span style="color:var(--error);">*</span></td>
                     <td style="border:1px solid #000; padding:6px;">
                         <input type="text" name="numero_of" value="<?= htmlspecialchars($machine['numero_of']) ?>"
-                            class="pdf-input">
+                            class="pdf-input" required placeholder="N° O.F.">
                     </td>
-                    <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Désignation
+                    <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Année <span style="color:var(--error);">*</span></td>
+                    <td style="border:1px solid #000; padding:6px;">
+                        <input type="number" name="annee_fabrication" value="<?= htmlspecialchars($machine['annee_fabrication']) ?>"
+                            class="pdf-input" required min="1900" max="<?= date('Y') + 1 ?>" placeholder="AAAA">
                     </td>
-                    <td style="border:1px solid #000; padding:6px; font-weight:bold;">
+                </tr>
+                <tr>
+                    <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Désignation</td>
+                    <td colspan="3" style="border:1px solid #000; padding:6px; font-weight:bold;">
                         <?= htmlspecialchars($machine['designation']) ?>
                     </td>
                 </tr>
@@ -1143,12 +1181,19 @@ $heureFin = $mesures['heure_fin'] ?? '';
                             </th>
                         </tr>
 
-                        <!-- Section Main -->
                         <tr>
                             <th style="background:#4472c4; color:white; font-weight:bold; padding:4px;" colspan="3">Produit
-                                de Levage type : <input type="text" name="mesures[levage_type]"
-                                    value="<?= htmlspecialchars($mesures['levage_type'] ?? '') ?>"
-                                    style="background:transparent; border:none; border-bottom:1px solid white; color:white; outline:none; font-weight:bold; width:200px;">
+                                de Levage type : 
+                                <select name="mesures[levage_type]" required 
+                                    style="background:#1B4F72; border:1px solid white; color:white; outline:none; font-weight:bold; width:220px; font-size:11px; padding:2px;">
+                                    <option value="">-- Choisir le type --</option>
+                                    <option value="Electroaimant Circulaire" <?= ($mesures['levage_type'] ?? '') == 'Electroaimant Circulaire' ? 'selected' : '' ?>>Electroaimant Circulaire</option>
+                                    <option value="Electroaimant Rectangulaire" <?= ($mesures['levage_type'] ?? '') == 'Electroaimant Rectangulaire' ? 'selected' : '' ?>>Electroaimant Rectangulaire</option>
+                                    <option value="Palonnier Fixe" <?= ($mesures['levage_type'] ?? '') == 'Palonnier Fixe' ? 'selected' : '' ?>>Palonnier Fixe</option>
+                                    <option value="Palonnier Telescopique" <?= ($mesures['levage_type'] ?? '') == 'Palonnier Telescopique' ? 'selected' : '' ?>>Palonnier Telescopique</option>
+                                    <option value="Armoire de Commande" <?= ($mesures['levage_type'] ?? '') == 'Armoire de Commande' ? 'selected' : '' ?>>Armoire de Commande</option>
+                                    <option value="Autre / Accessoire" <?= ($mesures['levage_type'] ?? '') == 'Autre / Accessoire' ? 'selected' : '' ?>>Autre / Accessoire</option>
+                                </select>
                             </th>
                         </tr>
                         <?= renderAprfRow("Satisfaction de fonctionnement", "levage_satisfaction", $donnees) ?>
@@ -1578,9 +1623,27 @@ $heureFin = $mesures['heure_fin'] ?? '';
         document.getElementById('cameraInput').addEventListener('change', function (e) {
             var file = e.target.files[0];
             if (!file) return;
+
+            // --- BUG-013: Validation de la taille de l'image ---
+            // On exige > 100 Ko pour garantir une photo terrain réaliste
+            if (file.size < 100 * 1024) {
+                alert("❌ Image rejetée : Le fichier est trop petit (" + Math.round(file.size/1024) + " Ko). Veuillez prendre une photo nette de l'équipement (min. 100 Ko).");
+                e.target.value = '';
+                return;
+            }
+
             compressImage(file, 1200, 0.8, function (base64) {
                 if (!allPhotos[currentPhotoKey]) allPhotos[currentPhotoKey] = [];
+                
                 var caption = prompt('Commentaire photo (optionnel) :', '') || '';
+                
+                // --- BUG-013: Validation de la légende ---
+                const forbiddenWords = ['nul', 'rien', 'sans', 'na', 'test', 'lorem'];
+                if (forbiddenWords.includes(caption.toLowerCase().trim())) {
+                    alert("⚠️ Légende non-professionnelle détectée. La photo sera ajoutée sans légende.");
+                    caption = '';
+                }
+
                 allPhotos[currentPhotoKey].push({ data: base64, caption: caption });
                 syncPhotos();
                 renderThumbsForKey(currentPhotoKey);
@@ -1709,12 +1772,29 @@ $heureFin = $mesures['heure_fin'] ?? '';
             var d = document.getElementById('heureDebut').value;
             var f = document.getElementById('heureFin').value;
             var span = document.getElementById('tempsCalc');
+            var realInput = document.querySelector('[name="mesures[temps_realise]"]');
+            
             if (d && f) {
                 var dp = d.split(':'), fp = f.split(':');
                 var mins = (parseInt(fp[0]) * 60 + parseInt(fp[1])) - (parseInt(dp[0]) * 60 + parseInt(dp[1]));
-                if (mins < 0) mins += 1440;
+                if (mins <= 0) {
+                    if (mins === 0) {
+                        alert("⚠️ L'heure de fin est identique à l'heure de début.");
+                    } else {
+                        mins += 1440; // Over Midnight
+                    }
+                }
+                
+                if (mins < 15 && mins > 0) {
+                    console.log("Durée très courte détectée: " + mins + "min");
+                }
+
                 var h = Math.floor(mins / 60), m = mins % 60;
-                span.textContent = '= ' + h + 'h' + pad2(m);
+                var formatted = h + 'h' + pad2(m);
+                span.textContent = '= ' + formatted;
+                if (realInput && !chronoRunning) {
+                    realInput.value = formatted;
+                }
             } else if (d && chronoRunning) {
                 // Live display
                 var now = new Date();
@@ -1722,7 +1802,9 @@ $heureFin = $mesures['heure_fin'] ?? '';
                 var mins2 = (now.getHours() * 60 + now.getMinutes()) - (parseInt(dp2[0]) * 60 + parseInt(dp2[1]));
                 if (mins2 < 0) mins2 += 1440;
                 var h2 = Math.floor(mins2 / 60), m2 = mins2 % 60;
-                span.textContent = '⏱ ' + h2 + 'h' + pad2(m2);
+                var formatted2 = h2 + 'h' + pad2(m2);
+                span.textContent = '⏱ ' + formatted2;
+                if (realInput) realInput.value = formatted2;
             } else {
                 span.textContent = '';
             }
@@ -1762,6 +1844,22 @@ $heureFin = $mesures['heure_fin'] ?? '';
 
             // Live chrono update every 30s
             setInterval(function () { if (chronoRunning) calcTemps(); }, 30000);
+
+            // --- BUG-020: Alerte si divergence des fréquences recommandées ---
+            const RECO_FREQ = <?= json_encode($recoFreq) ?>;
+            document.querySelectorAll('input[type="radio"]').forEach(function(radio) {
+                radio.addEventListener('change', function() {
+                    const nameAttr = this.getAttribute('name');
+                    const match = nameAttr.match(/donnees\[(.*?)\]/);
+                    if (match && RECO_FREQ[match[1]]) {
+                        const recoVal = RECO_FREQ[match[1]];
+                        if (this.value !== recoVal) {
+                            const labels = { q: 'Quotidien', h: 'Hebdomadaire', m: 'Mensuel', a: 'Annuel' };
+                            alert("⚠️ Recommandation Lenoir-Mec :\nLa fréquence préconisée pour ce contrôle est : " + labels[recoVal] + ".\nVous avez sélectionné : " + labels[this.value] + ".");
+                        }
+                    }
+                });
+            });
         });
     </script>
 </body>

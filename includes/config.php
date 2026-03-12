@@ -45,6 +45,11 @@ define('APP_NAME', 'LM Expert');
 define('APP_VERSION', '2.1.0');
 define('SESSION_TIMEOUT', 28800); // 8 heures
 
+// Informations Légales (BUG-016)
+define('COMPANY_LEGAL_ADDRESS', 'Établissement Raoul LENOIR – Z.I du Béarn – 54400 COSNES ET ROMAIN (France)');
+define('COMPANY_LEGAL_CONTACT', 'Tél : +33 (0)3 82 25 23 00 – Fax : +33 (0)3 82 24 59 19 – E-mail: contact@raoul-lenoir.com – Web: www.lenoir-mec.com');
+define('COMPANY_LEGAL_SIRET', 'S.A au capital de 5.728.967€ – RCS BRIEY – Siret 383 141 546 000 17 – TVA FR 11 383 141 546 – APE 2822Z');
+
 // Politique de mot de passe
 define('PASSWORD_MIN_LENGTH', 12);
 define('PASSWORD_REQUIRE_UPPERCASE', true);

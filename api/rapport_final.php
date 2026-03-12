@@ -40,7 +40,13 @@ if (!$intervention) {
 // Fetch machines
 $stmtM = $db->prepare('SELECT * FROM machines WHERE intervention_id = ? ORDER BY id');
 $stmtM->execute([$id]);
-$machines = $stmtM->fetchAll();
+$allMachines = $stmtM->fetchAll();
+
+$machines = array_filter($allMachines, function($m) {
+    $mes = json_decode($m['mesures'] ?? '{}', true);
+    return !($mes['excluded'] ?? false);
+});
+$machines = array_values($machines); // Re-index
 
 // Fetch technicien name
 $stmtT = $db->prepare('SELECT prenom, nom FROM users WHERE id = ?');
@@ -58,6 +64,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $contactFonction = trim($_POST['contact_fonction'] ?? '');
             $contactEmail = trim($_POST['contact_email'] ?? '');
             $contactTel = trim($_POST['contact_telephone'] ?? '');
+
+            if (empty($contactNom)) {
+                die("Le nom du contact est obligatoire.");
+            }
+            if (strlen($contactNom) > 50) {
+                die("Le nom du contact ne doit pas dépasser 50 caractères.");
+            }
+            if (count(explode(' ', $contactNom)) < 2) {
+                die("Veuillez saisir le nom ET le prénom du contact.");
+            }
             $adresse = trim($_POST['adresse'] ?? '');
             $cp = trim($_POST['code_postal'] ?? '');
             $ville = trim($_POST['ville'] ?? '');
@@ -122,8 +138,10 @@ $totalNonConforme = 0;
 $totalRemplacer = 0;
 $totalNA = 0;
 $totalMinutes = 0;
+$nbMachinesFilled = 0;
+$nbMachinesEmpty = 0;
 
-foreach ($machines as $m) {
+foreach ($machines as &$m) {
     $donnees = json_decode($m['donnees_controle'] ?? '{}', true);
     $mesures = json_decode($m['mesures'] ?? '{}', true);
     
@@ -132,30 +150,48 @@ foreach ($machines as $m) {
     if (preg_match('/(\d+)\s*h\s*(\d*)/i', $t, $mt)) {
         $totalMinutes += (int)$mt[1] * 60 + (int)($mt[2] ?: 0);
     } elseif (is_numeric($t)) {
-        $totalMinutes += (int)$t;
+        $totalMinutes += (int)($t * 60);
+    } else {
+        // Fallback to hours diff
+        $h_deb = $mesures['heure_debut'] ?? '';
+        $h_fin = $mesures['heure_fin'] ?? '';
+        if (!empty($h_deb) && !empty($h_fin)) {
+            $start = strtotime($h_deb);
+            $end = strtotime($h_fin);
+            if ($end > $start) {
+                $totalMinutes += ($end - $start) / 60;
+            }
+        }
     }
     
     // États de contrôle
+    $pointsCount = 0;
     foreach ($donnees as $k => $v) {
-        // Filtrer les clés qui correspondent à un état (finissant par _radio, _stat ou clés APRF/EDX spécifiques)
         if (strpos($k, '_radio') !== false || strpos($k, '_stat') !== false || 
             preg_match('/^(aprf|edx|ov|levage|pap)_(?!.*comment).*/', $k)) {
             
-            if ($v === 'c' || $v === 'bon' || $v === 'OK') $totalOk++;
-            elseif ($v === 'aa' || $v === 'r' || $v === 'A améliorer') $totalAmeliorer++;
-            elseif ($v === 'nc' || $v === 'hs' || $v === 'Non conforme') $totalNonConforme++;
-            elseif ($v === 'nr' || $v === 'A remplacer') $totalRemplacer++;
-            elseif ($v === 'pc' || $v === 'N/A') $totalNA++;
+            if (!empty($v) && $v !== 'pc') {
+                $pointsCount++;
+                if ($v === 'c' || $v === 'bon' || $v === 'OK') $totalOk++;
+                elseif ($v === 'aa' || $v === 'r' || $v === 'A améliorer') $totalAmeliorer++;
+                elseif ($v === 'nc' || $v === 'hs' || $v === 'Non conforme') $totalNonConforme++;
+                elseif ($v === 'nr' || $v === 'A remplacer') $totalRemplacer++;
+            }
         }
     }
+    $m['points_count'] = $pointsCount;
+    if ($pointsCount > 0) $nbMachinesFilled++;
+    else $nbMachinesEmpty++;
 }
+unset($m);
+
 $h_synth = floor($totalMinutes / 60);
 $m_synth = $totalMinutes % 60;
 $dureeSynth = ($h_synth > 0 ? $h_synth.'h' : '') . str_pad($m_synth, 2, '0', STR_PAD_LEFT);
-if ($totalMinutes == 0) $dureeSynth = "_____";
+if ($totalMinutes == 0) $dureeSynth = "—";
 
 $denom = $totalOk + $totalAmeliorer + $totalNonConforme + $totalRemplacer;
-$scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
+$scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -466,6 +502,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
                         interventionId: <?= (int) $id ?>,
                         clientEmail: <?= json_encode($intervention['contact_email'] ?? $intervention['c_email'] ?? '') ?>,
                         nomSociete: <?= json_encode($intervention['nom_societe'] ?? '') ?>,
+                        legal: {
+                            address: <?= json_encode(COMPANY_LEGAL_ADDRESS) ?>,
+                            contact: <?= json_encode(COMPANY_LEGAL_CONTACT) ?>,
+                            siret: <?= json_encode(COMPANY_LEGAL_SIRET) ?>
+                        },
                         dateInt: <?= json_encode(date('d/m/Y', strtotime($intervention['date_intervention'] ?? 'now'))) ?>,
                         csrfToken: <?= json_encode(getCsrfToken()) ?>,
                         techName: <?= json_encode($techName) ?>,
@@ -480,17 +521,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
                             nc: <?= $totalNonConforme ?>,
                             nr: <?= $totalRemplacer ?>,
                             na: <?= $totalNA ?>,
-                            score: <?= $scoreConformite ?>
+                            score: <?= $scoreConformite ?>,
+                            nbMachinesFilled: <?= $nbMachinesFilled ?>,
+                            nbMachinesEmpty: <?= $nbMachinesEmpty ?>
                         },
                         pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>, 
                         machinesIds: [<?= implode(',', array_column($machines, 'id')) ?>],
                         machinesData: <?= json_encode(array_values(array_map(function($m) use ($intervention) {
-                            $mes = json_decode($m['mesures'] ?? '{}', true);
                             return [
                                 'arc' => $intervention['numero_arc'],
                                 'of' => $m['numero_of'] ?? '',
                                 'designation' => $m['designation'] ?? '',
-                                'annee' => $mes['annee'] ?? ''
+                                'annee' => $m['annee_fabrication'] ?? '',
+                                'points_count' => $m['points_count'] ?? 0
                             ];
                         }, $machines))) ?>
                     };
@@ -520,15 +563,18 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
             </div>
             <div class="machines-recap">
                 <?php foreach ($machines as $m): ?>
-                    <span class="machine-tag">
+                    <?php 
+                        $pct = ($m['points_count'] > 0) ? 'filled' : 'empty';
+                        $statusColor = ($m['points_count'] > 5) ? 'var(--accent-cyan)' : 'var(--error)';
+                    ?>
+                    <span class="machine-tag" style="border-left: 4px solid <?= $statusColor ?>;">
                         ⚙️
                         <?= htmlspecialchars($m['designation']) ?>
                         <?php $mm = json_decode($m['mesures'] ?? '{}', true); ?>
                         <?php if (!empty($mm['repere'])): ?>
-                            <small style="opacity:0.7">–
-                                <?= htmlspecialchars($mm['repere']) ?>
-                            </small>
+                            <small style="opacity:0.7">– <?= htmlspecialchars($mm['repere']) ?></small>
                         <?php endif; ?>
+                        <small style="margin-left: 8px; color: <?= $statusColor ?>;">(<?= $m['points_count'] ?> pts)</small>
                     </span>
                 <?php endforeach; ?>
             </div>
@@ -544,9 +590,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
 
                 <div class="field-row">
                     <div class="form-group">
-                        <label class="label">Nom du contact</label>
-                        <input type="text" name="contact_nom" class="input" placeholder="Nom et prénom..."
-                            value="<?= htmlspecialchars($intervention['contact_nom'] ?? '') ?>">
+                        <label class="label">Nom et Prénom du contact <span style="color:var(--error);">*</span></label>
+                        <input type="text" name="contact_nom" id="contact_nom" class="input" placeholder="Nom et prénom..."
+                            value="<?= htmlspecialchars($intervention['contact_nom'] ?? '') ?>" required maxlength="50">
+                        <small id="contact_nom_warning" style="color: var(--error); display: none; font-size: 0.75rem; margin-top: 0.25rem;">
+                            ⚠️ Attention: Caractères répétés détectés.
+                        </small>
                     </div>
                     <div class="form-group">
                         <label class="label">Fonction / Rôle</label>
@@ -661,7 +710,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
                     </div>
                     <div class="form-group" style="margin-bottom: 0.5rem;">
                         <input type="text" name="nom_signataire" class="input"
-                            placeholder="Nom et prénom du signataire..."
+                            placeholder="NOM Prénom du signataire (ex: DUPONT Jean)"
                             value="<?= htmlspecialchars($intervention['nom_signataire_client'] ?? '') ?>" required>
                     </div>
                     <canvas id="canvasClient" width="600" height="200"></canvas>
@@ -757,6 +806,65 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
                 alert('Erreur: les zones de signature ne sont pas prêtes. Veuillez rafraîchir la page.');
                 return false;
             }
+
+            // --- BUG-005, BUG-014, BUG-015: Contrôle de qualité des textes ---
+            const fieldsToCheck = [
+                { name: 'commentaire_technicien', label: 'Observations du technicien' },
+                { name: 'commentaire_client', label: 'Commentaire du client' },
+                { name: 'nom_signataire', label: 'Nom du signataire' }
+            ];
+            const testPatterns = [/test/i, /lorem/i, /(.)\1{4,}/];
+            const forbiddenWords = ['nul', 'rien', 'sans', 'na', 'n/a'];
+
+            for (let f of fieldsToCheck) {
+                const val = document.querySelector('[name="' + f.name + '"]')?.value || '';
+                if (val.length < 2 && val.length > 0) continue; // Skip very shorts handled elsewhere
+                
+                let foundMatch = false;
+                for (let p of testPatterns) {
+                    if (p.test(val)) {
+                        foundMatch = true;
+                        break;
+                    }
+                }
+                
+                if (!foundMatch && forbiddenWords.includes(val.toLowerCase().trim())) {
+                    foundMatch = true;
+                }
+
+                if (foundMatch) {
+                    if (!confirm("⚠️ Le champ '" + f.label + "' contient des données semblant être du test ou non-professionnelles (\"" + val.substring(0, 20) + "...\"). Voulez-vous vraiment continuer ?")) {
+                        return false;
+                    }
+                }
+            }
+
+            const nomSignataire = document.querySelector('[name="nom_signataire"]')?.value.trim() || '';
+            const wordsSignataire = nomSignataire.split(/\s+/).filter(w => w.length > 0);
+            if (wordsSignataire.length < 2) {
+                alert('❌ Le champ "Nom du signataire" doit contenir au moins le NOM et le Prénom (ex: DUPONT Jean).');
+                return false;
+            }
+
+            // --- BUG-008: Contrôle de complétude des fiches ---
+            const machinesData = window.LM_RAPPORT.machinesData;
+            for (let m of machinesData) {
+                if (m.points_count === 0) {
+                    alert('❌ Complétude insuffisante : La fiche machine "' + m.designation + '" est entièrement vide (0 point de contrôle rempli). Veuillez la compléter avant de finaliser.');
+                    return false;
+                }
+            }
+
+            const contactNom = document.getElementById('contact_nom')?.value.trim() || '';
+            if (!contactNom) {
+                alert('Le nom du contact est obligatoire.');
+                return false;
+            }
+            if (contactNom.split(' ').filter(p => p.length > 0).length < 2) {
+                alert('Veuillez saisir le nom ET le prénom du contact.');
+                return false;
+            }
+
             if (padTech.isEmpty()) {
                 alert('Veuillez signer en tant que technicien.');
                 return false;
@@ -766,7 +874,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
                 return false;
             }
             
-            // On s'assure que le contenu est bien capturé avant submit
             document.getElementById('sigTechInput').value = padTech.toDataURL();
             document.getElementById('sigClientInput').value = padClient.toDataURL();
             return true;
@@ -779,7 +886,43 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
             if (cC && padClient) resizeCanvas(cC);
         });
 
-        document.addEventListener('DOMContentLoaded', initSignatures);
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- BUG-018: Exclusivité des checkboxes "Le client souhaite" ---
+            const chkUnique = document.querySelector('[name="souhait_rapport_unique"]');
+            const otherChks = document.querySelectorAll('[name="souhait_offre_pieces"], [name="souhait_pieces_intervention"], [name="souhait_aucune_offre"]');
+            
+            if (chkUnique) {
+                chkUnique.addEventListener('change', function() {
+                    if (this.checked) {
+                        otherChks.forEach(c => c.checked = false);
+                    }
+                });
+                otherChks.forEach(c => {
+                    c.addEventListener('change', function() {
+                        if (this.checked) {
+                            chkUnique.checked = false;
+                        }
+                    });
+                });
+            }
+
+            initSignatures();
+            
+            const contactNomInput = document.getElementById('contact_nom');
+            const warningEl = document.getElementById('contact_nom_warning');
+            
+            if (contactNomInput) {
+                contactNomInput.addEventListener('input', function() {
+                    const val = this.value;
+                    // Detect more than 3 consecutive identical characters
+                    if (/(.)\1{3,}/.test(val)) {
+                        warningEl.style.display = 'block';
+                    } else {
+                        warningEl.style.display = 'none';
+                    }
+                });
+            }
+        });
 
 
         // ══════════════════════════════════════════════════════════════════
@@ -803,6 +946,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
         // helper: create footer
         function createPdfFooter() {
             const f = document.createElement('div');
+            const leg = window.LM_RAPPORT.legal;
             f.style.position = 'absolute';
             f.style.bottom = '15mm';
             f.style.left = '0';
@@ -815,7 +959,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
             f.style.fontWeight = 'bold';
             f.style.borderTop = '2px solid #000';
             f.style.paddingTop = '5px';
-            f.innerHTML = `Établissement Raoul LENOIR – Z.I du Béarn – 54400 COSNES ET ROMAIN (France)<br>Tél : +33 (0)3 82 25 23 00 – Fax : +33 (0)3 82 24 59 19 – E-mail: contact@raoul-lenoir.com – Web: www.lenoir-mec.com<br>S.A au capital de 5.728.967€ – RCS BRIEY – Siret 383 141 546 000 17 – TVA FR 11 383 141 546 – APE 2822Z`;
+            f.innerHTML = `${leg.address}<br>${leg.contact}<br>${leg.siret}`;
             return f;
         }
 
@@ -922,10 +1066,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
             // Generate HTML lines for machines
             const machinesTrs = window.LM_RAPPORT.machinesData.map(m => `
                 <tr style="border-bottom:1px solid #000;">
-                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.arc}</td>
-                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.of}</td>
-                    <td style="padding:6px; border-right:1px solid #000;">${m.designation}</td>
-                    <td style="padding:6px; text-align:center;">${m.annee}</td>
+                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.arc || '—'}</td>
+                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.of || '—'}</td>
+                    <td style="padding:6px; border-right:1px solid #000;">${m.designation || '—'}</td>
+                    <td style="padding:6px; text-align:center;">${m.annee || '—'}</td>
                 </tr>
             `).join('');
 
@@ -1081,9 +1225,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
                         </div>
 
                         <div style="margin-top: 25px; text-align: center;">
-                            <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px; text-transform: uppercase;">SCORE DE CONFORMITÉ : ${s.score}%</div>
-                            <div style="width: 100%; height: 20px; background: #f1f5f9; border: 1px solid #000; position: relative; overflow: hidden;">
-                                <div style="width: ${s.score}%; height: 100%; background: linear-gradient(to right, #ef4444, #f59e0b, #22c55e);"></div>
+                            <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px; text-transform: uppercase;">SCORE DE CONFORMITÉ : ${s.score}%</div>
+                            ${s.nbMachinesEmpty > 0 ? `<div style="font-size: 11px; color: #dc3545; font-weight: bold; margin-bottom: 8px;">⚠️ ${s.nbMachinesEmpty} fiche(s) non remplie(s) — score calculé sur ${s.nbMachinesFilled}/${s.nbMachinesFilled + s.nbMachinesEmpty} fiches uniquement</div>` : ''}
+                            <div style="width: 100%; height: 20px; background: #e2e8f0; border: 1px solid #000; position: relative; overflow: hidden; border-radius: 4px;">
+                                <div style="width: ${s.score}%; height: 100%; background: ${s.score < 33 ? '#dc3545' : (s.score < 66 ? '#f59e0b' : '#22c55e')}; transition: width 0.5s;"></div>
                             </div>
                         </div>
                     </div>

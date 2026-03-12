@@ -19,6 +19,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if (empty($arc) || empty($clientNom)) {
             $message = 'Le numéro ARC et le client sont obligatoires.';
             $messageType = 'error';
+        } elseif (strlen($arc) > 15) {
+            $message = 'Le numéro ARC ne doit pas dépasser 15 caractères.';
+            $messageType = 'error';
+        } elseif (!preg_match('/^ARC-[A-Z0-9\-_]+$/i', $arc)) {
+            $message = 'Le format du numéro ARC est invalide (doit commencer par ARC-).';
+            $messageType = 'error';
         } else {
             try {
                 $db->beginTransaction();
@@ -211,7 +217,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                         <div class="form-group">
                             <label class="label">Numéro ARC *</label>
                             <input type="text" name="numero_arc" class="input" required placeholder="Ex: ARC-2026-001"
-                                style="text-transform:uppercase;">
+                                style="text-transform:uppercase;" maxlength="15" pattern="ARC-[A-Za-z0-9\-_]{1,11}" title="Format attendu: ARC-XXXXXXXXXX (max 15 caractères)">
                         </div>
                         <div class="form-group">
                             <label class="label">Client (Nom de la société) *</label>

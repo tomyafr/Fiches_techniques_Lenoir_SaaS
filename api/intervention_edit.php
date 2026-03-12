@@ -47,10 +47,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $annee = trim($_POST['annee_fabrication'] ?? '');
         $repere = trim($_POST['repere'] ?? '');
 
-        $initMesures = json_encode(['repere' => $repere]);
-        $stmtIns = $db->prepare('INSERT INTO machines (intervention_id, numero_of, designation, annee_fabrication, commentaires, mesures, donnees_controle) VALUES (?, ?, ?, ?, ?, ?, ?)');
-        $stmtIns->execute([$id, $of, $designation, $annee, '', $initMesures, '{}']);
-        $message = "Machine ajoutée avec succès.";
+        if (empty($of) || empty($designation) || empty($annee)) {
+            $message = "Le N° O.F., la désignation et l'année sont obligatoires.";
+        } else {
+            $initMesures = json_encode(['repere' => $repere]);
+            $stmtIns = $db->prepare('INSERT INTO machines (intervention_id, numero_of, designation, annee_fabrication, commentaires, mesures, donnees_controle) VALUES (?, ?, ?, ?, ?, ?, ?)');
+            $stmtIns->execute([$id, $of, $designation, $annee, '', $initMesures, '{}']);
+            $message = "Machine ajoutée avec succès.";
+        }
     } elseif ($_POST['action'] === 'save_signatures') {
         $sigClient = $_POST['sigClient'] ?? null;
         $sigTech = $_POST['sigTech'] ?? null;
@@ -257,8 +261,8 @@ $machines = $stmtMach->fetchAll();
                             disabled style="font-family:monospace; opacity:0.7; font-size:0.9rem;">
                     </div>
                     <div class="form-group" style="flex:1; margin-bottom:0;">
-                        <label class="label" style="font-size:0.7rem;">N° OF</label>
-                        <input type="text" name="numero_of" class="input" placeholder="OF-1234">
+                        <label class="label" style="font-size:0.7rem;">N° OF <span style="color:var(--error);">*</span></label>
+                        <input type="text" name="numero_of" class="input" placeholder="OF-1234" required>
                     </div>
                 </div>
 
@@ -281,9 +285,9 @@ $machines = $stmtMach->fetchAll();
                         <input type="text" name="repere" class="input" placeholder="ex: SEP-01">
                     </div>
                     <div class="form-group" style="flex:1; margin-bottom:0;">
-                        <label class="label" style="font-size:0.7rem;">Année de fabrication</label>
+                        <label class="label" style="font-size:0.7rem;">Année de mise en service <span style="color:var(--error);">*</span></label>
                         <input type="number" name="annee_fabrication" class="input" placeholder="<?= date('Y') ?>"
-                            min="1950" max="<?= date('Y') ?>">
+                            min="1900" max="<?= date('Y') + 1 ?>" required pattern="[0-9]{4}">
                     </div>
                 </div>
 
