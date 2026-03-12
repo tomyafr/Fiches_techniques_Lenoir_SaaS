@@ -780,9 +780,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
         });
 
         document.addEventListener('DOMContentLoaded', initSignatures);
-            // L'envoi email est déclenché manuellement par le technicien
-            // via le bouton "📧 Envoyer PDF par email" — pas d'envoi automatique.
-        });
+
 
         // ══════════════════════════════════════════════════════════════════
         // CRÉATION DU CONTENEUR COMPLET POUR LE PDF (ASYNCHRONE)
@@ -1235,10 +1233,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 100;
                     
                     <!-- OBSERVATIONS GÉNÉRALES -->
                     <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">OBSERVATIONS DU TECHNICIEN</div>
-                    <div style="border: 2px solid #000; padding: 8px; min-height: 60px; font-size: 11px; white-space: pre-wrap; margin-bottom: 10px;">${commentaryTech}</div>` : ''}
+                    <div style="border: 2px solid #000; padding: 8px; min-height: 60px; font-size: 11px; white-space: pre-wrap; margin-bottom: 10px;">${commentaryTech}</div>
 
                     <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">COMMENTAIRE DU CLIENT</div>
-                    <div style="border: 2px solid #000; padding: 8px; font-size: 11px; white-space: pre-wrap; margin-bottom: 10px;">${commentaryClient}</div>` : ''}
+                    <div style="border: 2px solid #000; padding: 8px; font-size: 11px; white-space: pre-wrap; margin-bottom: 10px;">${commentaryClient}</div>
 
                     <!-- LE CLIENT SOUHAITE -->
                     <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
