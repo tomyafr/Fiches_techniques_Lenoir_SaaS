@@ -64,16 +64,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $contactFonction = trim($_POST['contact_fonction'] ?? '');
             $contactEmail = trim($_POST['contact_email'] ?? '');
             $contactTel = trim($_POST['contact_telephone'] ?? '');
+            $nomSignataire = trim($_POST['nom_signataire'] ?? '');
 
-            if (empty($contactNom)) {
-                die("Le nom du contact est obligatoire.");
-            }
-            if (strlen($contactNom) > 50) {
-                die("Le nom du contact ne doit pas dépasser 50 caractères.");
-            }
-            if (count(explode(' ', $contactNom)) < 2) {
-                die("Veuillez saisir le nom ET le prénom du contact.");
-            }
+            if (empty($contactNom)) { $error = "Le nom du contact est obligatoire."; }
+            elseif (strlen($contactNom) > 50) { $error = "Le nom du contact ne doit pas dépasser 50 caractères."; }
+            elseif (empty($nomSignataire)) { $error = "Le nom du signataire est obligatoire."; }
+
+            if (isset($error)) { throw new Exception($error); }
             $adresse = trim($_POST['adresse'] ?? '');
             $cp = trim($_POST['code_postal'] ?? '');
             $ville = trim($_POST['ville'] ?? '');
@@ -89,7 +86,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
             $sigClient = $_POST['sigClient'] ?? null;
             $sigTech = $_POST['sigTech'] ?? null;
-            $nomSignataire = trim($_POST['nom_signataire'] ?? '');
 
             // Update client info
             $db->prepare('UPDATE clients SET adresse = ?, code_postal = ?, ville = ?, pays = ?,
@@ -840,9 +836,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
 
             const nomSignataire = document.querySelector('[name="nom_signataire"]')?.value.trim() || '';
-            const wordsSignataire = nomSignataire.split(/\s+/).filter(w => w.length > 0);
-            if (wordsSignataire.length < 2) {
-                alert('❌ Le champ "Nom du signataire" doit contenir au moins le NOM et le Prénom (ex: DUPONT Jean).');
+            if (!nomSignataire) {
+                alert('Le nom du signataire est obligatoire.');
                 return false;
             }
 
@@ -858,10 +853,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const contactNom = document.getElementById('contact_nom')?.value.trim() || '';
             if (!contactNom) {
                 alert('Le nom du contact est obligatoire.');
-                return false;
-            }
-            if (contactNom.split(' ').filter(p => p.length > 0).length < 2) {
-                alert('Veuillez saisir le nom ET le prénom du contact.');
                 return false;
             }
 
