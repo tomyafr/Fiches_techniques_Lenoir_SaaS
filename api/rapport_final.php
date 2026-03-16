@@ -1380,7 +1380,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const souhaitPieces = originalRapport.querySelector('[name="souhait_offre_pieces"]').checked;
             const souhaitIntervention = originalRapport.querySelector('[name="souhait_pieces_intervention"]').checked;
             const souhaitAucune = originalRapport.querySelector('[name="souhait_aucune_offre"]').checked;
-            const nomSignataire = originalRapport.querySelector('[name="nom_signataire"]').value || '_____';
+            const nomSignataireFin = originalRapport.querySelector('[name="nom_signataire"]').value || '_____';
             const techNameLabel = "<?= htmlspecialchars($techName) ?>";
             const dateStr = window.LM_RAPPORT.dateInt;
 
@@ -1428,7 +1428,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             </td>
                             <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
                                 <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Client (NOM Prénom) :</div>
-                                <div style="margin-bottom: 10px;"><strong>${nomSignataire}</strong></div>
+                                <div style="margin-bottom: 10px;"><strong>${nomSignataireFin}</strong></div>
                                 <div style="text-align: center;">
                                     <img src="${sigClientImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
                                 </div>
