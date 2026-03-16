@@ -542,7 +542,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <tr>
                     <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N°
                         A.R.C.</td>
-                    <td style="width:35%; border:1px solid #000; padding:6px; font-family:Courier, monospace;">
+                    <td style="width:35%; border:1px solid #000; padding:6px; font-weight:bold;">
                         <?= htmlspecialchars($machine['numero_arc']) ?>
                     </td>
                     <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
