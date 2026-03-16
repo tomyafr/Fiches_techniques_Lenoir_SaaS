@@ -1,0 +1,178 @@
+﻿diff --git a/api/rapport_final.php b/api/rapport_final.php
+index 69fddeb..0637c2d 100644
+--- a/api/rapport_final.php
++++ b/api/rapport_final.php
+@@ -183,8 +183,16 @@ unset($m);
+ 
+ $h_synth = floor($totalMinutes / 60);
+ $m_synth = $totalMinutes % 60;
+-$dureeSynth = ($h_synth > 0 ? $h_synth.'h' : '') . str_pad($m_synth, 2, '0', STR_PAD_LEFT);
+-if ($totalMinutes == 0) $dureeSynth = "ÔÇö";
++
++if ($totalMinutes == 0) {
++    $dureeSynth = "N/A";
++} else {
++    $dureeSynth = "";
++    if ($h_synth > 0) {
++        $dureeSynth .= $h_synth . "h ";
++    }
++    $dureeSynth .= str_pad($m_synth, 2, '0', STR_PAD_LEFT) . "min";
++}
+ 
+ $denom = $totalOk + $totalAmeliorer + $totalNonConforme + $totalRemplacer;
+ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+@@ -491,6 +499,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                         </a>
+                     </div>
+                 </div>
++            <?php endif; ?>
+ 
+                 <!-- Donn├®es PHP expos├®es pour le JS -->
+                 <script>
+@@ -521,6 +530,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                             nbMachinesFilled: <?= $nbMachinesFilled ?>,
+                             nbMachinesEmpty: <?= $nbMachinesEmpty ?>
+                         },
++                        sigTech: <?= json_encode($intervention['signature_technicien'] ?? '') ?>,
++                        sigClient: <?= json_encode($intervention['signature_client'] ?? '') ?>,
+                         pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>, 
+                         machinesIds: [<?= implode(',', array_column($machines, 'id')) ?>],
+                         machinesData: <?= json_encode(array_values(array_map(function($m) use ($intervention) {
+@@ -534,7 +545,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                         }, $machines))) ?>
+                     };
+                 </script>
+-            <?php endif; ?>
+ 
+             <?php if (!empty($error)): ?>
+                 <div
+@@ -870,13 +880,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+             return true;
+         }
+ 
+-        window.addEventListener('resize', () => {
+-            const cT = document.getElementById('canvasTech');
+-            const cC = document.getElementById('canvasClient');
+-            if (cT && padTech) resizeCanvas(cT);
+-            if (cC && padClient) resizeCanvas(cC);
+-        });
+-
+         document.addEventListener('DOMContentLoaded', function() {
+             // --- BUG-018: Exclusivit├® des checkboxes "Le client souhaite" ---
+             const chkUnique = document.querySelector('[name="souhait_rapport_unique"]');
+@@ -938,13 +941,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+         function createPdfFooter() {
+             const f = document.createElement('div');
+             const leg = window.LM_RAPPORT.legal;
+-            f.style.position = 'absolute';
+-            f.style.bottom = '15mm';
+-            f.style.left = '0';
++            f.style.marginTop = '30px';
+             f.style.width = '100%';
+-            f.style.paddingLeft = '15mm';
+-            f.style.paddingRight = '15mm';
+-            f.style.boxSizing = 'border-box';
+             f.style.textAlign = 'center';
+             f.style.fontSize = '9px';
+             f.style.fontWeight = 'bold';
+@@ -1044,15 +1042,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+             const contactTel = document.querySelector('[name="contact_telephone"]')?.value || '';
+             const contactEmail = document.querySelector('[name="contact_email"]')?.value || '';
+             
+-            const nomParts = contactNom.trim().split(' ');
+-            const cNom = nomParts.length > 0 ? nomParts[0] : '';
+-            const cPrenom = nomParts.length > 1 ? nomParts.slice(1).join(' ') : '';
++            const nomSignataire = document.querySelector('[name="nom_signataire"]')?.value || '_____';
+             
+             const commentaire = document.querySelector('[name="commentaire_technicien"]')?.value || '';
+             
+             const techName = "<?= htmlspecialchars($techName) ?>";
+             const dateExp = window.LM_RAPPORT.dateInt;
+-            const sigTechData = document.getElementById('canvasTech')?.toDataURL() || '';
++            const sigTechData = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
++            const sigClientData = window.LM_RAPPORT.sigClient || document.getElementById('canvasClient')?.toDataURL() || '';
+ 
+             // Generate HTML lines for machines
+             const machinesTrs = window.LM_RAPPORT.machinesData.map(m => `
+@@ -1109,8 +1106,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                         <td style="width:50%; padding:10px; vertical-align:top;">
+                             <div style="margin-bottom:8px; font-weight:bold; font-size:13px; text-decoration:underline;">CONTACT SUR SITE</div>
+                             <table style="width:100%">
+-                                <tr><td style="width:80px; padding-bottom:3px;">Nom:</td><td style="font-weight:bold; padding-bottom:3px;">${cNom || '_____'}</td></tr>
+-                                <tr><td style="padding-bottom:3px;">Pr├®nom:</td><td style="padding-bottom:3px;">${cPrenom || '_____'}</td></tr>
++                                <tr><td style="width:90px; padding-bottom:3px;">Nom complet:</td><td style="font-weight:bold; padding-bottom:3px;">${contactNom || '_____'}</td></tr>
+                                 <tr><td style="padding-bottom:3px;">Fonction:</td><td style="padding-bottom:3px;">${contactFonction || '_____'}</td></tr>
+                                 <tr><td style="padding-bottom:3px;">T├®l├®phone:</td><td style="padding-bottom:3px;">${contactTel || '_____'}</td></tr>
+                                 <tr><td style="padding-bottom:3px;">Courriel:</td><td style="padding-bottom:3px;">${contactEmail || '_____'}</td></tr>
+@@ -1152,10 +1148,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                         <td style="width:50%; padding:10px; border-right:1px solid #000; vertical-align:top;">
+                             <div style="margin-bottom:8px;"><strong>Technicien sur site :</strong> ${techName}</div>
+                             <div><strong>Date d'expertise :</strong> ${dateExp}</div>
++                            <div style="text-align: center; margin-top: 10px;">
++                                <img src="${sigTechData}" style="max-height:60px; max-width:90%; border:1px dashed #ccc; padding:3px; background:white;">
++                            </div>
+                         </td>
+                         <td style="width:50%; padding:10px; text-align:center; vertical-align:middle;">
+-                            <div style="font-size:10px; color:#666; margin-bottom:5px;">Signature Lenoir</div>
+-                            <img src="${sigTechData}" style="max-height:60px; max-width:90%; border:1px dashed #ccc; padding:3px;">
++                            <div style="margin-bottom:8px;"><strong>Client :</strong> ${nomSignataire}</div>
++                            <img src="${sigClientData}" style="max-height:60px; max-width:90%; border:1px dashed #ccc; padding:3px; background:white;">
+                         </td>
+                     </tr>
+                 </table>
+@@ -1306,14 +1305,24 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                             p.querySelectorAll('input[type="text"], input[type="time"]').forEach(inp => {
+                                 let val = inp.value || '';
+                                 // Bug 4: Handle "Poste"
+-                                if (inp.name === 'mesures[poste]' && !val) val = '_____';
+-                                else if (!val) val = '_____';
++                                if (inp.name === 'mesures[poste]') {
++                                    val = val ? val : 'N/A';
++                                } else if (!val) {
++                                    val = '_____';
++                                }
+                                 
+                                 inp.outerHTML = `<span style="border-bottom:1px dashed black; display:inline-block; min-width:30px; padding:0 3px; font-weight:bold;">${val}</span>`;
+                             });
+ 
+                             p.querySelectorAll('textarea').forEach(ta => {
+-                                const val = ta.value || ta.innerHTML;
++                                let val = ta.value || ta.innerHTML;
++                                
++                                // NEW FIX FOR PERFORMANCE / NON REALISE Bug:
++                                const specialKeys = ['aprf_attraction_comment', 'ov_perf_bille', 'ov_perf_ecrou', 'ov_perf_rond50', 'ov_perf_rond100', 'levage_charge_maxi_comment', 'levage_temp_maxi_comment'];
++                                if (specialKeys.some(k => ta.name && ta.name.includes(k))) {
++                                    if (!val.trim()) val = "Non r├®alis├®";
++                                }
++
+                                 if (val.trim()) {
+                                     const div = document.createElement('div');
+                                     div.className = 'pdf-textarea-rendered';
+@@ -1361,8 +1370,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+             const commentaryTech = originalRapport.querySelector('[name="commentaire_technicien"]')?.value || '';
+             const commentaryClient = originalRapport.querySelector('[name="commentaire_client"]')?.value || '';
+ 
+-            const sigTechImg = document.getElementById('canvasTech').toDataURL();
+-            const sigClientImg = document.getElementById('canvasClient').toDataURL();
++            const sigTechImg = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
++            const sigClientImg = window.LM_RAPPORT.sigClient || document.getElementById('canvasClient')?.toDataURL() || '';
+ 
+             endPage.innerHTML = `
+                 <div style="font-family: Arial, sans-serif; font-size: 11px; color: #000;">
+@@ -1397,14 +1406,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                                 <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Contr├┤leur (NOM Pr├®nom) :</div>
+                                 <div style="margin-bottom: 10px;"><strong>${techNameLabel}</strong></div>
+                                 <div style="text-align: center;">
+-                                    <img src="${sigTechImg}" style="max-height: 80px; max-width: 90%; object-fit: contain;">
++                                    <img src="${sigTechImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
+                                 </div>
+                             </td>
+                             <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
+                                 <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Client (NOM Pr├®nom) :</div>
+                                 <div style="margin-bottom: 10px;"><strong>${nomSignataire}</strong></div>
+                                 <div style="text-align: center;">
+-                                    <img src="${sigClientImg}" style="max-height: 80px; max-width: 90%; object-fit: contain;">
++                                    <img src="${sigClientImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
+                                 </div>
+                             </td>
+                         </tr>

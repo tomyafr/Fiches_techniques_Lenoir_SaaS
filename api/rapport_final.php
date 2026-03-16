@@ -758,6 +758,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
         }
 
+        let canvasWidthT = 0;
+        let canvasWidthC = 0;
+
         function initSignatures() {
             const canvasC = document.getElementById('canvasClient');
             const canvasT = document.getElementById('canvasTech');
@@ -772,6 +775,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             // Tech Pad
             resizeCanvas(canvasT);
+            canvasWidthT = canvasT.offsetWidth;
             padTech = new SignaturePad(canvasT, { 
                 penColor: 'black',
                 throttle: 16,
@@ -786,6 +790,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             // Client Pad
             resizeCanvas(canvasC);
+            canvasWidthC = canvasC.offsetWidth;
             padClient = new SignaturePad(canvasC, { 
                 penColor: 'blue',
                 throttle: 16,
@@ -799,8 +804,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
         }
 
-        let canvasWidthT = 0;
-        let canvasWidthC = 0;
+
 
         window.addEventListener('resize', () => {
             const cT = document.getElementById('canvasTech');

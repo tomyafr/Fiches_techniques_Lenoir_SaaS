@@ -325,7 +325,7 @@ $machines = $stmtMach->fetchAll();
                             style="cursor:pointer; color:var(--accent-cyan); font-size:0.75rem;">Effacer</span>
                     </label>
                     <canvas id="canvasClient" width="400" height="200"
-                        style="background:#fff; border-radius:8px; width:100%; cursor:crosshair;"></canvas>
+                        style="background:#fff; border-radius:8px; width:100%; cursor:crosshair; touch-action:none;"></canvas>
                     <input type="hidden" name="sigClient" id="sigClientInput" required>
                 </div>
 
@@ -336,7 +336,7 @@ $machines = $stmtMach->fetchAll();
                             style="cursor:pointer; color:var(--accent-cyan); font-size:0.75rem;">Effacer</span>
                     </label>
                     <canvas id="canvasTech" width="400" height="200"
-                        style="background:#fff; border-radius:8px; width:100%; cursor:crosshair;"></canvas>
+                        style="background:#fff; border-radius:8px; width:100%; cursor:crosshair; touch-action:none;"></canvas>
                     <input type="hidden" name="sigTech" id="sigTechInput" required>
                 </div>
 
