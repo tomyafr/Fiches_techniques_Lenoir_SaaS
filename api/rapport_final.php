@@ -1337,6 +1337,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 inp.outerHTML = `<span style="border-bottom:1px dashed black; display:inline-block; min-width:30px; padding:0 3px; font-weight:bold;">${val}</span>`;
                             });
 
+                            p.querySelectorAll('select').forEach(sel => {
+                                let valText = sel.options[sel.selectedIndex]?.text || '';
+                                if (!sel.value) {
+                                    valText = '_____';
+                                }
+                                sel.outerHTML = `<span style="border-bottom:1px dashed black; display:inline-block; min-width:30px; padding:0 3px; font-weight:bold; color:black;">${valText}</span>`;
+                            });
+
                             p.querySelectorAll('textarea').forEach(ta => {
                                 let val = ta.value || ta.innerHTML;
                                 
