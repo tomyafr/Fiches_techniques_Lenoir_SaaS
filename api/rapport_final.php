@@ -1499,6 +1499,18 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             };
 
             const worker = html2pdf().set(opt).from(container);
+            
+            await worker.toPdf().get('pdf').then(function (pdf) {
+                const totalPages = pdf.internal.getNumberOfPages();
+                for (let i = 1; i <= totalPages; i++) {
+                    pdf.setPage(i);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(9);
+                    pdf.setTextColor(50, 50, 50);
+                    pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
+                }
+            });
+
             const pdfBlob = await worker.outputPdf('blob');
 
             return new Promise((resolve, reject) => {
@@ -1526,7 +1538,20 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
 
-                await html2pdf().set(opt).from(container).save();
+                const worker = html2pdf().set(opt).from(container);
+                
+                await worker.toPdf().get('pdf').then(function (pdf) {
+                    const totalPages = pdf.internal.getNumberOfPages();
+                    for (let i = 1; i <= totalPages; i++) {
+                        pdf.setPage(i);
+                        pdf.setFont('helvetica', 'normal');
+                        pdf.setFontSize(9);
+                        pdf.setTextColor(50, 50, 50);
+                        pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
+                    }
+                });
+
+                await worker.save();
             } catch (e) {
                 alert('Erreur génération PDF : ' + e.message);
             } finally {
