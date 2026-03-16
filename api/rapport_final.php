@@ -136,6 +136,7 @@ $totalNA = 0;
 $totalMinutes = 0;
 $nbMachinesFilled = 0;
 $nbMachinesEmpty = 0;
+$emptyMachinesIds = [];
 
 foreach ($machines as &$m) {
     $donnees = json_decode($m['donnees_controle'] ?? '{}', true);
@@ -176,8 +177,12 @@ foreach ($machines as &$m) {
         }
     }
     $m['points_count'] = $pointsCount;
-    if ($pointsCount > 0) $nbMachinesFilled++;
-    else $nbMachinesEmpty++;
+    if ($pointsCount > 0) {
+        $nbMachinesFilled++;
+    } else {
+        $nbMachinesEmpty++;
+        $emptyMachinesIds[] = $m['id'];
+    }
 }
 unset($m);
 
@@ -476,6 +481,21 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <?= htmlspecialchars($intervention['numero_arc']) ?> a été clôturée.
                     </p>
 
+                    <?php if ($nbMachinesEmpty > 0): ?>
+                    <div style="background: rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: left;">
+                        <div style="font-weight: 700; color: #f59e0b; margin-bottom: 0.5rem;">⚠️ <?= $nbMachinesEmpty ?> fiche(s) non remplie(s) détectée(s)</div>
+                        <p style="font-size: 0.85rem; margin-bottom: 0.8rem; color: var(--text-dim);">Veuillez choisir comment inclure ces machines vides dans le rapport final :</p>
+                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; cursor: pointer; color: var(--text);">
+                            <input type="radio" name="empty_fiches_option" value="exclude" checked onclick="window.LM_RAPPORT.emptyFichesOption='exclude'">
+                            Exclure totalement les fiches vides du PDF
+                        </label>
+                        <label style="display: block; font-size: 0.85rem; cursor: pointer; color: var(--text);">
+                            <input type="radio" name="empty_fiches_option" value="condensed" onclick="window.LM_RAPPORT.emptyFichesOption='condensed'">
+                            Les inclure en version condensée (1 page "Non contrôlé")
+                        </label>
+                    </div>
+                    <?php endif; ?>
+
                     <!-- Toast email (injecté par JS) -->
                     <div id="emailToast"
                         style="display:none; margin-bottom:1rem; padding:0.75rem 1rem; border-radius:8px; font-size:0.85rem; font-weight:600;">
@@ -533,9 +553,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         sigTech: <?= json_encode($intervention['signature_technicien'] ?? '') ?>,
                         sigClient: <?= json_encode($intervention['signature_client'] ?? '') ?>,
                         pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>, 
+                        emptyFichesOption: 'exclude',
+                        emptyMachinesIds: <?= json_encode($emptyMachinesIds) ?>,
                         machinesIds: [<?= implode(',', array_column($machines, 'id')) ?>],
                         machinesData: <?= json_encode(array_values(array_map(function($m) use ($intervention) {
                             return [
+                                'id' => $m['id'],
                                 'arc' => $intervention['numero_arc'],
                                 'of' => $m['numero_of'] ?? '',
                                 'designation' => $m['designation'] ?? '',
@@ -1268,9 +1291,60 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             // --- 2. FETCH & APPEND MACHINES ---
             if (window.LM_RAPPORT && window.LM_RAPPORT.machinesIds) {
-                const totalMachines = window.LM_RAPPORT.machinesIds.length;
+                let reportMachineIds = [...window.LM_RAPPORT.machinesIds];
+                const emptyOption = window.LM_RAPPORT.emptyFichesOption || 'exclude';
+                const emptyIds = window.LM_RAPPORT.emptyMachinesIds || [];
+
+                // Si option = 'exclude', on retire carrément les machines vides de la boucle !
+                if (emptyOption === 'exclude' && emptyIds.length > 0) {
+                    reportMachineIds = reportMachineIds.filter(id => !emptyIds.includes(parseInt(id, 10)) && !emptyIds.includes(String(id)));
+                }
+
+                const totalMachines = reportMachineIds.length;
                 for (let mIdx = 0; mIdx < totalMachines; mIdx++) {
-                    const mId = window.LM_RAPPORT.machinesIds[mIdx];
+                    const mId = reportMachineIds[mIdx];
+                    
+                    // Si on a gardé la machine mais qu'elle est vide et qu'on voulait 'condensed'
+                    if (emptyOption === 'condensed' && (emptyIds.includes(parseInt(mId, 10)) || emptyIds.includes(String(mId)))) {
+                        const mData = window.LM_RAPPORT.machinesData.find(m => parseInt(m.id, 10) === parseInt(mId, 10)) || {};
+                        const mDesignation = mData.designation || 'Équipement';
+                        const mArc = mData.arc || numArc;
+                        
+                        const p = document.createElement('div');
+                        p.className = 'pdf-page';
+                        p.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 3px solid #5B9BD5; padding-bottom: 5px;">
+                                <div style="font-size: 14px; font-weight: bold; color: #1B4F72;">FICHE ${mIdx + 1} / ${totalMachines}</div>
+                                <img src="/assets/lenoir_logo_doc.png" style="height: 45px;">
+                            </div>
+                            
+                            <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000;">
+                                <tr>
+                                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N° A.R.C.</td>
+                                    <td style="width:35%; border:1px solid #000; padding:6px; font-weight:bold;">${mArc}</td>
+                                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Désignation</td>
+                                    <td style="width:35%; border:1px solid #000; padding:6px;"><b>${mDesignation}</b></td>
+                                </tr>
+                            </table>
+
+                            <div style="margin-top: 150px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #dc3545; text-transform: uppercase; border: 4px solid #dc3545; display: inline-block; padding: 20px 40px; transform: rotate(-5deg);">
+                                    ÉQUIPEMENT NON CONTRÔLÉ
+                                </div>
+                                <div style="margin-top: 30px; color: #555; font-size: 14px;">
+                                    Aucune donnée n'a été saisie pour ce matériel lors de l'intervention.
+                                </div>
+                            </div>
+                        `;
+                        
+                        const forcedBreak = document.createElement('div');
+                        forcedBreak.className = 'html2pdf__page-break';
+                        container.appendChild(forcedBreak);
+                        container.appendChild(p);
+
+                        continue; // Passe directement à la machine suivante sans fetch html !
+                    }
+
                     try {
                         const res = await fetch('machine_edit.php?id=' + mId);
                         const html = await res.text();
