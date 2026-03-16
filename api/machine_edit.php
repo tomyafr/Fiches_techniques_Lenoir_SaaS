@@ -627,8 +627,12 @@ foreach ($recoFreq as $rfk => $rfv) {
                         . pastille($key, 'nr', 'p-nr', 'Non réparé / À revoir', $val)
                         . '</div>';
                 }
-                function photoCamBtn($key)
+                function photoCamBtn($key, $label = '')
                 {
+                    global $photoLabelsMap;
+                    if (!isset($photoLabelsMap)) $photoLabelsMap = [];
+                    if ($label) $photoLabelsMap[$key] = $label;
+                    
                     return '<div style="display:flex; align-items:center; gap:4px; margin-top:2px;">
                         <button type="button" class="photo-btn" onclick="capturePhoto(\'' . $key . '\')">📷</button>
                         <span class="photo-thumbs" id="thumbs_' . $key . '"></span>
@@ -639,7 +643,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     return '<tr>
                         <td style="font-weight:bold; font-size:12px;">' . htmlspecialchars($label) . '</td>
                         <td class="col-etat" style="text-align:center;">' . renderEtatRadios($key . "_radio", $donnees) . '</td>
-                        <td class="col-comment"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" placeholder="Détails..." oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key) . '</td>
+                        <td class="col-comment"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" placeholder="Détails..." oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
                     </tr>';
                 }
                 function renderAprfEtatRadios($key, $donnees)
@@ -656,7 +660,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     return '<tr>
                         <td style="font-weight:normal; font-size:11px;">' . htmlspecialchars($label) . '</td>
                         <td style="padding:2px 4px; vertical-align:middle; text-align:center;">' . renderAprfEtatRadios($key, $donnees) . '</td>
-                        <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key) . '</td>
+                        <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
                     </tr>';
                 }
                 ?>
@@ -819,7 +823,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         return '<tr>
                             <td style="font-weight:normal; font-size:11px;">' . htmlspecialchars($label) . '</td>
                             <td style="padding:2px 4px; vertical-align:middle; text-align:center;">' . renderEdxEtatRadios($key, $donnees) . '</td>
-                            <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key) . '</td>
+                            <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
                         </tr>';
                     }
                     ?>
@@ -1008,7 +1012,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         return '<tr>
                             <td style="font-weight:bold; font-size:11px;">' . htmlspecialchars($label) . '</td>
                             <td style="padding:2px 4px; vertical-align:middle; text-align:center;">' . renderOvEtatRadios($key, $donnees) . '</td>
-                            <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key) . '</td>
+                            <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
                         </tr>';
                     }
                     ?>
@@ -1559,17 +1563,22 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?php if (empty($photosData)): ?>
                                 <p style="color:#999; font-size:11px; margin:0;" id="noPhotosMsg" class="no-print-pdf">Aucune photo. Utilisez les boutons 📷 sur chaque ligne de contrôle.</p>
                             <?php else: ?>
+                                <?php $photoIndex = 1; ?>
                                 <?php foreach ($photosData as $key => $photos): ?>
                                     <?php foreach ($photos as $p): ?>
                                         <div class="photo-annexe-item">
                                             <img src="<?= htmlspecialchars($p['data']) ?>">
                                             <?php 
-                                            $label = str_replace('_', ' ', $key);
-                                            $label = preg_replace('/edx |ov |aprf |levage /i', '', $label);
-                                            $label = str_replace(['comment', 'radio'], '', $label);
-                                            $label = ucfirst(trim($label));
+                                            global $photoLabelsMap;
+                                            $label = $photoLabelsMap[$key] ?? '';
+                                            if (!$label) {
+                                                $label = str_replace('_', ' ', $key);
+                                                $label = preg_replace('/edx |ov |aprf |levage /i', '', $label);
+                                                $label = str_replace(['comment', 'radio'], '', $label);
+                                                $label = ucfirst(trim($label));
+                                            }
                                             ?>
-                                            <p><strong><?= htmlspecialchars($label) ?></strong>
+                                            <p><strong>Photo <?= $photoIndex++ ?> : <?= htmlspecialchars($label) ?></strong>
                                             <?php if (!empty($p['caption'])): ?>
                                                 <br><em><?= htmlspecialchars($p['caption']) ?></em>
                                             <?php endif; ?>
@@ -1582,7 +1591,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </div>
 
                     <input type="hidden" name="photos_json" id="photosJsonInput" value="">
-                    <script>var _photosFromDB = <?= json_encode($photosData ?: new stdClass(), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES) ?>;</script>
+                    <script>
+                        var _photosFromDB = <?= json_encode($photosData ?: new stdClass(), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES) ?>;
+                        var _photoLabelsMap = <?= json_encode($photoLabelsMap ?? new stdClass(), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES) ?>;
+                    </script>
 
                 </div> <!-- fin .pdf-page -->
             </div> <!-- fin .mobile-wrapper -->
@@ -1701,16 +1713,23 @@ foreach ($recoFreq as $rfk => $rfv) {
             grid.innerHTML = '';
             var hasPhotos = false;
             var keys = Object.keys(allPhotos);
+            var photoIndex = 1;
             keys.forEach(function (key) {
                 allPhotos[key].forEach(function (p) {
                     hasPhotos = true;
                     var item = document.createElement('div');
                     item.className = 'photo-annexe-item';
-                    var label = key.replace(/_/g, ' ').replace(/edx |ov |aprf |levage /gi, '').replace(/comment|radio/g, '').trim();
-                    label = label.charAt(0).toUpperCase() + label.slice(1);
+                    
+                    var label = _photoLabelsMap[key] || '';
+                    if (!label) {
+                        label = key.replace(/_/g, ' ').replace(/edx |ov |aprf |levage /gi, '').replace(/comment|radio/g, '').trim();
+                        label = label.charAt(0).toUpperCase() + label.slice(1);
+                    }
+                    
                     item.innerHTML = '<img src="' + p.data + '">' +
-                        '<p><strong>' + label + '</strong>' + (p.caption ? '<br><em>' + p.caption + '</em>' : '') + '</p>';
+                        '<p><strong>Photo ' + photoIndex + ' : ' + label + '</strong>' + (p.caption ? '<br><em>' + p.caption + '</em>' : '') + '</p>';
                     grid.appendChild(item);
+                    photoIndex++;
                 });
             });
             if (!hasPhotos) {
