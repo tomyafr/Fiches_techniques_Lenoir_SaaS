@@ -778,15 +778,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 minWidth: 1.5,
                 maxWidth: 4.5
             });
-            <?php if (!empty($intervention['signature_technicien'])): ?>
+            if (window.LM_RAPPORT && window.LM_RAPPORT.sigTech) {
                 try {
-                    padTech.fromDataURL('<?= $intervention['signature_technicien'] ?>', {
-                        ratio: dpr,
-                        width: canvasT.width / dpr,
-                        height: canvasT.height / dpr
-                    });
+                    padTech.fromDataURL(window.LM_RAPPORT.sigTech, { ratio: dpr, width: canvasT.width / dpr, height: canvasT.height / dpr });
                 } catch(e) { console.error("Error loading tech sig:", e); }
-            <?php endif; ?>
+            }
 
             // Client Pad
             resizeCanvas(canvasC);
@@ -796,16 +792,30 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 minWidth: 1.5,
                 maxWidth: 4.5
             });
-            <?php if (!empty($intervention['signature_client'])): ?>
+            if (window.LM_RAPPORT && window.LM_RAPPORT.sigClient) {
                 try {
-                    padClient.fromDataURL('<?= $intervention['signature_client'] ?>', {
-                        ratio: dpr,
-                        width: canvasC.width / dpr,
-                        height: canvasC.height / dpr
-                    });
+                    padClient.fromDataURL(window.LM_RAPPORT.sigClient, { ratio: dpr, width: canvasC.width / dpr, height: canvasC.height / dpr });
                 } catch(e) { console.error("Error loading client sig:", e); }
-            <?php endif; ?>
+            }
         }
+
+        let canvasWidthT = 0;
+        let canvasWidthC = 0;
+
+        window.addEventListener('resize', () => {
+            const cT = document.getElementById('canvasTech');
+            const cC = document.getElementById('canvasClient');
+            
+            // Only resize and clear if the actual container width changed (to avoid scroll-resize issues on mobile)
+            if (cT && padTech && cT.offsetWidth && cT.offsetWidth !== canvasWidthT) {
+                canvasWidthT = cT.offsetWidth;
+                resizeCanvas(cT, padTech);
+            }
+            if (cC && padClient && cC.offsetWidth && cC.offsetWidth !== canvasWidthC) {
+                canvasWidthC = cC.offsetWidth;
+                resizeCanvas(cC, padClient);
+            }
+        });
 
         function validateAndSubmit() {
             if (!padClient || !padTech) {
@@ -900,8 +910,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 });
             }
 
-            initSignatures();
-            
             const contactNomInput = document.getElementById('contact_nom');
             const warningEl = document.getElementById('contact_nom_warning');
             
@@ -916,6 +924,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     }
                 });
             }
+        });
+
+        // Initialize signatures when layout is completely established to avoid zero-width bugs
+        window.addEventListener('load', () => {
+            setTimeout(initSignatures, 100);
         });
 
 
