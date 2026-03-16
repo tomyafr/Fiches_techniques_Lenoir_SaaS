@@ -461,13 +461,8 @@ foreach ($recoFreq as $rfk => $rfv) {
             .pdf-page {
                 margin: 0;
                 box-shadow: none;
-                page-break-after: always;
                 padding: 0;
                 border-radius: 0;
-            }
-
-            .pdf-page:last-child {
-                page-break-after: auto;
             }
         }
 
@@ -605,9 +600,10 @@ foreach ($recoFreq as $rfk => $rfv) {
             </table>
             <?php
             $pdfHeader = ob_get_clean();
+            // MF-007 Fix: we completely stop breaking pages artificially between sections
             function newPdfPage()
             {
-                return '</div><div class="pdf-page" style="padding-top:2cm;">';
+                return ''; 
             }
             ?>
             <div class="pdf-page">
