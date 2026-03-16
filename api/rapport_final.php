@@ -499,6 +499,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         </a>
                     </div>
                 </div>
+            <?php endif; ?>
 
                 <!-- Données PHP exposées pour le JS -->
                 <script>
@@ -544,7 +545,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         }, $machines))) ?>
                     };
                 </script>
-            <?php endif; ?>
 
             <?php if (!empty($error)): ?>
                 <div
@@ -879,13 +879,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             document.getElementById('sigClientInput').value = padClient.toDataURL();
             return true;
         }
-
-        window.addEventListener('resize', () => {
-            const cT = document.getElementById('canvasTech');
-            const cC = document.getElementById('canvasClient');
-            if (cT && padTech) resizeCanvas(cT);
-            if (cC && padClient) resizeCanvas(cC);
-        });
 
         document.addEventListener('DOMContentLoaded', function() {
             // --- BUG-018: Exclusivité des checkboxes "Le client souhaite" ---
