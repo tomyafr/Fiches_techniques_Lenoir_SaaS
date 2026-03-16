@@ -681,26 +681,39 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <div class="section-title">Le client souhaite</div>
             <div class="checkbox-group">
                 <label class="checkbox-item">
-                    <input type="checkbox" name="souhait_rapport_unique" value="1"
+                    <input type="checkbox" name="souhait_rapport_unique" value="1" class="chk-souhait"
                         <?= ($intervention['souhait_rapport_unique'] ?? false) ? 'checked' : '' ?>>
                     <span>Ce rapport d'expertise uniquement</span>
                 </label>
                 <label class="checkbox-item">
-                    <input type="checkbox" name="souhait_offre_pieces" value="1"
+                    <input type="checkbox" name="souhait_offre_pieces" value="1" class="chk-souhait"
                         <?= ($intervention['souhait_offre_pieces'] ?? false) ? 'checked' : '' ?>>
                     <span>Une offre de pièces de rechange</span>
                 </label>
                 <label class="checkbox-item">
-                    <input type="checkbox" name="souhait_pieces_intervention" value="1"
+                    <input type="checkbox" name="souhait_pieces_intervention" value="1" class="chk-souhait"
                         <?= ($intervention['souhait_pieces_intervention'] ?? false) ? 'checked' : '' ?>>
                     <span>Pièces de rechange + intervention mise en place</span>
                 </label>
                 <label class="checkbox-item">
-                    <input type="checkbox" name="souhait_aucune_offre" value="1"
+                    <input type="checkbox" name="souhait_aucune_offre" value="1" class="chk-souhait"
                         <?= ($intervention['souhait_aucune_offre'] ?? false) ? 'checked' : '' ?>>
                     <span>Aucune offre</span>
                 </label>
             </div>
+            
+            <script>
+                // MF-010: Mutual exclusivity for "Le client souhaite" options (radio-group behavior)
+                document.querySelectorAll('.chk-souhait').forEach(chk => {
+                    chk.addEventListener('change', function() {
+                        if (this.checked) {
+                            document.querySelectorAll('.chk-souhait').forEach(other => {
+                                if (other !== this) other.checked = false;
+                            });
+                        }
+                    });
+                });
+            </script>
 
             <!-- COMMENTAIRE CLIENT -->
             <div class="section-title">Commentaire du client</div>
