@@ -190,7 +190,7 @@ $h_synth = floor($totalMinutes / 60);
 $m_synth = $totalMinutes % 60;
 
 if ($totalMinutes == 0) {
-    $dureeSynth = "N/A";
+    $dureeSynth = "Non renseigné";
 } else {
     $dureeSynth = "";
     if ($h_synth > 0) {
