@@ -1399,8 +1399,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 if (lbl) lbl.classList.add('selected');
                             });
 
-                            p.querySelectorAll('input[type="text"], input[type="time"]').forEach(inp => {
-                                let val = inp.value || '';
+                            p.querySelectorAll('input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"]):not([type="file"])').forEach(inp => {
+                                let val = (inp.value || '').trim();
                                 // Bug 4: Handle "Poste"
                                 if (inp.name === 'mesures[poste]') {
                                     val = val ? val : (mIdx + 1);
