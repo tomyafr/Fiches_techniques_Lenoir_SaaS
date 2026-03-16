@@ -1329,7 +1329,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 let val = inp.value || '';
                                 // Bug 4: Handle "Poste"
                                 if (inp.name === 'mesures[poste]') {
-                                    val = val ? val : 'N/A';
+                                    val = val ? val : (mIdx + 1);
                                 } else if (!val) {
                                     val = '_____';
                                 }
