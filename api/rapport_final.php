@@ -1556,7 +1556,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         
                         <div style="margin-top: 5px;">
                             <div style="font-size: 10px; font-weight: bold; margin-bottom: 3px;">Visitez notre site !</div>
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.lenoir-mec.com" crossorigin="anonymous" style="width: 100px; height: 100px; display: block; margin: 0 auto;">
+                            <img src="/assets/qr_lenoir.png" style="width: 100px; height: 100px; display: block; margin: 0 auto;">
                             <div style="font-weight: bold; font-size: 10px; margin-top: 5px;">www.raoul-lenoir.com</div>
                         </div>
                     </div>
