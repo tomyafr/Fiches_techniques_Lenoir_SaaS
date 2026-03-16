@@ -1013,9 +1013,15 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .pdf-section {
                     margin-bottom: 15px;
                 }
-                .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; color: black; font-size: 11px; }
-                .pdf-table th, .pdf-table td { border: 1px solid #000; padding: 4px; vertical-align: middle; }
+                .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; color: black; font-size: 11px; table-layout: fixed; }
+                .pdf-table th, .pdf-table td { border: 1px solid #000; padding: 4px; vertical-align: middle; word-wrap: break-word; word-break: break-word; }
                 .pdf-table th { background-color: #f0f0f0; text-align: left; text-transform: uppercase; }
+                
+                .pdf-table .col-comment, .pdf-table td:last-child {
+                    max-width: 65mm;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
                 
                 .pastille-group { display: inline-flex; gap: 4px; align-items: center; }
                 .pastille-group label {
