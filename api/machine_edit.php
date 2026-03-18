@@ -1630,59 +1630,51 @@ foreach ($recoFreq as $rfk => $rfv) {
             document.getElementById('cameraInput').click();
         }
 
+        // Implémentation de Compressor.js (remplace l'ancienne compression Canvas très lente et buggée sur iOS)
         document.getElementById('cameraInput').addEventListener('change', function (e) {
             var file = e.target.files[0];
             if (!file) return;
 
             // --- BUG-013: Validation de la taille de l'image ---
-            // On exige > 100 Ko pour garantir une photo terrain réaliste
             if (file.size < 100 * 1024) {
                 alert("❌ Image rejetée : Le fichier est trop petit (" + Math.round(file.size/1024) + " Ko). Veuillez prendre une photo nette de l'équipement (min. 100 Ko).");
                 e.target.value = '';
                 return;
             }
 
-            compressImage(file, 1200, 0.8, function (base64) {
-                if (!allPhotos[currentPhotoKey]) allPhotos[currentPhotoKey] = [];
-                
-                var caption = prompt('Commentaire photo (optionnel) :', '') || '';
-                
-                // --- BUG-013: Validation de la légende ---
-                const forbiddenWords = ['nul', 'rien', 'sans', 'na', 'test', 'lorem'];
-                if (forbiddenWords.includes(caption.toLowerCase().trim())) {
-                    alert("⚠️ Légende non-professionnelle détectée. La photo sera ajoutée sans légende.");
-                    caption = '';
-                }
+            new Compressor(file, {
+                quality: 0.8,
+                maxWidth: 1200,
+                checkOrientation: true, // Fix iOS rotation bugs
+                success(result) {
+                    var reader = new FileReader();
+                    reader.onloadend = function () {
+                        var base64 = reader.result;
+                        if (!allPhotos[currentPhotoKey]) allPhotos[currentPhotoKey] = [];
+                        
+                        var caption = prompt('Commentaire photo (optionnel) :', '') || '';
+                        
+                        const forbiddenWords = ['nul', 'rien', 'sans', 'na', 'test', 'lorem'];
+                        if (forbiddenWords.includes(caption.toLowerCase().trim())) {
+                            alert("⚠️ Légende non-professionnelle détectée. La photo sera ajoutée sans légende.");
+                            caption = '';
+                        }
 
-                allPhotos[currentPhotoKey].push({ data: base64, caption: caption });
-                syncPhotos();
-                renderThumbsForKey(currentPhotoKey);
-                renderAnnexes();
+                        allPhotos[currentPhotoKey].push({ data: base64, caption: caption });
+                        syncPhotos();
+                        renderThumbsForKey(currentPhotoKey);
+                        renderAnnexes();
+                    };
+                    reader.readAsDataURL(result);
+                },
+                error(err) {
+                    console.error("Erreur de compression :", err.message);
+                    alert("Erreur lors de la compression de la photo.");
+                }
             });
             // Reset so same file can be re-selected
             e.target.value = '';
         });
-
-        function compressImage(file, maxWidth, quality, callback) {
-            var reader = new FileReader();
-            reader.onload = function (ev) {
-                var img = new Image();
-                img.onload = function () {
-                    var w = img.width, h = img.height;
-                    if (w > maxWidth) {
-                        h = Math.round(h * maxWidth / w);
-                        w = maxWidth;
-                    }
-                    var canvas = document.createElement('canvas');
-                    canvas.width = w;
-                    canvas.height = h;
-                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                    callback(canvas.toDataURL('image/jpeg', quality));
-                };
-                img.src = ev.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
 
         function deletePhoto(key, index) {
             if (!confirm('Supprimer cette photo ?')) return;
@@ -1879,6 +1871,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             });
         });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/compressorjs/1.2.1/compressor.min.js" integrity="sha512-MgYeYFj8R3S6rvZ80DbnAxgO45O58XF1xZ1a1gD1jS+p1t3H31N4m3qj19/2N/0Q3E44Bf9+g2B//M+n1R5g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 
 </html>
