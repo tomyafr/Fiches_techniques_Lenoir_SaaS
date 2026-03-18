@@ -211,9 +211,11 @@ foreach ($recoFreq as $rfk => $rfv) {
 
         /* === PASTILLE SYSTEM === */
         .pastille-group {
-            display: inline-flex;
-            gap: 4px;
+            display: flex;
+            gap: 6px;
             align-items: center;
+            justify-content: center;
+            width: 100%;
             flex-shrink: 0;
         }
 
