@@ -1446,6 +1446,44 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 ta.remove();
                             });
                             
+                            // BUGFIX PDF: Séparateur de table (tbody)
+                            // html2pdf coupe en deux les <tr> sauvagement. 
+                            // La seule vraie solution est de wrapper chaque ligne logique dans son propre <tbody> !
+                            p.querySelectorAll('table.pdf-table').forEach(table => {
+                                const rows = Array.from(table.querySelectorAll('tr'));
+                                if (!rows.length) return;
+                                
+                                let currentTbody = document.createElement('tbody');
+                                currentTbody.style.pageBreakInside = 'avoid';
+                                table.appendChild(currentTbody);
+                                
+                                let pendingSpans = 0;
+                                rows.forEach(row => {
+                                    let maxSpan = 1;
+                                    row.querySelectorAll('th, td').forEach(c => {
+                                        if (c.rowSpan > maxSpan) maxSpan = c.rowSpan;
+                                    });
+                                    if (maxSpan - 1 > pendingSpans) pendingSpans = maxSpan - 1;
+                                    
+                                    currentTbody.appendChild(row); // Déplace le tr dans le nouveau tbody
+                                    
+                                    if (pendingSpans > 0) {
+                                        pendingSpans--;
+                                    } else {
+                                        currentTbody = document.createElement('tbody');
+                                        currentTbody.style.pageBreakInside = 'avoid';
+                                        table.appendChild(currentTbody);
+                                    }
+                                });
+                                
+                                // Supprimer les tbody/thead originaux devenus vides
+                                Array.from(table.children).forEach(child => {
+                                    if ((child.tagName === 'TBODY' || child.tagName === 'THEAD') && child.children.length === 0) {
+                                        child.remove();
+                                    }
+                                });
+                            });
+                            
                             p.style.position = 'relative';
                             p.style.paddingBottom = '30mm';
                             p.style.minHeight = 'auto'; // Help chaining
@@ -1578,7 +1616,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone'] }
+                pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone'] }
             };
 
             const worker = html2pdf().set(opt).from(container);
@@ -1619,7 +1657,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true, logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone'] }
+                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone'] }
                 };
 
                 const worker = html2pdf().set(opt).from(container);
