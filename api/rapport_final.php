@@ -1127,96 +1127,103 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             rapportCloneWrapper.className = 'pdf-page';
             // Layout exact as requested
             rapportCloneWrapper.innerHTML = `
-                <!-- HEADER -->
-                <div style="border: 2px solid #000; margin-bottom: 20px;">
-                    <div style="display:flex; padding:15px; align-items:center;">
-                        <div style="flex:1;">
-                            <img src="/assets/lenoir_logo_doc.png" style="height:60px;">
-                            <div style="font-weight:bold; font-size:16px; margin-top:5px; color:#1B4F72;">MAGNETIC SYSTEMS</div>
-                        </div>
-                        <div style="flex:2; text-align:right; color:#1B4F72; font-weight:bold; font-size:13px; line-height:1.4;">
-                            Le spécialiste des applications<br>
-                            magnétiques pour la séparation<br>
-                            et le levage industriel<br>
-                            <br>
-                            <span style="font-size:16px; text-decoration:underline;">LISTING DES EXPERTISES</span>
-                        </div>
-                    </div>
-                    <div style="background-color:#5B9BD5; color:white; text-align:center; padding:15px; border-top:2px solid #000;">
-                        <h1 style="margin:0; font-size:20px; text-transform:uppercase; letter-spacing:1px;">RAPPORT D'EXPERTISE SUR SITE</h1>
-                        <div style="font-size:16px; font-weight:bold; margin-top:8px;">N° ARC : ${numArc}</div>
-                    </div>
-                </div>
-
-                <!-- COORDONNEES DU CLIENT -->
-                <div style="background-color:#1B4F72; color:white; padding:6px 15px; font-weight:bold; border:2px solid #000; border-bottom:none; text-transform:uppercase; font-size:12px;">
-                    COORDONNÉES DU CLIENT
-                </div>
-                <table style="width:100%; border-collapse:collapse; border:2px solid #000; margin-bottom:15px; font-size:12px;">
+                <!-- HEADER (Logo, Slogan) -->
+                <table style="width:100%; border:none; margin-bottom:15px; border-bottom: 2px solid #e67e22;">
                     <tr>
-                        <td style="width:50%; padding:10px; border-right:1px solid #000; vertical-align:top;">
-                            <div style="margin-bottom:8px; font-weight:bold; font-size:13px; text-decoration:underline;">SOCIÉTÉ</div>
-                            <table style="width:100%">
-                                <tr><td style="width:80px; padding-bottom:3px;">Nom:</td><td style="font-weight:bold; padding-bottom:3px;">${nomSociete || '_____'}</td></tr>
-                                <tr><td style="padding-bottom:3px;">Adresse:</td><td style="padding-bottom:3px;">${adresse || '_____'}</td></tr>
-                                <tr><td style="padding-bottom:3px;">CP:</td><td style="padding-bottom:3px;">${cp || '_____'}</td></tr>
-                                <tr><td style="padding-bottom:3px;">Ville:</td><td style="padding-bottom:3px;">${ville || '_____'}</td></tr>
-                                <tr><td style="padding-bottom:3px;">Pays:</td><td style="padding-bottom:3px;">${pays || 'France'}</td></tr>
-                            </table>
+                        <td style="width: 40%; vertical-align: bottom; padding-bottom: 10px;">
+                            <img src="/assets/lenoir_logo_doc.png" style="height:60px;">
                         </td>
-                        <td style="width:50%; padding:10px; vertical-align:top;">
-                            <div style="margin-bottom:8px; font-weight:bold; font-size:13px; text-decoration:underline;">CONTACT SUR SITE</div>
-                            <table style="width:100%">
-                                <tr><td style="width:90px; padding-bottom:3px;">Nom complet:</td><td style="font-weight:bold; padding-bottom:3px;">${contactNom || '_____'}</td></tr>
-                                <tr><td style="padding-bottom:3px;">Fonction:</td><td style="padding-bottom:3px;">${contactFonction || '_____'}</td></tr>
-                                <tr><td style="padding-bottom:3px;">Téléphone:</td><td style="padding-bottom:3px;">${contactTel || '_____'}</td></tr>
-                                <tr><td style="padding-bottom:3px;">Courriel:</td><td style="padding-bottom:3px;">${contactEmail || '_____'}</td></tr>
-                            </table>
+                        <td style="width: 60%; vertical-align: bottom; text-align: right; padding-bottom: 5px;">
+                            <div style="font-size: 11px; font-weight: normal; color: #e67e22; font-style: italic;">
+                                Le spécialiste des applications magnétiques pour la séparation et le levage industriel
+                            </div>
                         </td>
                     </tr>
                 </table>
+                <div style="text-align: right; color: #555; font-weight: bold; font-size: 11px; margin-top: 5px; margin-bottom: 15px;">RAPPORT D'EXPERTISE</div>
 
-                <!-- PARC MACHINE -->
-                <div style="background-color:#1B4F72; color:white; padding:6px 15px; font-weight:bold; border:2px solid #000; border-bottom:none; text-transform:uppercase; font-size:12px;">
-                    PARC MACHINE
-                </div>
-                <table style="width:100%; border-collapse:collapse; border:2px solid #000; margin-bottom:15px; font-size:11px; text-align:left;">
-                    <thead>
-                        <tr style="border-bottom:2px solid #000; background-color:#f8fafc;">
-                            <th style="padding:6px; border-right:1px solid #000; width:15%; text-align:center;">N° A.R.C</th>
-                            <th style="padding:6px; border-right:1px solid #000; width:15%; text-align:center;">N° O.F.</th>
-                            <th style="padding:6px; border-right:1px solid #000; width:55%;">Désignation du matériel</th>
-                            <th style="padding:6px; width:15%; text-align:center;">Année</th>
+                <!-- GRAND CADRE ORANGE -->
+                <div style="border: 3px solid #d35400; padding: 15px; margin-bottom: 30px;">
+                    <h1 style="text-align: center; color: #d35400; font-size: 26px; font-weight: bold; margin: 10px 0 20px 0;">RAPPORT DE L'EXPERTISE</h1>
+                    <div style="text-align: right; font-weight: bold; font-size: 14px; color: black; margin-bottom: 15px;">N°ARC : ${numArc}</div>
+
+                    <!-- TABLEAU CLIENT -->
+                    <table style="width:100%; border-collapse:collapse; border: 2px solid #d35400; margin-bottom:20px; font-size:12px; font-family: Arial, sans-serif;">
+                        <tr>
+                            <td colspan="4" style="background-color: #5b9bd5; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 6px; border: 1px solid #000;">
+                                COORDONNEES DU CLIENT
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        ${machinesTrs}
-                    </tbody>
-                </table>
+                        <tr>
+                            <td colspan="2" style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 50%;">SOCIETE</td>
+                            <td colspan="2" style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 50%;">CONTACT SUR SITE</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000; width: 15%;">Nom</td>
+                            <td style="padding: 6px; border: 1px solid #000; width: 35%;">${nomSociete || '_____'}</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000; width: 15%;">Nom</td>
+                            <td style="padding: 6px; border: 1px solid #000; width: 35%;">${contactNom || '_____'}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Adresse</td>
+                            <td style="padding: 6px; border: 1px solid #000;">${adresse || '_____'}</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Prénom</td>
+                            <td style="padding: 6px; border: 1px solid #000;">_____</td> <!-- Backend n'a pas séparé Nom/Prénom historiquement, on met un placeholder ou on laisse vide -->
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">CP</td>
+                            <td style="padding: 6px; border: 1px solid #000;">${cp || '_____'}</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Fonction</td>
+                            <td style="padding: 6px; border: 1px solid #000;">${contactFonction || '_____'}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Ville</td>
+                            <td style="padding: 6px; border: 1px solid #000;">${ville || '_____'}</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Téléphone</td>
+                            <td style="padding: 6px; border: 1px solid #000;">${contactTel || '_____'}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Pays</td>
+                            <td style="padding: 6px; border: 1px solid #000;">${pays || 'France'}</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Courriel</td>
+                            <td style="padding: 6px; border: 1px solid #000; color: blue; text-decoration: underline;">${contactEmail || '_____'}</td>
+                        </tr>
+                    </table>
 
-                <!-- COMMENTAIRE TECHNICIEN -->
-                ${commentaire ? `
-                <div style="border:2px solid #000; margin-bottom:15px;">
-                    <div style="background-color:#f8fafc; border-bottom:1px solid #000; padding:6px 15px; font-weight:bold; font-size:12px;">
-                        Commentaire :
-                    </div>
-                    <div style="padding:10px; min-height:80px; font-size:12px; white-space:pre-wrap;">${commentaire}</div>
-                </div>` : ''}
+                    <!-- TABLEAU PARC MACHINE -->
+                    <table style="width:100%; border-collapse:collapse; border: 2px solid #d35400; font-size:12px; font-family: Arial, sans-serif;">
+                        <tr>
+                            <td colspan="3" style="background-color: #5b9bd5; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 6px; border: 1px solid #000;">
+                                PARC MACHINE
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 10%;">Poste</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 30%;">N° A.R.C (N° de série)</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 60%;">Désignation du Produit</td>
+                        </tr>
+                        ${window.LM_RAPPORT.machinesData.map((m, idx) => \`
+                            <tr>
+                                <td style="text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000;">\${m.poste || (idx + 1)}</td>
+                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">\${m.arc || '—'} \${m.of ? ' - ' + m.of : ''}</td>
+                                <td style="padding: 6px; border: 1px solid #000;">\${m.designation || '—'}</td>
+                            </tr>
+                        \`).join('')}
+                    </table>
+                </div>
 
-                <!-- SIGNATURES -->
-                <table style="width:100%; border-collapse:collapse; border:2px solid #000; font-size:12px; margin-bottom: 20px;">
+                <!-- SIGNATURES (Hors du cadre orange) -->
+                <table style="width:100%; border-collapse:collapse; border: 2px solid #d35400; font-size:13px; font-family: Arial, sans-serif;">
                     <tr>
-                        <td style="width:50%; padding:10px; border-right:1px solid #000; vertical-align:top;">
-                            <div style="margin-bottom:8px;"><strong>Technicien sur site :</strong> ${techName}</div>
-                            <div><strong>Date d'expertise :</strong> ${dateExp}</div>
-                            <div style="text-align: center; margin-top: 10px;">
-                                <img src="${sigTechData}" style="max-height:60px; max-width:90%; border:1px dashed #ccc; padding:3px; background:white;">
-                            </div>
+                        <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #cc4e00; width: 25%;">Technicien sur Site :</td>
+                        <td style="padding: 15px 10px; border: 1px solid #cc4e00; width: 30%;">${techName}</td>
+                        <td rowspan="2" style="padding: 5px; border: 1px solid #cc4e00; width: 45%; text-align: center; vertical-align: middle;">
+                            <img src="${sigClientData || sigTechData}" style="max-height:80px; max-width:100%;">
                         </td>
-                        <td style="width:50%; padding:10px; text-align:center; vertical-align:middle;">
-                            <div style="margin-bottom:8px;"><strong>Client :</strong> ${nomSignataire}</div>
-                            <img src="${sigClientData}" style="max-height:60px; max-width:90%; border:1px dashed #ccc; padding:3px; background:white;">
-                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #cc4e00;">Date d'expertise :</td>
+                        <td style="padding: 15px 10px; border: 1px solid #cc4e00;">${dateExp}</td>
                     </tr>
                 </table>
             `;
