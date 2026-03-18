@@ -1061,7 +1061,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     text-overflow: ellipsis;
                 }
                 
-                .pastille-group { display: inline-flex; gap: 4px; align-items: center; }
+                .pastille-group { display: flex; gap: 6px; align-items: center; justify-content: center; width: 100%; }
                 .pastille-group label {
                     display: flex; align-items: center; justify-content: center;
                     width: 18px; height: 18px; border-radius: 50%;
