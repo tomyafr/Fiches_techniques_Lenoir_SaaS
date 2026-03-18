@@ -9,7 +9,7 @@ try {
 
     $users = [
         ['nom' => 'CHRIST', 'prenom' => 'Olivier', 'role' => 'chef'],
-        ['nom' => 'LOTITO', 'prenom' => 'Pierre', 'role' => 'operateur'],
+        ['nom' => 'SALAH', 'prenom' => 'Soufyane', 'role' => 'operateur'],
         ['nom' => 'BUDIN', 'prenom' => 'Aymeric', 'role' => 'operateur'],
         ['nom' => 'MANGIN', 'prenom' => 'Maxime', 'role' => 'operateur'],
         ['nom' => 'LAFOND', 'prenom' => 'Vivian', 'role' => 'operateur'],

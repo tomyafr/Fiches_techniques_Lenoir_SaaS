@@ -1128,102 +1128,126 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             // Layout exact as requested
             rapportCloneWrapper.innerHTML = `
                 <!-- HEADER (Logo, Slogan) -->
-                <table style="width:100%; border:none; margin-bottom:15px; border-bottom: 2px solid #e67e22;">
+                <table style="width:100%; border:none; margin-bottom:5px;">
                     <tr>
-                        <td style="width: 40%; vertical-align: bottom; padding-bottom: 10px;">
-                            <img src="/assets/lenoir_logo_doc.png" style="height:60px;">
+                        <td style="width: 250px; vertical-align: middle;">
+                            <img src="/assets/lenoir_logo_doc.png" style="height:70px; display:block;">
                         </td>
-                        <td style="width: 60%; vertical-align: bottom; text-align: right; padding-bottom: 5px;">
-                            <div style="font-size: 11px; font-weight: normal; color: #e67e22; font-style: italic;">
+                        <td style="vertical-align: bottom; text-align: right; padding-bottom: 4px;">
+                            <div style="font-size: 11px; font-weight: normal; color: #555; font-style: italic; margin-bottom: 5px;">
                                 Le spécialiste des applications magnétiques pour la séparation et le levage industriel
                             </div>
+                            <div style="border-top: 3px solid #d35400; border-bottom: 1px solid #d35400; height: 3px; margin-bottom: 4px; width: 100%;"></div>
+                            <div style="color: #777; font-weight: bold; font-size: 11px; font-style: italic;">RAPPORT D'EXPERTISE</div>
                         </td>
                     </tr>
                 </table>
-                <div style="text-align: right; color: #555; font-weight: bold; font-size: 11px; margin-top: 5px; margin-bottom: 15px;">RAPPORT D'EXPERTISE</div>
 
                 <!-- GRAND CADRE ORANGE -->
-                <div style="border: 3px solid #d35400; padding: 15px; margin-bottom: 30px;">
-                    <h1 style="text-align: center; color: #d35400; font-size: 26px; font-weight: bold; margin: 10px 0 20px 0;">RAPPORT DE L'EXPERTISE</h1>
-                    <div style="text-align: right; font-weight: bold; font-size: 14px; color: black; margin-bottom: 15px;">N°ARC : ${numArc}</div>
+                <div style="border: 3px solid #d35400; margin-bottom: 30px; font-family: Arial, sans-serif;">
+                    
+                    <!-- EN-TÊTE GRIS "RAPPORT DE L'EXPERTISE" -->
+                    <div style="background-color: #e6e6e6; padding: 25px 20px 10px 20px; border-bottom: 1px solid #000;">
+                        <h1 style="text-align: center; color: #d35400; font-size: 28px; font-weight: 900; margin: 0 0 20px 0; font-family: 'Arial Black', Arial, sans-serif; text-transform: uppercase;">RAPPORT DE L'EXPERTISE</h1>
+                        <div style="text-align: right; font-weight: bold; font-size: 14px; color: black;">N°ARC : ${numArc}</div>
+                    </div>
 
                     <!-- TABLEAU CLIENT -->
-                    <table style="width:100%; border-collapse:collapse; border: 2px solid #d35400; margin-bottom:20px; font-size:12px; font-family: Arial, sans-serif;">
+                    <table style="width:100%; border-collapse:collapse; border: none; font-size:12px;">
                         <tr>
-                            <td colspan="4" style="background-color: #5b9bd5; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 6px; border: 1px solid #000;">
+                            <td colspan="4" style="background-color: #5b9bd5; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 6px; border-bottom: 1px solid #000;">
                                 COORDONNEES DU CLIENT
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="2" style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 50%;">SOCIETE</td>
-                            <td colspan="2" style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 50%;">CONTACT SUR SITE</td>
+                            <td colspan="2" style="background-color: #e6e6e6; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; border-left: none; width: 50%;">SOCIETE</td>
+                            <td colspan="2" style="background-color: #e6e6e6; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; border-right: none; width: 50%;">CONTACT SUR SITE</td>
                         </tr>
                         <tr>
-                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000; width: 15%;">Nom</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000; border-left: none; width: 15%;">Nom</td>
                             <td style="padding: 6px; border: 1px solid #000; width: 35%;">${nomSociete || '_____'}</td>
                             <td style="font-weight: bold; padding: 6px; border: 1px solid #000; width: 15%;">Nom</td>
-                            <td style="padding: 6px; border: 1px solid #000; width: 35%;">${contactNom || '_____'}</td>
+                            <td style="padding: 6px; border: 1px solid #000; border-right: none; width: 35%;">${contactNom || '_____'}</td>
                         </tr>
                         <tr>
-                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Adresse</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000; border-left: none;">Adresse</td>
                             <td style="padding: 6px; border: 1px solid #000;">${adresse || '_____'}</td>
                             <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Prénom</td>
-                            <td style="padding: 6px; border: 1px solid #000;">_____</td> <!-- Backend n'a pas séparé Nom/Prénom historiquement, on met un placeholder ou on laisse vide -->
+                            <td style="padding: 6px; border: 1px solid #000; border-right: none;">_____</td>
                         </tr>
                         <tr>
-                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">CP</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000; border-left: none;">CP</td>
                             <td style="padding: 6px; border: 1px solid #000;">${cp || '_____'}</td>
                             <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Fonction</td>
-                            <td style="padding: 6px; border: 1px solid #000;">${contactFonction || '_____'}</td>
+                            <td style="padding: 6px; border: 1px solid #000; border-right: none;">${contactFonction || '_____'}</td>
                         </tr>
                         <tr>
-                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Ville</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000; border-left: none;">Ville</td>
                             <td style="padding: 6px; border: 1px solid #000;">${ville || '_____'}</td>
                             <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Téléphone</td>
-                            <td style="padding: 6px; border: 1px solid #000;">${contactTel || '_____'}</td>
+                            <td style="padding: 6px; border: 1px solid #000; border-right: none;">${contactTel || '_____'}</td>
                         </tr>
                         <tr>
-                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Pays</td>
-                            <td style="padding: 6px; border: 1px solid #000;">${pays || 'France'}</td>
-                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Courriel</td>
-                            <td style="padding: 6px; border: 1px solid #000; color: blue; text-decoration: underline;">${contactEmail || '_____'}</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000; border-left: none; border-bottom: none;">Pays</td>
+                            <td style="padding: 6px; border: 1px solid #000; border-bottom: none;">${pays || 'France'}</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000; border-bottom: none;">Courriel</td>
+                            <td style="padding: 6px; border: 1px solid #000; border-right: none; border-bottom: none; color: blue; text-decoration: underline;">${contactEmail || '_____'}</td>
                         </tr>
                     </table>
 
+                    <!-- SÉPARATEUR BLANC -->
+                    <div style="height: 20px; background-color: white; border-top: 1px solid #000; border-bottom: 1px solid #000;"></div>
+
                     <!-- TABLEAU PARC MACHINE -->
-                    <table style="width:100%; border-collapse:collapse; border: 2px solid #d35400; font-size:12px; font-family: Arial, sans-serif;">
+                    <table style="width:100%; border-collapse:collapse; border: none; font-size:12px;">
                         <tr>
-                            <td colspan="3" style="background-color: #5b9bd5; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 6px; border: 1px solid #000;">
+                            <td colspan="3" style="background-color: #5b9bd5; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 6px; border-bottom: 1px solid #000;">
                                 PARC MACHINE
                             </td>
                         </tr>
                         <tr>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 10%;">Poste</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 30%;">N° A.R.C (N° de série)</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 60%;">Désignation du Produit</td>
+                            <td style="background-color: #e6e6e6; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; border-left: none; width: 10%;">Poste</td>
+                            <td style="background-color: #e6e6e6; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 30%;">N° A.R.C (N° de série)</td>
+                            <td style="background-color: #e6e6e6; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; border-right: none; width: 60%;">Désignation du Produit</td>
                         </tr>
                         ${window.LM_RAPPORT.machinesData.map((m, idx) => `
                             <tr>
-                                <td style="text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000;">${m.poste || (idx + 1)}</td>
+                                <td style="text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; border-left: none;">${m.poste || (idx + 1)}</td>
                                 <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.arc || '—'} ${m.of ? ' - ' + m.of : ''}</td>
-                                <td style="padding: 6px; border: 1px solid #000;">${m.designation || '—'}</td>
+                                <td style="padding: 6px; border: 1px solid #000; border-right: none;">${m.designation || '—'}</td>
+                            </tr>
+                        `).join('')}
+                        <!-- Remplir de lignes vides pour l'esthétique si parc petit (jusqu'à 6) -->
+                        ${Array.from({length: Math.max(0, 6 - window.LM_RAPPORT.machinesData.length)}).map((_, i) => `
+                            <tr>
+                                <td style="text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; border-left: none; color: transparent;">${window.LM_RAPPORT.machinesData.length + i + 1}</td>
+                                <td style="padding: 6px; border: 1px solid #000;"></td>
+                                <td style="padding: 6px; border: 1px solid #000; border-right: none;"></td>
                             </tr>
                         `).join('')}
                     </table>
                 </div>
 
                 <!-- SIGNATURES (Hors du cadre orange) -->
-                <table style="width:100%; border-collapse:collapse; border: 2px solid #d35400; font-size:13px; font-family: Arial, sans-serif;">
+                <table style="width:100%; border-collapse:collapse; border: 3px solid #d35400; font-size:14px; font-family: Arial, sans-serif;">
                     <tr>
-                        <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #cc4e00; width: 25%;">Technicien sur Site :</td>
-                        <td style="padding: 15px 10px; border: 1px solid #cc4e00; width: 30%;">${techName}</td>
-                        <td rowspan="2" style="padding: 5px; border: 1px solid #cc4e00; width: 45%; text-align: center; vertical-align: middle;">
-                            <img src="${sigClientData || sigTechData}" style="max-height:80px; max-width:100%;">
+                        <td style="font-weight: bold; padding: 15px 15px; border: 1px solid #000; width: 30%;">Technicien sur Site :</td>
+                        <td style="padding: 15px 15px; border: 1px solid #000; width: 30%;">${techName}</td>
+                        <td rowspan="2" style="padding: 5px; border: 1px solid #000; width: 40%; text-align: center; vertical-align: middle; position: relative;">
+                            <!-- TAMPON LEGAL SIMULÉ EN HTML -->
+                            <div style="font-size: 8px; color: #555; text-align: center; font-family: Arial, sans-serif; line-height: 1.3; margin-bottom: 2px;">
+                                ETABLISSEMENTS RAOUL LENOIR<br>
+                                ZI du Béarn - 54400 COSNES-ET-ROMAIN<br>
+                                Tél. : +33 (0)3 82 25 23 00 - Fax : +33 (0)3 82 24 59 19<br>
+                                SAS capital 5 728 967 € - RCS BRIEY<br>
+                                SIRET 383 080 066 00020
+                            </div>
+                            <img src="${sigTechData}" style="max-height:55px; max-width:100%; z-index: 10;">
                         </td>
                     </tr>
                     <tr>
-                        <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #cc4e00;">Date d'expertise :</td>
-                        <td style="padding: 15px 10px; border: 1px solid #cc4e00;">${dateExp}</td>
+                        <td style="font-weight: bold; padding: 15px 15px; border: 1px solid #000;">Date d'expertise :</td>
+                        <td style="padding: 15px 15px; border: 1px solid #000;">${dateExp}</td>
                     </tr>
                 </table>
             `;
