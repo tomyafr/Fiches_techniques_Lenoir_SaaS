@@ -1001,6 +1001,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             f.style.fontWeight = 'bold';
             f.style.borderTop = '2px solid #000';
             f.style.paddingTop = '5px';
+            f.style.paddingBottom = '5px';
+            f.style.pageBreakInside = 'avoid';
             f.innerHTML = `${leg.address}<br>${leg.contact}<br>${leg.siret}`;
             return f;
         }
@@ -1350,9 +1352,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             </div>
                         `;
                         
-                        const forcedBreak = document.createElement('div');
-                        forcedBreak.className = 'html2pdf__page-break';
-                        container.appendChild(forcedBreak);
+                        p.style.pageBreakBefore = 'always';
                         container.appendChild(p);
 
                         continue; // Passe directement à la machine suivante sans fetch html !
@@ -1383,15 +1383,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 return; // Skip empty pages
                             }
 
-                            // Chaque machine commence sur une nouvelle page
+                            // Chaque machine commence obligatoirement sur une nouvelle page
                             if (pIdx === 0) {
-                                const forcedBreak = document.createElement('div');
-                                forcedBreak.className = 'html2pdf__page-break';
-                                container.appendChild(forcedBreak);
+                                p.style.pageBreakBefore = 'always';
                                 p.style.marginTop = '0';
-                            }
-
-                            if (pIdx === 0) {
                                 p.style.paddingTop = '0';
                                 const hDiv = document.createElement('div');
                                 hDiv.style.display = 'flex';
