@@ -1022,7 +1022,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     min-height: 100px; 
                     background: white;
                     color: black;
-                    padding: 10mm 15mm 25mm 15mm;
+                    padding: 0 15mm; /* Margins are now handled by html2pdf natively! */
                     box-sizing: border-box;
                     margin: 0;
                     font-family: Arial, sans-serif;
@@ -1468,7 +1468,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             const endPage = document.createElement('div');
             endPage.className = 'pdf-page';
-            endPage.style.padding = '10mm 15mm 15mm 15mm';
+            endPage.style.padding = '0 15mm';
             endPage.style.position = 'relative';
 
             const originalRapport = document.getElementById('rapportForm');
@@ -1573,7 +1573,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const container = await buildFullPdfContainer();
 
             const opt = {
-                margin: 0,
+                margin: [10, 0, 15, 0], // Top, Left, Bottom, Right
                 filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
@@ -1614,7 +1614,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 const container = await buildFullPdfContainer();
 
                 const opt = {
-                    margin: 0,
+                    margin: [10, 0, 15, 0], // Top, Left, Bottom, Right
                     filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true, logging: false },
