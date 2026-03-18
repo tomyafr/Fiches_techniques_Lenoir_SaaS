@@ -1202,13 +1202,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 30%;">N° A.R.C (N° de série)</td>
                             <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 60%;">Désignation du Produit</td>
                         </tr>
-                        ${window.LM_RAPPORT.machinesData.map((m, idx) => \`
+                        ${window.LM_RAPPORT.machinesData.map((m, idx) => `
                             <tr>
-                                <td style="text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000;">\${m.poste || (idx + 1)}</td>
-                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">\${m.arc || '—'} \${m.of ? ' - ' + m.of : ''}</td>
-                                <td style="padding: 6px; border: 1px solid #000;">\${m.designation || '—'}</td>
+                                <td style="text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000;">${m.poste || (idx + 1)}</td>
+                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.arc || '—'} ${m.of ? ' - ' + m.of : ''}</td>
+                                <td style="padding: 6px; border: 1px solid #000;">${m.designation || '—'}</td>
                             </tr>
-                        \`).join('')}
+                        `).join('')}
                     </table>
                 </div>
 
