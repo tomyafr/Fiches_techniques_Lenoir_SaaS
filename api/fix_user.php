@@ -2,15 +2,10 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-$dbFile = __DIR__ . '/database.db';
-
-if (!file_exists($dbFile)) {
-    die("La base de données n'existe pas ($dbFile).");
-}
+require_once __DIR__ . '/../includes/config.php';
 
 try {
-    $db = new PDO('sqlite:' . $dbFile);
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $db = getDB();
     
     // On met à jour Pierre LOTITO en Soufyane SALAH pour garder l'historique
     $stmt = $db->prepare("UPDATE users SET nom = 'SALAH', prenom = 'Soufyane' WHERE (nom = 'LOTITO' AND prenom = 'Pierre') OR nom = 'LOTITO'");
