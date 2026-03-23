@@ -6,6 +6,11 @@ $db = getDB();
 $userId = $_SESSION['user_id'];
 $id = $_GET['id'] ?? null;
 
+// Self-healing DB migration to add signature_base64
+try {
+    $db->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS signature_base64 TEXT");
+} catch (Exception $e) { }
+
 if (!$id) {
     header('Location: technicien.php');
     exit;
@@ -48,11 +53,12 @@ $machines = array_filter($allMachines, function($m) {
 });
 $machines = array_values($machines); // Re-index
 
-// Fetch technicien name
-$stmtT = $db->prepare('SELECT prenom, nom FROM users WHERE id = ?');
+// Fetch technicien name and signature
+$stmtT = $db->prepare('SELECT prenom, nom, signature_base64 FROM users WHERE id = ?');
 $stmtT->execute([$intervention['technicien_id']]);
 $tech = $stmtT->fetch();
 $techName = ($tech['prenom'] ?? '') . ' ' . ($tech['nom'] ?? '');
+$techSignatureBase64 = $tech['signature_base64'] ?? '';
 
 // Handle form POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -86,6 +92,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
             $sigClient = $_POST['sigClient'] ?? null;
             $sigTech = $_POST['sigTech'] ?? null;
+
+            // Save new technician signature permanently if present
+            if (!empty($sigTech)) {
+                try {
+                    $db->prepare('UPDATE users SET signature_base64 = ? WHERE id = ?')
+                       ->execute([$sigTech, $userId]);
+                } catch (Exception $e) {}
+            }
 
             // Update client info
             $db->prepare('UPDATE clients SET adresse = ?, code_postal = ?, ville = ?, pays = ?,
@@ -550,7 +564,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             nbMachinesFilled: <?= $nbMachinesFilled ?>,
                             nbMachinesEmpty: <?= $nbMachinesEmpty ?>
                         },
-                        sigTech: <?= json_encode($intervention['signature_technicien'] ?? '') ?>,
+                        sigTech: <?= json_encode($intervention['signature_technicien'] ?: $techSignatureBase64) ?>,
                         sigClient: <?= json_encode($intervention['signature_client'] ?? '') ?>,
                         pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>, 
                         emptyFichesOption: 'exclude',
@@ -753,7 +767,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <div class="form-group" style="margin-bottom: 0.5rem;">
                         <input type="text" name="nom_signataire" class="input"
                             placeholder="NOM Prénom du signataire (ex: DUPONT Jean)"
-                            value="<?= htmlspecialchars($intervention['nom_signataire_client'] ?? '') ?>" required>
+                            value="<?= htmlspecialchars($intervention['nom_signataire_client'] ?: ($intervention['contact_nom'] ?? '')) ?>" required>
                     </div>
                     <canvas id="canvasClient" width="600" height="200"></canvas>
                     <input type="hidden" name="sigClient" id="sigClientInput">
@@ -1074,7 +1088,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .pastille-group label.selected.p-nc { background: #dc3545 !important; border-color: #bd2130 !important; opacity: 1; }
                 .pastille-group label.selected.p-nr { background: #8b0000 !important; border-color: #5a0000 !important; opacity: 1; }
                 /* Non selected labels are subtle empty circles */
-                .pastille-group label:not(.selected) { opacity: 0.3; border: 1px solid #ccc !important; }
+                .pastille-group label:not(.selected) { opacity: 0.8; border: 1px solid #777 !important; background: transparent !important;}
 
                 .pdf-input { border: none; border-bottom: 1px dashed #000; background: transparent; font-size: 13px; font-family: Arial; padding: 2px; width: 100%; color: black; outline:none; }
                 .pdf-textarea-rendered { 
@@ -1111,6 +1125,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const dateExp = window.LM_RAPPORT.dateInt;
             const sigTechData = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
             const sigClientData = window.LM_RAPPORT.sigClient || document.getElementById('canvasClient')?.toDataURL() || '';
+            
+            const stampHTML = \`
+                <div style="color: #2b4c80; font-family: Arial, sans-serif; font-size: 9px; line-height: 1.2; font-weight: bold; margin-bottom: 5px;">
+                    \${window.LM_RAPPORT.legal.address}<br>
+                    \${window.LM_RAPPORT.legal.contact}<br>
+                    \${window.LM_RAPPORT.legal.siret}
+                </div>
+            \`;
 
             // Generate HTML lines for machines
             const machinesTrs = window.LM_RAPPORT.machinesData.map(m => `
@@ -1213,17 +1235,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
 
                 <!-- SIGNATURES (Hors du cadre orange) -->
-                <table style="width:100%; border-collapse:collapse; border: 2px solid #d35400; font-size:13px; font-family: Arial, sans-serif;">
+                <table style="width:100%; border-collapse:collapse; border: 3px solid #d35400; font-size:13px; font-family: Arial, sans-serif;">
                     <tr>
-                        <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #cc4e00; width: 25%;">Technicien sur Site :</td>
-                        <td style="padding: 15px 10px; border: 1px solid #cc4e00; width: 30%;">${techName}</td>
-                        <td rowspan="2" style="padding: 5px; border: 1px solid #cc4e00; width: 45%; text-align: center; vertical-align: middle;">
-                            <img src="${sigTechData}" style="max-height:80px; max-width:100%;">
+                        <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #000; width: 25%;">Technicien sur Site :</td>
+                        <td style="padding: 15px 10px; border: 1px solid #000; width: 30%; font-weight: bold;">${techName}</td>
+                        <td rowspan="2" style="padding: 15px; border: 1px solid #000; width: 45%; text-align: center; vertical-align: middle;">
+                            ${stampHTML}
+                            <img src="${sigTechData}" style="max-height:90px; max-width:100%; object-fit: contain;">
+                            <div style="margin-top:5px; font-size: 11px; color:#2b4c80; font-style:italic;">${techName}</div>
                         </td>
                     </tr>
                     <tr>
-                        <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #cc4e00;">Date d'expertise :</td>
-                        <td style="padding: 15px 10px; border: 1px solid #cc4e00;">${dateExp}</td>
+                        <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #000;">Date d'expertise :</td>
+                        <td style="padding: 15px 10px; border: 1px solid #000; font-weight: bold;">${dateExp}</td>
                     </tr>
                 </table>
             `;

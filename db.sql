@@ -22,6 +22,7 @@ CREATE TABLE users (
     actif BOOLEAN NOT NULL DEFAULT TRUE,
     must_change_password BOOLEAN NOT NULL DEFAULT TRUE,
     avatar_base64 TEXT,
+    signature_base64 TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
