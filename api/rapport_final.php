@@ -1912,7 +1912,52 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 if (label) label.textContent = 'Réessayer l\'envoi';
             }
         }
-    </script>
-</body>
 
+        // ══════════════════════════════════════════════════════════════════
+        // GESTION DES SIGNATURES
+        // ══════════════════════════════════════════════════════════════════
+        let padClient, padTech;
+
+        function resizeCanvas(canvas) {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.style.height = "200px";
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = 200 * ratio; 
+            canvas.getContext("2d").scale(ratio, ratio);
+        }
+
+        function initSignatures() {
+            const canvasC = document.getElementById('canvasClient');
+            const canvasT = document.getElementById('canvasTech');
+            
+            if (!window.SignaturePad) {
+                console.error("SignaturePad library not loaded");
+                return;
+            }
+
+            const dpr = Math.max(window.devicePixelRatio || 1, 1);
+
+            if (canvasT) {
+                resizeCanvas(canvasT);
+                padTech = new SignaturePad(canvasT, { penColor: "black" });
+                if (window.LM_RAPPORT && window.LM_RAPPORT.sigTech && window.LM_RAPPORT.sigTech.startsWith('data:image')) {
+                    padTech.fromDataURL(window.LM_RAPPORT.sigTech, { ratio: dpr, width: canvasT.width / dpr, height: canvasT.height / dpr });
+                }
+            }
+
+            if (canvasC) {
+                resizeCanvas(canvasC);
+                padClient = new SignaturePad(canvasC, { penColor: "blue" });
+                if (window.LM_RAPPORT && window.LM_RAPPORT.sigClient && window.LM_RAPPORT.sigClient.startsWith('data:image')) {
+                    padClient.fromDataURL(window.LM_RAPPORT.sigClient, { ratio: dpr, width: canvasC.width / dpr, height: canvasC.height / dpr });
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initSignatures();
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js" onload="initSignatures()"></script>
+</body>
 </html>
