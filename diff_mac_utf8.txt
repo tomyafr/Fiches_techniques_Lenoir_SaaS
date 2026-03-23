@@ -1,0 +1,136 @@
+﻿diff --git a/api/machine_edit.php b/api/machine_edit.php
+index 91ee4ce..437284c 100644
+--- a/api/machine_edit.php
++++ b/api/machine_edit.php
+@@ -211,9 +211,11 @@ foreach ($recoFreq as $rfk => $rfv) {
+ 
+         /* === PASTILLE SYSTEM === */
+         .pastille-group {
+-            display: inline-flex;
+-            gap: 4px;
++            display: flex;
++            gap: 6px;
+             align-items: center;
++            justify-content: center;
++            width: 100%;
+             flex-shrink: 0;
+         }
+ 
+@@ -516,7 +518,7 @@ foreach ($recoFreq as $rfk => $rfv) {
+             <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:15px; color:#000;">
+                 <tr>
+                     <td style="width:40%; border-right:1px solid #000; padding:15px; vertical-align:bottom;">
+-                        <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC"
++                        <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC" class="no-print-pdf"
+                             style="max-width:220px; display:block; margin-bottom:30px;">
+                         <div style="text-align:right; font-weight:bold; color:#1B4F72; font-size:16px;">
+                             Poste<input type="text" name="mesures[poste]"
+@@ -1628,60 +1630,52 @@ foreach ($recoFreq as $rfk => $rfv) {
+             document.getElementById('cameraInput').click();
+         }
+ 
++        // Impl├®mentation de Compressor.js (remplace l'ancienne compression Canvas tr├¿s lente et bugg├®e sur iOS)
+         document.getElementById('cameraInput').addEventListener('change', function (e) {
+             var file = e.target.files[0];
+             if (!file) return;
+ 
+             // --- BUG-013: Validation de la taille de l'image ---
+-            // On exige > 100 Ko pour garantir une photo terrain r├®aliste
+             if (file.size < 100 * 1024) {
+                 alert("ÔØî Image rejet├®e : Le fichier est trop petit (" + Math.round(file.size/1024) + " Ko). Veuillez prendre une photo nette de l'├®quipement (min. 100 Ko).");
+                 e.target.value = '';
+                 return;
+             }
+ 
+-            compressImage(file, 1200, 0.8, function (base64) {
+-                if (!allPhotos[currentPhotoKey]) allPhotos[currentPhotoKey] = [];
+-                
+-                var caption = prompt('Commentaire photo (optionnel) :', '') || '';
+-                
+-                // --- BUG-013: Validation de la l├®gende ---
+-                const forbiddenWords = ['nul', 'rien', 'sans', 'na', 'test', 'lorem'];
+-                if (forbiddenWords.includes(caption.toLowerCase().trim())) {
+-                    alert("ÔÜá´©Å L├®gende non-professionnelle d├®tect├®e. La photo sera ajout├®e sans l├®gende.");
+-                    caption = '';
+-                }
++            new Compressor(file, {
++                quality: 0.8,
++                maxWidth: 1200,
++                checkOrientation: true, // Fix iOS rotation bugs
++                success(result) {
++                    var reader = new FileReader();
++                    reader.onloadend = function () {
++                        var base64 = reader.result;
++                        if (!allPhotos[currentPhotoKey]) allPhotos[currentPhotoKey] = [];
++                        
++                        var caption = prompt('Commentaire photo (optionnel) :', '') || '';
++                        
++                        const forbiddenWords = ['nul', 'rien', 'sans', 'na', 'test', 'lorem'];
++                        if (forbiddenWords.includes(caption.toLowerCase().trim())) {
++                            alert("ÔÜá´©Å L├®gende non-professionnelle d├®tect├®e. La photo sera ajout├®e sans l├®gende.");
++                            caption = '';
++                        }
+ 
+-                allPhotos[currentPhotoKey].push({ data: base64, caption: caption });
+-                syncPhotos();
+-                renderThumbsForKey(currentPhotoKey);
+-                renderAnnexes();
++                        allPhotos[currentPhotoKey].push({ data: base64, caption: caption });
++                        syncPhotos();
++                        renderThumbsForKey(currentPhotoKey);
++                        renderAnnexes();
++                    };
++                    reader.readAsDataURL(result);
++                },
++                error(err) {
++                    console.error("Erreur de compression :", err.message);
++                    alert("Erreur lors de la compression de la photo.");
++                }
+             });
+             // Reset so same file can be re-selected
+             e.target.value = '';
+         });
+ 
+-        function compressImage(file, maxWidth, quality, callback) {
+-            var reader = new FileReader();
+-            reader.onload = function (ev) {
+-                var img = new Image();
+-                img.onload = function () {
+-                    var w = img.width, h = img.height;
+-                    if (w > maxWidth) {
+-                        h = Math.round(h * maxWidth / w);
+-                        w = maxWidth;
+-                    }
+-                    var canvas = document.createElement('canvas');
+-                    canvas.width = w;
+-                    canvas.height = h;
+-                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+-                    callback(canvas.toDataURL('image/jpeg', quality));
+-                };
+-                img.src = ev.target.result;
+-            };
+-            reader.readAsDataURL(file);
+-        }
+-
+         function deletePhoto(key, index) {
+             if (!confirm('Supprimer cette photo ?')) return;
+             allPhotos[key].splice(index, 1);
+@@ -1821,7 +1815,8 @@ foreach ($recoFreq as $rfk => $rfv) {
+                 span.textContent = 'ÔÅ▒ ' + formatted2;
+                 if (realInput) realInput.value = formatted2;
+             } else {
+-                span.textContent = '';
++                span.textContent = 'ÔÇö';
++                if (realInput) realInput.value = 'ÔÇö';
+             }
+         }
+ 
+@@ -1877,6 +1872,7 @@ foreach ($recoFreq as $rfk => $rfv) {
+             });
+         });
+     </script>
++    <script src="https://cdnjs.cloudflare.com/ajax/libs/compressorjs/1.2.1/compressor.min.js" integrity="sha512-MgYeYFj8R3S6rvZ80DbnAxgO45O58XF1xZ1a1gD1jS+p1t3H31N4m3qj19/2N/0Q3E44Bf9+g2B//M+n1R5g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+ </body>
+ 
+ </html>
+\ No newline at end of file
