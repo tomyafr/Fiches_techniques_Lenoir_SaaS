@@ -1815,7 +1815,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                 span.textContent = '⏱ ' + formatted2;
                 if (realInput) realInput.value = formatted2;
             } else {
-                span.textContent = '';
+                span.textContent = '—';
+                if (realInput) realInput.value = '';
             }
         }
 
