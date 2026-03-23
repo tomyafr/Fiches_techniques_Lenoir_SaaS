@@ -1662,26 +1662,22 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone'] }
             };
 
-            const worker = html2pdf().set(opt).from(container);
-            
-            await worker.toPdf().get('pdf').then(function (pdf) {
-                const totalPages = pdf.internal.getNumberOfPages();
-                for (let i = 1; i <= totalPages; i++) {
-                    pdf.setPage(i);
-                    pdf.setFont('helvetica', 'normal');
-                    pdf.setFontSize(9);
-                    pdf.setTextColor(50, 50, 50);
-                    pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
-                }
-            });
-
-            const pdfBlob = await worker.outputPdf('blob');
-
             return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.onerror = reject;
-                reader.readAsDataURL(pdfBlob);
+                html2pdf().set(opt).from(container).toPdf().get('pdf').then(function (pdf) {
+                    const totalPages = pdf.internal.getNumberOfPages();
+                    for (let i = 1; i <= totalPages; i++) {
+                        pdf.setPage(i);
+                        pdf.setFont('helvetica', 'normal');
+                        pdf.setFontSize(9);
+                        pdf.setTextColor(50, 50, 50);
+                        pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
+                    }
+                }).outputPdf('blob').then(function(pdfBlob) {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(pdfBlob);
+                }).catch(reject);
             });
         }
 
@@ -1703,9 +1699,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone'] }
                 };
 
-                const worker = html2pdf().set(opt).from(container);
-                
-                await worker.toPdf().get('pdf').then(function (pdf) {
+                await html2pdf().set(opt).from(container).toPdf().get('pdf').then(function (pdf) {
                     const totalPages = pdf.internal.getNumberOfPages();
                     for (let i = 1; i <= totalPages; i++) {
                         pdf.setPage(i);
@@ -1714,9 +1708,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         pdf.setTextColor(50, 50, 50);
                         pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
                     }
-                });
-
-                await worker.save();
+                }).save();
             } catch (e) {
                 alert('Erreur génération PDF : ' + e.message);
             } finally {
@@ -1940,7 +1932,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             if (canvasT) {
                 resizeCanvas(canvasT);
                 padTech = new SignaturePad(canvasT, { penColor: "black" });
-                if (window.LM_RAPPORT && window.LM_RAPPORT.sigTech && window.LM_RAPPORT.sigTech.startsWith('data:image')) {
+                if (window.LM_RAPPORT && window.LM_RAPPORT.sigTech && typeof window.LM_RAPPORT.sigTech === 'string' && window.LM_RAPPORT.sigTech.startsWith('data:image')) {
                     padTech.fromDataURL(window.LM_RAPPORT.sigTech, { ratio: dpr, width: canvasT.width / dpr, height: canvasT.height / dpr });
                 }
             }
@@ -1948,7 +1940,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             if (canvasC) {
                 resizeCanvas(canvasC);
                 padClient = new SignaturePad(canvasC, { penColor: "blue" });
-                if (window.LM_RAPPORT && window.LM_RAPPORT.sigClient && window.LM_RAPPORT.sigClient.startsWith('data:image')) {
+                if (window.LM_RAPPORT && window.LM_RAPPORT.sigClient && typeof window.LM_RAPPORT.sigClient === 'string' && window.LM_RAPPORT.sigClient.startsWith('data:image')) {
                     padClient.fromDataURL(window.LM_RAPPORT.sigClient, { ratio: dpr, width: canvasC.width / dpr, height: canvasC.height / dpr });
                 }
             }
