@@ -915,14 +915,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 return false;
             }
 
-            // --- BUG-008: Contrôle de complétude des fiches ---
-            const machinesData = window.LM_RAPPORT.machinesData;
-            for (let m of machinesData) {
-                if (m.points_count === 0) {
-                    alert('❌ Complétude insuffisante : La fiche machine "' + m.designation + '" est entièrement vide (0 point de contrôle rempli). Veuillez la compléter avant de finaliser.');
-                    return false;
-                }
-            }
+            // --- BUG-008: Contrôle de complétude des fiches (Désactivé suite à la demande du client) ---
+            // Les machines vides ("Non contrôlées") sont désormais autorisées lors de la finalisation.
 
             const contactNom = document.getElementById('contact_nom')?.value.trim() || '';
             if (!contactNom) {
@@ -1967,10 +1961,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            initSignatures();
-        });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js" onload="initSignatures()"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 </body>
 </html>
