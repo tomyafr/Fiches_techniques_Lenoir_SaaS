@@ -1499,19 +1499,16 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 }
             }
 
-            // Le saut de page est directement sur endPage, pas sur un div vide séparé
-
             // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC + SIGNATURES + OBSERVATIONS) ---
 
             const endPage = document.createElement('div');
-            endPage.className = 'pdf-page';
-            endPage.style.padding = '0 15mm';
+            // Finis les bugs hérités de la classe pdf-page ! On recrée un bloc pur A4 pour la dernière page.
+            endPage.style.width = '21cm';
+            endPage.style.padding = '20px 15mm';
+            endPage.style.boxSizing = 'border-box';
+            endPage.style.background = 'white';
             endPage.style.position = 'relative';
-            endPage.style.minHeight = 'auto'; // Retire le 29.7cm forcé du CSS global
-            endPage.style.margin = '0'; // Retire la grosse marge du CSS global
-            endPage.style.boxShadow = 'none'; // Pareil
-            // Pas de page-break forcé ici — sinon ça crée une page blanche
-            // quand la dernière fiche se termine avec de l'espace vide
+            endPage.style.pageBreakBefore = 'always'; // L'utilisateur veut la page de fin seule sur UNE page !
 
             const originalRapport = document.getElementById('rapportForm');
             const souhaitRapport = originalRapport.querySelector('[name="souhait_rapport_unique"]').checked;
@@ -1619,22 +1616,29 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             `;
             container.appendChild(endPage);
 
+            // CHANGEMENT MAJEUR CONTRE LA COUPURE DE CANVAS : border-collapse empêche html2pdf de calculer la hauteur des TR
+            // On le force en "separate" pour donner à html2pdf des hauteurs de TR nettes et mesurables sans overlap.
+            container.querySelectorAll('table.pdf-table, table.controles').forEach(tbl => {
+                tbl.style.borderCollapse = 'separate';
+                tbl.style.borderSpacing = '0';
+            });
+
             // Blindage ultime anti-coupure de tableaux
             // 1) Chaque ligne <tr> ne peut pas être coupée
             container.querySelectorAll('tr').forEach(tr => {
                 tr.style.pageBreakInside = 'avoid';
                 tr.classList.add('avoid-break');
             });
-            // 2) Les petits tableaux (< 15 lignes) ne peuvent pas être coupés du tout
+            // 2) Les sections pdf-section ne sont pas coupées
+            container.querySelectorAll('.pdf-section').forEach(sec => {
+                sec.style.pageBreakInside = 'avoid';
+            });
+            // 3) Les petits tableaux (< 15 lignes) ne peuvent pas être coupés du tout
             container.querySelectorAll('table').forEach(tbl => {
                 if (tbl.querySelectorAll('tr').length <= 15) {
                     tbl.style.pageBreakInside = 'avoid';
                     tbl.classList.add('avoid-break');
                 }
-            });
-            // 3) Les sections pdf-section ne sont pas coupées
-            container.querySelectorAll('.pdf-section').forEach(sec => {
-                sec.style.pageBreakInside = 'avoid';
             });
 
             await waitForImages(container);
