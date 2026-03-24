@@ -1507,6 +1507,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             endPage.className = 'pdf-page';
             endPage.style.padding = '0 15mm';
             endPage.style.position = 'relative';
+            endPage.style.minHeight = 'auto'; // Retire le 29.7cm forcé du CSS global
+            endPage.style.margin = '0'; // Retire la grosse marge du CSS global
+            endPage.style.boxShadow = 'none'; // Pareil
             // Pas de page-break forcé ici — sinon ça crée une page blanche
             // quand la dernière fiche se termine avec de l'espace vide
 
@@ -1652,7 +1655,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.avoid-break'] }
+                pagebreak: { mode: ['css'], avoid: ['tr', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.avoid-break'] }
             };
 
             return new Promise((resolve, reject) => {
