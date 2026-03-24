@@ -1477,43 +1477,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 ta.remove();
                             });
                             
-                            // BUGFIX PDF: Séparateur de table (tbody)
-                            // html2pdf coupe en deux les <tr> sauvagement. 
-                            // La seule vraie solution est de wrapper chaque ligne logique dans son propre <tbody> !
-                            p.querySelectorAll('table.pdf-table, table.controles').forEach(table => {
-                                const rows = Array.from(table.querySelectorAll('tr'));
-                                if (!rows.length) return;
-                                
-                                let currentTbody = document.createElement('tbody');
-                                currentTbody.style.pageBreakInside = 'avoid';
-                                table.appendChild(currentTbody);
-                                
-                                let pendingSpans = 0;
-                                rows.forEach(row => {
-                                    let maxSpan = 1;
-                                    row.querySelectorAll('th, td').forEach(c => {
-                                        if (c.rowSpan > maxSpan) maxSpan = c.rowSpan;
-                                    });
-                                    if (maxSpan - 1 > pendingSpans) pendingSpans = maxSpan - 1;
-                                    
-                                    currentTbody.appendChild(row); // Déplace le tr dans le nouveau tbody
-                                    
-                                    if (pendingSpans > 0) {
-                                        pendingSpans--;
-                                    } else {
-                                        currentTbody = document.createElement('tbody');
-                                        currentTbody.style.pageBreakInside = 'avoid';
-                                        table.appendChild(currentTbody);
-                                    }
-                                });
-                                
-                                // Supprimer les tbody/thead originaux devenus vides
-                                Array.from(table.children).forEach(child => {
-                                    if ((child.tagName === 'TBODY' || child.tagName === 'THEAD') && child.children.length === 0) {
-                                        child.remove();
-                                    }
-                                });
-                            });
+                            // L'ancienne logique `tbody` complexe a été retirée car elle cassait les bordures 
+                            // et gelait la génération de html2canvas sur iOS/Safari.
                             
                             p.style.position = 'relative';
                             p.style.paddingBottom = '30mm';
@@ -1654,6 +1619,24 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             container.querySelectorAll('table.pdf-table, table.controles').forEach(tbl => {
                 tbl.style.borderCollapse = 'separate';
                 tbl.style.borderSpacing = '0';
+            });
+
+            // Blindage ultime anti-coupure de tableaux
+            // 1) Chaque ligne <tr> ne peut pas être coupée
+            container.querySelectorAll('tr').forEach(tr => {
+                tr.style.pageBreakInside = 'avoid';
+                tr.classList.add('avoid-break');
+            });
+            // 2) Les sections pdf-section ne sont pas coupées
+            container.querySelectorAll('.pdf-section').forEach(sec => {
+                sec.style.pageBreakInside = 'avoid';
+            });
+            // 3) Les petits tableaux (< 15 lignes) ne peuvent pas être coupés du tout
+            container.querySelectorAll('table').forEach(tbl => {
+                if (tbl.querySelectorAll('tr').length <= 15) {
+                    tbl.style.pageBreakInside = 'avoid';
+                    tbl.classList.add('avoid-break');
+                }
             });
 
             await waitForImages(container);
