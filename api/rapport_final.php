@@ -495,25 +495,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <?= htmlspecialchars($intervention['numero_arc']) ?> a été clôturée.
                     </p>
 
-                    <?php if ($nbMachinesEmpty > 0): ?>
-                    <div style="background: rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: left;">
-                        <div style="font-weight: 700; color: #f59e0b; margin-bottom: 0.5rem;">⚠️ <?= $nbMachinesEmpty ?> fiche(s) non remplie(s) détectée(s)</div>
-                        <p style="font-size: 0.85rem; margin-bottom: 0.8rem; color: var(--text-dim);">Veuillez choisir comment inclure ces machines vides dans le rapport final :</p>
-                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; cursor: pointer; color: var(--text);">
-                            <input type="radio" name="empty_fiches_option" value="include" checked onclick="window.LM_RAPPORT.emptyFichesOption='include'">
-                            Les inclure entièrement (Toutes les pages de la fiche vierge)
-                        </label>
-                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; cursor: pointer; color: var(--text);">
-                            <input type="radio" name="empty_fiches_option" value="condensed" onclick="window.LM_RAPPORT.emptyFichesOption='condensed'">
-                            Les inclure en version condensée (1 page "Non contrôlé")
-                        </label>
-                        <label style="display: block; font-size: 0.85rem; cursor: pointer; color: var(--text);">
-                            <input type="radio" name="empty_fiches_option" value="exclude" onclick="window.LM_RAPPORT.emptyFichesOption='exclude'">
-                            Exclure totalement les fiches vides du PDF
-                        </label>
-                    </div>
-                    <?php endif; ?>
-
                     <!-- Toast email (injecté par JS) -->
                     <div id="emailToast"
                         style="display:none; margin-bottom:1rem; padding:0.75rem 1rem; border-radius:8px; font-size:0.85rem; font-weight:600;">
@@ -1301,7 +1282,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             synthPreambulePage.innerHTML = `
                 <div style="padding-top: 10px;">
                     <div style="border: 2px solid #000; padding: 20px; color: #000; background: #fff; margin-bottom: 30px; page-break-inside: avoid;">
-                        <h2 style="text-align: center; margin-top: 0; margin-bottom: 20px; text-decoration: underline; font-size: 16px; text-transform: uppercase; color: #000; font-weight: 900;">SYNTHÈSE DE L'INTERVENTION</h2>
+                        <h2 style="text-align: center; margin-top: 0; margin-bottom: 20px; text-decoration: none; font-size: 16px; text-transform: uppercase; color: #000; font-weight: 900;"><span style="border-bottom: 2px solid #000; padding-bottom: 2px;">SYNTHÈSE DE L'INTERVENTION</span></h2>
                         
                         <div style="margin-bottom: 15px; font-size: 13px; line-height: 1.6; color: #000;">
                             <div><strong>Technicien :</strong> ${s.tech}</div>
@@ -1456,9 +1437,18 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 p.insertBefore(hDiv, p.firstChild);
                             }
 
-                            p.querySelectorAll('input[type="radio"]:checked').forEach(r => {
+                            p.querySelectorAll('input[type="radio"]').forEach(r => {
                                 const lbl = r.closest('label');
-                                if (lbl) lbl.classList.add('selected');
+                                if (lbl) {
+                                    if (r.checked) lbl.classList.add('selected');
+                                } else {
+                                    // For plain naked radio inputs (like in RAPPEL DES FRÉQUENCES blue table)
+                                    // that html2canvas refuses to paint correctly: Replace them inline!
+                                    const isChecked = r.checked;
+                                    r.outerHTML = `<div style="display:inline-block; width:14px; height:14px; border-radius:50%; border:1px solid #777; position:relative; vertical-align:middle; background:transparent;">
+                                        ${isChecked ? '<div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:6px; height:6px; background:#000; border-radius:50%;"></div>' : ''}
+                                    </div>`;
+                                }
                             });
 
                             p.querySelectorAll('input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"]):not([type="file"])').forEach(inp => {
