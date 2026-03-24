@@ -1470,10 +1470,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 }
             }
 
-            // Page de fin : On ne force plus systématiquement le saut de page
-            // si le contenu précédent est court. On laisse html2pdf gérer ou on met un petit espacement.
+            // L'utilisateur exige formellement un saut de page propre pour la dernière page, afin qu'elle garantisse la présence de tous les éléments sans scission sur 2 pages
             const pbFin = document.createElement('div');
-            pbFin.style.height = '20px';
+            pbFin.style.pageBreakBefore = 'always';
             container.appendChild(pbFin);
 
             // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC + SIGNATURES + OBSERVATIONS) ---
