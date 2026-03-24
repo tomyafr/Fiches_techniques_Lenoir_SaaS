@@ -500,11 +500,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <div style="font-weight: 700; color: #f59e0b; margin-bottom: 0.5rem;">⚠️ <?= $nbMachinesEmpty ?> fiche(s) non remplie(s) détectée(s)</div>
                         <p style="font-size: 0.85rem; margin-bottom: 0.8rem; color: var(--text-dim);">Veuillez choisir comment inclure ces machines vides dans le rapport final :</p>
                         <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; cursor: pointer; color: var(--text);">
-                            <input type="radio" name="empty_fiches_option" value="exclude" checked onclick="window.LM_RAPPORT.emptyFichesOption='exclude'">
+                            <input type="radio" name="empty_fiches_option" value="exclude" onclick="window.LM_RAPPORT.emptyFichesOption='exclude'">
                             Exclure totalement les fiches vides du PDF
                         </label>
                         <label style="display: block; font-size: 0.85rem; cursor: pointer; color: var(--text);">
-                            <input type="radio" name="empty_fiches_option" value="condensed" onclick="window.LM_RAPPORT.emptyFichesOption='condensed'">
+                            <input type="radio" name="empty_fiches_option" value="condensed" checked onclick="window.LM_RAPPORT.emptyFichesOption='condensed'">
                             Les inclure en version condensée (1 page "Non contrôlé")
                         </label>
                     </div>
@@ -567,7 +567,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         sigTech: <?= json_encode($intervention['signature_technicien'] ?: $techSignatureBase64) ?>,
                         sigClient: <?= json_encode($intervention['signature_client'] ?? '') ?>,
                         pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>, 
-                        emptyFichesOption: 'include',
+                        emptyFichesOption: 'condensed',
                         emptyMachinesIds: <?= json_encode($emptyMachinesIds) ?>,
                         machinesIds: [<?= implode(',', array_column($machines, 'id')) ?>],
                         machinesData: <?= json_encode(array_values(array_map(function($m) use ($intervention) {
@@ -998,26 +998,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             return new Promise(r => setTimeout(r, 200));
         }
 
-        // helper: create footer
-        function createPdfFooter() {
-            const f = document.createElement('div');
-            const leg = window.LM_RAPPORT.legal;
-            f.style.position = 'absolute';
-            f.style.bottom = '0';
-            f.style.left = '0';
-            f.style.right = '0';
-            f.style.width = '100%';
-            f.style.textAlign = 'center';
-            f.style.fontSize = '9px';
-            f.style.fontWeight = 'bold';
-            f.style.borderTop = '2px solid #000';
-            f.style.paddingTop = '5px';
-            f.style.paddingBottom = '5px';
-            f.style.pageBreakInside = 'avoid';
-            f.style.boxSizing = 'border-box';
-            f.innerHTML = `${leg.address}<br>${leg.contact}<br>${leg.siret}`;
-            return f;
-        }
+        // Footer is handled natively by jsPDF pdf.text() — see genererPDFBase64 and telechargerPDF.
 
         async function buildFullPdfContainer() {
             const container = document.createElement('div');
@@ -1247,9 +1228,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </tr>
                 </table>
             `;
-            rapportCloneWrapper.style.position = 'relative';
-            rapportCloneWrapper.style.paddingBottom = '40px';
-            rapportCloneWrapper.appendChild(createPdfFooter());
             container.appendChild(rapportCloneWrapper);
 
             // --- 1.2 PAGE SYNTHÈSE + PRÉAMBULE (FUSIONNÉS POUR ÉCONOMISER DES PAGES) ---
@@ -1330,9 +1308,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
                 </div>
             `;
-            synthPreambulePage.style.position = 'relative';
-            synthPreambulePage.style.paddingBottom = '40px';
-            synthPreambulePage.appendChild(createPdfFooter());
             container.appendChild(synthPreambulePage);
 
             // --- 2. FETCH & APPEND MACHINES ---
@@ -1488,10 +1463,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             // L'ancienne logique `tbody` complexe a été retirée car elle cassait les bordures 
                             // et gelait la génération de html2canvas sur iOS/Safari.
                             
-                            p.style.position = 'relative';
-                            p.style.paddingBottom = '40px'; // Juste assez pour le footer absolu
                             p.style.minHeight = 'auto';
-                            p.appendChild(createPdfFooter());
                             container.appendChild(p);
                         });
                     } catch (err) {
@@ -1619,9 +1591,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
                 </div>
             `;
-            endPage.style.position = 'relative';
-            endPage.style.paddingBottom = '40px';
-            endPage.appendChild(createPdfFooter());
             container.appendChild(endPage);
 
             // CHANGEMENT MAJEUR CONTRE LA COUPURE DE CANVAS : border-collapse empêche html2pdf de calculer la hauteur des TR
@@ -1677,10 +1646,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         const totalPages = pdf.internal.getNumberOfPages();
                         for (let i = 1; i <= totalPages; i++) {
                             pdf.setPage(i);
+                            // Page number
                             pdf.setFont('helvetica', 'normal');
                             pdf.setFontSize(9);
                             pdf.setTextColor(50, 50, 50);
-                            pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
+                            pdf.text('Page ' + i + ' / ' + totalPages, 105, 282, { align: 'center' });
+                            // Legal footer
+                            pdf.setFontSize(6);
+                            pdf.setTextColor(0, 0, 0);
+                            pdf.setFont('helvetica', 'bold');
+                            const leg = window.LM_RAPPORT.legal;
+                            pdf.text(leg.address, 105, 286, { align: 'center' });
+                            pdf.text(leg.contact, 105, 289, { align: 'center' });
+                            pdf.text(leg.siret, 105, 292, { align: 'center' });
                         }
                     });
                     const pdfBlob = await worker.outputPdf('blob');
@@ -1717,10 +1695,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     const totalPages = pdf.internal.getNumberOfPages();
                     for (let i = 1; i <= totalPages; i++) {
                         pdf.setPage(i);
+                        // Page number
                         pdf.setFont('helvetica', 'normal');
                         pdf.setFontSize(9);
                         pdf.setTextColor(50, 50, 50);
-                        pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
+                        pdf.text('Page ' + i + ' / ' + totalPages, 105, 282, { align: 'center' });
+                        // Legal footer
+                        pdf.setFontSize(6);
+                        pdf.setTextColor(0, 0, 0);
+                        pdf.setFont('helvetica', 'bold');
+                        const leg = window.LM_RAPPORT.legal;
+                        pdf.text(leg.address, 105, 286, { align: 'center' });
+                        pdf.text(leg.contact, 105, 289, { align: 'center' });
+                        pdf.text(leg.siret, 105, 292, { align: 'center' });
                     }
                 });
                 await worker.save();
