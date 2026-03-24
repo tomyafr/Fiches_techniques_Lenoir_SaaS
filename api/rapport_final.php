@@ -1509,11 +1509,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 }
             }
 
-            // Page de fin : On ne force plus systématiquement le saut de page
-            // si le contenu précédent est court. On laisse html2pdf gérer ou on met un petit espacement.
-            const pbFin = document.createElement('div');
-            pbFin.style.height = '20px';
-            container.appendChild(pbFin);
+            // Page de fin : On force SYSTEMATIQUEMENT le saut de page
+            // pour satisfaire le besoin "LA DERNIERE PAGE FIXE ET SUR UNE SEUL ET MEME PAGE"
 
             // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC + SIGNATURES + OBSERVATIONS) ---
 
@@ -1524,6 +1521,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             endPage.style.background = 'white';
             endPage.style.position = 'static';
             endPage.style.overflow = 'visible';
+            endPage.style.pageBreakBefore = 'always';
 
             const originalRapport = document.getElementById('rapportForm');
             const souhaitRapport = originalRapport.querySelector('[name="souhait_rapport_unique"]').checked;

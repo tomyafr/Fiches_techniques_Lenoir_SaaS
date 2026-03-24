@@ -910,7 +910,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderEdxRow("Contrôles des réglages du volet (archivages des réglages)", "edx_B_reglages", $donnees) ?>
                         <?= renderEdxRow("Nettoyage complet de l'intérieur du caisson de séparation", "edx_B_net", $donnees) ?>
                         <?= renderEdxRow("Remontage des carters de protection/portes", "edx_B_rem", $donnees) ?>
+                    </table>
 
+                    <?= newPdfPage() ?>
+                    <table class="pdf-table controles" style="font-size:11px;">
                         <tr>
                             <th colspan="3" style="background:#5b9bd5; color:white;">Partie C - Armoire électrique</th>
                         </tr>
@@ -939,6 +942,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderEdxRow("Fermeture de l'armoire électrique", "edx_C_ferm", $donnees) ?>
                     </table>
 
+                    <?= newPdfPage() ?>
                     <div style="margin-top:20px; font-weight:bold; font-size:11px;">Commentaire général :</div>
                     <textarea name="commentaires" class="pdf-textarea"
                         style="height:100px; padding:5px; margin-top:5px; border:1px solid #000; width:100%; box-sizing:border-box;"><?= htmlspecialchars($machine['commentaires']) ?></textarea>
@@ -1066,7 +1070,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderOvRow("Mesure de l'isolement sous 1000 volts CC", "ov_isol", $donnees) ?>
                         <?= renderOvRow("Option 1 :", "ov_opt1", $donnees) ?>
                         <?= renderOvRow("Option 2 :", "ov_opt2", $donnees) ?>
+                    </table>
 
+                    <?= newPdfPage() ?>
+                    <table class="pdf-table controles" style="font-size:11px;">
                         <tr>
                             <th colspan="3" style="background:#5b9bd5; color:white;">Partie B - Les performances</th>
                         </tr>
@@ -1104,6 +1111,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                     </table>
 
+                    <?= newPdfPage() ?>
                     <table class="pdf-table controles" style="font-size:11px;">
                         <tr>
                             <th colspan="6" style="background:#5b9bd5; color:white;">En présence du client / Rappel des
