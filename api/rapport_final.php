@@ -1372,10 +1372,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                         const pages = doc.querySelectorAll('.pdf-page');
                         pages.forEach((p, pIdx) => {
-                            // Nettoyage radical des styles d'affichage web parasites (marges et bordures de l'A4 web) 
-                            // qui se transmettaient au PDF et créaient de grands espaces blancs ou un dépassement de marges
-                            p.style.margin = '0';
-                            p.style.padding = '0';
+                            // Refonte du nettoyage (BUG 027 largeur et padding) : on efface les marges du body HTML
+                            // mais on CONSERVE le padding interne (1cm) pour que les tableaux ne débordent pas de la feuille !
+                            p.style.marginTop = '0';
+                            p.style.marginBottom = '0';
                             p.style.boxShadow = 'none';
                             p.style.minHeight = 'auto'; // Retire le 29.7cm forcé
 
@@ -1590,7 +1590,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                     <!-- FOOTER SECTION WITH QR CODE -->
                     <!-- BUG 025 : Retire le page-break-after: avoid fatal qui tue le QR code sous Chrome -->
-                    <div style="text-align: center; color: #1B4F72; margin-top: 5px; page-break-inside: avoid; padding-bottom: 10px;">
+                    <div class="qr-block" style="text-align: center; color: #1B4F72; margin-top: 5px; page-break-inside: avoid; padding-bottom: 10px;">
                         <div style="font-weight: bold; margin-bottom: 8px;">UNE SEULE ADRESSE COMMUNE : contact@lenoir-mec.com</div>
                         
                         <div style="margin-top: 5px;">
@@ -1606,6 +1606,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             // Blindage ultime de tous les TR pour ne jamais couper les lignes de tableaux horizontalement
             container.querySelectorAll('tr').forEach(tr => {
                 tr.style.pageBreakInside = 'avoid';
+                tr.classList.add('avoid-break'); // Relai direct vers html2pdf config
             });
 
             await waitForImages(container);
@@ -1626,7 +1627,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone'] }
+                pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.avoid-break'] }
             };
 
             return new Promise((resolve, reject) => {
@@ -1669,7 +1670,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true, logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone'] }
+                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.avoid-break'] }
                 };
 
                 await html2pdf().set(opt).from(container).toPdf().get('pdf').then(function (pdf) {
