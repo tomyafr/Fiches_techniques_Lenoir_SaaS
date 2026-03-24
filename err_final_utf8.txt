@@ -1,0 +1,39 @@
+﻿node : C:\Users\tomdu\D
+esktop\saas_lenoir_fich
+es_techniques\lint_fina
+l.js:1170
+Au caractère Ligne:1 : 
+1
++ node -c 
+lint_final.js 2> 
+err_final.txt; 
+Get-Content 
+err_final.txt -To ...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (C:\Users\tomd   
+ u\...t_final.js:11    
+70:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+        let padClient, 
+padTech;
+            ^
+
+SyntaxError: 
+Identifier 'padClient' 
+has already been 
+declared
+    at wrapSafe (node:i
+nternal/modules/cjs/loa
+der:1692:18)
+    at checkSyntax (nod
+e:internal/main/check_s
+yntax:76:3)
+
+Node.js v24.13.0

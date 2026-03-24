@@ -1,0 +1,41 @@
+﻿node : C:\Users\tomdu\D
+esktop\saas_lenoir_fich
+es_techniques\lint_all.
+js:812
+Au caractère Ligne:1 : 
+1
++ node -c lint_all.js 
+2> error.txt; 
+Get-Content error.txt 
+-TotalCount 5
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (C:\Users\tomd   
+ u\...lint_all.js:8    
+12:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+            const 
+contactNom = originalRa
+pport.querySelector('[n
+ame="contact_nom"]').va
+lue || '_____';
+                  ^
+
+SyntaxError: 
+Identifier 
+'contactNom' has 
+already been declared
+    at wrapSafe (node:i
+nternal/modules/cjs/loa
+der:1692:18)
+    at checkSyntax (nod
+e:internal/main/check_s
+yntax:76:3)
+
+Node.js v24.13.0
