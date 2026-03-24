@@ -1126,12 +1126,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const sigTechData = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
             const sigClientData = window.LM_RAPPORT.sigClient || document.getElementById('canvasClient')?.toDataURL() || '';
             
-            const stampHTML = '<div style="color: #2b4c80; font-family: Arial, sans-serif; font-size: 9px; line-height: 1.2; font-weight: bold; margin-bottom: 5px;">' +
-                (window.LM_RAPPORT.legal.address || '') + '<br>' +
-                (window.LM_RAPPORT.legal.contact || '') + '<br>' +
-                (window.LM_RAPPORT.legal.siret || '') +
-                '</div>';
-
             // Generate HTML lines for machines
             const machinesTrs = window.LM_RAPPORT.machinesData.map(m => `
                 <tr style="border-bottom:1px solid #000;">
@@ -1238,7 +1232,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #000; width: 25%;">Technicien sur Site :</td>
                         <td style="padding: 15px 10px; border: 1px solid #000; width: 30%; font-weight: bold;">${techName}</td>
                         <td rowspan="2" style="padding: 15px; border: 1px solid #000; width: 45%; text-align: center; vertical-align: middle;">
-                            ${stampHTML}
                             <img src="${sigTechData}" style="max-height:90px; max-width:100%; object-fit: contain;">
                             <div style="margin-top:5px; font-size: 11px; color:#2b4c80; font-style:italic;">${techName}</div>
                         </td>
