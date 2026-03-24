@@ -1480,7 +1480,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             // BUGFIX PDF: Séparateur de table (tbody)
                             // html2pdf coupe en deux les <tr> sauvagement. 
                             // La seule vraie solution est de wrapper chaque ligne logique dans son propre <tbody> !
-                            p.querySelectorAll('table.pdf-table').forEach(table => {
+                            p.querySelectorAll('table.pdf-table, table.controles').forEach(table => {
                                 const rows = Array.from(table.querySelectorAll('tr'));
                                 if (!rows.length) return;
                                 
@@ -1648,6 +1648,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             `;
             endPage.appendChild(createPdfFooter());
             container.appendChild(endPage);
+
+            // CHANGEMENT MAJEUR CONTRE LA COUPURE DE CANVAS : border-collapse empêche html2pdf de calculer la hauteur des TR
+            // On le force en "separate" pour donner à html2pdf des hauteurs de TR nettes et mesurables sans overlap.
+            container.querySelectorAll('table.pdf-table, table.controles').forEach(tbl => {
+                tbl.style.borderCollapse = 'separate';
+                tbl.style.borderSpacing = '0';
+            });
 
             await waitForImages(container);
             return container;
