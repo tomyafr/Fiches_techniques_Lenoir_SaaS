@@ -1378,6 +1378,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             p.style.marginBottom = '0';
                             p.style.boxShadow = 'none';
                             p.style.minHeight = 'auto'; // Retire le 29.7cm forcé
+                            // FIX TABLE CHOP : html2pdf a besoin que les éléments soient statiques pour calculer le vrai 'offsetTop'
+                            p.style.position = 'static'; 
+                            p.style.overflow = 'visible';
 
                             // Bug 5 & New Fix: Remove empty photos section
                             const hasPhotos = p.querySelectorAll('.photo-annexe-item img').length > 0;
@@ -1504,11 +1507,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const endPage = document.createElement('div');
             // Finis les bugs hérités de la classe pdf-page ! On recrée un bloc pur A4 pour la dernière page.
             endPage.style.width = '21cm';
-            endPage.style.padding = '20px 15mm';
+            endPage.style.padding = '10px 15mm';
             endPage.style.boxSizing = 'border-box';
             endPage.style.background = 'white';
-            endPage.style.position = 'relative';
-            endPage.style.pageBreakBefore = 'always'; // L'utilisateur veut la page de fin seule sur UNE page !
+            endPage.style.position = 'static';
+            endPage.style.overflow = 'visible';
+            // Pas de pageBreakBefore: 'always' ! C'est ce qui créait l'énorme page blanche avant.
+            // On le laisse s'aligner naturellement.
 
             const originalRapport = document.getElementById('rapportForm');
             const souhaitRapport = originalRapport.querySelector('[name="souhait_rapport_unique"]').checked;
@@ -1523,10 +1528,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const commentaryTechRaw = originalRapport.querySelector('[name="commentaire_technicien"]')?.value || '';
             const commentaryClientRaw = originalRapport.querySelector('[name="commentaire_client"]')?.value || '';
             
-            const commentaryTech = commentaryTechRaw.trim() ? `<div style="border: 2px solid #000; padding: 8px; min-height: 60px; font-size: 11px; white-space: pre-wrap; margin-bottom: 10px;">${commentaryTechRaw}</div>` : '';
-            const commentaryClient = commentaryClientRaw.trim() ? `<div style="border: 2px solid #000; padding: 8px; font-size: 11px; white-space: pre-wrap; margin-bottom: 10px;">${commentaryClientRaw}</div>` : '';
-            const titleTech = commentaryTechRaw.trim() ? `<div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">OBSERVATIONS DU TECHNICIEN</div>` : '';
-            const titleClient = commentaryClientRaw.trim() ? `<div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">COMMENTAIRE DU CLIENT</div>` : '';
+            const commentaryTech = commentaryTechRaw.trim() ? `<div style="border: 2px solid #000; padding: 4px; min-height: 40px; font-size: 11px; white-space: pre-wrap; margin-bottom: 5px;">${commentaryTechRaw}</div>` : '';
+            const commentaryClient = commentaryClientRaw.trim() ? `<div style="border: 2px solid #000; padding: 4px; font-size: 11px; white-space: pre-wrap; margin-bottom: 5px;">${commentaryClientRaw}</div>` : '';
+            const titleTech = commentaryTechRaw.trim() ? `<div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 3px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">OBSERVATIONS DU TECHNICIEN</div>` : '';
+            const titleClient = commentaryClientRaw.trim() ? `<div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 3px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">COMMENTAIRE DU CLIENT</div>` : '';
 
 
             const sigTechImg = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
@@ -1548,40 +1553,40 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                     <!-- LE CLIENT SOUHAITE -->
                     <div style="page-break-inside: avoid;">
-                        <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
-                        <div style="border: 2px solid #000; padding: 8px; margin-bottom: 10px;">
-                            <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? '☑' : '☐'} Ce Rapport d\\'expertise uniquement</div>
-                            <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? '☑' : '☐'} Une offre de Pièces de Rechange</div>
-                            <div style="margin-bottom: 3px; font-size: 11px;">${souhaitIntervention ? '☑' : '☐'} Une offre de PR + intervention mise en place</div>
+                        <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 3px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
+                        <div style="border: 2px solid #000; padding: 4px; margin-bottom: 5px;">
+                            <div style="margin-bottom: 2px; font-size: 11px;">${souhaitRapport ? '☑' : '☐'} Ce Rapport d\\'expertise uniquement</div>
+                            <div style="margin-bottom: 2px; font-size: 11px;">${souhaitPieces ? '☑' : '☐'} Une offre de Pièces de Rechange</div>
+                            <div style="margin-bottom: 2px; font-size: 11px;">${souhaitIntervention ? '☑' : '☐'} Une offre de PR + intervention mise en place</div>
                             <div style="font-size: 11px;">${souhaitAucune ? '☑' : '☐'} Aucune offre</div>
                         </div>
                     </div>
 
                     <!-- DATE ET HEURE -->
                     <div style="page-break-inside: avoid;">
-                        <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">DATE ET HEURE</div>
-                        <div style="border: 2px solid #000; padding: 8px; margin-bottom: 10px; font-size: 13px; font-weight: bold; text-align: center;">
+                        <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 3px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">DATE ET HEURE</div>
+                        <div style="border: 2px solid #000; padding: 4px; margin-bottom: 5px; font-size: 12px; font-weight: bold; text-align: center;">
                             Fait le ${dateStr}
                         </div>
                     </div>
 
                     <!-- SIGNATURES -->
                     <div style="page-break-inside: avoid;">
-                        <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">SIGNATURES</div>
-                        <table style="width: 100%; border-collapse: collapse; table-layout: fixed; border: 2px solid #000; margin-bottom: 15px;">
-                            <tr style="height: 120px;">
-                                <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
-                                    <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Contrôleur (NOM Prénom) :</div>
-                                    <div style="margin-bottom: 10px;"><strong>${techNameLabel}</strong></div>
+                        <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 3px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">SIGNATURES</div>
+                        <table style="width: 100%; border-collapse: collapse; table-layout: fixed; border: 2px solid #000; margin-bottom: 5px;">
+                            <tr style="height: 80px;">
+                                <td style="border: 1px solid #000; padding: 4px; vertical-align: top; width: 50%;">
+                                    <div style="font-weight: bold; text-decoration: underline; margin-bottom: 3px;">Contrôleur (NOM Prénom) :</div>
+                                    <div style="margin-bottom: 5px;"><strong>${techNameLabel}</strong></div>
                                     <div style="text-align: center;">
-                                        <img src="${sigTechImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
+                                        <img src="${sigTechImg}" style="max-height: 55px; max-width: 90%; object-fit: contain; background: white;">
                                     </div>
                                 </td>
-                                <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
-                                    <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Client (NOM Prénom) :</div>
-                                    <div style="margin-bottom: 10px;"><strong>${nomSignataireFin}</strong></div>
+                                <td style="border: 1px solid #000; padding: 4px; vertical-align: top; width: 50%;">
+                                    <div style="font-weight: bold; text-decoration: underline; margin-bottom: 3px;">Client (NOM Prénom) :</div>
+                                    <div style="margin-bottom: 5px;"><strong>${nomSignataireFin}</strong></div>
                                     <div style="text-align: center;">
-                                        <img src="${sigClientImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
+                                        <img src="${sigClientImg}" style="max-height: 55px; max-width: 90%; object-fit: contain; background: white;">
                                     </div>
                                 </td>
                             </tr>
@@ -1589,27 +1594,27 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
 
                     <!-- CONTACTS ORANGE -->
-                    <div style="border: 2px solid #000; padding: 0; text-align: center; margin-bottom: 15px;">
-                        <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR TOUTE INFORMATION TECHNIQUE SUR CE RAPPORT</div>
-                        <div style="background-color: #fff; padding: 6px; border-bottom: 2px solid #000;">
-                            <div style="font-size: 12px;">➤ <strong>Soufyane SALAH</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Chargé d'Affaires</span></div>
+                    <div style="border: 2px solid #000; padding: 0; text-align: center; margin-bottom: 5px;">
+                        <div style="background-color: #E67E22; color: white; padding: 3px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR TOUTE INFORMATION TECHNIQUE SUR CE RAPPORT</div>
+                        <div style="background-color: #fff; padding: 4px; border-bottom: 2px solid #000;">
+                            <div style="font-size: 11px;">➤ <strong>Soufyane SALAH</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Chargé d'Affaires</span></div>
                         </div>
                         
-                        <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR LA PLANIFICATION D'UNE VÉRIFICATION PÉRIODIQUE</div>
-                        <div style="background-color: #fff; padding: 6px;">
-                            <div style="font-size: 12px;">➤ <strong>Sophie NIAY</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Responsable Service Clients</span></div>
+                        <div style="background-color: #E67E22; color: white; padding: 3px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR LA PLANIFICATION D'UNE VÉRIFICATION PÉRIODIQUE</div>
+                        <div style="background-color: #fff; padding: 4px;">
+                            <div style="font-size: 11px;">➤ <strong>Sophie NIAY</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Responsable Service Clients</span></div>
                         </div>
                     </div>
 
                     <!-- FOOTER SECTION WITH QR CODE -->
                     <!-- BUG 025 : Retire le page-break-after: avoid fatal qui tue le QR code sous Chrome -->
-                    <div class="qr-block" style="text-align: center; color: #1B4F72; margin-top: 5px; page-break-inside: avoid; padding-bottom: 10px;">
-                        <div style="font-weight: bold; margin-bottom: 8px;">UNE SEULE ADRESSE COMMUNE : contact@raoul-lenoir.com</div>
+                    <div class="qr-block" style="text-align: center; color: #1B4F72; margin-top: 5px; page-break-inside: avoid; padding-bottom: 5px;">
+                        <div style="font-weight: bold; margin-bottom: 4px;">UNE SEULE ADRESSE COMMUNE : contact@raoul-lenoir.com</div>
                         
-                        <div style="margin-top: 5px;">
-                            <div style="font-size: 10px; font-weight: bold; margin-bottom: 3px;">Visitez notre site !</div>
-                            <img src="/assets/qr_lenoir.png" style="width: 100px; height: 100px; display: block; margin: 0 auto;">
-                            <div style="font-weight: bold; font-size: 10px; margin-top: 5px;">www.raoul-lenoir.com</div>
+                        <div style="margin-top: 4px;">
+                            <div style="font-size: 10px; font-weight: bold; margin-bottom: 2px;">Visitez notre site !</div>
+                            <img src="/assets/qr_lenoir.png" style="width: 80px; height: 80px; display: block; margin: 0 auto;">
+                            <div style="font-weight: bold; font-size: 10px; margin-top: 2px;">www.raoul-lenoir.com</div>
                         </div>
                     </div>
                 </div>
