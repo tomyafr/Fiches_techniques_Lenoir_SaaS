@@ -1536,19 +1536,25 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 <div style="font-family: Arial, sans-serif; font-size: 11px; color: #000;">
                     
                     <!-- OBSERVATIONS GÉNÉRALES -->
-                    ${titleTech}
-                    ${commentaryTech}
+                    <div style="page-break-inside: avoid;">
+                        ${titleTech}
+                        ${commentaryTech}
+                    </div>
 
-                    ${titleClient}
-                    ${commentaryClient}
+                    <div style="page-break-inside: avoid;">
+                        ${titleClient}
+                        ${commentaryClient}
+                    </div>
 
                     <!-- LE CLIENT SOUHAITE -->
-                    <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
-                    <div style="border: 2px solid #000; padding: 8px; margin-bottom: 10px;">
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? '☑' : '☐'} Ce Rapport d\'expertise uniquement</div>
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? '☑' : '☐'} Une offre de Pièces de Rechange</div>
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitIntervention ? '☑' : '☐'} Une offre de PR + intervention mise en place</div>
-                        <div style="font-size: 11px;">${souhaitAucune ? '☑' : '☐'} Aucune offre</div>
+                    <div style="page-break-inside: avoid;">
+                        <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
+                        <div style="border: 2px solid #000; padding: 8px; margin-bottom: 10px;">
+                            <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? '☑' : '☐'} Ce Rapport d\\'expertise uniquement</div>
+                            <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? '☑' : '☐'} Une offre de Pièces de Rechange</div>
+                            <div style="margin-bottom: 3px; font-size: 11px;">${souhaitIntervention ? '☑' : '☐'} Une offre de PR + intervention mise en place</div>
+                            <div style="font-size: 11px;">${souhaitAucune ? '☑' : '☐'} Aucune offre</div>
+                        </div>
                     </div>
 
                     <!-- DATE ET HEURE -->
