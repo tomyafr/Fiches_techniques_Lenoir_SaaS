@@ -1481,44 +1481,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 }
                                 ta.remove();
                             });
-                            
-                            // BUGFIX PDF: Séparateur de table (tbody)
-                            // html2pdf coupe en deux les <tr> sauvagement. 
-                            // La seule vraie solution est de wrapper chaque ligne logique dans son propre <tbody> !
-                            p.querySelectorAll('table.pdf-table').forEach(table => {
-                                const rows = Array.from(table.querySelectorAll('tr'));
-                                if (!rows.length) return;
-                                
-                                let currentTbody = document.createElement('tbody');
-                                currentTbody.style.pageBreakInside = 'avoid';
-                                table.appendChild(currentTbody);
-                                
-                                let pendingSpans = 0;
-                                rows.forEach(row => {
-                                    let maxSpan = 1;
-                                    row.querySelectorAll('th, td').forEach(c => {
-                                        if (c.rowSpan > maxSpan) maxSpan = c.rowSpan;
-                                    });
-                                    if (maxSpan - 1 > pendingSpans) pendingSpans = maxSpan - 1;
-                                    
-                                    currentTbody.appendChild(row); // Déplace le tr dans le nouveau tbody
-                                    
-                                    if (pendingSpans > 0) {
-                                        pendingSpans--;
-                                    } else {
-                                        currentTbody = document.createElement('tbody');
-                                        currentTbody.style.pageBreakInside = 'avoid';
-                                        table.appendChild(currentTbody);
-                                    }
-                                });
-                                
-                                // Supprimer les tbody/thead originaux devenus vides
-                                Array.from(table.children).forEach(child => {
-                                    if ((child.tagName === 'TBODY' || child.tagName === 'THEAD') && child.children.length === 0) {
-                                        child.remove();
-                                    }
-                                });
-                            });
+
                             
                             p.style.position = 'relative';
                             p.style.paddingBottom = '30mm';
@@ -1550,8 +1513,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const souhaitPieces = originalRapport.querySelector('[name="souhait_offre_pieces"]').checked;
             const souhaitIntervention = originalRapport.querySelector('[name="souhait_pieces_intervention"]').checked;
             const souhaitAucune = originalRapport.querySelector('[name="souhait_aucune_offre"]').checked;
-            const contactNom = originalRapport.querySelector('[name="contact_nom"]').value || '_____';
-            const nomSignataireFin = originalRapport.querySelector('[name="nom_signataire"]').value || contactNom;
+            const contactNomFin = originalRapport.querySelector('[name="contact_nom"]').value || '_____';
+            const nomSignataireFin = originalRapport.querySelector('[name="nom_signataire"]').value || contactNomFin;
             const techNameLabel = "<?= htmlspecialchars($techName) ?>";
             const dateStr = window.LM_RAPPORT.dateInt;
 
@@ -1905,50 +1868,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
         }
 
-        // ══════════════════════════════════════════════════════════════════
-        // GESTION DES SIGNATURES
-        // ══════════════════════════════════════════════════════════════════
-        let padClient, padTech;
 
-        function resizeCanvas(canvas) {
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
-            canvas.style.height = "200px";
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = 200 * ratio; 
-            canvas.getContext("2d").scale(ratio, ratio);
-        }
-
-        function initSignatures() {
-            const canvasC = document.getElementById('canvasClient');
-            const canvasT = document.getElementById('canvasTech');
-            
-            if (!window.SignaturePad) {
-                console.error("SignaturePad library not loaded");
-                return;
-            }
-
-            const dpr = Math.max(window.devicePixelRatio || 1, 1);
-
-            if (canvasT) {
-                resizeCanvas(canvasT);
-                padTech = new SignaturePad(canvasT, { penColor: "black" });
-                if (window.LM_RAPPORT && window.LM_RAPPORT.sigTech && typeof window.LM_RAPPORT.sigTech === 'string' && window.LM_RAPPORT.sigTech.startsWith('data:image')) {
-                    padTech.fromDataURL(window.LM_RAPPORT.sigTech, { ratio: dpr, width: canvasT.width / dpr, height: canvasT.height / dpr });
-                }
-            }
-
-            if (canvasC) {
-                resizeCanvas(canvasC);
-                padClient = new SignaturePad(canvasC, { penColor: "blue" });
-                if (window.LM_RAPPORT && window.LM_RAPPORT.sigClient && typeof window.LM_RAPPORT.sigClient === 'string' && window.LM_RAPPORT.sigClient.startsWith('data:image')) {
-                    padClient.fromDataURL(window.LM_RAPPORT.sigClient, { ratio: dpr, width: canvasC.width / dpr, height: canvasC.height / dpr });
-                }
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            initSignatures();
-        });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js" onload="initSignatures()"></script>
 </body>
