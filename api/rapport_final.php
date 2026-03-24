@@ -1525,31 +1525,35 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
 
                     <!-- DATE ET HEURE -->
-                    <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">DATE ET HEURE</div>
-                    <div style="border: 2px solid #000; padding: 8px; margin-bottom: 10px; font-size: 13px; font-weight: bold; text-align: center;">
-                        Fait le ${dateStr}
+                    <div style="page-break-inside: avoid;">
+                        <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">DATE ET HEURE</div>
+                        <div style="border: 2px solid #000; padding: 8px; margin-bottom: 10px; font-size: 13px; font-weight: bold; text-align: center;">
+                            Fait le ${dateStr}
+                        </div>
                     </div>
 
                     <!-- SIGNATURES -->
-                    <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">SIGNATURES</div>
-                    <table style="width: 100%; border-collapse: collapse; table-layout: fixed; border: 2px solid #000; margin-bottom: 15px;">
-                        <tr style="height: 120px;">
-                            <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
-                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Contrôleur (NOM Prénom) :</div>
-                                <div style="margin-bottom: 10px;"><strong>${techNameLabel}</strong></div>
-                                <div style="text-align: center;">
-                                    <img src="${sigTechImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
-                                </div>
-                            </td>
-                            <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
-                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Client (NOM Prénom) :</div>
-                                <div style="margin-bottom: 10px;"><strong>${nomSignataireFin}</strong></div>
-                                <div style="text-align: center;">
-                                    <img src="${sigClientImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
+                    <div style="page-break-inside: avoid;">
+                        <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">SIGNATURES</div>
+                        <table style="width: 100%; border-collapse: collapse; table-layout: fixed; border: 2px solid #000; margin-bottom: 15px;">
+                            <tr style="height: 120px;">
+                                <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
+                                    <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Contrôleur (NOM Prénom) :</div>
+                                    <div style="margin-bottom: 10px;"><strong>${techNameLabel}</strong></div>
+                                    <div style="text-align: center;">
+                                        <img src="${sigTechImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
+                                    </div>
+                                </td>
+                                <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
+                                    <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Client (NOM Prénom) :</div>
+                                    <div style="margin-bottom: 10px;"><strong>${nomSignataireFin}</strong></div>
+                                    <div style="text-align: center;">
+                                        <img src="${sigClientImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
 
                     <!-- CONTACTS ORANGE -->
                     <div style="border: 2px solid #000; padding: 0; text-align: center; margin-bottom: 15px;">
@@ -1608,6 +1612,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         pdf.setFontSize(9);
                         pdf.setTextColor(50, 50, 50);
                         pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
+                        
+                        pdf.setFontSize(6);
+                        pdf.setTextColor(80, 80, 80);
+                        const footerLine1 = window.LM_RAPPORT.legal.address + " - " + window.LM_RAPPORT.legal.contact;
+                        const footerLine2 = window.LM_RAPPORT.legal.siret;
+                        pdf.text([footerLine1, footerLine2], 105, 291, { align: 'center', lineHeightFactor: 1.2 });
                     }
                 }).outputPdf('blob').then(function(pdfBlob) {
                     const reader = new FileReader();
@@ -1647,7 +1657,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         
                         pdf.setFontSize(6);
                         pdf.setTextColor(80, 80, 80);
-                        const footerLine1 = window.LM_RAPPORT.legal.address + " - Tél. " + window.LM_RAPPORT.legal.contactTel + " - E-mail : " + window.LM_RAPPORT.legal.contactEmail + " - Site internet : " + window.LM_RAPPORT.legal.contactWeb;
+                        const footerLine1 = window.LM_RAPPORT.legal.address + " - " + window.LM_RAPPORT.legal.contact;
                         const footerLine2 = window.LM_RAPPORT.legal.siret;
                         pdf.text([footerLine1, footerLine2], 105, 291, { align: 'center', lineHeightFactor: 1.2 });
                     }
