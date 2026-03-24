@@ -791,7 +791,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                     </table>
 
-                    <div class="pdf-section" style="margin-top:20px;">
+                    <div class="pdf-section no-print-pdf" style="margin-top:20px;">
                         <img src="/assets/machines/aprf_diagram.png"
                             class="no-print-pdf"
                             style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma APRF"
@@ -1455,7 +1455,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <div style="margin-top:20px;"></div>
 
-                    <div class="pdf-section" style="margin-top:20px; border:1px solid #000; padding:10px; color:black;">
+                    <div class="pdf-section no-print-pdf" style="margin-top:20px; border:1px solid #000; padding:10px; color:black;">
                         <!-- Main schema enlarged without absolute positioning inside -->
                         <div style="display:flex; justify-content:center; align-items: flex-end; margin-bottom:10px;">
                             <img src="/assets/machines/levage_diagram.png"
@@ -1543,7 +1543,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                         if ($foundSchema):
                             ?>
-                            <div class="pdf-section" style="border:1px solid #000; padding:10px; text-align:center; margin-top:20px;">
+                            <div class="pdf-section no-print-pdf" style="border:1px solid #000; padding:10px; text-align:center; margin-top:20px;">
                                 <div style="font-weight:bold; margin-bottom:10px;">Schéma de Référence (Extrait Word) :</div>
                                 <img src="<?= htmlspecialchars($foundSchema) ?>"
                                     style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma machine">
