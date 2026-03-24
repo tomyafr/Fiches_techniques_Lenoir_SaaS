@@ -1005,21 +1005,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         }
 
         // helper: create footer
-        function createPdfFooter() {
-            const f = document.createElement('div');
-            const leg = window.LM_RAPPORT.legal;
-            f.style.marginTop = '30px';
-            f.style.width = '100%';
-            f.style.textAlign = 'center';
-            f.style.fontSize = '9px';
-            f.style.fontWeight = 'bold';
-            f.style.borderTop = '2px solid #000';
-            f.style.paddingTop = '5px';
-            f.style.paddingBottom = '5px';
-            f.style.pageBreakInside = 'avoid';
-            f.innerHTML = `${leg.address}<br>${leg.contact}<br>${leg.siret}`;
-            return f;
-        }
+        // Helper : createPdfFooter a été remplacé par pdf.text() natif dans JS PDF
 
         async function buildFullPdfContainer() {
             const container = document.createElement('div');
@@ -1242,7 +1228,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </tr>
                 </table>
             `;
-            rapportCloneWrapper.appendChild(createPdfFooter());
             container.appendChild(rapportCloneWrapper);
 
             // --- 1.2 PAGE SYNTHÈSE + PRÉAMBULE (FUSIONNÉS POUR ÉCONOMISER DES PAGES) ---
@@ -1323,7 +1308,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
                 </div>
             `;
-            synthPreambulePage.appendChild(createPdfFooter());
             container.appendChild(synthPreambulePage);
 
             // --- 2. FETCH & APPEND MACHINES ---
@@ -1477,9 +1461,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                             
                             p.style.position = 'relative';
-                            p.style.paddingBottom = '30mm';
                             p.style.minHeight = 'auto'; // Help chaining
-                            p.appendChild(createPdfFooter());
                             container.appendChild(p);
                         });
                     } catch (err) {
@@ -1594,7 +1576,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
                 </div>
             `;
-            endPage.appendChild(createPdfFooter());
             container.appendChild(endPage);
 
             await waitForImages(container);
@@ -1662,7 +1643,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         pdf.setFont('helvetica', 'normal');
                         pdf.setFontSize(9);
                         pdf.setTextColor(50, 50, 50);
-                        pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
+                        pdf.text('Page ' + i + ' / ' + totalPages, 105, 287, { align: 'center' });
+                        
+                        pdf.setFontSize(6);
+                        pdf.setTextColor(80, 80, 80);
+                        const footerLine1 = window.LM_RAPPORT.legal.address + " - Tél. " + window.LM_RAPPORT.legal.contactTel + " - E-mail : " + window.LM_RAPPORT.legal.contactEmail + " - Site internet : " + window.LM_RAPPORT.legal.contactWeb;
+                        const footerLine2 = window.LM_RAPPORT.legal.siret;
+                        pdf.text([footerLine1, footerLine2], 105, 291, { align: 'center', lineHeightFactor: 1.2 });
                     }
                 }).save();
             } catch (e) {
