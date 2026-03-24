@@ -793,6 +793,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <div class="pdf-section" style="margin-top:20px;">
                         <img src="/assets/machines/aprf_diagram.png"
+                            class="no-print-pdf"
                             style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma APRF"
                             onerror="this.style.display='none'">
                     </div>
@@ -980,10 +981,12 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <div class="pdf-section" style="margin-top:20px;">
                         <img src="/assets/machines/edx_diagram.png"
+                            class="no-print-pdf"
                             style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma ED-X"
                             onerror="this.style.display='none'">
 
                         <img src="/assets/machines/edx_diagram_2.png"
+                            class="no-print-pdf"
                             style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma ED-X (Suite)"
                             onerror="this.style.display='none'">
                     </div>
@@ -1134,7 +1137,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderFreqRow("Graissage des paliers", "ov_freq_graiss", $donnees) ?>
                     </table>
 
-                    <div class="pdf-section" style="margin-top:20px; border:1px solid #f29b43; padding:10px; text-align:center;">
+                    <div class="pdf-section no-print-pdf" style="margin-top:20px; border:1px solid #f29b43; padding:10px; text-align:center;">
                         <img src="/assets/machines/ov_diagram.png"
                             style="max-width:100%; height:auto; display:block; margin:0 auto 15px auto;" alt="Schéma OV">
 
@@ -1456,6 +1459,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <!-- Main schema enlarged without absolute positioning inside -->
                         <div style="display:flex; justify-content:center; align-items: flex-end; margin-bottom:10px;">
                             <img src="/assets/machines/levage_diagram.png"
+                                class="no-print-pdf"
                                 style="width:100%; max-width:600px; height:auto; display:block;" alt="Schéma Levage">
                         </div>
 
