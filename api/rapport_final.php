@@ -567,7 +567,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         sigTech: <?= json_encode($intervention['signature_technicien'] ?: $techSignatureBase64) ?>,
                         sigClient: <?= json_encode($intervention['signature_client'] ?? '') ?>,
                         pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>, 
-                        emptyFichesOption: 'exclude',
+                        emptyFichesOption: 'include',
                         emptyMachinesIds: <?= json_encode($emptyMachinesIds) ?>,
                         machinesIds: [<?= implode(',', array_column($machines, 'id')) ?>],
                         machinesData: <?= json_encode(array_values(array_map(function($m) use ($intervention) {
@@ -1002,7 +1002,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         function createPdfFooter() {
             const f = document.createElement('div');
             const leg = window.LM_RAPPORT.legal;
-            f.style.marginTop = '30px';
+            f.style.position = 'absolute';
+            f.style.bottom = '0';
+            f.style.left = '0';
+            f.style.right = '0';
             f.style.width = '100%';
             f.style.textAlign = 'center';
             f.style.fontSize = '9px';
@@ -1011,6 +1014,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             f.style.paddingTop = '5px';
             f.style.paddingBottom = '5px';
             f.style.pageBreakInside = 'avoid';
+            f.style.boxSizing = 'border-box';
             f.innerHTML = `${leg.address}<br>${leg.contact}<br>${leg.siret}`;
             return f;
         }
@@ -1243,6 +1247,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </tr>
                 </table>
             `;
+            rapportCloneWrapper.style.position = 'relative';
+            rapportCloneWrapper.style.paddingBottom = '40px';
             rapportCloneWrapper.appendChild(createPdfFooter());
             container.appendChild(rapportCloneWrapper);
 
@@ -1324,16 +1330,18 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
                 </div>
             `;
+            synthPreambulePage.style.position = 'relative';
+            synthPreambulePage.style.paddingBottom = '40px';
             synthPreambulePage.appendChild(createPdfFooter());
             container.appendChild(synthPreambulePage);
 
             // --- 2. FETCH & APPEND MACHINES ---
             if (window.LM_RAPPORT && window.LM_RAPPORT.machinesIds) {
                 let reportMachineIds = [...window.LM_RAPPORT.machinesIds];
-                const emptyOption = window.LM_RAPPORT.emptyFichesOption || 'exclude';
+                const emptyOption = window.LM_RAPPORT.emptyFichesOption || 'include';
                 const emptyIds = window.LM_RAPPORT.emptyMachinesIds || [];
 
-                // Si option = 'exclude', on retire carrément les machines vides de la boucle !
+                // Si option = 'exclude', on retire les machines vides de la boucle
                 if (emptyOption === 'exclude' && emptyIds.length > 0) {
                     reportMachineIds = reportMachineIds.filter(id => !emptyIds.includes(parseInt(id, 10)) && !emptyIds.includes(String(id)));
                 }
@@ -1481,8 +1489,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             // et gelait la génération de html2canvas sur iOS/Safari.
                             
                             p.style.position = 'relative';
-                            p.style.paddingBottom = '30mm';
-                            p.style.minHeight = 'auto'; // Help chaining
+                            p.style.paddingBottom = '40px'; // Juste assez pour le footer absolu
+                            p.style.minHeight = 'auto';
                             p.appendChild(createPdfFooter());
                             container.appendChild(p);
                         });
@@ -1611,6 +1619,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
                 </div>
             `;
+            endPage.style.position = 'relative';
+            endPage.style.paddingBottom = '40px';
             endPage.appendChild(createPdfFooter());
             container.appendChild(endPage);
 
@@ -1657,7 +1667,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone'] }
+                pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.avoid-break'] }
             };
 
             return new Promise(async (resolve, reject) => {
@@ -1699,7 +1709,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true, logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone'] }
+                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.avoid-break'] }
                 };
 
                 const worker = html2pdf().set(opt).from(container);
