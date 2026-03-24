@@ -602,10 +602,10 @@ foreach ($recoFreq as $rfk => $rfv) {
             </table>
             <?php
             $pdfHeader = ob_get_clean();
-            // MF-007 Fix: we completely stop breaking pages artificially between sections
+            // MF-007 Fix: we split pages artificially between sections for massive machines
             function newPdfPage()
             {
-                return ''; 
+                return '</div><div class="pdf-page bg-white p-4">'; 
             }
             ?>
             <div class="pdf-page">
