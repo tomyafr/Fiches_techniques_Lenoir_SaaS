@@ -1387,14 +1387,18 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 }
                             });
 
-                            // Clean up machine fiche
-                            p.querySelectorAll('.photo-btn, .photo-thumbs, #btnChrono, .no-print-pdf').forEach(el => el.remove());
+                            // Clean up machine fiche — UI-only elements
+                            // IMPORTANT: On ne supprime PAS .no-print-pdf ! On retire juste la CLASSE
+                            // pour que les schémas/diagrammes restent visibles dans le PDF
+                            p.querySelectorAll('.photo-btn, .photo-thumbs, #btnChrono').forEach(el => el.remove());
                             
-                            // If it's a diagram/photo page and it's empty after cleanup, skip it
-                            const contentText = p.textContent.trim();
-                            if ((pIdx > 0) && contentText.length < 50 && !hasPhotos && !p.querySelector('img')) {
-                                return; // Skip empty pages
-                            }
+                            // Retirer la classe no-print-pdf pour que les diagrammes apparaissent
+                            p.querySelectorAll('.no-print-pdf').forEach(el => {
+                                el.classList.remove('no-print-pdf');
+                            });
+                            
+                            // Retirer les messages "Aucune photo" qui sont vides
+                            p.querySelectorAll('#noPhotosMsg').forEach(el => el.remove());
                             
                             // Chaque fiche démarre obligatoirement sur une nouvelle feuille (sans margin parasite)
                             if (pIdx === 0) {
@@ -1491,10 +1495,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 }
             }
 
-            // L'utilisateur exige formellement un saut de page propre pour la dernière page, afin qu'elle garantisse la présence de tous les éléments sans scission sur 2 pages
-            const pbFin = document.createElement('div');
-            pbFin.style.pageBreakBefore = 'always';
-            container.appendChild(pbFin);
+            // Le saut de page est directement sur endPage, pas sur un div vide séparé
 
             // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC + SIGNATURES + OBSERVATIONS) ---
 
@@ -1502,6 +1503,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             endPage.className = 'pdf-page';
             endPage.style.padding = '0 15mm';
             endPage.style.position = 'relative';
+            endPage.style.pageBreakBefore = 'always'; // Force la page de fin sur une nouvelle feuille
 
             const originalRapport = document.getElementById('rapportForm');
             const souhaitRapport = originalRapport.querySelector('[name="souhait_rapport_unique"]').checked;
@@ -1603,10 +1605,22 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             `;
             container.appendChild(endPage);
 
-            // Blindage ultime de tous les TR pour ne jamais couper les lignes de tableaux horizontalement
+            // Blindage ultime anti-coupure de tableaux
+            // 1) Chaque ligne <tr> ne peut pas être coupée
             container.querySelectorAll('tr').forEach(tr => {
                 tr.style.pageBreakInside = 'avoid';
-                tr.classList.add('avoid-break'); // Relai direct vers html2pdf config
+                tr.classList.add('avoid-break');
+            });
+            // 2) Les petits tableaux (< 15 lignes) ne peuvent pas être coupés du tout
+            container.querySelectorAll('table').forEach(tbl => {
+                if (tbl.querySelectorAll('tr').length <= 15) {
+                    tbl.style.pageBreakInside = 'avoid';
+                    tbl.classList.add('avoid-break');
+                }
+            });
+            // 3) Les sections pdf-section ne sont pas coupées
+            container.querySelectorAll('.pdf-section').forEach(sec => {
+                sec.style.pageBreakInside = 'avoid';
             });
 
             await waitForImages(container);
