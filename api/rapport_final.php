@@ -1565,7 +1565,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
 
                     <!-- FOOTER SECTION WITH QR CODE -->
-                    <div style="text-align: center; color: #1B4F72; margin-top: 5px;">
+                    <div style="text-align: center; color: #1B4F72; margin-top: 5px; page-break-inside: avoid; page-break-after: avoid; padding-bottom: 10px;">
                         <div style="font-weight: bold; margin-bottom: 8px;">UNE SEULE ADRESSE COMMUNE : contact@lenoir-mec.com</div>
                         
                         <div style="margin-top: 5px;">
@@ -1596,7 +1596,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone'] }
+                pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone'] }
             };
 
             return new Promise((resolve, reject) => {
