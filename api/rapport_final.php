@@ -1372,6 +1372,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                         const pages = doc.querySelectorAll('.pdf-page');
                         pages.forEach((p, pIdx) => {
+                            // Nettoyage radical des styles d'affichage web parasites (marges et bordures de l'A4 web) 
+                            // qui se transmettaient au PDF et créaient de grands espaces blancs ou un dépassement de marges
+                            p.style.margin = '0';
+                            p.style.padding = '0';
+                            p.style.boxShadow = 'none';
+                            p.style.minHeight = 'auto'; // Retire le 29.7cm forcé
+
                             // Bug 5 & New Fix: Remove empty photos section
                             const hasPhotos = p.querySelectorAll('.photo-annexe-item img').length > 0;
                             p.querySelectorAll('.photos-annexes-wrapper').forEach(wrapper => {
@@ -1380,7 +1387,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 }
                             });
 
-                            // Bug 1 & 2 & 3: Clean up machine fiche
+                            // Clean up machine fiche
                             p.querySelectorAll('.photo-btn, .photo-thumbs, #btnChrono, .no-print-pdf').forEach(el => el.remove());
                             
                             // If it's a diagram/photo page and it's empty after cleanup, skip it
@@ -1388,12 +1395,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             if ((pIdx > 0) && contentText.length < 50 && !hasPhotos && !p.querySelector('img')) {
                                 return; // Skip empty pages
                             }
-
-                            // Chaque machine commence obligatoirement sur une nouvelle page
+                            
+                            // Chaque fiche démarre obligatoirement sur une nouvelle feuille (sans margin parasite)
                             if (pIdx === 0) {
                                 p.style.pageBreakBefore = 'always';
-                                p.style.marginTop = '0';
-                                p.style.paddingTop = '0';
                                 const hDiv = document.createElement('div');
                                 hDiv.style.display = 'flex';
                                 hDiv.style.justifyContent = 'space-between';
@@ -1411,6 +1416,22 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             p.querySelectorAll('input[type="radio"]:checked').forEach(r => {
                                 const lbl = r.closest('label');
                                 if (lbl) lbl.classList.add('selected');
+                            });
+
+                            // BUG 026: Convertir visuellement les boutons radios natifs non stylisés en symboles Unicode
+                            // car html2canvas jette parfois aléatoirement le rendu visuel de leur état "checked"
+                            p.querySelectorAll('input[type="radio"]').forEach(r => {
+                                if (r.closest('.pastille-group') || r.style.display === 'none') return;
+                                const isChecked = r.checked || r.hasAttribute('checked') || r.getAttribute('checked') === '';
+                                const symbol = document.createElement('span');
+                                symbol.innerHTML = isChecked ? '&#9673;' : '&#9711;'; // ◉ ou ◯
+                                symbol.style.fontSize = '14px';
+                                symbol.style.fontWeight = isChecked ? 'bold' : 'normal';
+                                symbol.style.color = isChecked ? '#1B4F72' : '#888';
+                                symbol.style.display = 'inline-block';
+                                symbol.style.width = '16px';
+                                symbol.style.textAlign = 'center';
+                                r.parentNode.replaceChild(symbol, r);
                             });
 
                             p.querySelectorAll('input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"]):not([type="file"])').forEach(inp => {
@@ -1568,7 +1589,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
 
                     <!-- FOOTER SECTION WITH QR CODE -->
-                    <div style="text-align: center; color: #1B4F72; margin-top: 5px; page-break-inside: avoid; page-break-after: avoid; padding-bottom: 10px;">
+                    <!-- BUG 025 : Retire le page-break-after: avoid fatal qui tue le QR code sous Chrome -->
+                    <div style="text-align: center; color: #1B4F72; margin-top: 5px; page-break-inside: avoid; padding-bottom: 10px;">
                         <div style="font-weight: bold; margin-bottom: 8px;">UNE SEULE ADRESSE COMMUNE : contact@lenoir-mec.com</div>
                         
                         <div style="margin-top: 5px;">
@@ -1580,6 +1602,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
             `;
             container.appendChild(endPage);
+
+            // Blindage ultime de tous les TR pour ne jamais couper les lignes de tableaux horizontalement
+            container.querySelectorAll('tr').forEach(tr => {
+                tr.style.pageBreakInside = 'avoid';
+            });
 
             await waitForImages(container);
             return container;
