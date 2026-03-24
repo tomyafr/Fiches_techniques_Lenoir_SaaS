@@ -1566,12 +1566,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                     <!-- FOOTER SECTION WITH QR CODE -->
                     <div style="text-align: center; color: #1B4F72; margin-top: 5px;">
-                        <div style="font-weight: bold; margin-bottom: 8px;">UNE SEULE ADRESSE COMMUNE : contact@www.lenoir-mec.com</div>
+                        <div style="font-weight: bold; margin-bottom: 8px;">UNE SEULE ADRESSE COMMUNE : contact@lenoir-mec.com</div>
                         
                         <div style="margin-top: 5px;">
                             <div style="font-size: 10px; font-weight: bold; margin-bottom: 3px;">Visitez notre site !</div>
                             <img src="/assets/qr_lenoir.png" style="width: 100px; height: 100px; display: block; margin: 0 auto;">
-                            <div style="font-weight: bold; font-size: 10px; margin-top: 5px;">www.www.lenoir-mec.com</div>
+                            <div style="font-weight: bold; font-size: 10px; margin-top: 5px;">www.lenoir-mec.com</div>
                         </div>
                     </div>
                 </div>
