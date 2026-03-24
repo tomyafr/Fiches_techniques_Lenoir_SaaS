@@ -500,12 +500,16 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <div style="font-weight: 700; color: #f59e0b; margin-bottom: 0.5rem;">⚠️ <?= $nbMachinesEmpty ?> fiche(s) non remplie(s) détectée(s)</div>
                         <p style="font-size: 0.85rem; margin-bottom: 0.8rem; color: var(--text-dim);">Veuillez choisir comment inclure ces machines vides dans le rapport final :</p>
                         <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; cursor: pointer; color: var(--text);">
-                            <input type="radio" name="empty_fiches_option" value="exclude" onclick="window.LM_RAPPORT.emptyFichesOption='exclude'">
-                            Exclure totalement les fiches vides du PDF
+                            <input type="radio" name="empty_fiches_option" value="include" checked onclick="window.LM_RAPPORT.emptyFichesOption='include'">
+                            Les inclure entièrement (Toutes les pages de la fiche vierge)
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; cursor: pointer; color: var(--text);">
+                            <input type="radio" name="empty_fiches_option" value="condensed" onclick="window.LM_RAPPORT.emptyFichesOption='condensed'">
+                            Les inclure en version condensée (1 page "Non contrôlé")
                         </label>
                         <label style="display: block; font-size: 0.85rem; cursor: pointer; color: var(--text);">
-                            <input type="radio" name="empty_fiches_option" value="condensed" checked onclick="window.LM_RAPPORT.emptyFichesOption='condensed'">
-                            Les inclure en version condensée (1 page "Non contrôlé")
+                            <input type="radio" name="empty_fiches_option" value="exclude" onclick="window.LM_RAPPORT.emptyFichesOption='exclude'">
+                            Exclure totalement les fiches vides du PDF
                         </label>
                     </div>
                     <?php endif; ?>
@@ -567,7 +571,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         sigTech: <?= json_encode($intervention['signature_technicien'] ?: $techSignatureBase64) ?>,
                         sigClient: <?= json_encode($intervention['signature_client'] ?? '') ?>,
                         pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>, 
-                        emptyFichesOption: 'condensed',
+                        emptyFichesOption: 'include',
                         emptyMachinesIds: <?= json_encode($emptyMachinesIds) ?>,
                         machinesIds: [<?= implode(',', array_column($machines, 'id')) ?>],
                         machinesData: <?= json_encode(array_values(array_map(function($m) use ($intervention) {
@@ -1069,6 +1073,49 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 /* Non selected labels are subtle empty circles */
                 .pastille-group label:not(.selected) { opacity: 0.8; border: 1px solid #777 !important; background: transparent !important;}
 
+                .pastille-group label.selected::after {
+                    content: '';
+                    display: block;
+                    width: 8px;
+                    height: 8px;
+                    background: #000;
+                    border-radius: 50%;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                }
+
+                /* Styling raw radio buttons for html2canvas compatibility (Frequency table) */
+                input[type="radio"] {
+                    -webkit-appearance: none;
+                    appearance: none;
+                    width: 16px;
+                    height: 16px;
+                    border: 2px solid #999;
+                    border-radius: 50%;
+                    background: #eee;
+                    position: relative;
+                    display: inline-block;
+                    vertical-align: middle;
+                }
+                input[type="radio"]:checked {
+                    border-color: #444;
+                    background: #fff;
+                }
+                input[type="radio"]:checked::after {
+                    content: '';
+                    display: block;
+                    width: 8px;
+                    height: 8px;
+                    background: #000;
+                    border-radius: 50%;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                }
+                
                 .pdf-input { border: none; border-bottom: 1px dashed #000; background: transparent; font-size: 13px; font-family: Arial; padding: 2px; width: 100%; color: black; outline:none; }
                 .pdf-textarea-rendered { 
                     width: 100%; font-family: Arial; font-size: 9pt; color: black; white-space: pre-wrap; word-wrap: break-word; padding:4px; box-sizing: border-box;
@@ -1254,9 +1301,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             synthPreambulePage.innerHTML = `
                 <div style="padding-top: 10px;">
                     <div style="border: 2px solid #000; padding: 20px; color: #000; background: #fff; margin-bottom: 30px; page-break-inside: avoid;">
-                        <h2 style="text-align: center; margin-top: 0; margin-bottom: 20px; text-decoration: underline; font-size: 16px; text-transform: uppercase;">SYNTHÈSE DE L'INTERVENTION</h2>
+                        <h2 style="text-align: center; margin-top: 0; margin-bottom: 20px; text-decoration: underline; font-size: 16px; text-transform: uppercase; color: #000; font-weight: 900;">SYNTHÈSE DE L'INTERVENTION</h2>
                         
-                        <div style="margin-bottom: 15px; font-size: 13px; line-height: 1.6;">
+                        <div style="margin-bottom: 15px; font-size: 13px; line-height: 1.6; color: #000;">
                             <div><strong>Technicien :</strong> ${s.tech}</div>
                             <div><strong>Date :</strong> ${s.date}</div>
                             <div><strong>Durée totale :</strong> ${s.duree}</div>
