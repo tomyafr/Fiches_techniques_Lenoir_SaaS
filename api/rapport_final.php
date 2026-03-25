@@ -762,7 +762,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <!-- BLOC IA GLOBAL (BATCH) -->
             <div class="card glass" style="margin-top:2.5rem; padding:1.5rem; border:1px solid #d35400; background:rgba(211, 84, 0, 0.05);">
                 <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-                    <div style="font-size:2rem;">🤖</div>
+                    <div style="line-height:0;"><img src="/assets/ai_expert.jpg" style="height:3rem; width:3rem; border-radius:50%; object-fit:cover; border: 2px solid #d35400;"></div>
                     <div>
                         <h4 style="margin:0; color:#d35400; font-size:1.1rem;">Génération automatique intelligente</h4>
                         <p style="margin:4px 0 0 0; font-size:0.8rem; color:var(--text-dim);">L'Expert IA va parcourir toutes vos machines pour rédiger les conclusions et dysfonctionnements (Section E & F) en fonction de vos contrôles.</p>
@@ -775,7 +775,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 <div id="iaBatchStatus" style="font-size:0.85rem; color:var(--text); text-align:center; margin-bottom:15px; font-weight:600; min-height:1.2em;"></div>
 
                 <button type="button" id="btnGenerateAllAI" onclick="generateAllIA()" class="btn-final" style="margin-top:0; background:linear-gradient(135deg, #e67e22, #d35400); box-shadow:0 4px 15px rgba(230, 126, 34, 0.3);">
-                    🤖 Analyser toutes les machines par IA
+                    <img src="/assets/ai_expert.jpg" style="height:20px; width:20px; border-radius:50%; vertical-align:middle; margin-right:8px;"> Analyser toutes les machines par l'Expert IA
                 </button>
             </div>
 
@@ -2052,7 +2052,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
 
             status.innerText = "✅ Analyse terminée !";
-            btn.innerHTML = '🤖 Relancer l\'Expert IA';
+            btn.innerHTML = '<img src="/assets/ai_expert.jpg" style="height:16px; width:16px; border-radius:50%; vertical-align:middle; margin-right:6px;"> Relancer l\'Expert IA';
             btn.disabled = false;
             
             // Recharger les données PHP pour que le PDF utilise les nouvelles valeurs DB
