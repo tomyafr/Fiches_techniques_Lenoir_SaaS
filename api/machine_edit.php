@@ -87,28 +87,60 @@ $heureDebut = $mesures['heure_debut'] ?? '';
 $heureFin = $mesures['heure_fin'] ?? '';
 
 /**
- * Génère un résumé des dysfonctionnements (NC/NR/AA) si le champ est vide.
+ * Génère un résumé des dysfonctionnements (NC/NR/AA/HS/R) si le champ est vide ou par défaut.
  */
 function generateDysfunctionsFallback($donnees) {
     $labelsMap = [
-        'aprf_alim' => 'Alimentation coffret (APRF)', 'aprf_fix' => 'Fixation/Visserie (APRF)', 'aprf_etat_cas' => 'État carrossage (APRF)',
-        'aprf_bande' => 'État bande (APRF)', 'aprf_joint' => 'Joints d\'étanchéité (APRF)', 'aprf_graiss' => 'Graissage (APRF)', 'aprf_fonct' => 'Test fonctionnement (APRF)',
-        'edx_bande' => 'Bande transporteuse (EDX)', 'edx_virole' => 'Virole/Enveloppe (EDX)', 'edx_tamb' => 'Tambour moteur (EDX)',
-        'edx_pal' => 'Paliers/Roulements (EDX)', 'edx_graiss' => 'Graissage (EDX)', 'edx_net_conv' => 'Nettoyage convoyeur (EDX)', 'edx_net_cais' => 'Nettoyage caisson (EDX)',
-        'ov_bande' => 'Bande (OV)', 'ov_virole' => 'Virole (OV)', 'ov_tamb' => 'Tambour (OV)', 'ov_pal' => 'Paliers (OV)',
-        'ov_moteur' => 'Moteur/Réducteur (OV)', 'ov_racleur' => 'Racleur (OV)', 'ov_graiss' => 'Graissage (OV)',
-        'levage_etat' => 'État général (Levage)', 'levage_crochet' => 'Chaine/Crochet (Levage)', 'levage_frein' => 'Frein/Sécurité (Levage)',
-        'levage_guide' => 'Guide chaine (Levage)', 'levage_pulse' => 'Bouton Poussoir (Levage)', 'levage_tele' => 'Télécommande (Levage)',
-        'pap_bande' => 'Bande (PAP/TAP)', 'pap_tamb' => 'Tambour (PAP/TAP)', 'pap_pal' => 'Paliers (PAP/TAP)', 'pap_moteur' => 'Moteur (PAP/TAP)', 'pap_net' => 'Nettoyage (PAP/TAP)'
+        // APRF
+        'aprf_satisfaction' => 'Satisfaction de fonctionnement',
+        'aprf_bande' => 'État et type de la bande',
+        'aprf_reglettes' => 'État des réglettes',
+        'aprf_boutons' => 'État des boutons étoile',
+        'aprf_options' => 'Options',
+        'aprf_inox' => 'Caisson Inox',
+        'aprf_attraction' => 'Contrôle de l\'attraction',
+        // EDX
+        'edx_bande' => 'Bande transporteuse',
+        'edx_virole' => 'Virole/Enveloppe',
+        'edx_tamb' => 'Tambour moteur',
+        'edx_pal' => 'Paliers/Roulements',
+        'edx_graiss' => 'Graissage',
+        'edx_net_conv' => 'Nettoyage convoyeur',
+        'edx_net_cais' => 'Nettoyage caisson',
+        // OV
+        'ov_bande' => 'Bande',
+        'ov_virole' => 'Virole',
+        'ov_tamb' => 'Tambour',
+        'ov_pal' => 'Paliers',
+        'ov_moteur' => 'Moteur/Réducteur',
+        'ov_racleur' => 'Racleur',
+        'ov_graiss' => 'Graissage',
+        // LEVAGE
+        'levage_etat' => 'État général',
+        'levage_crochet' => 'Chaine/Crochet',
+        'levage_frein' => 'Frein/Sécurité',
+        'levage_guide' => 'Guide chaine',
+        'levage_pulse' => 'Bouton Poussoir',
+        'levage_tele' => 'Télécommande',
+        // PAP
+        'pap_bande' => 'Bande (PAP/TAP)',
+        'pap_tamb' => 'Tambour (PAP/TAP)',
+        'pap_pal' => 'Paliers (PAP/TAP)',
+        'pap_moteur' => 'Moteur (PAP/TAP)',
+        'pap_net' => 'Nettoyage (PAP/TAP)'
     ];
 
     $issues = [];
+    $negativeValues = ['nc', 'nr', 'aa', 'r', 'hs'];
+    
     foreach ($donnees as $k => $v) {
-        if (strpos($k, '_radio') !== false && in_array($v, ['nc', 'nr', 'aa'])) {
+        if (in_array($v, $negativeValues)) {
             $baseKey = str_replace('_radio', '', $k);
-            $label = $labelsMap[$baseKey] ?? str_replace('_', ' ', $baseKey);
-            $eval = ($v === 'aa') ? 'À améliorer' : 'Non conforme';
-            $issues[] = "• " . $label . " : " . $eval;
+            if (isset($labelsMap[$baseKey])) {
+                $label = $labelsMap[$baseKey];
+                $eval = in_array($v, ['aa', 'r']) ? 'À améliorer / Remplacer' : 'Non conforme / HS';
+                $issues[] = "• " . $label . " : " . $eval;
+            }
         }
     }
     return !empty($issues) ? implode("\n", $issues) : "Aucun dysfonctionnement majeur signalé.";
@@ -1655,7 +1687,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?php else: ?>
                                 <?php 
                                     $dysText = trim($machine['dysfonctionnements'] ?? '');
-                                    if (empty($dysText)) {
+                                    $defaultMsg = "Aucun dysfonctionnement majeur signalé.";
+                                    if (empty($dysText) || $dysText === $defaultMsg) {
                                         $dysText = generateDysfunctionsFallback($donnees);
                                     }
                                 ?>
@@ -1963,19 +1996,20 @@ foreach ($recoFreq as $rfk => $rfv) {
 
         function generateDysfunctions() {
             let dys = [];
-            // Cherche tous les labels sélectionnés avec des couleurs NC/NR/AA
-            // On se base sur les classes CSS des labels parents des radios
-            const negativeLabels = document.querySelectorAll('.pastille-group label.selected.p-nc, .pastille-group label.selected.p-nr, .pastille-group label.selected.p-aa');
+            
+            // On cherche tous les labels sélectionnés avec des couleurs NC/NR/AA/R/HS
+            const selector = '.pastille-group label.selected.p-nc, .pastille-group label.selected.p-nr, .pastille-group label.selected.p-aa';
+            const negativeLabels = document.querySelectorAll(selector);
             
             negativeLabels.forEach(label => {
-                // On remonte au TR pour trouver le libellé
                 const tr = label.closest('tr');
                 if (tr) {
-                    const designation = tr.querySelector('td:first-child').innerText.trim();
-                    const eval = (label.classList.contains('p-aa')) ? "À améliorer" : "Non conforme / Remplacement nécessaire";
-                    // On cherche aussi le commentaire de la ligne
-                    const comment = tr.querySelector('textarea')?.value.trim();
+                    const designation = tr.querySelector('td:first-child').innerText.trim().split("\n")[0];
+                    let eval = "Non conforme";
+                    if (label.classList.contains('p-aa')) eval = "À améliorer / Remplacer";
+                    if (label.classList.contains('p-nr')) eval = "Urgent";
                     
+                    const comment = tr.querySelector('textarea')?.value.trim();
                     let line = "• " + designation + " : " + eval;
                     if (comment) line += " (" + comment + ")";
                     dys.push(line);
@@ -1984,8 +2018,8 @@ foreach ($recoFreq as $rfk => $rfv) {
 
             const textarea = document.getElementById('dysfonctionnementsText');
             if (textarea) {
-                if (textarea.value && !confirm("Voulez-vous écraser le contenu actuel par la liste automatique ?")) return;
-                textarea.value = dys.join("\n");
+                if (textarea.value && textarea.value !== "Aucun dysfonctionnement majeur signalé." && !confirm("Voulez-vous écraser le contenu actuel par la liste automatique ?")) return;
+                textarea.value = dys.length > 0 ? dys.join("\n") : "Aucun dysfonctionnement majeur signalé.";
                 autoGrow(textarea);
             }
         }
