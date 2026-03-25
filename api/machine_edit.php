@@ -526,6 +526,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             <?php
             ob_start();
             ?>
+            <div class="pdf-page">
             <!-- Header exact LENOIR -->
             <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:15px; color:#000;">
                 <tr>
@@ -1692,6 +1693,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     </div>
                                 <?php endif; ?>
                             <?php endif; ?>
+                        </div>
+
                         <div style="margin-top:20px; border: 1px solid #000; padding:10px; background: #fff;">
                             <div style="font-weight:bold; font-size:14px; margin-bottom:5px; color:#d35400;">F) CONCLUSION :</div>
                             <?php if (!isset($_GET['pdf'])): ?>
@@ -1775,6 +1778,9 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 </div> <!-- fin .pdf-page -->
             </div> <!-- fin .mobile-wrapper -->
+            <?php
+            echo ob_get_clean();
+            ?>
     </form>
 
     <!-- Hidden file input for camera capture -->
