@@ -58,11 +58,18 @@ if ($type === 'E') {
     $result = callGroqIA($systemPrompt, $userPrompt);
     
     if (!$result) {
-        $count = count($issues['nr']) + count($issues['nc']) + count($issues['aa']);
-        if ($count === 0) {
-            $result = "Votre équipement est conforme à nos standards officiels. L'équipement est opérationnel.";
+        $countNR = count($issues['nr']);
+        $countNC = count($issues['nc']);
+        $countAA = count($issues['aa']);
+        
+        if ($countNR + $countNC + $countAA === 0) {
+            $result = "Votre équipement est conforme à nos standards officiels. L'équipement est pleinement opérationnel.";
         } else {
-            $result = "Votre équipement présente certains points d'attention (voir Section E). Nous vous conseillons une révision technique.";
+            $reco = "une révision technique";
+            if ($countNR > 0) $reco = "le remplacement immédiat des pièces critiques (voir Section E)";
+            else if ($countNC > 0) $reco = "une remise en conformité rapide";
+            
+            $result = "L'expertise a révélé des anomalies" . ($countNR > 0 ? " majeures" : "") . ". Nous préconisons $reco pour garantir la sécurité et l'efficacité de votre séparation magnétique.";
         }
     }
 

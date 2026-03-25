@@ -98,7 +98,7 @@ function callGroqIA($systemPrompt, $userPrompt) {
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 10); // Timeout 10s
+    curl_setopt($ch, CURLOPT_TIMEOUT, 20); // Timeout augmenté à 20s
 
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
