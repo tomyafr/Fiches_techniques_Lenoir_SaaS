@@ -57,19 +57,19 @@ $equipe = $stmtUsers->fetchAll();
             <nav style="display:flex;flex-direction:column;gap:0.4rem;margin-bottom:2rem;">
                 <a href="admin.php" class="btn btn-ghost sidebar-link"
                     style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
-                    <img src="/assets/icons/dashboard.png" style="height:14px; width:auto; margin-right:8px;"> Tableau de bord
+                    <img src="/assets/icons/dashboard.png" class="premium-icon"> Tableau de bord
                 </a>
                 <a href="admin.php?new=1#" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/icons/add.png" style="height:14px; width:auto; margin-right:8px;"> Nouvelle Fiche
+                    <img src="/assets/icons/add.png" class="premium-icon"> Nouvelle Fiche
                 </a>
                 <a href="historique.php" class="btn btn-ghost sidebar-link"
                     style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
-                    <img src="/assets/icons/history.png" style="height:14px; width:auto; margin-right:8px;"> Historique
+                    <img src="/assets/icons/history.png" class="premium-icon"> Historique
                 </a>
                 <a href="equipe.php" class="btn btn-primary sidebar-link"
                     style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
-                    <img src="/assets/icons/team.png" style="height:14px; width:auto; margin-right:8px;"> Équipe
+                    <img src="/assets/icons/team.png" class="premium-icon"> Équipe
                 </a>
             </nav>
 
@@ -84,11 +84,11 @@ $equipe = $stmtUsers->fetchAll();
 
                 <a href="logout.php" class="btn btn-ghost"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; color: var(--error); margin-bottom: 0.4rem;">
-                    <img src="/assets/icons/error.png" style="height:14px; width:auto; margin-right:8px;"> Se déconnecter
+                    <img src="/assets/icons/dashboard.png" class="premium-icon" style="height:28px;"> Se déconnecter
                 </a>
                 <a href="profile.php" class="btn btn-ghost sidebar-link"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/icons/profile.png" style="height:14px; width:auto; margin-right:8px;"> Mon Profil
+                    <img src="/assets/icons/profile.png" class="premium-icon"> Mon Profil
                 </a>
             </div>
         </aside>

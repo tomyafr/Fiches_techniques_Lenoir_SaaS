@@ -141,20 +141,20 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
             <nav style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 2rem;">
                 <a href="admin.php" class="btn btn-primary sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/icons/dashboard.png" style="height:14px; width:auto; margin-right:8px;"> Tableau de bord
+                    <img src="/assets/icons/dashboard.png" class="premium-icon"> Tableau de bord
                 </a>
                 <button onclick="document.getElementById('newInterventionModal').style.display='flex'"
                     class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/icons/add.png" style="height:14px; width:auto; margin-right:8px;"> Nouvelle Fiche
+                    <img src="/assets/icons/add.png" class="premium-icon"> Nouvelle Fiche
                 </button>
                 <a href="historique.php" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/icons/history.png" style="height:14px; width:auto; margin-right:8px;"> Historique
+                    <img src="/assets/icons/history.png" class="premium-icon"> Historique
                 </a>
                 <a href="equipe.php" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/icons/team.png" style="height:14px; width:auto; margin-right:8px;"> Équipe
+                    <img src="/assets/icons/team.png" class="premium-icon"> Équipe
                 </a>
             </nav>
 
@@ -173,7 +173,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                 </a>
                 <a href="profile.php" class="btn btn-ghost sidebar-link"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/icons/profile.png" style="height:14px; width:auto; margin-right:8px;"> Mon Profil
+                    <img src="/assets/icons/profile.png" class="premium-icon"> Mon Profil
                 </a>
             </div>
         </aside>
@@ -365,15 +365,15 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
     <nav class="mobile-bottom-nav">
         <div class="mobile-bottom-nav-inner">
             <a href="admin.php" class="mobile-nav-item active" style="color: inherit; text-decoration:none;">
-                <img src="/assets/icons/dashboard.png" style="height:20px; width:auto; margin-bottom:4px; display:block; margin-left:auto; margin-right:auto;">
+                <img src="/assets/icons/dashboard.png" class="premium-icon" style="height:28px; display:block; margin-left:auto; margin-right:auto;">
                 <span class="mobile-nav-label">Tableau</span>
             </a>
             <a href="historique.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                <img src="/assets/icons/history.png" style="height:20px; width:auto; margin-bottom:4px; display:block; margin-left:auto; margin-right:auto;">
+                <img src="/assets/icons/history.png" class="premium-icon" style="height:28px; display:block; margin-left:auto; margin-right:auto;">
                 <span class="mobile-nav-label">Historique</span>
             </a>
             <a href="equipe.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                <img src="/assets/icons/team.png" style="height:20px; width:auto; margin-bottom:4px; display:block; margin-left:auto; margin-right:auto;">
+                <img src="/assets/icons/team.png" class="premium-icon" style="height:28px; display:block; margin-left:auto; margin-right:auto;">
                 <span class="mobile-nav-label">Équipe</span>
             </a>
             <a href="profile.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">

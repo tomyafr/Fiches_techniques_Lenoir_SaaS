@@ -249,7 +249,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                 <?php if (!$forceChange): ?>
                     <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <img src="/assets/icons/dashboard.png" style="height:14px; width:auto; margin-right:8px;"> Tableau de bord
+                        <img src="/assets/icons/dashboard.png" class="premium-icon"> Tableau de bord
                     </a>
                     
                     <?php if ($_SESSION['role'] === 'admin'): ?>
@@ -266,12 +266,12 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
 
                     <a href="historique.php" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <img src="/assets/icons/history.png" style="height:14px; width:auto; margin-right:8px;"> Historique
+                        <img src="/assets/icons/history.png" class="premium-icon"> Historique
                     </a>
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                     <a href="equipe.php" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <img src="/assets/icons/team.png" style="height:14px; width:auto; margin-right:8px;"> Équipe
+                        <img src="/assets/icons/team.png" class="premium-icon"> Équipe
                     </a>
                     <?php endif; ?>
                 <?php endif; ?>
@@ -290,7 +290,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                 </a>
                 <a href="profile.php" class="btn btn-primary sidebar-link"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/icons/profile.png" style="height:14px; width:auto; margin-right:8px;"> Mon Profil
+                    <img src="/assets/icons/profile.png" class="premium-icon"> Mon Profil
                 </a>
             </div>
         </aside>

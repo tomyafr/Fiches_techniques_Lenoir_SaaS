@@ -262,7 +262,8 @@ $nbClients = count($clientsSet);
             <nav style="display:flex;flex-direction:column;gap:0.4rem;margin-bottom:2rem;">
                 <a href="<?= $isAdmin ? 'admin.php' : 'technicien.php' ?>" class="btn btn-ghost sidebar-link"
                     style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
-                    <img src="/assets/icons/dashboard.png" style="height:14px; width:auto; margin-right:8px;"> Tableau de bord
+                    <img src="/assets/icons/dashboard.png" class="premium-icon" style="height:28px;">
+ Tableau de bord
                 </a>
                 <?php if ($isAdmin): ?>
                     <a href="admin.php?new=1#" class="btn btn-ghost sidebar-link"
@@ -277,12 +278,14 @@ $nbClients = count($clientsSet);
                 <?php endif; ?>
                 <a href="historique.php" class="btn btn-primary sidebar-link"
                     style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
-                    <img src="/assets/icons/history.png" style="height:14px; width:auto; margin-right:8px;"> Historique
+                    <img src="/assets/icons/history.png" class="premium-icon" style="height:28px;">
+ Historique
                 </a>
                 <?php if ($isAdmin): ?>
                     <a href="equipe.php" class="btn btn-ghost sidebar-link"
                         style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
-                        <img src="/assets/icons/team.png" style="height:14px; width:auto; margin-right:8px;"> Équipe
+                        <img src="/assets/icons/team.png" class="premium-icon" style="height:28px;">
+ Équipe
                     </a>
                 <?php endif; ?>
             </nav>
@@ -448,15 +451,19 @@ $nbClients = count($clientsSet);
                                             </span>
                                         </td>
                                         <td style="text-align:center; white-space:nowrap;">
-                                                    <img src="/assets/icons/print.png" style="height:14px; width:auto;" title="Voir le rapport"></a>
+                                            <?php if ($i['statut'] === 'Terminee'): ?>
+                                                <a href="rapport_final.php?id=<?= $i['id'] ?>&msg=ok" class="btn btn-ghost"
+                                                    style="padding: 0.35rem 0.6rem;"
+                                                    title="Voir le rapport"><img src="/assets/icons/print.png" class="premium-icon action-icon" title="Voir le rapport"></a>
+                                            <?php endif; ?>
                                             <a href="intervention_edit.php?id=<?= $i['id'] ?>" class="btn btn-ghost"
-                                                style="padding: 0.35rem 0.6rem; font-size: 0.85rem;"
-                                                title="Modifier l'intervention"><img src="/assets/icons/add.png" style="height:14px; width:auto;"></a>
+                                                style="padding: 0.35rem 0.6rem;"
+                                                title="Modifier l'intervention"><img src="/assets/icons/add.png" class="premium-icon action-icon"></a>
                                             <a href="#"
                                                 onclick="if(confirm('Supprimer cette fiche définitivement ?')) window.location.href='delete_intervention.php?id=<?= $i['id'] ?>';"
                                                 class="btn btn-ghost"
-                                                style="padding: 0.35rem 0.6rem; font-size: 0.85rem; color: var(--error);"
-                                                title="Supprimer"><img src="/assets/icons/error.png" style="height:14px; width:auto;"></a>
+                                                style="padding: 0.35rem 0.6rem; color: var(--error);"
+                                                title="Supprimer"><img src="/assets/icons/error.png" class="premium-icon action-icon"></a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

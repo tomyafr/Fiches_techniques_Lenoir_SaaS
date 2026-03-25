@@ -1324,3 +1324,37 @@ html.light-mode .active-status {
     background: rgba(16, 185, 129, 0.15);
     color: #059669;
 }
+
+/* ═══════════ PREMIUM ICONS FIX ═══════════ */
+.premium-icon {
+    height: 18px; 
+    width: auto;
+    vertical-align: middle;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Forcé multiply pour supprimer le fond blanc sur les fonds sombres du site */
+.sidebar .premium-icon, 
+.card .premium-icon, 
+.table .premium-icon,
+.mobile-bottom-nav .premium-icon,
+.btn-ghost .premium-icon {
+    mix-blend-mode: multiply;
+}
+
+.sidebar .premium-icon {
+    height: 22px;
+    margin-right: 12px;
+}
+
+.mobile-nav-icon .premium-icon {
+    height: 28px;
+}
+
+.action-icon {
+    height: 22px !important;
+}
+
+.btn-ghost:hover .premium-icon {
+    transform: scale(1.15);
+}
