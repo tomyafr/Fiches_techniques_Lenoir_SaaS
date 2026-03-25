@@ -1,0 +1,20 @@
+﻿263e816 | 2026-03-24 | Fix html2pdf offset calculation with static position and compress endPage
+04ed093 | 2026-03-24 | Fix html2pdf table chopping via border-collapse: separate and endPage overflow rewrite
+c10bb4d | 2026-03-24 | Fix final page massive whitespace and html2pdf legacy mode table chop
+99d4479 | 2026-03-24 | Fix final page sections splitting (page-break-inside: avoid on wrappers)
+1b29287 | 2026-03-24 | Fix logo duplicates, update QR/URLs to raoul-lenoir.com, remove blank page, preserve diagrams selectively
+f869ab9 | 2026-03-24 | Fix 5 root causes: preserve diagrams, remove ghost page, fix table splitting, QR protection
+214d109 | 2026-03-24 | Fix html2pdf configuration: Revert global padding reset to restore A4 lateral constraints, and enforce hard class-based element avoidance for tr and QR code splitting across pages
+4886d4b | 2026-03-24 | Fix final html2canvas rendering defects: clear web view inherited margins, bypass native radio dropping via unicode spans, force explicit pageBreakInside on table rows, ensure QR visibility
+830523e | 2026-03-24 | Restore mandatory page break for end page blocks to isolate layout components cleanly on single terminal sheet
+a92c80d | 2026-03-24 | Fix split date CSS box bounds and repair jsPDF undefined footer property references in templates
+207ce64 | 2026-03-24 | Fix trailing empty page with cloned QR Code snippet by applying severe page-break prevents
+995ab8a | 2026-03-24 | Fix redundant www on email and QR Code url in final pdf template
+667dbd3 | 2026-03-24 | Fix double page breaks by migrating absolute footers to native jsPDF text logic
+9c6cc39 | 2026-03-24 | Hide machine diagrams from PDF and fix table pagebreak logic
+4ae8934 | 2026-03-24 | Remove stampHTML legal info from technician signature block
+bcbff71 | 2026-03-24 | Fix syntax errors, pdf generation layout, and page breaking rules
+c9c638f | 2026-03-23 | fix(pdf/canvas): Safely handle null signature vars and natively chain html2pdf promises to prevent execution exhaustion
+c8a8745 | 2026-03-23 | fix(pdf): Re-instate totally missing SignaturePad logic that was lost in recent feature divergence
+f651e69 | 2026-03-23 | Merge branch 'main' of https://github.com/tomyafr/Fiches_techniques_Lenoir_SaaS
+74b4132 | 2026-03-23 | fix(pdf): Master patch for JS signature payload, plaintext vars, title, empty textareas, and timestamp bugs built cleanly atop the stable slice layout 60802fe6dd

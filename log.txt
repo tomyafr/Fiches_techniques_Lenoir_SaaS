@@ -1,0 +1,15 @@
+﻿263e816 | Fix html2pdf offset calculation with static position and compress endPage
+04ed093 | Fix html2pdf table chopping via border-collapse: separate and endPage overflow rewrite
+c10bb4d | Fix final page massive whitespace and html2pdf legacy mode table chop
+99d4479 | Fix final page sections splitting (page-break-inside: avoid on wrappers)
+1b29287 | Fix logo duplicates, update QR/URLs to raoul-lenoir.com, remove blank page, preserve diagrams selectively
+f869ab9 | Fix 5 root causes: preserve diagrams, remove ghost page, fix table splitting, QR protection
+214d109 | Fix html2pdf configuration: Revert global padding reset to restore A4 lateral constraints, and enforce hard class-based element avoidance for tr and QR code splitting across pages
+4886d4b | Fix final html2canvas rendering defects: clear web view inherited margins, bypass native radio dropping via unicode spans, force explicit pageBreakInside on table rows, ensure QR visibility
+830523e | Restore mandatory page break for end page blocks to isolate layout components cleanly on single terminal sheet
+a92c80d | Fix split date CSS box bounds and repair jsPDF undefined footer property references in templates
+207ce64 | Fix trailing empty page with cloned QR Code snippet by applying severe page-break prevents
+995ab8a | Fix redundant www on email and QR Code url in final pdf template
+667dbd3 | Fix double page breaks by migrating absolute footers to native jsPDF text logic
+9c6cc39 | Hide machine diagrams from PDF and fix table pagebreak logic
+4ae8934 | Remove stampHTML legal info from technician signature block

@@ -523,110 +523,101 @@ foreach ($recoFreq as $rfk => $rfv) {
         </div>
 
         <div class="mobile-wrapper">
-            <?php
-            ob_start();
-            ?>
             <div class="pdf-page">
-            <!-- Header exact LENOIR -->
-            <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:15px; color:#000;">
-                <tr>
-                    <td style="width:40%; border-right:1px solid #000; padding:15px; vertical-align:bottom;">
-                        <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC" class="no-print-pdf"
-                            style="max-width:220px; display:block; margin-bottom:30px;">
-                        <div style="text-align:right; font-weight:bold; color:#1B4F72; font-size:16px;">
-                            Poste<input type="text" name="mesures[poste]"
-                                value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>"
-                                style="width:100px; border:none; border-bottom:1px solid #1B4F72; outline:none; color:#1B4F72; background:transparent; font-weight:bold;">
-                        </div>
-                    </td>
-                    <td style="width:60%; text-align:center; vertical-align:middle;">
-                        <span style="font-size:26px; font-weight:bold; color:#000;">
-                            <?= $isAPRF ? 'Aimant permanent rectangulaire fixe APRF' : ($isEDX ? 'Séparateur à courants de foucault ED-X' : ($isOV ? 'Overband Electromagnétique OV' : ($isLevage ? 'Electroaimants de Levage' : htmlspecialchars($machine['designation'])))) ?>
-                        </span>
-                    </td>
-                </tr>
-            </table>
+                <?php if (!isset($_GET['pdf'])): ?>
+                    <!-- Header exact LENOIR (Edit Mode Only) -->
+                    <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:15px; color:#000;">
+                        <tr>
+                            <td style="width:40%; border-right:1px solid #000; padding:15px; vertical-align:bottom;">
+                                <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC" class="no-print-pdf"
+                                    style="max-width:220px; display:block; margin-bottom:30px;">
+                                <div style="text-align:right; font-weight:bold; color:#1B4F72; font-size:16px;">
+                                    Poste<input type="text" name="mesures[poste]"
+                                        value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>"
+                                        style="width:100px; border:none; border-bottom:1px solid #1B4F72; outline:none; color:#1B4F72; background:transparent; font-weight:bold;">
+                                </div>
+                            </td>
+                            <td style="width:60%; text-align:center; vertical-align:middle;">
+                                <span style="font-size:26px; font-weight:bold; color:#000;">
+                                    <?= $isAPRF ? 'Aimant permanent rectangulaire fixe APRF' : ($isEDX ? 'Séparateur à courants de foucault ED-X' : ($isOV ? 'Overband Electromagnétique OV' : ($isLevage ? 'Electroaimants de Levage' : htmlspecialchars($machine['designation'])))) ?>
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                <?php endif; ?>
 
-            <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">A) FICHE DE CONTRÔLE : <?= htmlspecialchars($machine['designation']) ?></div>
-            <table
-                style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000;">
-                <tr>
-                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N°
-                        A.R.C.</td>
-                    <td style="width:35%; border:1px solid #000; padding:6px; font-weight:bold;">
-                        <?= htmlspecialchars($machine['numero_arc']) ?>
-                    </td>
-                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
-                        Repère</td>
-                    <td style="width:35%; border:1px solid #000; padding:6px;">
-                        <input type="text" name="mesures[repere]"
-                            value="<?= htmlspecialchars($mesures['repere'] ?? '') ?>" class="pdf-input">
-                    </td>
-                </tr>
-                <tr>
-                    <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N° O.F. <span style="color:var(--error);">*</span></td>
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="numero_of" value="<?= htmlspecialchars($machine['numero_of']) ?>"
-                            class="pdf-input" required placeholder="N° O.F.">
-                    </td>
-                    <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Année <span style="color:var(--error);">*</span></td>
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="number" name="annee_fabrication" value="<?= htmlspecialchars($machine['annee_fabrication']) ?>"
-                            class="pdf-input" required min="1900" max="<?= date('Y') + 1 ?>" placeholder="AAAA">
-                    </td>
-                </tr>
-                <tr>
-                    <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Désignation</td>
-                    <td colspan="3" style="border:1px solid #000; padding:6px; font-weight:bold;">
-                        <?= htmlspecialchars($machine['designation']) ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Date</td>
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="mesures[date_intervention]"
-                            value="<?= htmlspecialchars($mesures['date_intervention'] ?? $dateIntervention) ?>"
-                            class="pdf-input" placeholder="DD/MM/YYYY" style="width:85px;">
-                    </td>
-                    <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">T. prévu</td>
-                    <td style="border:1px solid #000; padding:6px; font-weight:bold; color:#0070c0;">
-                        <?= $tempsPrev ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#e8f4e8;">Horaires</td>
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="time" name="mesures[heure_debut]" id="heureDebut"
-                            value="<?= htmlspecialchars($heureDebut) ?>"
-                            style="border:none; outline:none; font-size:13px; background:transparent; width:70px;">
-                        <span style="color:#999; font-size:11px;">→</span>
-                        <input type="time" name="mesures[heure_fin]" id="heureFin"
-                            value="<?= htmlspecialchars($heureFin) ?>"
-                            style="border:none; outline:none; font-size:13px; background:transparent; width:70px;">
-                    </td>
-                    <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#e8f4e8;">T. réalisé
-                    </td>
-                    <td style="border:1px solid #000; padding:6px;">
-                        <span id="tempsCalc" style="font-weight:bold; color:#1B4F72; font-size:14px;"></span>
-                        <button type="button" id="btnChrono" onclick="toggleChrono()"
-                            style="background:#28a745; color:white; border:none; border-radius:4px; padding:3px 10px; font-size:11px; cursor:pointer; margin-left:8px; vertical-align:middle;">▶
-                            Chrono</button>
-                    </td>
-                </tr>
-            </table>
-            <?php
-            $pdfHeader = ob_get_clean();
-            // MF-007 Fix: we split pages artificially between sections for massive machines
-            function newPdfPage()
-            {
-                return '</div><div class="pdf-page bg-white p-4">'; 
-            }
-            ?>
-            <div class="pdf-page">
-                <?= $pdfHeader ?>
+                <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">A) FICHE DE CONTRÔLE : <?= htmlspecialchars($machine['designation']) ?></div>
+                
+                <div style="font-weight:bold; color:#1B4F72; margin-bottom:10px; font-size:14px;">
+                    Poste : <?= htmlspecialchars($mesures['poste'] ?? 'N/A') ?>
+                </div>
+
+                <table
+                    style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000;">
+                    <tr>
+                        <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N°
+                            A.R.C.</td>
+                        <td style="width:35%; border:1px solid #000; padding:6px; font-weight:bold;">
+                            <?= htmlspecialchars($machine['numero_arc']) ?>
+                        </td>
+                        <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">
+                            Repère</td>
+                        <td style="width:35%; border:1px solid #000; padding:6px;">
+                            <input type="text" name="mesures[repere]"
+                                value="<?= htmlspecialchars($mesures['repere'] ?? '') ?>" class="pdf-input">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N° O.F. <span style="color:var(--error);">*</span></td>
+                        <td style="border:1px solid #000; padding:6px;">
+                            <input type="text" name="numero_of" value="<?= htmlspecialchars($machine['numero_of']) ?>"
+                                class="pdf-input" required placeholder="N° O.F.">
+                        </td>
+                        <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Année <span style="color:var(--error);">*</span></td>
+                        <td style="border:1px solid #000; padding:6px;">
+                            <input type="number" name="annee_fabrication" value="<?= htmlspecialchars($machine['annee_fabrication']) ?>"
+                                class="pdf-input" required min="1900" max="<?= date('Y') + 1 ?>" placeholder="AAAA">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Date</td>
+                        <td style="border:1px solid #000; padding:6px;">
+                            <input type="text" name="mesures[date_intervention]"
+                                value="<?= htmlspecialchars($mesures['date_intervention'] ?? $dateIntervention) ?>"
+                                class="pdf-input" placeholder="DD/MM/YYYY" style="width:85px;">
+                        </td>
+                        <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">T. prévu</td>
+                        <td style="border:1px solid #000; padding:6px; font-weight:bold; color:#0070c0;">
+                            <?= $tempsPrev ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#e8f4e8;">Horaires</td>
+                        <td style="border:1px solid #000; padding:6px;">
+                            <input type="time" name="mesures[heure_debut]" id="heureDebut"
+                                value="<?= htmlspecialchars($heureDebut) ?>"
+                                style="border:none; outline:none; font-size:13px; background:transparent; width:70px;">
+                            <span style="color:#999; font-size:11px;">→</span>
+                            <input type="time" name="mesures[heure_fin]" id="heureFin"
+                                value="<?= htmlspecialchars($heureFin) ?>"
+                                style="border:none; outline:none; font-size:13px; background:transparent; width:70px;">
+                        </td>
+                        <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#e8f4e8;">T. réalisé
+                        </td>
+                        <td style="border:1px solid #000; padding:6px;">
+                            <span id="tempsCalc" style="font-weight:bold; color:#1B4F72; font-size:14px;"></span>
+                            <button type="button" id="btnChrono" onclick="toggleChrono()"
+                                style="background:#28a745; color:white; border:none; border-radius:4px; padding:3px 10px; font-size:11px; cursor:pointer; margin-left:8px; vertical-align:middle;">▶
+                                Chrono</button>
+                        </td>
+                    </tr>
+                </table>
 
                 <?php
-                // === PASTILLE HELPERS ===
+                // === HELPERS ===
+                function newPdfPage() {
+                    return '</div><div class="pdf-page bg-white p-4">'; 
+                }
                 function pastille($name, $value, $cssClass, $title, $currentVal)
                 {
                     $sel = ($currentVal == $value) ? ' selected' : '';
@@ -657,42 +648,9 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 function renderSectionC($isEDX, $isOV) {
                     ?>
-                    <div style="margin-top:20px;">
+                    <div style="margin-top:20px; page-break-inside: avoid;">
                         <div style="font-weight:bold; font-size:14px; color:#d35400; margin-bottom:10px;">C) RAPPEL DES FRÉQUENCES DE NETTOYAGE ET DES DIFFÉRENTS POINTS DE CONTRÔLE :</div>
-                        <table style="width:100%; border-collapse:collapse; font-size:11px; border:2px solid #ed7d31;">
-                            <thead>
-                                <tr style="background:#ed7d31; color:white;">
-                                    <th style="border:1px solid #ed7d31; padding:5px; text-align:left;">Points de contrôle</th>
-                                    <th style="border:1px solid #ed7d31; padding:5px; text-align:center;">Quotidien</th>
-                                    <th style="border:1px solid #ed7d31; padding:5px; text-align:center;">Hebdo.</th>
-                                    <th style="border:1px solid #ed7d31; padding:5px; text-align:center;">Mensuel</th>
-                                    <th style="border:1px solid #ed7d31; padding:5px; text-align:center;">Trimestriel</th>
-                                    <th style="border:1px solid #ed7d31; padding:5px; text-align:center;">Annuel</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                $points = [
-                                    "Bande" => "h",
-                                    "Virole" => "h",
-                                    "Tambour" => "h",
-                                    "Paliers" => "t",
-                                    "Graissage" => "m",
-                                    "Nettoyage convoyeur" => "h",
-                                    "Nettoyage caisson" => "h"
-                                ];
-                                foreach ($points as $label => $freq): ?>
-                                    <tr style="background:<?= ($freq == 'h' ? '#fff2cc' : '#fce4d6') ?>;">
-                                        <td style="border:1px solid #ed7d31; padding:4px; font-weight:bold;"><?= $label ?></td>
-                                        <td style="border:1px solid #ed7d31; text-align:center;"><?= ($freq == 'q' ? 'X' : '') ?></td>
-                                        <td style="border:1px solid #ed7d31; text-align:center;"><?= ($freq == 'h' ? 'X' : '') ?></td>
-                                        <td style="border:1px solid #ed7d31; text-align:center;"><?= ($freq == 'm' ? 'X' : '') ?></td>
-                                        <td style="border:1px solid #ed7d31; text-align:center;"><?= ($freq == 't' ? 'X' : '') ?></td>
-                                        <td style="border:1px solid #ed7d31; text-align:center;"><?= ($freq == 'a' ? 'X' : '') ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
+                        <img src="/assets/machines/frequences_tableau.png" style="width:100%; height:auto; border:2px solid #ed7d31;">
                     </div>
                     <?php
                 }
@@ -1778,9 +1736,6 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 </div> <!-- fin .pdf-page -->
             </div> <!-- fin .mobile-wrapper -->
-            <?php
-            echo ob_get_clean();
-            ?>
     </form>
 
     <!-- Hidden file input for camera capture -->

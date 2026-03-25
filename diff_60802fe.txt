@@ -1,0 +1,340 @@
+﻿diff --git a/api/rapport_final.php b/api/rapport_final.php
+index fe68ac7..4611696 100644
+--- a/api/rapport_final.php
++++ b/api/rapport_final.php
+@@ -1126,13 +1126,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+             const sigTechData = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
+             const sigClientData = window.LM_RAPPORT.sigClient || document.getElementById('canvasClient')?.toDataURL() || '';
+             
+-            const stampHTML = \`
+-                <div style="color: #2b4c80; font-family: Arial, sans-serif; font-size: 9px; line-height: 1.2; font-weight: bold; margin-bottom: 5px;">
+-                    \${window.LM_RAPPORT.legal.address}<br>
+-                    \${window.LM_RAPPORT.legal.contact}<br>
+-                    \${window.LM_RAPPORT.legal.siret}
+-                </div>
+-            \`;
++            const stampHTML = '<div style="color: #2b4c80; font-family: Arial, sans-serif; font-size: 9px; line-height: 1.2; font-weight: bold; margin-bottom: 5px;">' +
++                (window.LM_RAPPORT.legal.address || '') + '<br>' +
++                (window.LM_RAPPORT.legal.contact || '') + '<br>' +
++                (window.LM_RAPPORT.legal.siret || '') +
++                '</div>';
+ 
+             // Generate HTML lines for machines
+             const machinesTrs = window.LM_RAPPORT.machinesData.map(m => `
+@@ -1166,7 +1164,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+ 
+                 <!-- GRAND CADRE ORANGE -->
+                 <div style="border: 3px solid #d35400; padding: 15px; margin-bottom: 30px;">
+-                    <h1 style="text-align: center; color: #d35400; font-size: 26px; font-weight: bold; margin: 10px 0 20px 0;">RAPPORT DE L'EXPERTISE</h1>
++                    <h1 style="text-align: center; color: #d35400; font-size: 26px; font-weight: bold; margin: 10px 0 20px 0;">RAPPORT D'EXPERTISE SUR SITE</h1>
+                     <div style="text-align: right; font-weight: bold; font-size: 14px; color: black; margin-bottom: 15px;">N┬░ARC : ${numArc}</div>
+ 
+                     <!-- TABLEAU CLIENT -->
+@@ -1405,8 +1403,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                                 }
+                             });
+ 
+-                            // Bug 1 & 2 & 3: Clean up machine fiche
+-                            p.querySelectorAll('.photo-btn, .photo-thumbs, #btnChrono, .no-print-pdf').forEach(el => el.remove());
++                            p.querySelectorAll('.photo-btn, .photo-thumbs, #btnChrono').forEach(el => el.remove());
++                            p.querySelectorAll('img.no-print-pdf').forEach(el => el.remove());
++                            p.querySelectorAll('div.no-print-pdf').forEach(el => el.classList.remove('no-print-pdf'));
+                             
+                             // If it's a diagram/photo page and it's empty after cleanup, skip it
+                             const contentText = p.textContent.trim();
+@@ -1467,6 +1466,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                                     if (!val.trim()) val = "Non r├®alis├®";
+                                 }
+ 
++                                if (ta.name === 'commentaires' && (!val || !val.trim())) {
++                                    const parentWrapper = ta.closest('div[style*="margin-top"]');
++                                    if (parentWrapper && parentWrapper.innerText.includes('Commentaire')) {
++                                        parentWrapper.style.display = 'none';
++                                    }
++                                }
++
+                                 if (val.trim()) {
+                                     const div = document.createElement('div');
+                                     div.className = 'pdf-textarea-rendered';
+@@ -1536,21 +1542,31 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+             // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC + SIGNATURES + OBSERVATIONS) ---
+ 
+             const endPage = document.createElement('div');
+-            endPage.className = 'pdf-page';
+-            endPage.style.padding = '0 15mm';
+-            endPage.style.position = 'relative';
++            endPage.style.width = '21cm';
++            endPage.style.padding = '10px 15mm';
++            endPage.style.boxSizing = 'border-box';
++            endPage.style.background = 'white';
++            endPage.style.position = 'static';
++            endPage.style.overflow = 'visible';
+ 
+             const originalRapport = document.getElementById('rapportForm');
+             const souhaitRapport = originalRapport.querySelector('[name="souhait_rapport_unique"]').checked;
+             const souhaitPieces = originalRapport.querySelector('[name="souhait_offre_pieces"]').checked;
+             const souhaitIntervention = originalRapport.querySelector('[name="souhait_pieces_intervention"]').checked;
+             const souhaitAucune = originalRapport.querySelector('[name="souhait_aucune_offre"]').checked;
+-            const nomSignataireFin = originalRapport.querySelector('[name="nom_signataire"]').value || '_____';
++            const contactNomFin = originalRapport.querySelector('[name="contact_nom"]').value || '_____';
++            const nomSignataireFin = originalRapport.querySelector('[name="nom_signataire"]').value || contactNomFin;
+             const techNameLabel = "<?= htmlspecialchars($techName) ?>";
+             const dateStr = window.LM_RAPPORT.dateInt;
+ 
+-            const commentaryTech = originalRapport.querySelector('[name="commentaire_technicien"]')?.value || '';
+-            const commentaryClient = originalRapport.querySelector('[name="commentaire_client"]')?.value || '';
++            const commentaryTechRaw = originalRapport.querySelector('[name="commentaire_technicien"]')?.value || '';
++            const commentaryClientRaw = originalRapport.querySelector('[name="commentaire_client"]')?.value || '';
++            
++            const commentaryTech = commentaryTechRaw.trim() ? `<div style="border: 2px solid #000; padding: 4px; min-height: 40px; font-size: 11px; white-space: pre-wrap; margin-bottom: 5px;">${commentaryTechRaw}</div>` : '';
++            const commentaryClient = commentaryClientRaw.trim() ? `<div style="border: 2px solid #000; padding: 4px; font-size: 11px; white-space: pre-wrap; margin-bottom: 5px;">${commentaryClientRaw}</div>` : '';
++            const titleTech = commentaryTechRaw.trim() ? `<div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 3px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">OBSERVATIONS DU TECHNICIEN</div>` : '';
++            const titleClient = commentaryClientRaw.trim() ? `<div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 3px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">COMMENTAIRE DU CLIENT</div>` : '';
++
+ 
+             const sigTechImg = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
+             const sigClientImg = window.LM_RAPPORT.sigClient || document.getElementById('canvasClient')?.toDataURL() || '';
+@@ -1559,69 +1575,79 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                 <div style="font-family: Arial, sans-serif; font-size: 11px; color: #000;">
+                     
+                     <!-- OBSERVATIONS G├ëN├ëRALES -->
+-                    <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">OBSERVATIONS DU TECHNICIEN</div>
+-                    <div style="border: 2px solid #000; padding: 8px; min-height: 60px; font-size: 11px; white-space: pre-wrap; margin-bottom: 10px;">${commentaryTech}</div>
++                    <div style="page-break-inside: avoid;">
++                        ${titleTech}
++                        ${commentaryTech}
++                    </div>
+ 
+-                    <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">COMMENTAIRE DU CLIENT</div>
+-                    <div style="border: 2px solid #000; padding: 8px; font-size: 11px; white-space: pre-wrap; margin-bottom: 10px;">${commentaryClient}</div>
++                    <div style="page-break-inside: avoid;">
++                        ${titleClient}
++                        ${commentaryClient}
++                    </div>
+ 
+                     <!-- LE CLIENT SOUHAITE -->
+-                    <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
+-                    <div style="border: 2px solid #000; padding: 8px; margin-bottom: 10px;">
+-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? 'Ôÿæ' : 'ÔÿÉ'} Ce Rapport d\'expertise uniquement</div>
+-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? 'Ôÿæ' : 'ÔÿÉ'} Une offre de Pi├¿ces de Rechange</div>
+-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitIntervention ? 'Ôÿæ' : 'ÔÿÉ'} Une offre de PR + intervention mise en place</div>
+-                        <div style="font-size: 11px;">${souhaitAucune ? 'Ôÿæ' : 'ÔÿÉ'} Aucune offre</div>
++                    <div style="page-break-inside: avoid;">
++                        <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 3px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
++                        <div style="border: 2px solid #000; padding: 4px; margin-bottom: 5px;">
++                            <div style="margin-bottom: 2px; font-size: 11px;">${souhaitRapport ? 'Ôÿæ' : 'ÔÿÉ'} Ce Rapport d\\'expertise uniquement</div>
++                            <div style="margin-bottom: 2px; font-size: 11px;">${souhaitPieces ? 'Ôÿæ' : 'ÔÿÉ'} Une offre de Pi├¿ces de Rechange</div>
++                            <div style="margin-bottom: 2px; font-size: 11px;">${souhaitIntervention ? 'Ôÿæ' : 'ÔÿÉ'} Une offre de PR + intervention mise en place</div>
++                            <div style="font-size: 11px;">${souhaitAucune ? 'Ôÿæ' : 'ÔÿÉ'} Aucune offre</div>
++                        </div>
+                     </div>
+ 
+                     <!-- DATE ET HEURE -->
+-                    <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">DATE ET HEURE</div>
+-                    <div style="border: 2px solid #000; padding: 8px; margin-bottom: 10px; font-size: 13px; font-weight: bold; text-align: center;">
+-                        Fait le ${dateStr}
++                    <div style="page-break-inside: avoid;">
++                        <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 3px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">DATE ET HEURE</div>
++                        <div style="border: 2px solid #000; padding: 4px; margin-bottom: 5px; font-size: 12px; font-weight: bold; text-align: center;">
++                            Fait le ${dateStr}
++                        </div>
+                     </div>
+ 
+                     <!-- SIGNATURES -->
+-                    <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">SIGNATURES</div>
+-                    <table style="width: 100%; border-collapse: collapse; table-layout: fixed; border: 2px solid #000; margin-bottom: 15px;">
+-                        <tr style="height: 120px;">
+-                            <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
+-                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Contr├┤leur (NOM Pr├®nom) :</div>
+-                                <div style="margin-bottom: 10px;"><strong>${techNameLabel}</strong></div>
+-                                <div style="text-align: center;">
+-                                    <img src="${sigTechImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
+-                                </div>
+-                            </td>
+-                            <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
+-                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Client (NOM Pr├®nom) :</div>
+-                                <div style="margin-bottom: 10px;"><strong>${nomSignataireFin}</strong></div>
+-                                <div style="text-align: center;">
+-                                    <img src="${sigClientImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
+-                                </div>
+-                            </td>
+-                        </tr>
+-                    </table>
++                    <div style="page-break-inside: avoid;">
++                        <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 3px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">SIGNATURES</div>
++                        <table style="width: 100%; border-collapse: collapse; table-layout: fixed; border: 2px solid #000; margin-bottom: 5px;">
++                            <tr style="height: 80px;">
++                                <td style="border: 1px solid #000; padding: 4px; vertical-align: top; width: 50%;">
++                                    <div style="font-weight: bold; text-decoration: underline; margin-bottom: 3px;">Contr├┤leur (NOM Pr├®nom) :</div>
++                                    <div style="margin-bottom: 5px;"><strong>${techNameLabel}</strong></div>
++                                    <div style="text-align: center;">
++                                        <img src="${sigTechImg}" style="max-height: 55px; max-width: 90%; object-fit: contain; background: white;">
++                                    </div>
++                                </td>
++                                <td style="border: 1px solid #000; padding: 4px; vertical-align: top; width: 50%;">
++                                    <div style="font-weight: bold; text-decoration: underline; margin-bottom: 3px;">Client (NOM Pr├®nom) :</div>
++                                    <div style="margin-bottom: 5px;"><strong>${nomSignataireFin}</strong></div>
++                                    <div style="text-align: center;">
++                                        <img src="${sigClientImg}" style="max-height: 55px; max-width: 90%; object-fit: contain; background: white;">
++                                    </div>
++                                </td>
++                            </tr>
++                        </table>
++                    </div>
+ 
+                     <!-- CONTACTS ORANGE -->
+-                    <div style="border: 2px solid #000; padding: 0; text-align: center; margin-bottom: 15px;">
+-                        <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR TOUTE INFORMATION TECHNIQUE SUR CE RAPPORT</div>
+-                        <div style="background-color: #fff; padding: 6px; border-bottom: 2px solid #000;">
+-                            <div style="font-size: 12px;">Ô×ñ <strong>Soufyane SALAH</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Charg├® d'Affaires</span></div>
++                    <div style="border: 2px solid #000; padding: 0; text-align: center; margin-bottom: 5px;">
++                        <div style="background-color: #E67E22; color: white; padding: 3px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR TOUTE INFORMATION TECHNIQUE SUR CE RAPPORT</div>
++                        <div style="background-color: #fff; padding: 4px; border-bottom: 2px solid #000;">
++                            <div style="font-size: 11px;">Ô×ñ <strong>Soufyane SALAH</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Charg├® d'Affaires</span></div>
+                         </div>
+                         
+-                        <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR LA PLANIFICATION D'UNE V├ëRIFICATION P├ëRIODIQUE</div>
+-                        <div style="background-color: #fff; padding: 6px;">
+-                            <div style="font-size: 12px;">Ô×ñ <strong>Sophie NIAY</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Responsable Service Clients</span></div>
++                        <div style="background-color: #E67E22; color: white; padding: 3px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR LA PLANIFICATION D'UNE V├ëRIFICATION P├ëRIODIQUE</div>
++                        <div style="background-color: #fff; padding: 4px;">
++                            <div style="font-size: 11px;">Ô×ñ <strong>Sophie NIAY</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Responsable Service Clients</span></div>
+                         </div>
+                     </div>
+ 
+                     <!-- FOOTER SECTION WITH QR CODE -->
+-                    <div style="text-align: center; color: #1B4F72; margin-top: 5px;">
+-                        <div style="font-weight: bold; margin-bottom: 8px;">UNE SEULE ADRESSE COMMUNE : contact@raoul-lenoir.com</div>
++                    <div class="qr-block" style="text-align: center; color: #1B4F72; margin-top: 5px; page-break-inside: avoid; padding-bottom: 5px;">
++                        <div style="font-weight: bold; margin-bottom: 4px;">UNE SEULE ADRESSE COMMUNE : contact@raoul-lenoir.com</div>
+                         
+-                        <div style="margin-top: 5px;">
+-                            <div style="font-size: 10px; font-weight: bold; margin-bottom: 3px;">Visitez notre site !</div>
+-                            <img src="/assets/qr_lenoir.png" style="width: 100px; height: 100px; display: block; margin: 0 auto;">
+-                            <div style="font-weight: bold; font-size: 10px; margin-top: 5px;">www.raoul-lenoir.com</div>
++                        <div style="margin-top: 4px;">
++                            <div style="font-size: 10px; font-weight: bold; margin-bottom: 2px;">Visitez notre site !</div>
++                            <img src="/assets/qr_lenoir.png" style="width: 80px; height: 80px; display: block; margin: 0 auto;">
++                            <div style="font-weight: bold; font-size: 10px; margin-top: 2px;">www.raoul-lenoir.com</div>
+                         </div>
+                     </div>
+                 </div>
+@@ -1650,27 +1676,28 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                 pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone'] }
+             };
+ 
+-            const worker = html2pdf().set(opt).from(container);
+-            
+-            await worker.toPdf().get('pdf').then(function (pdf) {
+-                const totalPages = pdf.internal.getNumberOfPages();
+-                for (let i = 1; i <= totalPages; i++) {
+-                    pdf.setPage(i);
+-                    pdf.setFont('helvetica', 'normal');
+-                    pdf.setFontSize(9);
+-                    pdf.setTextColor(50, 50, 50);
+-                    pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
++            return new Promise(async (resolve, reject) => {
++                try {
++                    const worker = html2pdf().set(opt).from(container);
++                    await worker.toPdf().get('pdf').then(function (pdf) {
++                        const totalPages = pdf.internal.getNumberOfPages();
++                        for (let i = 1; i <= totalPages; i++) {
++                            pdf.setPage(i);
++                            pdf.setFont('helvetica', 'normal');
++                            pdf.setFontSize(9);
++                            pdf.setTextColor(50, 50, 50);
++                            pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
++                        }
++                    });
++                    const pdfBlob = await worker.outputPdf('blob');
++                    const reader = new FileReader();
++                    reader.onload = () => resolve(reader.result.split(',')[1]);
++                    reader.onerror = reject;
++                    reader.readAsDataURL(pdfBlob);
++                } catch (e) {
++                    reject(e);
+                 }
+             });
+-
+-            const pdfBlob = await worker.outputPdf('blob');
+-
+-            return new Promise((resolve, reject) => {
+-                const reader = new FileReader();
+-                reader.onload = () => resolve(reader.result.split(',')[1]);
+-                reader.onerror = reject;
+-                reader.readAsDataURL(pdfBlob);
+-            });
+         }
+ 
+         // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+@@ -1692,7 +1719,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                 };
+ 
+                 const worker = html2pdf().set(opt).from(container);
+-                
+                 await worker.toPdf().get('pdf').then(function (pdf) {
+                     const totalPages = pdf.internal.getNumberOfPages();
+                     for (let i = 1; i <= totalPages; i++) {
+@@ -1703,7 +1729,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                         pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
+                     }
+                 });
+-
+                 await worker.save();
+             } catch (e) {
+                 alert('Erreur g├®n├®ration PDF : ' + e.message);
+@@ -1900,7 +1925,52 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                 if (label) label.textContent = 'R├®essayer l\'envoi';
+             }
+         }
++
++        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
++        // GESTION DES SIGNATURES
++        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
++        let padClient, padTech;
++
++        function resizeCanvas(canvas) {
++            const ratio = Math.max(window.devicePixelRatio || 1, 1);
++            canvas.style.height = "200px";
++            canvas.width = canvas.offsetWidth * ratio;
++            canvas.height = 200 * ratio; 
++            canvas.getContext("2d").scale(ratio, ratio);
++        }
++
++        function initSignatures() {
++            const canvasC = document.getElementById('canvasClient');
++            const canvasT = document.getElementById('canvasTech');
++            
++            if (!window.SignaturePad) {
++                console.error("SignaturePad library not loaded");
++                return;
++            }
++
++            const dpr = Math.max(window.devicePixelRatio || 1, 1);
++
++            if (canvasT) {
++                resizeCanvas(canvasT);
++                padTech = new SignaturePad(canvasT, { penColor: "black" });
++                if (window.LM_RAPPORT && window.LM_RAPPORT.sigTech && typeof window.LM_RAPPORT.sigTech === 'string' && window.LM_RAPPORT.sigTech.startsWith('data:image')) {
++                    padTech.fromDataURL(window.LM_RAPPORT.sigTech, { ratio: dpr, width: canvasT.width / dpr, height: canvasT.height / dpr });
++                }
++            }
++
++            if (canvasC) {
++                resizeCanvas(canvasC);
++                padClient = new SignaturePad(canvasC, { penColor: "blue" });
++                if (window.LM_RAPPORT && window.LM_RAPPORT.sigClient && typeof window.LM_RAPPORT.sigClient === 'string' && window.LM_RAPPORT.sigClient.startsWith('data:image')) {
++                    padClient.fromDataURL(window.LM_RAPPORT.sigClient, { ratio: dpr, width: canvasC.width / dpr, height: canvasC.height / dpr });
++                }
++            }
++        }
++
++        document.addEventListener('DOMContentLoaded', () => {
++            initSignatures();
++        });
+     </script>
++    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js" onload="initSignatures()"></script>
+ </body>
+-
+ </html>
+\ No newline at end of file

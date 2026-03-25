@@ -1,0 +1,71 @@
+﻿diff --git a/api/rapport_final.php b/api/rapport_final.php
+index fe68ac7..7504228 100644
+--- a/api/rapport_final.php
++++ b/api/rapport_final.php
+@@ -1126,13 +1126,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+             const sigTechData = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
+             const sigClientData = window.LM_RAPPORT.sigClient || document.getElementById('canvasClient')?.toDataURL() || '';
+             
+-            const stampHTML = \`
+-                <div style="color: #2b4c80; font-family: Arial, sans-serif; font-size: 9px; line-height: 1.2; font-weight: bold; margin-bottom: 5px;">
+-                    \${window.LM_RAPPORT.legal.address}<br>
+-                    \${window.LM_RAPPORT.legal.contact}<br>
+-                    \${window.LM_RAPPORT.legal.siret}
+-                </div>
+-            \`;
++            const stampHTML = '<div style="color: #2b4c80; font-family: Arial, sans-serif; font-size: 9px; line-height: 1.2; font-weight: bold; margin-bottom: 5px;">' +
++                (window.LM_RAPPORT.legal.address || '') + '<br>' +
++                (window.LM_RAPPORT.legal.contact || '') + '<br>' +
++                (window.LM_RAPPORT.legal.siret || '') +
++                '</div>';
+ 
+             // Generate HTML lines for machines
+             const machinesTrs = window.LM_RAPPORT.machinesData.map(m => `
+@@ -1166,7 +1164,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+ 
+                 <!-- GRAND CADRE ORANGE -->
+                 <div style="border: 3px solid #d35400; padding: 15px; margin-bottom: 30px;">
+-                    <h1 style="text-align: center; color: #d35400; font-size: 26px; font-weight: bold; margin: 10px 0 20px 0;">RAPPORT DE L'EXPERTISE</h1>
++                    <h1 style="text-align: center; color: #d35400; font-size: 26px; font-weight: bold; margin: 10px 0 20px 0;">RAPPORT D'EXPERTISE SUR SITE</h1>
+                     <div style="text-align: right; font-weight: bold; font-size: 14px; color: black; margin-bottom: 15px;">N┬░ARC : ${numArc}</div>
+ 
+                     <!-- TABLEAU CLIENT -->
+@@ -1545,12 +1543,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+             const souhaitPieces = originalRapport.querySelector('[name="souhait_offre_pieces"]').checked;
+             const souhaitIntervention = originalRapport.querySelector('[name="souhait_pieces_intervention"]').checked;
+             const souhaitAucune = originalRapport.querySelector('[name="souhait_aucune_offre"]').checked;
+-            const nomSignataireFin = originalRapport.querySelector('[name="nom_signataire"]').value || '_____';
++            const contactNom = originalRapport.querySelector('[name="contact_nom"]').value || '_____';
++            const nomSignataireFin = originalRapport.querySelector('[name="nom_signataire"]').value || contactNom;
+             const techNameLabel = "<?= htmlspecialchars($techName) ?>";
+             const dateStr = window.LM_RAPPORT.dateInt;
+ 
+-            const commentaryTech = originalRapport.querySelector('[name="commentaire_technicien"]')?.value || '';
+-            const commentaryClient = originalRapport.querySelector('[name="commentaire_client"]')?.value || '';
++            const commentaryTechRaw = originalRapport.querySelector('[name="commentaire_technicien"]')?.value || '';
++            const commentaryClientRaw = originalRapport.querySelector('[name="commentaire_client"]')?.value || '';
++            
++            const commentaryTech = commentaryTechRaw.trim() ? `<div style="border: 2px solid #000; padding: 8px; min-height: 60px; font-size: 11px; white-space: pre-wrap; margin-bottom: 10px;">${commentaryTechRaw}</div>` : '';
++            const commentaryClient = commentaryClientRaw.trim() ? `<div style="border: 2px solid #000; padding: 8px; font-size: 11px; white-space: pre-wrap; margin-bottom: 10px;">${commentaryClientRaw}</div>` : '';
++            const titleTech = commentaryTechRaw.trim() ? `<div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">OBSERVATIONS DU TECHNICIEN</div>` : '';
++            const titleClient = commentaryClientRaw.trim() ? `<div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">COMMENTAIRE DU CLIENT</div>` : '';
++
+ 
+             const sigTechImg = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
+             const sigClientImg = window.LM_RAPPORT.sigClient || document.getElementById('canvasClient')?.toDataURL() || '';
+@@ -1559,11 +1564,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                 <div style="font-family: Arial, sans-serif; font-size: 11px; color: #000;">
+                     
+                     <!-- OBSERVATIONS G├ëN├ëRALES -->
+-                    <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">OBSERVATIONS DU TECHNICIEN</div>
+-                    <div style="border: 2px solid #000; padding: 8px; min-height: 60px; font-size: 11px; white-space: pre-wrap; margin-bottom: 10px;">${commentaryTech}</div>
++                    ${titleTech}
++                    ${commentaryTech}
+ 
+-                    <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">COMMENTAIRE DU CLIENT</div>
+-                    <div style="border: 2px solid #000; padding: 8px; font-size: 11px; white-space: pre-wrap; margin-bottom: 10px;">${commentaryClient}</div>
++                    ${titleClient}
++                    ${commentaryClient}
+ 
+                     <!-- LE CLIENT SOUHAITE -->
+                     <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>

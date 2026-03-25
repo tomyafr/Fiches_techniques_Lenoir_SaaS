@@ -1,0 +1,358 @@
+﻿diff --git a/api/rapport_final.php b/api/rapport_final.php
+index a73ecf6..eec3066 100644
+--- a/api/rapport_final.php
++++ b/api/rapport_final.php
+@@ -1005,7 +1005,21 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+         }
+ 
+         // helper: create footer
+-        // Helper : createPdfFooter a ├®t├® remplac├® par pdf.text() natif dans JS PDF
++        function createPdfFooter() {
++            const f = document.createElement('div');
++            const leg = window.LM_RAPPORT.legal;
++            f.style.marginTop = '30px';
++            f.style.width = '100%';
++            f.style.textAlign = 'center';
++            f.style.fontSize = '9px';
++            f.style.fontWeight = 'bold';
++            f.style.borderTop = '2px solid #000';
++            f.style.paddingTop = '5px';
++            f.style.paddingBottom = '5px';
++            f.style.pageBreakInside = 'avoid';
++            f.innerHTML = `${leg.address}<br>${leg.contact}<br>${leg.siret}`;
++            return f;
++        }
+ 
+         async function buildFullPdfContainer() {
+             const container = document.createElement('div');
+@@ -1112,6 +1126,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+             const sigTechData = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
+             const sigClientData = window.LM_RAPPORT.sigClient || document.getElementById('canvasClient')?.toDataURL() || '';
+             
++            const stampHTML = '<div style="color: #2b4c80; font-family: Arial, sans-serif; font-size: 9px; line-height: 1.2; font-weight: bold; margin-bottom: 5px;">' +
++                (window.LM_RAPPORT.legal.address || '') + '<br>' +
++                (window.LM_RAPPORT.legal.contact || '') + '<br>' +
++                (window.LM_RAPPORT.legal.siret || '') +
++                '</div>';
++
+             // Generate HTML lines for machines
+             const machinesTrs = window.LM_RAPPORT.machinesData.map(m => `
+                 <tr style="border-bottom:1px solid #000;">
+@@ -1218,6 +1238,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                         <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #000; width: 25%;">Technicien sur Site :</td>
+                         <td style="padding: 15px 10px; border: 1px solid #000; width: 30%; font-weight: bold;">${techName}</td>
+                         <td rowspan="2" style="padding: 15px; border: 1px solid #000; width: 45%; text-align: center; vertical-align: middle;">
++                            ${stampHTML}
+                             <img src="${sigTechData}" style="max-height:90px; max-width:100%; object-fit: contain;">
+                             <div style="margin-top:5px; font-size: 11px; color:#2b4c80; font-style:italic;">${techName}</div>
+                         </td>
+@@ -1228,6 +1249,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                     </tr>
+                 </table>
+             `;
++            rapportCloneWrapper.appendChild(createPdfFooter());
+             container.appendChild(rapportCloneWrapper);
+ 
+             // --- 1.2 PAGE SYNTH├êSE + PR├ëAMBULE (FUSIONN├ëS POUR ├ëCONOMISER DES PAGES) ---
+@@ -1308,6 +1330,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                     </div>
+                 </div>
+             `;
++            synthPreambulePage.appendChild(createPdfFooter());
+             container.appendChild(synthPreambulePage);
+ 
+             // --- 2. FETCH & APPEND MACHINES ---
+@@ -1372,16 +1395,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+ 
+                         const pages = doc.querySelectorAll('.pdf-page');
+                         pages.forEach((p, pIdx) => {
+-                            // Refonte du nettoyage (BUG 027 largeur et padding) : on efface les marges du body HTML
+-                            // mais on CONSERVE le padding interne (1cm) pour que les tableaux ne d├®bordent pas de la feuille !
+-                            p.style.marginTop = '0';
+-                            p.style.marginBottom = '0';
+-                            p.style.boxShadow = 'none';
+-                            p.style.minHeight = 'auto'; // Retire le 29.7cm forc├®
+-                            // FIX TABLE CHOP : html2pdf a besoin que les ├®l├®ments soient statiques pour calculer le vrai 'offsetTop'
+-                            p.style.position = 'static'; 
+-                            p.style.overflow = 'visible';
+-
+                             // Bug 5 & New Fix: Remove empty photos section
+                             const hasPhotos = p.querySelectorAll('.photo-annexe-item img').length > 0;
+                             p.querySelectorAll('.photos-annexes-wrapper').forEach(wrapper => {
+@@ -1390,26 +1403,21 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                                 }
+                             });
+ 
+-                            // Clean up machine fiche ÔÇö UI-only elements
+                             p.querySelectorAll('.photo-btn, .photo-thumbs, #btnChrono').forEach(el => el.remove());
++                            p.querySelectorAll('img.no-print-pdf').forEach(el => el.remove());
++                            p.querySelectorAll('div.no-print-pdf').forEach(el => el.classList.remove('no-print-pdf'));
+                             
+-                            // Gestion s├®lective de .no-print-pdf :
+-                            // - Les <img> avec cette classe = logos inutiles ÔåÆ ON LES SUPPRIME
+-                            // - Les <div> avec cette classe = diagrammes/sch├®mas ÔåÆ ON RETIRE JUSTE LA CLASSE
+-                            p.querySelectorAll('.no-print-pdf').forEach(el => {
+-                                if (el.tagName === 'IMG' || el.tagName === 'P') {
+-                                    el.remove(); // Logos et messages texte
+-                                } else {
+-                                    el.classList.remove('no-print-pdf'); // Diagrammes : garder le contenu
+-                                }
+-                            });
+-                            
+-                            // Retirer les messages "Aucune photo" qui sont vides
+-                            p.querySelectorAll('#noPhotosMsg').forEach(el => el.remove());
+-                            
+-                            // Chaque fiche d├®marre obligatoirement sur une nouvelle feuille (sans margin parasite)
++                            // If it's a diagram/photo page and it's empty after cleanup, skip it
++                            const contentText = p.textContent.trim();
++                            if ((pIdx > 0) && contentText.length < 50 && !hasPhotos && !p.querySelector('img')) {
++                                return; // Skip empty pages
++                            }
++
++                            // Chaque machine commence obligatoirement sur une nouvelle page
+                             if (pIdx === 0) {
+                                 p.style.pageBreakBefore = 'always';
++                                p.style.marginTop = '0';
++                                p.style.paddingTop = '0';
+                                 const hDiv = document.createElement('div');
+                                 hDiv.style.display = 'flex';
+                                 hDiv.style.justifyContent = 'space-between';
+@@ -1429,22 +1437,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                                 if (lbl) lbl.classList.add('selected');
+                             });
+ 
+-                            // BUG 026: Convertir visuellement les boutons radios natifs non stylis├®s en symboles Unicode
+-                            // car html2canvas jette parfois al├®atoirement le rendu visuel de leur ├®tat "checked"
+-                            p.querySelectorAll('input[type="radio"]').forEach(r => {
+-                                if (r.closest('.pastille-group') || r.style.display === 'none') return;
+-                                const isChecked = r.checked || r.hasAttribute('checked') || r.getAttribute('checked') === '';
+-                                const symbol = document.createElement('span');
+-                                symbol.innerHTML = isChecked ? '&#9673;' : '&#9711;'; // Ôùë ou Ôù»
+-                                symbol.style.fontSize = '14px';
+-                                symbol.style.fontWeight = isChecked ? 'bold' : 'normal';
+-                                symbol.style.color = isChecked ? '#1B4F72' : '#888';
+-                                symbol.style.display = 'inline-block';
+-                                symbol.style.width = '16px';
+-                                symbol.style.textAlign = 'center';
+-                                r.parentNode.replaceChild(symbol, r);
+-                            });
+-
+                             p.querySelectorAll('input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"]):not([type="file"])').forEach(inp => {
+                                 let val = (inp.value || '').trim();
+                                 // Bug 4: Handle "Poste"
+@@ -1490,10 +1482,49 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                                 }
+                                 ta.remove();
+                             });
+-
++                            
++                            // BUGFIX PDF: S├®parateur de table (tbody)
++                            // html2pdf coupe en deux les <tr> sauvagement. 
++                            // La seule vraie solution est de wrapper chaque ligne logique dans son propre <tbody> !
++                            p.querySelectorAll('table.pdf-table').forEach(table => {
++                                const rows = Array.from(table.querySelectorAll('tr'));
++                                if (!rows.length) return;
++                                
++                                let currentTbody = document.createElement('tbody');
++                                currentTbody.style.pageBreakInside = 'avoid';
++                                table.appendChild(currentTbody);
++                                
++                                let pendingSpans = 0;
++                                rows.forEach(row => {
++                                    let maxSpan = 1;
++                                    row.querySelectorAll('th, td').forEach(c => {
++                                        if (c.rowSpan > maxSpan) maxSpan = c.rowSpan;
++                                    });
++                                    if (maxSpan - 1 > pendingSpans) pendingSpans = maxSpan - 1;
++                                    
++                                    currentTbody.appendChild(row); // D├®place le tr dans le nouveau tbody
++                                    
++                                    if (pendingSpans > 0) {
++                                        pendingSpans--;
++                                    } else {
++                                        currentTbody = document.createElement('tbody');
++                                        currentTbody.style.pageBreakInside = 'avoid';
++                                        table.appendChild(currentTbody);
++                                    }
++                                });
++                                
++                                // Supprimer les tbody/thead originaux devenus vides
++                                Array.from(table.children).forEach(child => {
++                                    if ((child.tagName === 'TBODY' || child.tagName === 'THEAD') && child.children.length === 0) {
++                                        child.remove();
++                                    }
++                                });
++                            });
+                             
+                             p.style.position = 'relative';
++                            p.style.paddingBottom = '30mm';
+                             p.style.minHeight = 'auto'; // Help chaining
++                            p.appendChild(createPdfFooter());
+                             container.appendChild(p);
+                         });
+                     } catch (err) {
+@@ -1502,18 +1533,21 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                 }
+             }
+ 
++            // Page de fin : On ne force plus syst├®matiquement le saut de page
++            // si le contenu pr├®c├®dent est court. On laisse html2pdf g├®rer ou on met un petit espacement.
++            const pbFin = document.createElement('div');
++            pbFin.style.height = '20px';
++            container.appendChild(pbFin);
++
+             // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC + SIGNATURES + OBSERVATIONS) ---
+ 
+             const endPage = document.createElement('div');
+-            // Finis les bugs h├®rit├®s de la classe pdf-page ! On recr├®e un bloc pur A4 pour la derni├¿re page.
+             endPage.style.width = '21cm';
+             endPage.style.padding = '10px 15mm';
+             endPage.style.boxSizing = 'border-box';
+             endPage.style.background = 'white';
+             endPage.style.position = 'static';
+             endPage.style.overflow = 'visible';
+-            // Pas de pageBreakBefore: 'always' ! C'est ce qui cr├®ait l'├®norme page blanche avant.
+-            // On le laisse s'aligner naturellement.
+ 
+             const originalRapport = document.getElementById('rapportForm');
+             const souhaitRapport = originalRapport.querySelector('[name="souhait_rapport_unique"]').checked;
+@@ -1607,7 +1641,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                     </div>
+ 
+                     <!-- FOOTER SECTION WITH QR CODE -->
+-                    <!-- BUG 025 : Retire le page-break-after: avoid fatal qui tue le QR code sous Chrome -->
+                     <div class="qr-block" style="text-align: center; color: #1B4F72; margin-top: 5px; page-break-inside: avoid; padding-bottom: 5px;">
+                         <div style="font-weight: bold; margin-bottom: 4px;">UNE SEULE ADRESSE COMMUNE : contact@raoul-lenoir.com</div>
+                         
+@@ -1619,33 +1652,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                     </div>
+                 </div>
+             `;
++            endPage.appendChild(createPdfFooter());
+             container.appendChild(endPage);
+ 
+-            // CHANGEMENT MAJEUR CONTRE LA COUPURE DE CANVAS : border-collapse emp├¬che html2pdf de calculer la hauteur des TR
+-            // On le force en "separate" pour donner ├á html2pdf des hauteurs de TR nettes et mesurables sans overlap.
+-            container.querySelectorAll('table.pdf-table, table.controles').forEach(tbl => {
+-                tbl.style.borderCollapse = 'separate';
+-                tbl.style.borderSpacing = '0';
+-            });
+-
+-            // Blindage ultime anti-coupure de tableaux
+-            // 1) Chaque ligne <tr> ne peut pas ├¬tre coup├®e
+-            container.querySelectorAll('tr').forEach(tr => {
+-                tr.style.pageBreakInside = 'avoid';
+-                tr.classList.add('avoid-break');
+-            });
+-            // 2) Les sections pdf-section ne sont pas coup├®es
+-            container.querySelectorAll('.pdf-section').forEach(sec => {
+-                sec.style.pageBreakInside = 'avoid';
+-            });
+-            // 3) Les petits tableaux (< 15 lignes) ne peuvent pas ├¬tre coup├®s du tout
+-            container.querySelectorAll('table').forEach(tbl => {
+-                if (tbl.querySelectorAll('tr').length <= 15) {
+-                    tbl.style.pageBreakInside = 'avoid';
+-                    tbl.classList.add('avoid-break');
+-                }
+-            });
+-
+             await waitForImages(container);
+             return container;
+         }
+@@ -1664,7 +1673,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                 image: { type: 'jpeg', quality: 0.98 },
+                 html2canvas: { scale: 2, useCORS: true, logging: false },
+                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+-                pagebreak: { mode: ['css'], avoid: ['tr', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.avoid-break'] }
++                pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone'] }
+             };
+ 
+             return new Promise((resolve, reject) => {
+@@ -1676,12 +1685,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                         pdf.setFontSize(9);
+                         pdf.setTextColor(50, 50, 50);
+                         pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
+-                        
+-                        pdf.setFontSize(6);
+-                        pdf.setTextColor(80, 80, 80);
+-                        const footerLine1 = window.LM_RAPPORT.legal.address + " - " + window.LM_RAPPORT.legal.contact;
+-                        const footerLine2 = window.LM_RAPPORT.legal.siret;
+-                        pdf.text([footerLine1, footerLine2], 105, 291, { align: 'center', lineHeightFactor: 1.2 });
+                     }
+                 }).outputPdf('blob').then(function(pdfBlob) {
+                     const reader = new FileReader();
+@@ -1707,7 +1710,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                     image: { type: 'jpeg', quality: 0.98 },
+                     html2canvas: { scale: 2, useCORS: true, logging: false },
+                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.avoid-break'] }
++                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone'] }
+                 };
+ 
+                 await html2pdf().set(opt).from(container).toPdf().get('pdf').then(function (pdf) {
+@@ -1717,13 +1720,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+                         pdf.setFont('helvetica', 'normal');
+                         pdf.setFontSize(9);
+                         pdf.setTextColor(50, 50, 50);
+-                        pdf.text('Page ' + i + ' / ' + totalPages, 105, 287, { align: 'center' });
+-                        
+-                        pdf.setFontSize(6);
+-                        pdf.setTextColor(80, 80, 80);
+-                        const footerLine1 = window.LM_RAPPORT.legal.address + " - " + window.LM_RAPPORT.legal.contact;
+-                        const footerLine2 = window.LM_RAPPORT.legal.siret;
+-                        pdf.text([footerLine1, footerLine2], 105, 291, { align: 'center', lineHeightFactor: 1.2 });
++                        pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
+                     }
+                 }).save();
+             } catch (e) {
+@@ -1922,7 +1919,50 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
+             }
+         }
+ 
++        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
++        // GESTION DES SIGNATURES
++        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
++        let padClient, padTech;
++
++        function resizeCanvas(canvas) {
++            const ratio = Math.max(window.devicePixelRatio || 1, 1);
++            canvas.style.height = "200px";
++            canvas.width = canvas.offsetWidth * ratio;
++            canvas.height = 200 * ratio; 
++            canvas.getContext("2d").scale(ratio, ratio);
++        }
++
++        function initSignatures() {
++            const canvasC = document.getElementById('canvasClient');
++            const canvasT = document.getElementById('canvasTech');
++            
++            if (!window.SignaturePad) {
++                console.error("SignaturePad library not loaded");
++                return;
++            }
++
++            const dpr = Math.max(window.devicePixelRatio || 1, 1);
++
++            if (canvasT) {
++                resizeCanvas(canvasT);
++                padTech = new SignaturePad(canvasT, { penColor: "black" });
++                if (window.LM_RAPPORT && window.LM_RAPPORT.sigTech && typeof window.LM_RAPPORT.sigTech === 'string' && window.LM_RAPPORT.sigTech.startsWith('data:image')) {
++                    padTech.fromDataURL(window.LM_RAPPORT.sigTech, { ratio: dpr, width: canvasT.width / dpr, height: canvasT.height / dpr });
++                }
++            }
++
++            if (canvasC) {
++                resizeCanvas(canvasC);
++                padClient = new SignaturePad(canvasC, { penColor: "blue" });
++                if (window.LM_RAPPORT && window.LM_RAPPORT.sigClient && typeof window.LM_RAPPORT.sigClient === 'string' && window.LM_RAPPORT.sigClient.startsWith('data:image')) {
++                    padClient.fromDataURL(window.LM_RAPPORT.sigClient, { ratio: dpr, width: canvasC.width / dpr, height: canvasC.height / dpr });
++                }
++            }
++        }
+ 
++        document.addEventListener('DOMContentLoaded', () => {
++            initSignatures();
++        });
+     </script>
+     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js" onload="initSignatures()"></script>
+ </body>
