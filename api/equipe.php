@@ -84,7 +84,7 @@ $equipe = $stmtUsers->fetchAll();
 
                 <a href="logout.php" class="btn btn-ghost"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; color: var(--error); margin-bottom: 0.4rem;">
-                    <img src="/assets/icons/dashboard.png" class="premium-icon" style="height:28px;"> Se déconnecter
+                    <img src="/assets/icons/error.png" class="premium-icon"> Se déconnecter
                 </a>
                 <a href="profile.php" class="btn btn-ghost sidebar-link"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">

@@ -297,7 +297,7 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                 <span class="mobile-nav-label">Dashboard</span>
             </button>
             <button class="mobile-nav-item" onclick="switchTab('nouvelle'); setActiveNav(this)" id="nav-mob-nouvelle">
-                <img src="/assets/icons/team.png" class="premium-icon" style="height:28px;">
+                <img src="/assets/icons/add.png" class="premium-icon" style="height:28px;">
                 <span class="mobile-nav-label">+ Fiche</span>
             </button>
             <a href="historique.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
