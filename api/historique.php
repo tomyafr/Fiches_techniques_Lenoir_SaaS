@@ -262,27 +262,27 @@ $nbClients = count($clientsSet);
             <nav style="display:flex;flex-direction:column;gap:0.4rem;margin-bottom:2rem;">
                 <a href="<?= $isAdmin ? 'admin.php' : 'technicien.php' ?>" class="btn btn-ghost sidebar-link"
                     style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
-                    <span>📊</span> Tableau de bord
+                    <img src="/assets/icons/dashboard.png" style="height:14px; width:auto; margin-right:8px;"> Tableau de bord
                 </a>
                 <?php if ($isAdmin): ?>
                     <a href="admin.php?new=1#" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <span>➕</span> Nouvelle Fiche
+                        <img src="/assets/icons/add.png" style="height:14px; width:auto; margin-right:8px;"> Nouvelle Fiche
                     </a>
                 <?php else: ?>
                     <a href="technicien.php?new=1#" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <span>➕</span> Nouvelle Fiche
+                        <img src="/assets/icons/add.png" style="height:14px; width:auto; margin-right:8px;"> Nouvelle Fiche
                     </a>
                 <?php endif; ?>
                 <a href="historique.php" class="btn btn-primary sidebar-link"
                     style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
-                    <span>🕒</span> Historique
+                    <img src="/assets/icons/history.png" style="height:14px; width:auto; margin-right:8px;"> Historique
                 </a>
                 <?php if ($isAdmin): ?>
                     <a href="equipe.php" class="btn btn-ghost sidebar-link"
                         style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
-                        <span>👥</span> Équipe
+                        <img src="/assets/icons/team.png" style="height:14px; width:auto; margin-right:8px;"> Équipe
                     </a>
                 <?php endif; ?>
             </nav>
@@ -298,11 +298,11 @@ $nbClients = count($clientsSet);
 
                 <a href="logout.php" class="btn btn-ghost"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; color: var(--error); margin-bottom: 0.4rem;">
-                    <span>🚪</span> Se déconnecter
+                    <img src="/assets/icons/error.png" style="height:14px; width:auto; margin-right:8px;"> Se déconnecter
                 </a>
                 <a href="profile.php" class="btn btn-ghost sidebar-link"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span>👤</span> Mon Profil
+                    <img src="/assets/icons/profile.png" style="height:14px; width:auto; margin-right:8px;"> Mon Profil
                 </a>
             </div>
         </aside>
@@ -393,7 +393,7 @@ $nbClients = count($clientsSet);
 
                 <?php if (empty($interventions)): ?>
                     <div style="padding:3rem;text-align:center;color:var(--text-dim);">
-                        <div style="font-size:2.5rem;margin-bottom:1rem;">📝</div>
+                        <img src="/assets/icons/machine.png" style="height:60px; width:auto; display:block; margin:0 auto 1rem auto; opacity:0.3;">
                         <p>Aucune intervention pour cette période.</p>
                     </div>
                 <?php else: ?>
@@ -448,19 +448,15 @@ $nbClients = count($clientsSet);
                                             </span>
                                         </td>
                                         <td style="text-align:center; white-space:nowrap;">
-                                            <?php if ($i['statut'] === 'Terminee'): ?>
-                                                <a href="rapport_final.php?id=<?= $i['id'] ?>&msg=ok" class="btn btn-ghost"
-                                                    style="padding: 0.35rem 0.6rem; font-size: 0.85rem; color: var(--success);"
-                                                    title="Voir le rapport">📄</a>
-                                            <?php endif; ?>
+                                                    <img src="/assets/icons/print.png" style="height:14px; width:auto;" title="Voir le rapport"></a>
                                             <a href="intervention_edit.php?id=<?= $i['id'] ?>" class="btn btn-ghost"
                                                 style="padding: 0.35rem 0.6rem; font-size: 0.85rem;"
-                                                title="Modifier l'intervention">✏️</a>
+                                                title="Modifier l'intervention"><img src="/assets/icons/add.png" style="height:14px; width:auto;"></a>
                                             <a href="#"
                                                 onclick="if(confirm('Supprimer cette fiche définitivement ?')) window.location.href='delete_intervention.php?id=<?= $i['id'] ?>';"
                                                 class="btn btn-ghost"
                                                 style="padding: 0.35rem 0.6rem; font-size: 0.85rem; color: var(--error);"
-                                                title="Supprimer">🗑️</a>
+                                                title="Supprimer"><img src="/assets/icons/error.png" style="height:14px; width:auto;"></a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -479,11 +475,11 @@ $nbClients = count($clientsSet);
     <!-- Bottom nav mobile -->
     <nav class="mobile-bottom-nav">
         <div class="mobile-bottom-nav-inner">
-            <a href="<?= $isAdmin ? 'admin.php' : 'technicien.php' ?>" class="mobile-nav-item"><span
-                    class="mobile-nav-icon">📊</span><span class="mobile-nav-label">Tableau</span></a>
-            <a href="historique.php" class="mobile-nav-item active"><span class="mobile-nav-icon">🕒</span><span
+            <a href="<?= $isAdmin ? 'admin.php' : 'technicien.php' ?>" class="mobile-nav-item"><img src="/assets/icons/dashboard.png" style="height:20px; width:auto; margin-bottom:4px;"><span
+                    class="mobile-nav-icon"></span><span class="mobile-nav-label">Tableau</span></a>
+            <a href="historique.php" class="mobile-nav-item active"><img src="/assets/icons/history.png" style="height:20px; width:auto; margin-bottom:4px;"><span
                     class="mobile-nav-label">Historique</span></a>
-            <a href="profile.php" class="mobile-nav-item"><span class="mobile-nav-icon">👤</span><span
+            <a href="profile.php" class="mobile-nav-item"><img src="/assets/icons/profile.png" style="height:20px; width:auto; margin-bottom:4px;"><span
                     class="mobile-nav-label">Profil</span></a>
         </div>
     </nav>

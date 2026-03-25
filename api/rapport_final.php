@@ -474,8 +474,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 <body>
     <header class="mobile-header">
         <a href="intervention_edit.php?id=<?= $id ?>" class="btn btn-ghost"
-            style="padding: 0.5rem; color: var(--accent-cyan); text-decoration: none;">
-            ← Retour
+            style="padding: 0.5rem; color: var(--accent-cyan); text-decoration: none; display:flex; align-items:center; gap:6px;">
+            <img src="/assets/icons/back.png" style="height:14px; width:auto;"> Retour
         </a>
         <span class="mobile-header-title">Rapport Final</span>
         <span class="mobile-header-user"></span>
@@ -489,7 +489,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <?php if (isset($_GET['msg']) && $_GET['msg'] === 'ok'): ?>
                 <div id="successBanner"
                     style="background: rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.4); color:#10b981; padding:1.5rem; border-radius:12px; margin-bottom:1.5rem; text-align:center;">
-                    <div style="font-size:2.5rem; margin-bottom:0.5rem;">✅</div>
+                    <div style="margin-bottom:1rem;"><img src="/assets/icons/success.png" style="height:80px; width:auto; display:block; margin:0 auto;"></div>
                     <h3 style="margin:0 0 0.5rem 0; color:#10b981;">Rapport finalisé avec succès !</h3>
                     <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1rem;">L'intervention ARC
                         <?= htmlspecialchars($intervention['numero_arc']) ?> a été clôturée.
@@ -504,17 +504,17 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <!-- Bouton Envoyer PDF par email -->
                         <button type="button" id="btnSendEmail" onclick="lancerEnvoiEmail()"
                             style="padding:0.7rem 1.5rem; background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem;">
-                            <span id="btnSendEmailIcon">📧</span>
+                            <img src="/assets/icons/email.png" style="height:1.2rem; width:auto; vertical-align:middle;">
                             <span id="btnSendEmailLabel">Envoyer PDF par email</span>
                         </button>
                         <!-- Bouton Télécharger PDF -->
                         <button type="button" id="btnDownloadPDF" onclick="telechargerPDF()"
                             style="padding:0.7rem 1.5rem; background:var(--primary); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">
-                            ⬇️ Télécharger le PDF
+                            <img src="/assets/icons/download.png" style="height:1.2rem; width:auto; vertical-align:middle;"> Télécharger le PDF
                         </button>
                         <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>"
-                            style="padding:0.7rem 1.5rem; background:rgba(255,255,255,0.1); color:var(--text); border:1px solid var(--glass-border); border-radius:8px; font-weight:600; text-decoration:none; font-size:0.9rem;">
-                            ← Retour au tableau de bord
+                            style="padding:0.7rem 1.5rem; background:rgba(255,255,255,0.1); color:var(--text); border:1px solid var(--glass-border); border-radius:8px; font-weight:600; text-decoration:none; font-size:0.9rem; display:flex; align-items:center; gap:6px;">
+                            <img src="/assets/icons/back.png" style="height:14px; width:auto;"> Retour au tableau de bord
                         </a>
                     </div>
                 </div>
@@ -570,17 +570,17 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             <?php if (!empty($error)): ?>
                 <div
-                    style="background: rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.4); color:#f43f5e; padding:1rem; border-radius:8px; margin-bottom:1.5rem; font-size:0.85rem;">
-                    ⚠️ <?= htmlspecialchars($error) ?>
+                    style="background: rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.4); color:#f43f5e; padding:1rem; border-radius:8px; margin-bottom:1.5rem; font-size:0.85rem; display:flex; align-items:center; gap:10px;">
+                    <img src="/assets/icons/warning.png" style="height:20px; width:auto;"> <?= htmlspecialchars($error) ?>
                 </div>
             <?php endif; ?>
 
             <!-- EN-TÊTE -->
-            <div class="rapport-header card glass">
-                <img src="/assets/logo_transparent.png" alt="LENOIR-MEC" class="rapport-logo"
-                    style="height: 60px; width: auto; object-fit: contain; margin: 0 auto 1rem auto; display: block; max-width: 100%;">
-                <h1>Rapport d'expertise sur site</h1>
-                <div class="arc-badge">ARC
+            <div class="rapport-header card glass" style="background:#020617; padding: 2rem; border-color: rgba(255,255,255,0.1);">
+                <img src="/assets/logo-raoul-lenoir.svg" alt="LENOIR-MEC" class="rapport-logo"
+                    style="height: 60px; width: auto; object-fit: contain; margin: 0 auto 1.5rem auto; display: block; max-width: 100%;">
+                <h1 style="color: #fff; margin-bottom: 0.5rem;">Rapport d'expertise sur site</h1>
+                <div class="arc-badge" style="background: rgba(255,179,0,0.2); color: #ffb300; border: 1px solid rgba(255,179,0,0.3);">ARC
                     <?= htmlspecialchars($intervention['numero_arc']) ?>
                 </div>
             </div>
@@ -596,7 +596,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         $statusColor = ($m['points_count'] > 5) ? 'var(--accent-cyan)' : 'var(--error)';
                     ?>
                     <span class="machine-tag" style="border-left: 4px solid <?= $statusColor ?>;">
-                        ⚙️
+                        <img src="/assets/icons/machine.png" style="height:1.2rem; width:auto; vertical-align:middle; margin-right:4px;">
                         <?= htmlspecialchars($m['designation']) ?>
                         <?php $mm = json_decode($m['mesures'] ?? '{}', true); ?>
                         <?php if (!empty($mm['repere'])): ?>
@@ -781,13 +781,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             <!-- BOUTON FINAL -->
             <button type="submit" class="btn-final" onclick="return validateAndSubmit()">
-                ✓ Finaliser le rapport et terminer l'intervention
+                <img src="/assets/icons/success.png" style="height:18px; width:auto; vertical-align:middle; margin-right:6px;"> Finaliser le rapport et terminer l'intervention
             </button>
 
-            <a href="intervention_edit.php?id=<?= $id ?>"
-                style="display:block; text-align:center; margin-top:1rem; color:var(--text-dim); font-size:0.85rem; text-decoration:none;">
-                ← Retour aux fiches
-            </a>
+                <a href="intervention_edit.php?id=<?= $id ?>"
+                    style="display:flex; align-items:center; justify-content:center; gap:6px; margin-top:1rem; color:var(--text-dim); font-size:0.85rem; text-decoration:none;">
+                    <img src="/assets/icons/back.png" style="height:12px; width:auto; opacity:0.7;"> Retour aux fiches
+                </a>
         </form>
     </div>
 
@@ -2051,7 +2051,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 bar.style.width = (current / total * 100) + '%';
             }
 
-            status.innerText = "✅ Analyse terminée !";
+            status.innerHTML = '<img src="/assets/icons/success.png" style="height:40px; width:auto; margin-bottom:10px; display:block; margin-left:auto; margin-right:auto;"> ✅ Analyse terminée !';
             btn.innerHTML = '<img src="/assets/ai_expert.jpg" style="height:16px; width:16px; border-radius:50%; vertical-align:middle; margin-right:6px;"> Relancer l\'Expert IA';
             btn.disabled = false;
             

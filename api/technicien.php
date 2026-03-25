@@ -121,15 +121,15 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
             <nav style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 2rem;">
                 <button class="btn btn-primary sidebar-link" onclick="switchTab('dashboard')" id="nav-dashboard"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span>📋</span> Mes Interventions
+                    <img src="/assets/icons/dashboard.png" style="height:14px; width:auto; margin-right:8px;"> Mes Interventions
                 </button>
                 <button class="btn btn-ghost sidebar-link" onclick="switchTab('nouvelle')" id="nav-nouvelle"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span>➕</span> Nouvelle Fiche
+                    <img src="/assets/icons/add.png" style="height:14px; width:auto; margin-right:8px;"> Nouvelle Fiche
                 </button>
                 <a href="historique.php" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; text-decoration: none; color: inherit;">
-                    <span>🕒</span> Historique
+                    <img src="/assets/icons/history.png" style="height:14px; width:auto; margin-right:8px;"> Historique
                 </a>
             </nav>
 
@@ -148,7 +148,7 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                 </a>
                 <a href="profile.php" class="btn btn-ghost sidebar-link"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span>👤</span> Mon Profil
+                    <img src="/assets/icons/profile.png" style="height:14px; width:auto; margin-right:8px;"> Mon Profil
                 </a>
             </div>
         </aside>
@@ -180,7 +180,7 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                 </h3>
                 <?php if (empty($encours)): ?>
                     <div class="card glass" style="text-align: center; padding: 4rem 2rem;">
-                        <p style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.3;">📝</p>
+                        <img src="/assets/icons/machine.png" style="height:60px; width:auto; display:block; margin:0 auto 1rem auto; opacity:0.3;">
                         <p style="color: var(--text-dim); font-size: 0.9rem;">Aucune intervention en cours</p>
                     </div>
                 <?php else: ?>
@@ -246,7 +246,7 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                     <input type="hidden" name="action" value="nouvelle_intervention">
                     <?= csrfField() ?>
                     <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-                        <span style="font-size: 1.2rem;">➕</span> Nouvelle Intervention
+                        <img src="/assets/icons/add.png" style="height:20px; width:auto;"> Nouvelle Intervention
                     </h3>
 
                     <div class="form-group">
@@ -293,19 +293,19 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
         <div class="mobile-bottom-nav-inner">
             <button class="mobile-nav-item active" onclick="switchTab('dashboard'); setActiveNav(this)"
                 id="nav-mob-dashboard">
-                <span class="mobile-nav-icon">📋</span>
+                <img src="/assets/icons/dashboard.png" style="height:20px; width:auto; margin-bottom:4px; display:block; margin-left:auto; margin-right:auto;">
                 <span class="mobile-nav-label">Dashboard</span>
             </button>
             <button class="mobile-nav-item" onclick="switchTab('nouvelle'); setActiveNav(this)" id="nav-mob-nouvelle">
-                <span class="mobile-nav-icon">➕</span>
+                <img src="/assets/icons/add.png" style="height:20px; width:auto; margin-bottom:4px; display:block; margin-left:auto; margin-right:auto;">
                 <span class="mobile-nav-label">+ Fiche</span>
             </button>
             <a href="historique.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                <span class="mobile-nav-icon">🕒</span>
+                <img src="/assets/icons/history.png" style="height:20px; width:auto; margin-bottom:4px; display:block; margin-left:auto; margin-right:auto;">
                 <span class="mobile-nav-label">Historique</span>
             </a>
             <a href="profile.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                <span class="mobile-nav-icon">👤</span>
+                <img src="/assets/icons/profile.png" style="height:20px; width:auto; margin-bottom:4px; display:block; margin-left:auto; margin-right:auto;">
                 <span class="mobile-nav-label">Profil</span>
             </a>
         </div>

@@ -219,7 +219,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
             onclick="window.location.href='<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>'"
             aria-label="Retour"
             style="background: none; border: none; padding: 0.5rem; display: flex; align-items: center; justify-content: center;">
-            <span style="font-size: 1.6rem; color: var(--primary);">&larr;</span>
+            <img src="/assets/icons/back.png" style="height:24px; width:auto; border:none;">
         </button>
         <span class="mobile-header-title">Mon Profil</span>
         <span class="mobile-header-user">
@@ -249,29 +249,29 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                 <?php if (!$forceChange): ?>
                     <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <span>📊</span> Tableau de bord
+                        <img src="/assets/icons/dashboard.png" style="height:14px; width:auto; margin-right:8px;"> Tableau de bord
                     </a>
                     
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                     <a href="admin.php?new=1#" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <span>➕</span> Nouvelle Fiche
+                        <img src="/assets/icons/add.png" style="height:14px; width:auto; margin-right:8px;"> Nouvelle Fiche
                     </a>
                     <?php else: ?>
                     <a href="technicien.php?new=1#" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <span>➕</span> Nouvelle Fiche
+                        <img src="/assets/icons/add.png" style="height:14px; width:auto; margin-right:8px;"> Nouvelle Fiche
                     </a>
                     <?php endif; ?>
 
                     <a href="historique.php" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <span>🕒</span> Historique
+                        <img src="/assets/icons/history.png" style="height:14px; width:auto; margin-right:8px;"> Historique
                     </a>
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                     <a href="equipe.php" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <span>👥</span> Équipe
+                        <img src="/assets/icons/team.png" style="height:14px; width:auto; margin-right:8px;"> Équipe
                     </a>
                     <?php endif; ?>
                 <?php endif; ?>
@@ -290,7 +290,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                 </a>
                 <a href="profile.php" class="btn btn-primary sidebar-link"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span>👤</span> Mon Profil
+                    <img src="/assets/icons/profile.png" style="height:14px; width:auto; margin-right:8px;"> Mon Profil
                 </a>
             </div>
         </aside>
@@ -336,7 +336,9 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                 <!-- PREFERENCES / STATUT -->
                 <div
                     style="margin-bottom: 2rem; background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
-                    <h4 style="margin-bottom: 1.5rem; color: var(--primary);">⚙️ Préférences & Statut</h4>
+                    <h4 style="margin-bottom: 1.5rem; color: var(--primary); display:flex; align-items:center; gap:8px;">
+                        <img src="/assets/icons/machine.png" style="height:20px; width:auto;"> Préférences & Statut
+                    </h4>
 
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
                         <!-- Theme Toggle -->

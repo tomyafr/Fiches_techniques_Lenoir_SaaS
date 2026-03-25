@@ -110,8 +110,8 @@ $machines = $stmtMach->fetchAll();
 <body>
     <header class="mobile-header">
         <button class="btn btn-ghost" onclick="document.getElementById('modalQuit').style.display='flex'"
-            style="padding: 0.5rem; color: var(--error);">
-            ← Quitter
+            style="padding: 0.5rem; color: var(--error); display:flex; align-items:center; gap:6px;">
+            <img src="/assets/icons/back.png" style="height:14px; width:auto;"> Quitter
         </button>
         <span class="mobile-header-title">Fiche ARC</span>
         <span class="mobile-header-user"></span>
@@ -120,7 +120,7 @@ $machines = $stmtMach->fetchAll();
     <main class="main-content" style="padding-top: 5rem; padding-bottom: 6rem;">
         <?php if ($message): ?>
             <div class="alert alert-success animate-in">
-                <span>✓</span>
+                <img src="/assets/icons/success.png" style="height:16px; width:auto; vertical-align:middle; margin-right:4px;">
                 <span>
                     <?= htmlspecialchars($message) ?>
                 </span>
@@ -165,7 +165,7 @@ $machines = $stmtMach->fetchAll();
         <?php if (empty($machines)): ?>
             <div class="card glass"
                 style="text-align: center; padding: 2.5rem 1rem; border: 1px dashed var(--glass-border); background: transparent;">
-                <p style="font-size: 2rem; margin-bottom: 1rem;">⚙️</p>
+                <img src="/assets/icons/machine.png" style="height:60px; width:auto; display:block; margin:0 auto 1.5rem auto;">
                 <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Aucune machine n'a encore été ajoutée à cette
                     fiche.</p>
                 <button onclick="document.getElementById('modalNewMachine').style.display='flex'"
@@ -232,12 +232,12 @@ $machines = $stmtMach->fetchAll();
 
             <!-- Bouton pour Finaliser -->
             <a href="rapport_final.php?id=<?= $id ?>" class="btn btn-primary"
-                style="display:block; width:100%; margin-top: 2rem; padding: 1rem; font-size: 1rem; background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: bold; border:none; text-align:center; text-decoration:none; border-radius:12px;">
-                Finaliser le Rapport ✓
+                style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; margin-top: 2rem; padding: 1rem; font-size: 1rem; background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: bold; border:none; text-align:center; text-decoration:none; border-radius:12px;">
+                <img src="/assets/icons/success.png" style="height:20px; width:auto;"> Finaliser le Rapport
             </a>
             <button onclick="document.getElementById('modalQuit').style.display='flex'" class="btn btn-ghost"
-                style="width:100%; margin-top: 1rem; padding: 1rem; font-size: 1rem; color: var(--error); border: 1px solid rgba(244, 63, 94, 0.3);">
-                Quitter sans finaliser ✖
+                style="width:100%; margin-top: 1rem; padding: 1rem; font-size: 1rem; color: var(--error); border: 1px solid rgba(244, 63, 94, 0.3); display:flex; align-items:center; justify-content:center; gap:6px;">
+                <img src="/assets/icons/error.png" style="height:14px; width:auto;"> Quitter sans finaliser
             </button>
         <?php endif; ?>
 

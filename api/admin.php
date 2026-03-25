@@ -141,20 +141,20 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
             <nav style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 2rem;">
                 <a href="admin.php" class="btn btn-primary sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span>📊</span> Tableau de bord
+                    <img src="/assets/icons/dashboard.png" style="height:14px; width:auto; margin-right:8px;"> Tableau de bord
                 </a>
                 <button onclick="document.getElementById('newInterventionModal').style.display='flex'"
                     class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span>➕</span> Nouvelle Fiche
+                    <img src="/assets/icons/add.png" style="height:14px; width:auto; margin-right:8px;"> Nouvelle Fiche
                 </button>
                 <a href="historique.php" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span>🕒</span> Historique
+                    <img src="/assets/icons/history.png" style="height:14px; width:auto; margin-right:8px;"> Historique
                 </a>
                 <a href="equipe.php" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span>👥</span> Équipe
+                    <img src="/assets/icons/team.png" style="height:14px; width:auto; margin-right:8px;"> Équipe
                 </a>
             </nav>
 
@@ -173,7 +173,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                 </a>
                 <a href="profile.php" class="btn btn-ghost sidebar-link"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span>👤</span> Mon Profil
+                    <img src="/assets/icons/profile.png" style="height:14px; width:auto; margin-right:8px;"> Mon Profil
                 </a>
             </div>
         </aside>
@@ -189,11 +189,11 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
             <div style="display:flex; justify-content:space-between; margin-bottom: 2rem; align-items: center;">
                 <button class="btn btn-primary"
                     onclick="document.getElementById('newInterventionModal').style.display='flex'">
-                    ➕ NOUVELLE FICHE TECHNIQUE
+                    <img src="/assets/icons/add.png" style="height:18px; width:auto; margin-right:8px;"> NOUVELLE FICHE TECHNIQUE
                 </button>
                 <button onclick="document.getElementById('pwdInboxModal').style.display='flex'" class="btn btn-ghost"
                     style="padding:0.6rem 1rem;">
-                    <span>🔔</span> Demandes MDP
+                    <img src="/assets/icons/notification.png" style="height:16px; width:auto; margin-right:6px;"> Demandes MDP
                     <?php if (count($pendingPwdRequests) > 0): ?>
                         <span
                             style="background:var(--error); color:white; border-radius:50%; width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:bold; margin-left:0.5rem;">
@@ -365,19 +365,19 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
     <nav class="mobile-bottom-nav">
         <div class="mobile-bottom-nav-inner">
             <a href="admin.php" class="mobile-nav-item active" style="color: inherit; text-decoration:none;">
-                <span class="mobile-nav-icon">📊</span>
+                <img src="/assets/icons/dashboard.png" style="height:20px; width:auto; margin-bottom:4px; display:block; margin-left:auto; margin-right:auto;">
                 <span class="mobile-nav-label">Tableau</span>
             </a>
             <a href="historique.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                <span class="mobile-nav-icon">🕒</span>
+                <img src="/assets/icons/history.png" style="height:20px; width:auto; margin-bottom:4px; display:block; margin-left:auto; margin-right:auto;">
                 <span class="mobile-nav-label">Historique</span>
             </a>
             <a href="equipe.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                <span class="mobile-nav-icon">👥</span>
+                <img src="/assets/icons/team.png" style="height:20px; width:auto; margin-bottom:4px; display:block; margin-left:auto; margin-right:auto;">
                 <span class="mobile-nav-label">Équipe</span>
             </a>
             <a href="profile.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                <span class="mobile-nav-icon">👤</span>
+                <img src="/assets/icons/profile.png" style="height:20px; width:auto; margin-bottom:4px; display:block; margin-left:auto; margin-right:auto;">
                 <span class="mobile-nav-label">Profil</span>
             </a>
         </div>
