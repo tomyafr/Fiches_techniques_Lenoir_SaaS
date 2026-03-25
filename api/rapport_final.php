@@ -1370,8 +1370,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 }
 
                 const totalMachines = reportMachineIds.length;
+                console.log(`[PDF] Début du traitement de ${totalMachines} machines.`);
+                
                 for (let mIdx = 0; mIdx < totalMachines; mIdx++) {
                     const mId = reportMachineIds[mIdx];
+                    
+                    // Indicateur de progression sur le bouton si possible
+                    const labelBtn = document.getElementById('btnDownloadPDFLabel') || document.getElementById('btnDownloadPDF');
+                    if (labelBtn) labelBtn.textContent = `⏳ Récupération machine ${mIdx + 1}/${totalMachines}...`;
                     
                     // Si on a gardé la machine mais qu'elle est vide et qu'on voulait 'condensed'
                     if (emptyOption === 'condensed' && (emptyIds.includes(parseInt(mId, 10)) || emptyIds.includes(String(mId)))) {
@@ -1525,8 +1531,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         });
                     } catch (err) {
                         console.error('Erreur fetch machine ' + mId, err);
+                        const errorPage = document.createElement('div');
+                        errorPage.className = 'pdf-page';
+                        errorPage.innerHTML = `<div style="padding:20px; color:red; border:2px solid red;">⚠️ Erreur lors de la récupération de la machine ${mId} : ${err.message}</div>`;
+                        container.appendChild(errorPage);
                     }
                 }
+            } else {
+                console.warn("[PDF] Aucune machine trouvée dans window.LM_RAPPORT.machinesIds");
             }
 
             // Page de fin : On force SYSTEMATIQUEMENT le saut de page
@@ -1732,9 +1744,18 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         // ══════════════════════════════════════════════════════════════════
         async function telechargerPDF() {
             const btn = document.getElementById('btnDownloadPDF');
-            if (btn) { btn.disabled = true; btn.textContent = '⏳ Génération du rapport complet...'; }
+            const originalContent = btn ? btn.innerHTML : '';
+            if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Préparation du rapport...'; }
+            
             try {
                 const container = await buildFullPdfContainer();
+                const nbPagesAssemblees = container.querySelectorAll('.pdf-page').length;
+                
+                if (nbPagesAssemblees <= 2 && window.LM_RAPPORT.machinesIds.length > 0) {
+                    if (!confirm("Attention : Le rapport semble ne contenir aucune fiche machine (3 pages seulement). Voulez-vous quand même continuer ?")) {
+                        throw new Error("Génération annulée par l'utilisateur car le rapport était incomplet.");
+                    }
+                }
 
                 const opt = {
                     margin: [10, 0, 15, 0], // Top, Left, Bottom, Right
