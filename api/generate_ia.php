@@ -39,23 +39,17 @@ if ($type === 'E') {
     $formattedNC = array_map(fn($i) => "• " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['nc']);
     $formattedNR = array_map(fn($i) => "• " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['nr']);
 
-    $systemPrompt = "Tu es un expert technique senior chez LENOIR-MEC, spécialiste mondial de la séparation magnétique. Ta mission est de rédiger la section 'E) CAUSE DE DYSFONCTIONNEMENT' d'un rapport d'expertise.
-Instructions :
-- Sois très précis, technique et professionnel.
-- Utilise le vocabulaire métier (ex: virole, tambour, induction, moteur, bande).
-- Structure la réponse sous forme de liste à puces claire.
-- Si des pièces sont à remplacer (NR/HS), insiste sur l'urgence technique de manière factuelle.
-- Langue : Français de France.
-- NE PAS inventer de faits non listés.";
+    $systemPrompt = "Tu es l'Expert Senior LENOIR-MEC. Rédige 'E) CAUSE DE DYSFONCTIONNEMENT'.
+RÈGLES CRITIQUES :
+- NE LISTE QUE LES ANOMALIES (Points à améliorer, Non conformes ou Remplacements).
+- CLASSE-LES par gravité : 1. CRITIQUE (Rouge), 2. À CORRIGER (Orange).
+- Sois très concis (maximum 3-5 mots par point).
+- Si aucune anomalie n'est listée par l'utilisateur, réponds UNIQUEMENT: 'Aucune anomalie majeure détectée lors de l'inspection.'
+- NE LISTE PAS les points qui sont en bon état.";
 
-    $userPrompt = "CONTEXTE LENOIR-MEC\n" .
-                  "Équipement : $typeMachine\n" .
-                  "Localisation/Poste : $poste\n\n" .
-                  "CONSTATS DE TERRAIN :\n" .
-                  "- Points non conformes (NC) / Hors Service (HS) :\n" . (empty($formattedNC) ? "Aucun" : implode("\n", $formattedNC)) . "\n" .
-                  "- Remplacements requis (NR/R) :\n" . (empty($formattedNR) ? "Aucun" : implode("\n", $formattedNR)) . "\n" .
-                  "- Points à surveiller (AA) :\n" . (empty($formattedAA) ? "Aucun" : implode("\n", $formattedAA)) . "\n\n" .
-                  "Rédige maintenant la section E) de manière structurée.";
+    $userPrompt = "LISTE DES ANOMALIES DÉTECTÉES :\n" .
+                  "🚨 CRITIQUE (Remplacements/Non conformes) :\n" . (empty(array_merge($formattedNR, $formattedNC)) ? "Néant\n" : implode("\n", array_merge($formattedNR, $formattedNC))) . "\n" .
+                  "⚠️ À SURVEILLER (À améliorer) :\n" . (empty($formattedAA) ? "Néant" : implode("\n", $formattedAA));
 
     $result = callGroqIA($systemPrompt, $userPrompt);
     
@@ -79,18 +73,14 @@ Instructions :
         foreach($issues[$cat] as $i) $allIssuesString .= "• " . $i['designation'] . "\n";
     }
 
-    $systemPrompt = "Tu es l'Expert LENOIR-MEC. Rédige la section 'F) CONCLUSION' finale du rapport.
+    $systemPrompt = "Tu es l'Expert LENOIR-MEC. Rédige 'F) CONCLUSION'.
 Instructions :
-- Rédige 2 à 3 phrases maximum.
-- Sois direct, rassurant ou alertant selon la gravité des défauts.
-- Parle de l'impact sur la production ou la sécurité (ex: perte d'efficacité de tri, risque mécanique).
-- Termine par une recommandation claire.
-- Style : Expert industriel senior.";
+- Synthétise le bilan technique en 2 phrases très courtes.
+- Mentionne le niveau de priorité global (Urgent, Moyen, Faible).
+- Style : Industriel, factuel, sans fioritures.";
 
-    $userPrompt = "BILAN D'EXPERTISE :\n" .
-                  "Machine : $typeMachine\n" .
-                  "Détails des anomalies relevées :\n" . ($allIssuesString ?: "Aucun défaut, équipement en parfait état de fonctionnement.") . "\n\n" .
-                  "Rédige la conclusion finale professionnelle.";
+    $userPrompt = "BILAN DÉTAILLÉ DES ANOMALIES :\n" . ($allIssuesString ?: "Aucun défaut majeur.") . "\n\n" .
+                  "Rédige la conclusion finale.";
 
     $result = callGroqIA($systemPrompt, $userPrompt);
     
