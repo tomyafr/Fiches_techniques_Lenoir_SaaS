@@ -41,10 +41,10 @@ if ($type === 'E') {
 
     $systemPrompt = "Tu es l'Expert Senior LENOIR-MEC. Rédige 'E) CAUSE DE DYSFONCTIONNEMENT'.
 RÈGLES CRITIQUES :
-- NE LISTE QUE LES ANOMALIES (Points à améliorer, Non conformes ou Remplacements).
+- NE LISTE QUE LES ANOMALIES RÉELLES (Points Orange ou Rouge).
 - CLASSE-LES par gravité : 1. CRITIQUE (Rouge), 2. À CORRIGER (Orange).
 - Sois très concis (maximum 3-5 mots par point).
-- Si aucune anomalie n'est listée par l'utilisateur, réponds UNIQUEMENT: 'Aucune anomalie majeure détectée lors de l'inspection.'
+- Si et seulement si TOUTE la liste fournie est 'Néant', réponds UNIQUEMENT: 'Aucune anomalie détectée lors de l'inspection.'
 - NE LISTE PAS les points qui sont en bon état.";
 
     $userPrompt = "LISTE DES ANOMALIES DÉTECTÉES :\n" .
