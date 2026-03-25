@@ -560,7 +560,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:15px; color:#000;">
                         <tr>
                             <td style="width:40%; border-right:1px solid #000; padding:15px; vertical-align:bottom;">
-                                <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC" class="no-print-pdf"
+                                <img src="/assets/logo_transparent.png" alt="LENOIR-MEC" class="no-print-pdf"
                                     style="max-width:220px; display:block; margin-bottom:30px;">
                                 <div style="text-align:right; font-weight:bold; color:#1B4F72; font-size:16px;">
                                     Poste<input type="text" name="mesures[poste]"

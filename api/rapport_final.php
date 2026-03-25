@@ -577,7 +577,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             <!-- EN-TÊTE -->
             <div class="rapport-header card glass">
-                <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC" class="rapport-logo"
+                <img src="/assets/logo_transparent.png" alt="LENOIR-MEC" class="rapport-logo"
                     style="height: 60px; width: auto; object-fit: contain; margin: 0 auto 1rem auto; display: block; max-width: 100%;">
                 <h1>Rapport d'expertise sur site</h1>
                 <div class="arc-badge">ARC
