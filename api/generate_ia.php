@@ -38,7 +38,13 @@ if ($type === 'E') {
 
     $result = callGroqIA($systemPrompt, $userPrompt);
     
-    // Fallback si IA échoue ou pas de clé
+    // Détection d'une erreur (si le résultat commence par "Erreur IA")
+    if ($result && strpos($result, 'Erreur IA') === 0) {
+        echo json_encode(['error' => $result]);
+        exit;
+    }
+
+    // Fallback si IA échoue complètement ou pas de clé
     if (!$result) {
         $all = array_merge($formattedNR, $formattedNC, $formattedAA);
         $result = !empty($all) ? implode("\n", $all) : "Aucun dysfonctionnement majeur signalé.";
@@ -57,6 +63,11 @@ if ($type === 'E') {
 
     $result = callGroqIA($systemPrompt, $userPrompt);
     
+    if ($result && strpos($result, 'Erreur IA') === 0) {
+        echo json_encode(['error' => $result]);
+        exit;
+    }
+
     if (!$result) {
         $countNR = count($issues['nr']);
         $countNC = count($issues['nc']);

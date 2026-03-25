@@ -98,9 +98,13 @@ function callGroqIA($systemPrompt, $userPrompt) {
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 20); // Timeout augmenté à 20s
+    curl_setopt($ch, CURLOPT_TIMEOUT, 25); // Augmenté à 25s pour éviter les micro-couures
+    
+    // Debug SSL : Si ton serveur a des vieux certificats, curl peut bloquer
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
 
     $response = curl_exec($ch);
+    $error = curl_error($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
@@ -109,5 +113,6 @@ function callGroqIA($systemPrompt, $userPrompt) {
         return $result['choices'][0]['message']['content'] ?? null;
     }
 
-    return null;
+    // Retourne l'erreur pour affichage dans l'interface (debug)
+    return "Erreur IA (Code $httpCode) : " . ($error ?: "Réponse invalide du serveur Groq");
 }
