@@ -1,5 +1,5 @@
-<?php
 require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/../includes/ia_helper.php';
 requireAuth(['technicien', 'admin']);
 
 $db = getDB();
@@ -87,63 +87,33 @@ $heureDebut = $mesures['heure_debut'] ?? '';
 $heureFin = $mesures['heure_fin'] ?? '';
 
 /**
- * Génère un résumé des dysfonctionnements (NC/NR/AA/HS/R) si le champ est vide ou par défaut.
+ * Génère un résumé des dysfonctionnements via IA ou fallback local.
  */
-function generateDysfunctionsFallback($donnees) {
-    $labelsMap = [
-        // APRF
-        'aprf_satisfaction' => 'Satisfaction de fonctionnement',
-        'aprf_bande' => 'État et type de la bande',
-        'aprf_reglettes' => 'État des réglettes',
-        'aprf_boutons' => 'État des boutons étoile',
-        'aprf_options' => 'Options',
-        'aprf_inox' => 'Caisson Inox',
-        'aprf_attraction' => 'Contrôle de l\'attraction',
-        // EDX
-        'edx_bande' => 'Bande transporteuse',
-        'edx_virole' => 'Virole/Enveloppe',
-        'edx_tamb' => 'Tambour moteur',
-        'edx_pal' => 'Paliers/Roulements',
-        'edx_graiss' => 'Graissage',
-        'edx_net_conv' => 'Nettoyage convoyeur',
-        'edx_net_cais' => 'Nettoyage caisson',
-        // OV
-        'ov_bande' => 'Bande',
-        'ov_virole' => 'Virole',
-        'ov_tamb' => 'Tambour',
-        'ov_pal' => 'Paliers',
-        'ov_moteur' => 'Moteur/Réducteur',
-        'ov_racleur' => 'Racleur',
-        'ov_graiss' => 'Graissage',
-        // LEVAGE
-        'levage_etat' => 'État général',
-        'levage_crochet' => 'Chaine/Crochet',
-        'levage_frein' => 'Frein/Sécurité',
-        'levage_guide' => 'Guide chaine',
-        'levage_pulse' => 'Bouton Poussoir',
-        'levage_tele' => 'Télécommande',
-        // PAP
-        'pap_bande' => 'Bande (PAP/TAP)',
-        'pap_tamb' => 'Tambour (PAP/TAP)',
-        'pap_pal' => 'Paliers (PAP/TAP)',
-        'pap_moteur' => 'Moteur (PAP/TAP)',
-        'pap_net' => 'Nettoyage (PAP/TAP)'
-    ];
+function generateDysfunctionsAI($machine, $type = 'E') {
+    $donnees = json_decode($machine['donnees_controle'] ?? '{}', true);
+    $issues = extractIssuesFromDonnees($donnees);
+    $typeMachine = $machine['designation'];
+    $poste = json_decode($machine['mesures'] ?? '{}', true)['poste'] ?? 'N/A';
 
-    $issues = [];
-    $negativeValues = ['nc', 'nr', 'aa', 'r', 'hs'];
-    
-    foreach ($donnees as $k => $v) {
-        if (in_array($v, $negativeValues)) {
-            $baseKey = str_replace('_radio', '', $k);
-            if (isset($labelsMap[$baseKey])) {
-                $label = $labelsMap[$baseKey];
-                $eval = in_array($v, ['aa', 'r']) ? 'À améliorer / Remplacer' : 'Non conforme / HS';
-                $issues[] = "• " . $label . " : " . $eval;
-            }
+    if ($type === 'E') {
+        $formattedAA = array_map(fn($i) => "• " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['aa']);
+        $formattedNC = array_map(fn($i) => "• " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['nc']);
+        $formattedNR = array_map(fn($i) => "• " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['nr']);
+
+        $systemPrompt = "Tu es un expert technique Lenoir-Mec spécialiste des séparateurs magnétiques industriels. Rédige la section E) CAUSE DE DYSFONCTIONNEMENT en français. Format : une liste à puces courte (1 ligne par problème). Style : professionnel, technique, concis.";
+        $userPrompt = "Type: $typeMachine, Poste: $poste\nAA: " . implode(", ", $formattedAA) . "\nNC: " . implode(", ", $formattedNC) . "\nNR/HS: " . implode(", ", $formattedNR);
+
+        $result = callGroqIA($systemPrompt, $userPrompt);
+        if (!$result) {
+            $all = array_merge($formattedNR, $formattedNC, $formattedAA);
+            return !empty($all) ? implode("\n", $all) : "Aucun dysfonctionnement majeur signalé.";
         }
+        return $result;
+    } else {
+        $systemPrompt = "En te basant sur les dysfonctionnements listés, rédige la section F) CONCLUSION. Format : 1-2 phrases max. Style rapport d'expertise Lenoir-Mec.";
+        $userPrompt = "Machine: $typeMachine\nDysfonctionnements: " . json_encode($issues);
+        return callGroqIA($systemPrompt, $userPrompt) ?: "Votre équipement est conforme à nos standards technologiques.";
     }
-    return !empty($issues) ? implode("\n", $issues) : "Aucun dysfonctionnement majeur signalé.";
 }
 
 // --- BUG-020: Fréquences recommandées Lenoir-Mec ---
@@ -1689,7 +1659,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     $dysText = trim($machine['dysfonctionnements'] ?? '');
                                     $defaultMsg = "Aucun dysfonctionnement majeur signalé.";
                                     if (empty($dysText) || $dysText === $defaultMsg) {
-                                        $dysText = generateDysfunctionsFallback($donnees);
+                                        $dysText = generateDysfunctionsAI($machine, 'E');
                                     }
                                 ?>
                                 <div style="font-size:13px; white-space: pre-wrap; margin-bottom:10px;"><?= htmlspecialchars($dysText) ?></div>
@@ -1728,13 +1698,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <?php 
                                     $concText = trim($machine['conclusion'] ?? '');
                                     if (empty($concText)) {
-                                        $issuesCount = 0;
-                                        foreach($donnees as $v) if(in_array($v, ['nc','nr','aa'])) $issuesCount++;
-                                        if ($issuesCount === 0) {
-                                            $concText = "Votre équipement est conforme à nos standards officiels. L'équipement est opérationnel et ne présente aucun défaut majeur limitant son efficacité.";
-                                        } else {
-                                            $concText = "Votre équipement présente certains points d'attention (voir Section E). Nous vous conseillons une révision lors de votre prochain arrêt technique.";
-                                        }
+                                        $concText = generateDysfunctionsAI($machine, 'F');
                                     }
                                 ?>
                                 <div style="font-size:13px; white-space: pre-wrap; margin-bottom:10px;"><?= htmlspecialchars($concText) ?></div>
@@ -1961,66 +1925,54 @@ foreach ($recoFreq as $rfk => $rfv) {
             el.style.height = 'auto';
             el.style.height = el.scrollHeight + 'px';
         }
+        // ========== SECTION E & F GENERATION IA ==========
+        async function generateConclusion() {
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '⌛ Analyse...';
+            btn.disabled = true;
 
-        // ========== SECTION E GENERATION ==========
-        function generateConclusion() {
-            let issues = [];
-            const labels = {
-                'nc': 'Non conforme',
-                'aa': 'À améliorer',
-                'nr': 'À remplacer'
-            };
-            
-            document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
-                if (['nc', 'aa', 'nr'].includes(radio.value)) {
-                    let row = radio.closest('tr');
-                    if (row) {
-                        let label = row.cells[0].innerText.trim();
-                        issues.push(label.toLowerCase());
-                    }
+            try {
+                const res = await fetch('api/generate_ia.php?type=F&id=<?= $id ?>');
+                const data = await res.json();
+                if (data.content) {
+                    document.getElementById('conclusionText').value = data.content;
+                    autoGrow(document.getElementById('conclusionText'));
+                } else {
+                    alert('Erreur IA : ' + (data.error || 'Indisponible'));
                 }
-            });
-
-            const machineName = document.querySelector('h3') ? document.querySelector('h3').innerText : 'votre équipement';
-            let text = "";
-            
-            if (issues.length === 0) {
-                text = `Votre ${machineName} est conforme à nos standards officiels. L'équipement est opérationnel et ne présente aucun défaut majeur limitant son efficacité.`;
-            } else {
-                text = `Votre ${machineName} présente certains points d'attention. Lors de votre prochain arrêt technique, nous vous conseillons la révision des éléments suivants : ${issues.join(', ')}. `;
-                text += `\n\nNous vous recommandons de suivre scrupuleusement les préconisations de maintenance mentionnées dans le tableau des fréquences (Section C) pour garantir la longévité de l'appareil.`;
+            } catch (e) {
+                alert('Erreur de connexion à l\'API IA.');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
-
-            document.getElementById('conclusionText').value = text;
         }
 
-        function generateDysfunctions() {
-            let dys = [];
-            
-            // On cherche tous les labels sélectionnés avec des couleurs NC/NR/AA/R/HS
-            const selector = '.pastille-group label.selected.p-nc, .pastille-group label.selected.p-nr, .pastille-group label.selected.p-aa';
-            const negativeLabels = document.querySelectorAll(selector);
-            
-            negativeLabels.forEach(label => {
-                const tr = label.closest('tr');
-                if (tr) {
-                    const designation = tr.querySelector('td:first-child').innerText.trim().split("\n")[0];
-                    let eval = "Non conforme";
-                    if (label.classList.contains('p-aa')) eval = "À améliorer / Remplacer";
-                    if (label.classList.contains('p-nr')) eval = "Urgent";
-                    
-                    const comment = tr.querySelector('textarea')?.value.trim();
-                    let line = "• " + designation + " : " + eval;
-                    if (comment) line += " (" + comment + ")";
-                    dys.push(line);
-                }
-            });
-
+        async function generateDysfunctions() {
+            const btn = event.currentTarget;
+            const originalText = btn.innerHTML;
             const textarea = document.getElementById('dysfonctionnementsText');
-            if (textarea) {
-                if (textarea.value && textarea.value !== "Aucun dysfonctionnement majeur signalé." && !confirm("Voulez-vous écraser le contenu actuel par la liste automatique ?")) return;
-                textarea.value = dys.length > 0 ? dys.join("\n") : "Aucun dysfonctionnement majeur signalé.";
-                autoGrow(textarea);
+            
+            if (textarea.value && textarea.value !== "Aucun dysfonctionnement majeur signalé." && !confirm("Voulez-vous écraser le contenu actuel par l'analyse IA ?")) return;
+            
+            btn.innerHTML = '⌛ Analyse...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('api/generate_ia.php?type=E&id=<?= $id ?>');
+                const data = await res.json();
+                if (data.content) {
+                    textarea.value = data.content;
+                    autoGrow(textarea);
+                } else {
+                    alert('Erreur IA : ' + (data.error || 'Indisponible'));
+                }
+            } catch (e) {
+                alert('Erreur de connexion à l\'API IA.');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
         }
 

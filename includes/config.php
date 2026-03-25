@@ -39,6 +39,7 @@ define('BC_ENV', getenv('BC_ENV') ?: 'production');
 define('BC_BASE_URL', "https://api.businesscentral.dynamics.com/v2.0/" . BC_TENANT_ID . "/" . BC_ENV . "/api/v2.0");
 define('BC_TOKEN_URL', 'https://login.microsoftonline.com/' . BC_TENANT_ID . '/oauth2/v2.0/token');
 define('BC_SCOPE', 'https://api.businesscentral.dynamics.com/.default');
+define('GROQ_API_KEY', getenv('GROQ_API_KEY') ?: '');
 
 // Application
 define('APP_NAME', 'LM Expert');
