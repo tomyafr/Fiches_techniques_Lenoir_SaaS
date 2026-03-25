@@ -1429,7 +1429,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             console.error('Aucune classe .pdf-page trouvée pour machine ' + mId);
                             const errDiv = document.createElement('div');
                             errDiv.className = 'pdf-page';
-                            errDiv.innerHTML = `<div style="padding:20px; color:red; border:2px solid red;">⚠️ Erreur : La fiche machine ${mId} est vide ou impossible à charger (vérifiez votre session).</div>`;
+                            const preview = (html || '').substring(0, 200).replace(/</g, '&lt;');
+                            errDiv.innerHTML = `<div style="padding:20px; color:red; border:2px solid red;">
+                                ⚠️ Erreur : La fiche machine ${mId} est vide ou impossible à charger.<br>
+                                <small>Réponse serveur (début) : ${preview}...</small>
+                            </div>`;
                             container.appendChild(errDiv);
                         }
 
