@@ -1425,6 +1425,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         const doc = parser.parseFromString(html, 'text/html');
 
                         const pages = doc.querySelectorAll('.pdf-page');
+                        if (pages.length === 0) {
+                            console.error('Aucune classe .pdf-page trouvée pour machine ' + mId);
+                            const errDiv = document.createElement('div');
+                            errDiv.className = 'pdf-page';
+                            errDiv.innerHTML = `<div style="padding:20px; color:red; border:2px solid red;">⚠️ Erreur : La fiche machine ${mId} est vide ou impossible à charger (vérifiez votre session).</div>`;
+                            container.appendChild(errDiv);
+                        }
+
                         pages.forEach((p, pIdx) => {
                             // Bug 5 & New Fix: Remove empty photos section
                             const hasPhotos = p.querySelectorAll('.photo-annexe-item img').length > 0;
@@ -1527,7 +1535,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             // et gelait la génération de html2canvas sur iOS/Safari.
                             
                             p.style.minHeight = 'auto';
-                            container.appendChild(p);
+                            container.appendChild(document.importNode(p, true));
                         });
                     } catch (err) {
                         console.error('Erreur fetch machine ' + mId, err);
@@ -2010,10 +2018,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                 try {
                     // 1. Générer et Sauvegarder Section E (Dysfonctionnements)
-                    let resE = await fetch(`api/generate_ia.php?type=E&id=${id}`);
+                    let resE = await fetch(`generate_ia.php?type=E&id=${id}`);
                     let dataE = await resE.json();
                     if (dataE.content) {
-                        await fetch('api/save_ia.php', {
+                        await fetch('save_ia.php', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ id: id, type: 'dysfonctionnements', content: dataE.content })
@@ -2021,10 +2029,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     }
 
                     // 2. Générer et Sauvegarder Section F (Conclusion)
-                    let resF = await fetch(`api/generate_ia.php?type=F&id=${id}`);
+                    let resF = await fetch(`generate_ia.php?type=F&id=${id}`);
                     let dataF = await resF.json();
                     if (dataF.content) {
-                        await fetch('api/save_ia.php', {
+                        await fetch('save_ia.php', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ id: id, type: 'conclusion', content: dataF.content })
