@@ -1591,8 +1591,6 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <?php endif; ?>
 
-                        </div>
-
                         <?php 
                         // SECTION B : DESCRIPTION DU MATÉRIEL (uniquement si photos présentes)
                         $descPhotos = $photosData['desc_materiel'] ?? [];
@@ -1689,7 +1687,6 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 </table>
                             </div>
                         <?php endif; ?>
-                    </div>
 
                     <div class="pdf-section photos-annexes-wrapper" style="margin-top:20px;">
                         <div
