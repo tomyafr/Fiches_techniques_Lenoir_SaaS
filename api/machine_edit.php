@@ -86,6 +86,34 @@ $tempsRealise = $mesures['temps_realise'] ?? '';
 $heureDebut = $mesures['heure_debut'] ?? '';
 $heureFin = $mesures['heure_fin'] ?? '';
 
+/**
+ * Génère un résumé des dysfonctionnements (NC/NR/AA) si le champ est vide.
+ */
+function generateDysfunctionsFallback($donnees) {
+    $labelsMap = [
+        'aprf_alim' => 'Alimentation coffret (APRF)', 'aprf_fix' => 'Fixation/Visserie (APRF)', 'aprf_etat_cas' => 'État carrossage (APRF)',
+        'aprf_bande' => 'État bande (APRF)', 'aprf_joint' => 'Joints d\'étanchéité (APRF)', 'aprf_graiss' => 'Graissage (APRF)', 'aprf_fonct' => 'Test fonctionnement (APRF)',
+        'edx_bande' => 'Bande transporteuse (EDX)', 'edx_virole' => 'Virole/Enveloppe (EDX)', 'edx_tamb' => 'Tambour moteur (EDX)',
+        'edx_pal' => 'Paliers/Roulements (EDX)', 'edx_graiss' => 'Graissage (EDX)', 'edx_net_conv' => 'Nettoyage convoyeur (EDX)', 'edx_net_cais' => 'Nettoyage caisson (EDX)',
+        'ov_bande' => 'Bande (OV)', 'ov_virole' => 'Virole (OV)', 'ov_tamb' => 'Tambour (OV)', 'ov_pal' => 'Paliers (OV)',
+        'ov_moteur' => 'Moteur/Réducteur (OV)', 'ov_racleur' => 'Racleur (OV)', 'ov_graiss' => 'Graissage (OV)',
+        'levage_etat' => 'État général (Levage)', 'levage_crochet' => 'Chaine/Crochet (Levage)', 'levage_frein' => 'Frein/Sécurité (Levage)',
+        'levage_guide' => 'Guide chaine (Levage)', 'levage_pulse' => 'Bouton Poussoir (Levage)', 'levage_tele' => 'Télécommande (Levage)',
+        'pap_bande' => 'Bande (PAP/TAP)', 'pap_tamb' => 'Tambour (PAP/TAP)', 'pap_pal' => 'Paliers (PAP/TAP)', 'pap_moteur' => 'Moteur (PAP/TAP)', 'pap_net' => 'Nettoyage (PAP/TAP)'
+    ];
+
+    $issues = [];
+    foreach ($donnees as $k => $v) {
+        if (strpos($k, '_radio') !== false && in_array($v, ['nc', 'nr', 'aa'])) {
+            $baseKey = str_replace('_radio', '', $k);
+            $label = $labelsMap[$baseKey] ?? str_replace('_', ' ', $baseKey);
+            $eval = ($v === 'aa') ? 'À améliorer' : 'Non conforme';
+            $issues[] = "• " . $label . " : " . $eval;
+        }
+    }
+    return !empty($issues) ? implode("\n", $issues) : "Aucun dysfonctionnement majeur signalé.";
+}
+
 // --- BUG-020: Fréquences recommandées Lenoir-Mec ---
 $recoFreq = [];
 if ($isEDX) {
@@ -660,7 +688,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     $mini = $mesures['edx_releve_mini'] ?? '....';
                     $maxi = $mesures['edx_releve_maxi'] ?? '....';
                     ?>
-                    <div style="margin-top:20px;">
+                    <div style="margin-top:20px; page-break-inside: avoid;">
                         <div style="font-weight:bold; font-size:14px; color:#d35400; margin-bottom:5px;">D) RELEVES D’INDUCTION MAGNETIQUE :</div>
                         <div style="border:1px solid #ed7d31; padding:10px; font-size:13px; background:#fff;">
                             <p style="margin:5px 0;"><strong>Roue polaire :</strong></p>
@@ -1595,7 +1623,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         // SECTION B : DESCRIPTION DU MATÉRIEL (uniquement si photos présentes)
                         $descPhotos = $photosData['desc_materiel'] ?? [];
                         if (!empty($descPhotos)): ?>
-                            <div style="margin-top:20px;">
+                            <div style="margin-top:20px; page-break-inside: avoid;">
                                 <div style="font-weight:bold; font-size:14px; color:#d35400; margin-bottom:10px;">B) DESCRIPTION DU MATÉRIEL :</div>
                                 <div class="photo-grid-<?= min(4, count($descPhotos)) ?>" style="display:grid; gap:10px;">
                                     <?php foreach ($descPhotos as $idx => $p): ?>
@@ -1618,14 +1646,20 @@ foreach ($recoFreq as $rfk => $rfv) {
                         endif;
                         ?>
 
-                        <div style="margin-top:20px; border: 1px solid #000; padding:10px; background: #fff;">
+                        <div style="margin-top:20px; border: 1px solid #000; padding:10px; background: #fff; page-break-inside: avoid;">
                             <div style="font-weight:bold; font-size:14px; margin-bottom:5px; color:#d35400;">E) CAUSE DE DYSFONCTIONNEMENT :</div>
                             <?php if (!isset($_GET['pdf'])): ?>
                                 <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette zone est pré-remplie avec les points "Non conformes" ou "À améliorer" détectés. Vous pouvez éditer le texte ci-dessous.</p>
                                 <textarea name="dysfonctionnements" id="dysfonctionnementsText" class="pdf-textarea" style="min-height:100px; font-size:13px; border: 1px solid #ccc; background:#fff; padding:5px;"><?= htmlspecialchars($machine['dysfonctionnements'] ?? '') ?></textarea>
                                 <button type="button" onclick="generateDysfunctions()" style="margin-top:5px; background:#e67e22; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:11px;">🔄 Actualiser depuis la fiche</button>
                             <?php else: ?>
-                                <div style="font-size:13px; white-space: pre-wrap; margin-bottom:10px;"><?= htmlspecialchars($machine['dysfonctionnements'] ?? 'Aucun dysfonctionnement majeur signalé.') ?></div>
+                                <?php 
+                                    $dysText = trim($machine['dysfonctionnements'] ?? '');
+                                    if (empty($dysText)) {
+                                        $dysText = generateDysfunctionsFallback($donnees);
+                                    }
+                                ?>
+                                <div style="font-size:13px; white-space: pre-wrap; margin-bottom:10px;"><?= htmlspecialchars($dysText) ?></div>
                                 <?php
                                 // Affichage des photos liées aux points critiques
                                 $criticalPhotos = [];
@@ -1651,14 +1685,26 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?php endif; ?>
                         </div>
 
-                        <div style="margin-top:20px; border: 1px solid #000; padding:10px; background: #fff;">
+                        <div style="margin-top:20px; border: 1px solid #000; padding:10px; background: #fff; page-break-inside: avoid;">
                             <div style="font-weight:bold; font-size:14px; margin-bottom:5px; color:#d35400;">F) CONCLUSION :</div>
                             <?php if (!isset($_GET['pdf'])): ?>
                                 <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette conclusion peut être générée par l'IA en fonction des résultats du contrôle.</p>
                                 <textarea name="conclusion" id="conclusionText" class="pdf-textarea" style="min-height:80px; font-size:13px; border: 1px solid #ccc; background:#fff; padding:5px;"><?= htmlspecialchars($machine['conclusion'] ?? '') ?></textarea>
                                 <button type="button" onclick="generateConclusion()" style="margin-top:5px; background:#2980b9; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:11px;">🤖 Générer Conclusion IA</button>
                             <?php else: ?>
-                                <div style="font-size:13px; white-space: pre-wrap; margin-bottom:10px;"><?= htmlspecialchars($machine['conclusion'] ?? 'Votre équipement est conforme à nos standards d\'utilisation après intervention.') ?></div>
+                                <?php 
+                                    $concText = trim($machine['conclusion'] ?? '');
+                                    if (empty($concText)) {
+                                        $issuesCount = 0;
+                                        foreach($donnees as $v) if(in_array($v, ['nc','nr','aa'])) $issuesCount++;
+                                        if ($issuesCount === 0) {
+                                            $concText = "Votre équipement est conforme à nos standards officiels. L'équipement est opérationnel et ne présente aucun défaut majeur limitant son efficacité.";
+                                        } else {
+                                            $concText = "Votre équipement présente certains points d'attention (voir Section E). Nous vous conseillons une révision lors de votre prochain arrêt technique.";
+                                        }
+                                    }
+                                ?>
+                                <div style="font-size:13px; white-space: pre-wrap; margin-bottom:10px;"><?= htmlspecialchars($concText) ?></div>
                             <?php endif; ?>
                         </div>
 
@@ -1688,7 +1734,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </div>
                         <?php endif; ?>
 
-                    <div class="pdf-section photos-annexes-wrapper" style="margin-top:20px;">
+                    <div class="pdf-section photos-annexes-wrapper" style="margin-top:20px; page-break-inside: avoid;">
                         <div
                             style="background:#d35400; color:white; font-weight:bold; font-size:12px; padding:5px; border:1px solid #000;">
                             PHOTOS ANNEXES</div>
