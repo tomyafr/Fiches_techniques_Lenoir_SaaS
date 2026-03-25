@@ -83,6 +83,8 @@ CREATE TABLE machines (
     mesures JSONB, -- Stocke les valeurs Gauss, isolement, etc.
     photos JSONB, -- Tableaux de data URIs ou chemins S3
     commentaires TEXT,
+    dysfonctionnements TEXT,
+    conclusion TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
