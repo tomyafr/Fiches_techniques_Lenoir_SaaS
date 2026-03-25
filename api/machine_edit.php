@@ -1657,9 +1657,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?php else: ?>
                                 <?php 
                                     $dysText = trim($machine['dysfonctionnements'] ?? '');
-                                    $defaultMsg = "Aucun dysfonctionnement majeur signalé.";
-                                    if (empty($dysText) || $dysText === $defaultMsg) {
-                                        $dysText = generateDysfunctionsAI($machine, 'E');
+                                    if (empty($dysText)) {
+                                        $dysText = "Aucun dysfonctionnement majeur signalé.";
                                     }
                                 ?>
                                 <div style="font-size:13px; white-space: pre-wrap; margin-bottom:10px;"><?= htmlspecialchars($dysText) ?></div>
@@ -1698,7 +1697,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <?php 
                                     $concText = trim($machine['conclusion'] ?? '');
                                     if (empty($concText)) {
-                                        $concText = generateDysfunctionsAI($machine, 'F');
+                                        $concText = "Votre équipement est conforme à nos standards officiels.";
                                     }
                                 ?>
                                 <div style="font-size:13px; white-space: pre-wrap; margin-bottom:10px;"><?= htmlspecialchars($concText) ?></div>

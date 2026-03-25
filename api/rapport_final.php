@@ -759,6 +759,26 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
             </div>
 
+            <!-- BLOC IA GLOBAL (BATCH) -->
+            <div class="card glass" style="margin-top:2.5rem; padding:1.5rem; border:1px solid #d35400; background:rgba(211, 84, 0, 0.05);">
+                <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+                    <div style="font-size:2rem;">🤖</div>
+                    <div>
+                        <h4 style="margin:0; color:#d35400; font-size:1.1rem;">Génération automatique intelligente</h4>
+                        <p style="margin:4px 0 0 0; font-size:0.8rem; color:var(--text-dim);">L'IA Groq va parcourir toutes vos machines pour rédiger les conclusions et dysfonctionnements (Section E & F) en fonction de vos contrôles.</p>
+                    </div>
+                </div>
+                
+                <div id="iaBatchProgress" style="display:none; margin-bottom:15px; background:rgba(0,0,0,0.2); border-radius:10px; height:12px; overflow:hidden; border:1px solid var(--glass-border);">
+                    <div id="iaBatchProgressBar" style="width:0%; height:100%; background:linear-gradient(90deg, #e67e22, #d35400); transition:width 0.3s;"></div>
+                </div>
+                <div id="iaBatchStatus" style="font-size:0.85rem; color:var(--text); text-align:center; margin-bottom:15px; font-weight:600; min-height:1.2em;"></div>
+
+                <button type="button" id="btnGenerateAllAI" onclick="generateAllIA()" class="btn-final" style="margin-top:0; background:linear-gradient(135deg, #e67e22, #d35400); box-shadow:0 4px 15px rgba(230, 126, 34, 0.3);">
+                    🤖 Analyser toutes les machines par IA
+                </button>
+            </div>
+
             <!-- BOUTON FINAL -->
             <button type="submit" class="btn-final" onclick="return validateAndSubmit()">
                 ✓ Finaliser le rapport et terminer l'intervention
@@ -1940,6 +1960,70 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 if (icon) icon.textContent = '🔄';
                 if (label) label.textContent = 'Réessayer l\'envoi';
             }
+        }
+
+        // ══════════════════════════════════════════════════════════════════
+        // GÉNÉRATION IA PAR LOT (BATCH)
+        // ══════════════════════════════════════════════════════════════════
+        async function generateAllIA() {
+            if (!confirm("L'IA va mettre à jour toutes les machines du rapport. Les conclusions existantes seront écrasées. Continuer ?")) return;
+
+            const btn = document.getElementById('btnGenerateAllAI');
+            const progress = document.getElementById('iaBatchProgress');
+            const bar = document.getElementById('iaBatchProgressBar');
+            const status = document.getElementById('iaBatchStatus');
+            const mIds = window.LM_RAPPORT.machinesIds;
+
+            btn.disabled = true;
+            btn.innerHTML = '⌛ Analyse en cours...';
+            progress.style.display = 'block';
+            
+            let current = 0;
+            const total = mIds.length;
+
+            for (const id of mIds) {
+                current++;
+                const mData = window.LM_RAPPORT.machinesData.find(m => m.id == id) || { designation: 'Machine' };
+                status.innerText = `Traitement: ${mData.designation} (${current}/${total})`;
+                bar.style.width = ((current - 0.5) / total * 100) + '%';
+
+                try {
+                    // 1. Générer et Sauvegarder Section E (Dysfonctionnements)
+                    let resE = await fetch(`api/generate_ia.php?type=E&id=${id}`);
+                    let dataE = await resE.json();
+                    if (dataE.content) {
+                        await fetch('api/save_ia.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id: id, type: 'dysfonctionnements', content: dataE.content })
+                        });
+                    }
+
+                    // 2. Générer et Sauvegarder Section F (Conclusion)
+                    let resF = await fetch(`api/generate_ia.php?type=F&id=${id}`);
+                    let dataF = await resF.json();
+                    if (dataF.content) {
+                        await fetch('api/save_ia.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id: id, type: 'conclusion', content: dataF.content })
+                        });
+                    }
+                } catch (e) {
+                    console.error(`Error processing machine ${id}:`, e);
+                }
+                
+                bar.style.width = (current / total * 100) + '%';
+            }
+
+            status.innerText = "✅ Analyse terminée pour toutes les machines !";
+            btn.innerHTML = '🤖 Ré-analyser toutes les machines';
+            btn.disabled = false;
+            
+            // Recharger les données PHP pour que le PDF utilise les nouvelles valeurs DB
+            setTimeout(() => {
+                location.reload(); 
+            }, 1000);
         }
 
     </script>
