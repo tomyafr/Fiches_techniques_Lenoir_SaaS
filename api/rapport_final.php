@@ -1425,19 +1425,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         const doc = parser.parseFromString(html, 'text/html');
 
                         const pages = doc.querySelectorAll('.pdf-page');
-                        if (pages.length === 0) {
-                            console.error('Aucune classe .pdf-page trouvée pour machine ' + mId);
-                            const errDiv = document.createElement('div');
-                            errDiv.className = 'pdf-page';
-                            const preview = (html || '').substring(0, 200).replace(/</g, '&lt;');
-                            errDiv.innerHTML = `<div style="padding:20px; color:red; border:2px solid red;">
-                                ⚠️ Erreur : La fiche machine ${mId} est vide ou impossible à charger.<br>
-                                <small>Réponse serveur (début) : ${preview}...</small>
-                            </div>`;
-                            container.appendChild(errDiv);
-                        }
 
                         pages.forEach((p, pIdx) => {
+                            // Bug 5 & New Fix: Remove empty photos section
                             // Bug 5 & New Fix: Remove empty photos section
                             const hasPhotos = p.querySelectorAll('.photo-annexe-item img').length > 0;
                             p.querySelectorAll('.photos-annexes-wrapper').forEach(wrapper => {
