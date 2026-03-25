@@ -47,9 +47,8 @@ RÈGLES CRITIQUES :
 - Si et seulement si TOUTE la liste fournie est 'Néant', réponds UNIQUEMENT: 'Aucune anomalie détectée lors de l'inspection.'
 - NE LISTE PAS les points qui sont en bon état.";
 
-    $userPrompt = "LISTE DES ANOMALIES DÉTECTÉES :\n" .
-                  "🚨 CRITIQUE (Remplacements/Non conformes) :\n" . (empty(array_merge($formattedNR, $formattedNC)) ? "Néant\n" : implode("\n", array_merge($formattedNR, $formattedNC))) . "\n" .
-                  "⚠️ À SURVEILLER (À améliorer) :\n" . (empty($formattedAA) ? "Néant" : implode("\n", $formattedAA));
+    $allIssues = array_merge($formattedNR, $formattedNC, $formattedAA);
+    $userPrompt = "LISTE DES DÉFAUTS À TRAITER :\n" . (empty($allIssues) ? "Néant" : implode("\n", $allIssues));
 
     $result = callGroqIA($systemPrompt, $userPrompt);
     

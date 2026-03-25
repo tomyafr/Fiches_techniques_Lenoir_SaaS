@@ -56,6 +56,9 @@ function extractIssuesFromDonnees($donnees) {
     $issues = ['aa' => [], 'nc' => [], 'nr' => []];
     $negativeValues = ['nc', 'nr', 'aa', 'r', 'hs'];
 
+    // DEBUG LOG RAW DATA
+    file_put_contents(__DIR__ . '/../tmp/ia_raw_data.log', "Keys: " . implode(', ', array_keys($donnees)) . " | Sample Values: " . json_encode(array_slice($donnees, 0, 10)) . "\n", FILE_APPEND);
+
     foreach ($donnees as $k => $v) {
         if (substr($k, -8) === '_comment') continue;
         $v = trim(strtolower((string)$v));
@@ -95,6 +98,9 @@ function callGroqIA($systemPrompt, $userPrompt) {
         'temperature' => 0.2,
         'max_tokens' => 600
     ];
+
+    // DEBUG LOG PROMPT
+    file_put_contents(__DIR__ . '/../tmp/ia_prompt.log', "--- SYSTEM ---\n$systemPrompt\n--- USER ---\n$userPrompt\n\n", FILE_APPEND);
 
     $ch = curl_init('https://api.groq.com/openai/v1/chat/completions');
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
