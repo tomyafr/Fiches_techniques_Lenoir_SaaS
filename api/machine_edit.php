@@ -46,12 +46,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $of = trim($_POST['numero_of'] ?? '');
         $annee = trim($_POST['annee_fabrication'] ?? '');
         $commentaire = trim($_POST['commentaires'] ?? '');
+        $dysfonctionnements = trim($_POST['dysfonctionnements'] ?? '');
         $postDonnees = $_POST['donnees'] ?? [];
         $postMesures = $_POST['mesures'] ?? [];
         $postPhotos = $_POST['photos_json'] ?? '{}';
 
-        $db->prepare('UPDATE machines SET numero_of = ?, annee_fabrication = ?, commentaires = ?, donnees_controle = ?, mesures = ?, photos = ? WHERE id = ?')
-            ->execute([$of, $annee, $commentaire, json_encode($postDonnees), json_encode($postMesures), $postPhotos, $id]);
+        $db->prepare('UPDATE machines SET numero_of = ?, annee_fabrication = ?, commentaires = ?, dysfonctionnements = ?, donnees_controle = ?, mesures = ?, photos = ? WHERE id = ?')
+            ->execute([$of, $annee, $commentaire, $dysfonctionnements, json_encode($postDonnees), json_encode($postMesures), $postPhotos, $id]);
 
         header('Location: intervention_edit.php?id=' . $machine['intervention_id'] . '&msg=saved');
         exit;
@@ -375,6 +376,16 @@ foreach ($recoFreq as $rfk => $rfv) {
             color: #333;
         }
 
+        /* PHOTO GRID SYSTEM */
+        .photo-grid-1 { grid-template-columns: 1fr; }
+        .photo-grid-2 { grid-template-columns: 1fr 1fr; }
+        .photo-grid-3 { 
+            grid-template-columns: 1fr 1fr;
+            grid-template-areas: "p1 p2" "p3 p3";
+        }
+        .photo-grid-3 > div:nth-child(3) { grid-area: p3; }
+        .photo-grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; }
+
         .pdf-input {
             border: none;
             border-bottom: 1px dashed #000;
@@ -534,6 +545,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 </tr>
             </table>
 
+            <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">A) FICHE DE CONTRÔLE : <?= htmlspecialchars($machine['designation']) ?></div>
             <table
                 style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000;">
                 <tr>
@@ -639,6 +651,65 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <button type="button" class="photo-btn" onclick="capturePhoto(\'' . $key . '\')">📷</button>
                         <span class="photo-thumbs" id="thumbs_' . $key . '"></span>
                     </div>';
+                }
+
+                function renderSectionC($isEDX, $isOV) {
+                    ?>
+                    <div style="margin-top:20px;">
+                        <div style="font-weight:bold; font-size:14px; color:#d35400; margin-bottom:10px;">C) RAPPEL DES FRÉQUENCES DE NETTOYAGE ET DES DIFFÉRENTS POINTS DE CONTRÔLE :</div>
+                        <table style="width:100%; border-collapse:collapse; font-size:11px; border:2px solid #ed7d31;">
+                            <thead>
+                                <tr style="background:#ed7d31; color:white;">
+                                    <th style="border:1px solid #ed7d31; padding:5px; text-align:left;">Points de contrôle</th>
+                                    <th style="border:1px solid #ed7d31; padding:5px; text-align:center;">Quotidien</th>
+                                    <th style="border:1px solid #ed7d31; padding:5px; text-align:center;">Hebdo.</th>
+                                    <th style="border:1px solid #ed7d31; padding:5px; text-align:center;">Mensuel</th>
+                                    <th style="border:1px solid #ed7d31; padding:5px; text-align:center;">Trimestriel</th>
+                                    <th style="border:1px solid #ed7d31; padding:5px; text-align:center;">Annuel</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $points = [
+                                    "Bande" => "h",
+                                    "Virole" => "h",
+                                    "Tambour" => "h",
+                                    "Paliers" => "t",
+                                    "Graissage" => "m",
+                                    "Nettoyage convoyeur" => "h",
+                                    "Nettoyage caisson" => "h"
+                                ];
+                                foreach ($points as $label => $freq): ?>
+                                    <tr style="background:<?= ($freq == 'h' ? '#fff2cc' : '#fce4d6') ?>;">
+                                        <td style="border:1px solid #ed7d31; padding:4px; font-weight:bold;"><?= $label ?></td>
+                                        <td style="border:1px solid #ed7d31; text-align:center;"><?= ($freq == 'q' ? 'X' : '') ?></td>
+                                        <td style="border:1px solid #ed7d31; text-align:center;"><?= ($freq == 'h' ? 'X' : '') ?></td>
+                                        <td style="border:1px solid #ed7d31; text-align:center;"><?= ($freq == 'm' ? 'X' : '') ?></td>
+                                        <td style="border:1px solid #ed7d31; text-align:center;"><?= ($freq == 't' ? 'X' : '') ?></td>
+                                        <td style="border:1px solid #ed7d31; text-align:center;"><?= ($freq == 'a' ? 'X' : '') ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <?php
+                }
+
+                function renderSectionD($isEDX, $mesures) {
+                    if (!$isEDX) return;
+                    $mini = $mesures['edx_releve_mini'] ?? '....';
+                    $maxi = $mesures['edx_releve_maxi'] ?? '....';
+                    ?>
+                    <div style="margin-top:20px;">
+                        <div style="font-weight:bold; font-size:14px; color:#d35400; margin-bottom:5px;">D) RELEVES D’INDUCTION MAGNETIQUE :</div>
+                        <div style="border:1px solid #ed7d31; padding:10px; font-size:13px; background:#fff;">
+                            <p style="margin:5px 0;"><strong>Roue polaire :</strong></p>
+                            <p style="margin:5px 0 5px 20px;">• Relevé mini : <strong><?= htmlspecialchars($mini) ?></strong> Gauss</p>
+                            <p style="margin:5px 0 5px 20px;">• Relevé maxi : <strong><?= htmlspecialchars($maxi) ?></strong> Gauss</p>
+                            <p style="margin:10px 0 5px 0; font-style:italic; font-size:11px; color:#555;">(Matériel neuf = 2000 Gauss en standard +/- 10%)</p>
+                        </div>
+                    </div>
+                    <?php
                 }
                 function renderCheckRow($label, $key, $donnees)
                 {
@@ -1560,17 +1631,71 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <?php endif; ?>
 
-                    <?php if (!$isEDX): ?>
-                        <div style="margin-top:20px; border: 1px solid #000; padding:10px;">
-                            <div style="font-weight:bold; font-size:14px; margin-bottom:5px;">Commentaire général :</div>
-                            <textarea name="commentaires" class="pdf-textarea" style="min-height:80px; font-size:13px;"
-                                placeholder="En présence du client / Pièces à proposer..."><?= htmlspecialchars($machine['commentaires'] ?? '') ?></textarea>
                         </div>
-                    <?php endif; ?>
+
+                        <?php 
+                        // SECTION B : DESCRIPTION DU MATÉRIEL (uniquement si photos présentes)
+                        $descPhotos = $photosData['desc_materiel'] ?? [];
+                        if (!empty($descPhotos)): ?>
+                            <div style="margin-top:20px;">
+                                <div style="font-weight:bold; font-size:14px; color:#d35400; margin-bottom:10px;">B) DESCRIPTION DU MATÉRIEL :</div>
+                                <div class="photo-grid-<?= min(4, count($descPhotos)) ?>" style="display:grid; gap:10px;">
+                                    <?php foreach ($descPhotos as $idx => $p): ?>
+                                        <div style="border:1px solid #000; padding:2px; text-align:center; background:#fff;">
+                                            <img src="<?= htmlspecialchars($p['data']) ?>" style="max-width:100%; height:auto; display:block; margin:0 auto;">
+                                            <?php if (!empty($p['caption'])): ?>
+                                                <p style="font-size:10px; margin:3px 0;"><?= htmlspecialchars($p['caption']) ?></p>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php 
+                        // SECTION C & D (uniquement PDF)
+                        if (isset($_GET['pdf'])):
+                            renderSectionC($isEDX, $isOV);
+                            renderSectionD($isEDX, $mesures);
+                        endif;
+                        ?>
+
+                        <div style="margin-top:20px; border: 1px solid #000; padding:10px; background: #fff;">
+                            <div style="font-weight:bold; font-size:14px; margin-bottom:5px; color:#d35400;">E) CAUSE DE DYSFONCTIONNEMENT :</div>
+                            <?php if (!isset($_GET['pdf'])): ?>
+                                <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette zone est pré-remplie avec les points "Non conformes" ou "À améliorer" détectés. Vous pouvez éditer le texte ci-dessous.</p>
+                                <textarea name="dysfonctionnements" id="dysfonctionnementsText" class="pdf-textarea" style="min-height:100px; font-size:13px; border: 1px solid #ccc; background:#fff; padding:5px;"><?= htmlspecialchars($machine['dysfonctionnements'] ?? '') ?></textarea>
+                                <button type="button" onclick="generateDysfunctions()" style="margin-top:5px; background:#e67e22; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:11px;">🔄 Actualiser depuis la fiche</button>
+                            <?php else: ?>
+                                <div style="font-size:13px; white-space: pre-wrap; margin-bottom:10px;"><?= htmlspecialchars($machine['dysfonctionnements'] ?? 'Aucun dysfonctionnement majeur signalé.') ?></div>
+                                <?php
+                                // Affichage des photos liées aux points critiques
+                                $criticalPhotos = [];
+                                foreach ($donnees as $k => $v) {
+                                    if (strpos($k, '_radio') !== false && in_array($v, ['nc', 'nr', 'aa'])) {
+                                        $baseKey = str_replace('_radio', '', $k);
+                                        if (!empty($photosData[$baseKey])) {
+                                            foreach ($photosData[$baseKey] as $p) {
+                                                $criticalPhotos[] = $p;
+                                            }
+                                        }
+                                    }
+                                }
+                                if (!empty($criticalPhotos)): ?>
+                                    <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;">
+                                        <?php foreach ($criticalPhotos as $p): ?>
+                                            <div style="border:1px solid #000; padding:2px; text-align:center;">
+                                                <img src="<?= htmlspecialchars($p['data']) ?>" style="max-height:150px; width:auto;">
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
 
                     <div class="pdf-section photos-annexes-wrapper" style="margin-top:20px;">
                         <div
-                            style="background:#5b9bd5; color:white; font-weight:bold; font-size:12px; padding:5px; border:1px solid #000;">
+                            style="background:#d35400; color:white; font-weight:bold; font-size:12px; padding:5px; border:1px solid #000;">
                             PHOTOS ANNEXES</div>
                         <div id="photosAnnexesGrid"
                             style="border:1px solid #000; border-top:none; padding:10px; min-height:60px; display:flex; flex-wrap:wrap; gap:10px;">
@@ -1579,6 +1704,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?php else: ?>
                                 <?php $photoIndex = 1; ?>
                                 <?php foreach ($photosData as $key => $photos): ?>
+                                    <?php if ($key === 'desc_materiel') continue; // Déjà affiché en Section B ?>
                                     <?php foreach ($photos as $p): ?>
                                         <div class="photo-annexe-item">
                                             <img src="<?= htmlspecialchars($p['data']) ?>">
@@ -1647,44 +1773,56 @@ foreach ($recoFreq as $rfk => $rfv) {
             var file = e.target.files[0];
             if (!file) return;
 
+            // Visual feedback
+            const btn = document.querySelector(`.photo-btn[onclick*="${currentPhotoKey}"]`);
+            if (btn) btn.innerHTML = '⌛';
+
             // --- BUG-013: Validation de la taille de l'image ---
-            if (file.size < 100 * 1024) {
-                alert("❌ Image rejetée : Le fichier est trop petit (" + Math.round(file.size/1024) + " Ko). Veuillez prendre une photo nette de l'équipement (min. 100 Ko).");
+            if (file.size < 50 * 1024) { // lowered to 50KB to be safe
+                alert("❌ Image rejetée : Le fichier est trop petit. Veuillez prendre une photo nette.");
+                if (btn) btn.innerHTML = '📷';
                 e.target.value = '';
                 return;
             }
 
-            new Compressor(file, {
-                quality: 0.8,
-                maxWidth: 1200,
-                checkOrientation: true, // Fix iOS rotation bugs
-                success(result) {
-                    var reader = new FileReader();
-                    reader.onloadend = function () {
-                        var base64 = reader.result;
-                        if (!allPhotos[currentPhotoKey]) allPhotos[currentPhotoKey] = [];
-                        
-                        var caption = prompt('Commentaire photo (optionnel) :', '') || '';
-                        
-                        const forbiddenWords = ['nul', 'rien', 'sans', 'na', 'test', 'lorem'];
-                        if (forbiddenWords.includes(caption.toLowerCase().trim())) {
-                            alert("⚠️ Légende non-professionnelle détectée. La photo sera ajoutée sans légende.");
-                            caption = '';
-                        }
+            const handleResult = (result) => {
+                var reader = new FileReader();
+                reader.onloadend = function () {
+                    var base64 = reader.result;
+                    if (!allPhotos[currentPhotoKey]) allPhotos[currentPhotoKey] = [];
+                    
+                    var caption = prompt('Commentaire photo (optionnel) :', '') || '';
+                    const forbiddenWords = ['nul', 'rien', 'sans', 'na', 'test', 'lorem'];
+                    if (forbiddenWords.includes(caption.toLowerCase().trim())) {
+                        caption = '';
+                    }
 
-                        allPhotos[currentPhotoKey].push({ data: base64, caption: caption });
-                        syncPhotos();
-                        renderThumbsForKey(currentPhotoKey);
-                        renderAnnexes();
-                    };
-                    reader.readAsDataURL(result);
-                },
-                error(err) {
-                    console.error("Erreur de compression :", err.message);
-                    alert("Erreur lors de la compression de la photo.");
-                }
-            });
-            // Reset so same file can be re-selected
+                    allPhotos[currentPhotoKey].push({ data: base64, caption: caption });
+                    syncPhotos();
+                    renderThumbsForKey(currentPhotoKey);
+                    renderAnnexes();
+                    if (btn) btn.innerHTML = '📷';
+                };
+                reader.readAsDataURL(result);
+            };
+
+            if (typeof Compressor === 'undefined') {
+                console.warn("Compressor.js non chargé, utilisation du fallback direct.");
+                handleResult(file);
+            } else {
+                new Compressor(file, {
+                    quality: 0.7,
+                    maxWidth: 1280,
+                    checkOrientation: true,
+                    success(result) {
+                        handleResult(result);
+                    },
+                    error(err) {
+                        console.error("Erreur Compressor :", err.message);
+                        handleResult(file); // Fallback even on error
+                    }
+                });
+            }
             e.target.value = '';
         });
 
@@ -1721,6 +1859,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             var keys = Object.keys(allPhotos);
             var photoIndex = 1;
             keys.forEach(function (key) {
+                if (key === 'desc_materiel') return; // Skip in annexes since it has its own section
                 allPhotos[key].forEach(function (p) {
                     hasPhotos = true;
                     var item = document.createElement('div');
@@ -1747,6 +1886,36 @@ foreach ($recoFreq as $rfk => $rfv) {
         function autoGrow(el) {
             el.style.height = 'auto';
             el.style.height = el.scrollHeight + 'px';
+        }
+
+        // ========== SECTION E GENERATION ==========
+        function generateDysfunctions() {
+            let dys = [];
+            // Cherche tous les labels sélectionnés avec des couleurs NC/NR/AA
+            // On se base sur les classes CSS des labels parents des radios
+            const negativeLabels = document.querySelectorAll('.pastille-group label.selected.p-nc, .pastille-group label.selected.p-nr, .pastille-group label.selected.p-aa');
+            
+            negativeLabels.forEach(label => {
+                // On remonte au TR pour trouver le libellé
+                const tr = label.closest('tr');
+                if (tr) {
+                    const designation = tr.querySelector('td:first-child').innerText.trim();
+                    const eval = (label.classList.contains('p-aa')) ? "À améliorer" : "Non conforme / Remplacement nécessaire";
+                    // On cherche aussi le commentaire de la ligne
+                    const comment = tr.querySelector('textarea')?.value.trim();
+                    
+                    let line = "• " + designation + " : " + eval;
+                    if (comment) line += " (" + comment + ")";
+                    dys.push(line);
+                }
+            });
+
+            const textarea = document.getElementById('dysfonctionnementsText');
+            if (textarea) {
+                if (textarea.value && !confirm("Voulez-vous écraser le contenu actuel par la liste automatique ?")) return;
+                textarea.value = dys.join("\n");
+                autoGrow(textarea);
+            }
         }
 
         // ========== PASTILLE CLICK MANAGEMENT ==========
@@ -1884,7 +2053,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             });
         });
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/compressorjs/1.2.1/compressor.min.js" integrity="sha512-MgYeYFj8R3S6rvZ80DbnAxgO45O58XF1xZ1a1gD1jS+p1t3H31N4m3qj19/2N/0Q3E44Bf9+g2B//M+n1R5g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/compressorjs/1.2.1/compressor.min.js"></script>
 </body>
 
 </html>

@@ -1393,7 +1393,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     }
 
                     try {
-                        const res = await fetch('machine_edit.php?id=' + mId);
+                        const res = await fetch('machine_edit.php?id=' + mId + '&pdf=1');
                         const html = await res.text();
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(html, 'text/html');
@@ -1428,7 +1428,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 hDiv.style.justifyContent = 'space-between';
                                 hDiv.style.alignItems = 'center';
                                 hDiv.style.marginBottom = '20px';
-                                hDiv.style.borderBottom = '3px solid #5B9BD5';
+                                hDiv.style.borderBottom = '3px solid #d35400';
                                 hDiv.style.paddingBottom = '5px';
                                 hDiv.innerHTML = `
                                     <div style="font-size: 14px; font-weight: bold; color: #1B4F72;">FICHE ${mIdx + 1} / ${totalMachines}</div>
