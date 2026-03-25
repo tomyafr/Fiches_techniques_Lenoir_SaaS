@@ -57,16 +57,22 @@ function extractIssuesFromDonnees($donnees) {
     $negativeValues = ['nc', 'nr', 'aa', 'r', 'hs'];
 
     foreach ($donnees as $k => $v) {
+        if (substr($k, -8) === '_comment') continue;
+        $v = trim(strtolower((string)$v));
         if (in_array($v, $negativeValues)) {
-            $baseKey = str_replace('_radio', '', $k);
-            $label = $labelsMap[$baseKey] ?? str_replace(['_', 'edx ', 'ov '], [' ', '', ''], $baseKey);
-            $comment = $donnees[$baseKey . '_comment'] ?? '';
+            $label = $labelsMap[$k] ?? $k;
+            $comment = $donnees[$k . '_comment'] ?? null;
             
-            $cat = in_array($v, ['nc', 'hs']) ? 'nc' : (in_array($v, ['nr', 'r']) ? 'nr' : 'aa');
-            $issues[$cat][] = [
-                'designation' => $label,
-                'commentaire' => $comment
-            ];
+            // Si pas de label dans la map, on essaie de nettoyer le nom de la clé
+            if ($label === $k) {
+                $label = ucwords(str_replace('_', ' ', str_replace('edx_', '', str_replace('ov_', '', $k))));
+            }
+
+            $issue = ['designation' => $label, 'commentaire' => $comment];
+            
+            if ($v === 'nc' || $v === 'hs') $issues['nc'][] = $issue;
+            elseif ($v === 'nr' || $v === 'r') $issues['nr'][] = $issue;
+            else $issues['aa'][] = $issue;
         }
     }
     return $issues;

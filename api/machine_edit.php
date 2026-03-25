@@ -1933,7 +1933,11 @@ foreach ($recoFreq as $rfk => $rfv) {
             btn.disabled = true;
 
             try {
-                const res = await fetch('generate_ia.php?type=F&id=<?= $id ?>');
+                const formData = new FormData(document.querySelector('form'));
+                const res = await fetch(`generate_ia.php?type=F&id=<?= $id ?>`, {
+                    method: 'POST',
+                    body: formData
+                });
                 const data = await res.json();
                 if (data.content) {
                     document.getElementById('conclusionText').value = data.content;
@@ -1960,7 +1964,11 @@ foreach ($recoFreq as $rfk => $rfv) {
             btn.disabled = true;
 
             try {
-                const res = await fetch('generate_ia.php?type=E&id=<?= $id ?>');
+                const formData = new FormData(document.querySelector('form'));
+                const res = await fetch(`generate_ia.php?type=E&id=<?= $id ?>`, {
+                    method: 'POST',
+                    body: formData
+                });
                 const data = await res.json();
                 if (data.content) {
                     textarea.value = data.content;
