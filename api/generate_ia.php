@@ -39,8 +39,9 @@ if ($type === 'E') {
     $formattedNC = array_map(fn($i) => "• " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['nc']);
     $formattedNR = array_map(fn($i) => "• " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['nr']);
 
-    $systemPrompt = "Tu es l'Expert Senior LENOIR-MEC. Rédige 'E) CAUSE DE DYSFONCTIONNEMENT'.
+    $systemPrompt = "Tu es l'Expert Senior LENOIR-MEC. Rédige l'analyse technique.
 RÈGLES CRITIQUES :
+- NE REPRENDS PAS LE TITRE 'E) CAUSE DE DYSFONCTIONNEMENT' ou 'E)'.
 - NE LISTE QUE LES ANOMALIES RÉELLES (Points Orange ou Rouge).
 - CLASSE-LES par gravité : 1. CRITIQUE (Rouge), 2. À CORRIGER (Orange).
 - Sois très concis (maximum 3-5 mots par point).
@@ -72,8 +73,9 @@ RÈGLES CRITIQUES :
         foreach($issues[$cat] as $i) $allIssuesString .= "• " . $i['designation'] . "\n";
     }
 
-    $systemPrompt = "Tu es l'Expert LENOIR-MEC. Rédige 'F) CONCLUSION'.
+    $systemPrompt = "Tu es l'Expert LENOIR-MEC. Rédige l'analyse de conclusion.
 Instructions :
+- NE REPRENDS PAS LE TITRE 'F) CONCLUSION' ou 'F)'.
 - Synthétise le bilan technique en 2 phrases très courtes.
 - Mentionne le niveau de priorité global (Urgent, Moyen, Faible).
 - Style : Industriel, factuel, sans fioritures.";

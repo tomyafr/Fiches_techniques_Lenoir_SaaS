@@ -765,7 +765,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <div style="font-size:2rem;">🤖</div>
                     <div>
                         <h4 style="margin:0; color:#d35400; font-size:1.1rem;">Génération automatique intelligente</h4>
-                        <p style="margin:4px 0 0 0; font-size:0.8rem; color:var(--text-dim);">L'IA Groq va parcourir toutes vos machines pour rédiger les conclusions et dysfonctionnements (Section E & F) en fonction de vos contrôles.</p>
+                        <p style="margin:4px 0 0 0; font-size:0.8rem; color:var(--text-dim);">L'Expert IA va parcourir toutes vos machines pour rédiger les conclusions et dysfonctionnements (Section E & F) en fonction de vos contrôles.</p>
                     </div>
                 </div>
                 
@@ -1989,7 +1989,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         // GÉNÉRATION IA PAR LOT (BATCH)
         // ══════════════════════════════════════════════════════════════════
         async function generateAllIA() {
-            if (!confirm("L'IA va mettre à jour toutes les machines du rapport. Les conclusions existantes seront écrasées. Continuer ?")) return;
+            if (!confirm("L'Expert IA va parcourir toutes les machines du rapport.\n\nNOTE : Les conclusions et causes déjà saisies seront PRÉSERVÉES. Seules les fiches vides seront complétées.\n\nContinuer ?")) return;
 
             const btn = document.getElementById('btnGenerateAllAI');
             const progress = document.getElementById('iaBatchProgress');
@@ -1998,7 +1998,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const mIds = window.LM_RAPPORT.machinesIds;
 
             btn.disabled = true;
-            btn.innerHTML = '⌛ Analyse en cours...';
+            btn.innerHTML = '⌛ Analyse par l\'Expert IA...';
             progress.style.display = 'block';
             
             let current = 0;
@@ -2006,31 +2006,43 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             for (const id of mIds) {
                 current++;
-                const mData = window.LM_RAPPORT.machinesData.find(m => m.id == id) || { designation: 'Machine' };
-                status.innerText = `Traitement: ${mData.designation} (${current}/${total})`;
+                const mData = window.LM_RAPPORT.machinesData.find(m => m.id == id) || { designation: 'Machine', dysfonctionnements: '', conclusion: '' };
+                
+                // Sécurité : Ne pas écraser si déjà rempli
+                if (mData.dysfonctionnements && mData.conclusion && mData.dysfonctionnements.trim() !== '' && mData.conclusion.trim() !== '') {
+                    status.innerText = `Saut de: ${mData.designation} (Déjà rempli)`;
+                    bar.style.width = (current / total * 100) + '%';
+                    continue;
+                }
+
+                status.innerText = `Analyse par l'Expert IA: ${mData.designation} (${current}/${total})`;
                 bar.style.width = ((current - 0.5) / total * 100) + '%';
 
                 try {
-                    // 1. Générer et Sauvegarder Section E (Dysfonctionnements)
-                    let resE = await fetch(`generate_ia.php?type=E&id=${id}`);
-                    let dataE = await resE.json();
-                    if (dataE.content) {
-                        await fetch('save_ia.php', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ id: id, type: 'dysfonctionnements', content: dataE.content })
-                        });
+                    // 1. Dysfonctionnements (Seulement si vide)
+                    if (!mData.dysfonctionnements || mData.dysfonctionnements.trim() === '') {
+                        let resE = await fetch(`generate_ia.php?type=E&id=${id}`);
+                        let dataE = await resE.json();
+                        if (dataE.content) {
+                            await fetch('save_ia.php', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ id: id, type: 'dysfonctionnements', content: dataE.content })
+                            });
+                        }
                     }
 
-                    // 2. Générer et Sauvegarder Section F (Conclusion)
-                    let resF = await fetch(`generate_ia.php?type=F&id=${id}`);
-                    let dataF = await resF.json();
-                    if (dataF.content) {
-                        await fetch('save_ia.php', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ id: id, type: 'conclusion', content: dataF.content })
-                        });
+                    // 2. Conclusion (Seulement si vide)
+                    if (!mData.conclusion || mData.conclusion.trim() === '') {
+                        let resF = await fetch(`generate_ia.php?type=F&id=${id}`);
+                        let dataF = await resF.json();
+                        if (dataF.content) {
+                            await fetch('save_ia.php', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ id: id, type: 'conclusion', content: dataF.content })
+                            });
+                        }
                     }
                 } catch (e) {
                     console.error(`Error processing machine ${id}:`, e);
@@ -2039,8 +2051,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 bar.style.width = (current / total * 100) + '%';
             }
 
-            status.innerText = "✅ Analyse terminée pour toutes les machines !";
-            btn.innerHTML = '🤖 Ré-analyser toutes les machines';
+            status.innerText = "✅ Analyse terminée !";
+            btn.innerHTML = '🤖 Relancer l\'Expert IA';
             btn.disabled = false;
             
             // Recharger les données PHP pour que le PDF utilise les nouvelles valeurs DB
