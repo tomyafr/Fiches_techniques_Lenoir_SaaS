@@ -47,12 +47,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $annee = trim($_POST['annee_fabrication'] ?? '');
         $commentaire = trim($_POST['commentaires'] ?? '');
         $dysfonctionnements = trim($_POST['dysfonctionnements'] ?? '');
+        $conclusion = trim($_POST['conclusion'] ?? '');
         $postDonnees = $_POST['donnees'] ?? [];
         $postMesures = $_POST['mesures'] ?? [];
         $postPhotos = $_POST['photos_json'] ?? '{}';
 
-        $db->prepare('UPDATE machines SET numero_of = ?, annee_fabrication = ?, commentaires = ?, dysfonctionnements = ?, donnees_controle = ?, mesures = ?, photos = ? WHERE id = ?')
-            ->execute([$of, $annee, $commentaire, $dysfonctionnements, json_encode($postDonnees), json_encode($postMesures), $postPhotos, $id]);
+        $db->prepare('UPDATE machines SET numero_of = ?, annee_fabrication = ?, commentaires = ?, dysfonctionnements = ?, conclusion = ?, donnees_controle = ?, mesures = ?, photos = ? WHERE id = ?')
+            ->execute([$of, $annee, $commentaire, $dysfonctionnements, $conclusion, json_encode($postDonnees), json_encode($postMesures), $postPhotos, $id]);
 
         header('Location: intervention_edit.php?id=' . $machine['intervention_id'] . '&msg=saved');
         exit;
@@ -1691,7 +1692,43 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     </div>
                                 <?php endif; ?>
                             <?php endif; ?>
+                        <div style="margin-top:20px; border: 1px solid #000; padding:10px; background: #fff;">
+                            <div style="font-weight:bold; font-size:14px; margin-bottom:5px; color:#d35400;">F) CONCLUSION :</div>
+                            <?php if (!isset($_GET['pdf'])): ?>
+                                <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette conclusion peut être générée par l'IA en fonction des résultats du contrôle.</p>
+                                <textarea name="conclusion" id="conclusionText" class="pdf-textarea" style="min-height:80px; font-size:13px; border: 1px solid #ccc; background:#fff; padding:5px;"><?= htmlspecialchars($machine['conclusion'] ?? '') ?></textarea>
+                                <button type="button" onclick="generateConclusion()" style="margin-top:5px; background:#2980b9; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:11px;">🤖 Générer Conclusion IA</button>
+                            <?php else: ?>
+                                <div style="font-size:13px; white-space: pre-wrap; margin-bottom:10px;"><?= htmlspecialchars($machine['conclusion'] ?? 'Votre équipement est conforme à nos standards d\'utilisation après intervention.') ?></div>
+                            <?php endif; ?>
                         </div>
+
+                        <?php if (isset($_GET['pdf'])): ?>
+                            <div style="margin-top:40px; border-top: 1px solid #ddd; padding-top:15px; page-break-inside: avoid;">
+                                <div style="font-weight:bold; font-size:14px; color:#d35400; margin-bottom:15px;">RAPPEL : Le nettoyage de votre <?= $isEDX ? 'EDX' : ($isOV ? 'OV' : 'équipement') ?> doit être régulier et complet (intérieur et extérieur)</div>
+                                <table style="width:100%; border-collapse:collapse;">
+                                    <tr>
+                                        <td style="width:60px; vertical-align:middle; padding-bottom:15px;">
+                                            <img src="/assets/hazard/magnet.png" style="height:45px;">
+                                        </td>
+                                        <td style="font-size:14px; vertical-align:middle; padding-bottom:15px; font-weight:bold;">Attention ! Champ magnétique !</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:60px; vertical-align:middle; padding-bottom:15px;">
+                                            <img src="/assets/hazard/no_water.png" style="height:45px;">
+                                        </td>
+                                        <td style="font-size:14px; vertical-align:middle; padding-bottom:15px; font-weight:bold;">Ne pas arroser !</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:60px; vertical-align:middle; padding-bottom:15px;">
+                                            <img src="/assets/hazard/no_implants.png" style="height:45px;">
+                                        </td>
+                                        <td style="font-size:14px; vertical-align:middle; padding-bottom:15px; font-weight:bold;">Accès interdit aux porteurs d’implants actifs !</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        <?php endif; ?>
+                    </div>
 
                     <div class="pdf-section photos-annexes-wrapper" style="margin-top:20px;">
                         <div
@@ -1889,6 +1926,37 @@ foreach ($recoFreq as $rfk => $rfv) {
         }
 
         // ========== SECTION E GENERATION ==========
+        function generateConclusion() {
+            let issues = [];
+            const labels = {
+                'nc': 'Non conforme',
+                'aa': 'À améliorer',
+                'nr': 'À remplacer'
+            };
+            
+            document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
+                if (['nc', 'aa', 'nr'].includes(radio.value)) {
+                    let row = radio.closest('tr');
+                    if (row) {
+                        let label = row.cells[0].innerText.trim();
+                        issues.push(label.toLowerCase());
+                    }
+                }
+            });
+
+            const machineName = document.querySelector('h3') ? document.querySelector('h3').innerText : 'votre équipement';
+            let text = "";
+            
+            if (issues.length === 0) {
+                text = `Votre ${machineName} est conforme à nos standards officiels. L'équipement est opérationnel et ne présente aucun défaut majeur limitant son efficacité.`;
+            } else {
+                text = `Votre ${machineName} présente certains points d'attention. Lors de votre prochain arrêt technique, nous vous conseillons la révision des éléments suivants : ${issues.join(', ')}. `;
+                text += `\n\nNous vous recommandons de suivre scrupuleusement les préconisations de maintenance mentionnées dans le tableau des fréquences (Section C) pour garantir la longévité de l'appareil.`;
+            }
+
+            document.getElementById('conclusionText').value = text;
+        }
+
         function generateDysfunctions() {
             let dys = [];
             // Cherche tous les labels sélectionnés avec des couleurs NC/NR/AA
