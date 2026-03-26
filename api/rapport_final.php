@@ -489,7 +489,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <?php if (isset($_GET['msg']) && $_GET['msg'] === 'ok'): ?>
                 <div id="successBanner"
                     style="background: rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.4); color:#10b981; padding:1.5rem; border-radius:12px; margin-bottom:1.5rem; text-align:center;">
-                    <div style="margin-bottom:1rem; font-size: 80px; text-align:center;">✅</div>
+                    <div style="margin-bottom:1rem; text-align:center;">
+                        <img src="/assets/check_success.svg" style="height: 80px; width: 80px;">
+                    </div>
                     <h3 style="margin:0 0 0.5rem 0; color:#10b981;">Rapport finalisé avec succès !</h3>
                     <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1rem;">L'intervention ARC
                         <?= htmlspecialchars($intervention['numero_arc']) ?> a été clôturée.
