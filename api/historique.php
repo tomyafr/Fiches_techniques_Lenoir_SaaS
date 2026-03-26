@@ -290,7 +290,7 @@ $nbClients = count($clientsSet);
                 <p style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase;">Connecté</p>
                 <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
                     <?php if (!empty($_SESSION['avatar'])): ?>
-                        <div style="width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--primary); overflow: hidden; flex-shrink: 0;">
+                        <div style="width: 42px; height: 42px; border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, 0.8); overflow: hidden; flex-shrink: 0; box-shadow: 0 0 10px rgba(0,0,0,0.2);">
                             <img src="<?= htmlspecialchars($_SESSION['avatar']) ?>" style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
                     <?php endif; ?>
