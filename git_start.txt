@@ -1,0 +1,296 @@
+1689c39 Initial commit: Pointage SaaS with Vercel support
+99fa480 Fix: remove non-existent api/ pattern in vercel.json
+82590b5 Fix: Restructure project to api/ folder for Vercel functions support
+3b71325 Migration: Switch to Vercel Postgres (PostgreSQL) and update SQL queries
+5e17264 Fix: improve DB connection robustness with multiple env var support
+9bb651c Fix: Add show password toggle and update SQL to force-overwrite password hashes
+b88d29b Fix: Add DROP TABLE to db.sql and detailed diagnostics to login page
+52435e8 Fix: Add automated database setup script for reliable server-side hashing
+b62543e Fix: resolve session persistence and redirection loop on Vercel
+30fb2fc UI: Add Quick Access / Demo Mode buttons to bypass login issues and refresh UI
+6d7ee7a Fix: Add formnovalidate to demo buttons to bypass required field validation
+4265932 Fix: resolve ERR_TOO_MANY_REDIRECTS and remaining PostgreSQL boolean compatibility issues
+d7d9d6a Security: Remove setup_db script after successful initialization
+9bc7f93 Fix: add robust cookie fallback for sessions to survive Vercel's ephemeral lambdas
+b65cfab Fix: ensure logout clears the session backup cookie
+e990806 feat: complete premium UI overhaul for Raoul Lenoir (Login, Operator, Chef dashboards)
+4302a0e feat(v2.0): major SaaS overhaul  premium UI, mobile menu, progress bars, company link, enhanced UX
+1af982b fix: replace emoji logo with actual Lenoir image, fix login form invisible (animation bug), remove clickable logo
+060e020 fix: show full logo without circular crop
+7684977 fix: use full SVG logo from lenoir-mec.com (white, no crop, rectangular)
+896f0f6 Feat: implementation systeme notifications, mise a jour liste utilisateurs et polish UI professionnel
+5902107 Fix: Mise à jour des hashes de mot de passe et correction compatibilité Postgres
+576c073 Fix: Déconnexion totale et suppression du mode démo pour la production
+024f5a6 Final: Professional SaaS Polish - Audit Logs, Brute Force protection, Password Management, and RGPD compliance
+fd32aa5 Fix: Final SaaS polish - Fixed logout issues, rewritten profile page, and robust asset paths
+52809f5 Fix: Fixed login page layout and restored missing CSS styles
+b7da240 Fix: Final adjustments - Fixed Excel export, added password toggle on profile, linked sidebar logo, and restored gold logo on login
+29a7a9e Design: Luxury polished Excel export and Golden logo restoration
+c60baf1 Fix: Restoration of the working local logo on login page
+c81146f Fix: Relative logo path and Gold filter applied
+35a857a Fix: Automatic dashboard redirect and absolute logo path (/assets/)
+5182163 UI: High-end SaaS Login experience with nebula animation and particle system
+ba4557a UI: Added video background for login page
+b4204e8 UI: Prepared code for dashboard smoke video (video file too large for push)
+376ab45 UI: Switched to compressed smoke video for dashboard background
+ac106bd security: patch critique - CSRF, HttpOnly cookies, politique MDP forte, validation serveur, headers HTTP securite
+1dd0bdc feat: mobile UI native-like - header fixe, bottom nav, touch targets 48px, iOS safe-area, PWA standalone
+229aa7d fix: sidebar auto-close, placeholder OF, historique general, Chart.js graphiques, bottom nav chef
+c55c6e0 chore: trigger Vercel redeploy [2026-02-22]
+c7e0945 fix: corriger .gitignore - inclure .htaccess et db.sql qui etaient ignores et jamais deployes sur Vercel
+61b188f fix: supprimer strftime() incompatible PHP 8.2 + CSP autoriser Google Fonts et jsDelivr CDN
+3ef6588 fix: vercel.json excludeFiles assets/ videos MP4 de la lambda PHP - evite erreur 250MB Serverless Function size
+c959b1f remove: suppression video fumee blanche - retire HTML, CSS et fichier MP4 de git (80MB liberes)
+10b7103 fix: hamburger sans overlap logo, form profil 1col mobile, export page retour, sidebar historique, suppr Saisie bottom nav
+30443ce fix: revert hamburger mobile (retour original), inputs MDP alignes a gauche
+b0c296d feat: ajout icones PWA, replace hamburger par tap sur logo mobile, ajout bouton close (X) rouge mobile sidebar
+9b5cb4a fix: logo mobile sidebar trigger, force texte mdp a gauche inline, suppr profil bottom nav historique
+3e7371d fix: pwa sur login, sidebar toggle cache bottom nav (body class helper), supprimer padding in inputs password pour mobile
+754f46b fix: restore login mobile input padding to avoid overlap with emojis, keep profile password padding low
+8d08791 feat: live tracking pour operateurs avec validation en direct (dashboard chef + alertes si > 8h)
+2153a3e fix: timer start 0 offset and exact hour precision instead of rounding to quarters
+1189730 feat: user profile picture upload, avatar display across app, ui cleanup
+9f69f32 fix: auto migrate avatar_base64 column on login to prevent HTTP 500
+a8a14fa fix: display user avatar in mobile headers and add back button on profile mobile header
+afeac94 temp: add manual seeder for dummy OF
+2d85252 fix: remove transaction from seeder
+d0395cc fix: explicit postgres driver rollback and boolean handling
+7a98746 chore: remove manual seeder after successful injection
+05b6045 feat: enforce 6 digits OF starting with 4 and add edit pointage action/modal for admin
+021e112 chore: rollback OF 6 digit restriction and move avatar to bottom right of sidebar
+2614009 fix: move script out of api
+c0a449f chore: clean up update_ofs script
+23262a6 fix: restore original sidebar avatar layout as requested
+717edd1 fix: restore logo on privacy policy page
+a8cc862 style: remove unused notifications activation button
+d22d07d feat: Add manual pointage for admins and historical view for operators
+0735293 feat: Add filters and period options to export-excel
+1344b78 feat: Show operator names in Excel summary by grouping by OF and Operator
+24ce1f7 feat: add Equipe page (équipe) to monitor users and details
+a0e3144 fix: Live timer offset and add today filter to periods
+210e4c5 docs: explain BC API sync simulation
+0525d63 feat: Light Mode, User Status, and Forgot Password Inbox
+38104a1 feat: enhance forgot password UX with waiting screen and error fixes
+4df2a5e Refonte SaaS: Migration vers Fiches Techniques en mode PHP Natif/PWA avec authentification ID/MDP
+1dfc80c fix(csrf): Use cookie Double Submit pattern for Vercel stateless environment limit
+9f658d2 fix(db): Use dynamic port from DATABASE_URL instead of hardcoded 5432 to support Supabase connection poolers
+826c140 chore(db): Temporarily log precise db error for debugging
+72395a4 chore(db): Remove precise db error logging
+1fdb2fd chore(db): Temporarily log precise db error logging
+380ef0c chore(db): Remove precise db error logging
+623e0de chore(db): Temporarily log precise db error logging
+baf64a3 feat(machine): Implement dynamic checklist schemas for APRF and ED-X machine types based on PDF specs
+8f28794 feat(ui): Redesign machine edit page to look exactly like A4 PDF sheets
+421dc7c feat(admin): Add ability to create new interventions directly from admin dashboard
+07135cd fix(auth): Allow admins to edit fiches techniques and fix redirect
+05b0042 feat(auth): Add quick login dev shortcuts to the index page
+f72a906 feat(ui): Add exact OV PDF template with specific 5 columns radio layout and frequency table
+a7180ac feat(ui): Use exact lenoir top header for all sheets and add legend table for OV
+7d08642 fix(ui): CSS typo
+0d1b2e3 fix(ui): Init SignaturePad only when modal opens to ensure canvas size is > 0
+fbf3872 feat(ui): Extract all remaining machines schemas and display them in fallback template
+667e432 feat(ui): Fix OV legend table scaling, implement Historique tab and integrate Profil tab
+955cb54 feat(intervention): Reverse machine display order and add a 2-step Quit button
+b302fcb fix(intervention): Load existing signatures and signee name into modal
+9e5b305 feat(machine_edit): Add accurate grid design for APRF and ED-X machines
+4481c3b fix(machine_edit): Fix PHP string artifact evaluation syntax for APRF forms
+a446c23 feat(ui): Add missing ED-X diagram and global scrollbar
+bdaaa6c fix(ui): Fix and improve global scrollbar style and visibility
+97b261e style(ui): Change scrollbar color to gray/white
+6d07aa0 fix(ui): Remove duplicate scrollbar rules hiding the new visible design
+395e7ba fix(login): Replace TG by DURAND in the test login shortcut
+2bf4ac2 style(ui): Unify sidebar on all views and move mon profil under logout
+23f58b0 feat: Add Levage machine form and delete functionality with double-click
+9a832c2 style: Update Levage diagram with complete schema from Word
+315deb6 fix: Fix Levage form inputs, add missing side diagram and style diameter inputs
+565bed7 style: Clean up Levage diagram, enlarge main view and overlay inputs
+f29ecb9 fix: Realign Levage diagram inputs to match PNG underscores
+d214e71 style: Adjust absolute positioning of Levage diagram inputs
+c79f42a style: Revert Levage diagram inputs to standard flex layout instead of absolute overlay
+e260c2b style: Match Levage tables strictly to Word document layout with inline inputs
+4c41e34 feat: add radio buttons to Levage forms middle columns
+0b29c78 feat: setup multiple A4 page layout with repeating header and page breaks for all machine forms
+e5f14d0 style: colorize status radio buttons (green, yellow, red, gray) per user request
+52cba59 fix: restore missing input tag closing that broke layout on Levage and remove extra page break
+0bce41d style: remove repeating document header on extra pages of machine forms
+666034b feat: add print to PDF button and handle table row page breaks on print
+1ece17f style: optimize @media print and table paddings for exact A4 fit
+35b7043 fix: signature dpi scaling bug on edit page and tweak orange radio color for white center dot
+ee64b0b feat: only allow formatted machines in select dropdown
+ffff68a style: remove page break before photos annexes in levage form
+18b9070 fix: admin login shortcut (DURAND->TG) and AJAX machine deletion without page reload
+76b72ed feat: replace radio buttons with compact colored pastille system + auto-expanding textareas
+ad17546 feat: photo capture system per control point with compression, thumbnails, and PHOTOS ANNEXES section
+9e5e663 fix: photo persistence - safe JSON injection, form submit sync, captions in PHOTOS ANNEXES
+78e06a0 feat: reorganize intervention flow - ARC first + PARC MACHINE table + repere + PAP/TAP
+dd0ee0d feat: date + temps previsionnel/realise + chronometre dans en-tete fiches
+a2f647d fix: clean 4-col layout for date/temps/horaires header table
+63f711e feat: page Rapport Final - client info, commentaires, souhaits, signatures, finalisation
+5212eee rebrand: rename app to LM Expert with new icon and fix report logo display
+820bf80 fix: rapport_final 500 error - fix PostgreSQL boolean handling + add error display
+8edbe26 fix: reduce rapport logo size to fit properly
+59e9287 fix: proper logo size in rapport header
+d6abbfd feat: rapport accessible after finalization - success page + view buttons in dashboard/historique
+102b1ed fix: rapport logo aspect ratio and sizing
+79d82ba fix: use proper uncropped logo and handle dark/light mode for printing
+efe3fc1 feat: envoi email PDF rapport via MailerSend + page de test
+569975a fix: envoi email uniquement sur clic technicien, pas automatique
+68ace06 feat: génération PDF complet avec couverture, rapport central, et machines fusionnées via html2pdf
+72ea86d fix: pdf blank page by waiting for images and appending temporarily to DOM
+4812daa fix: pdf blank page by removing explicit DOM insertion and using implicit iframe cloning for html2pdf
+4de410d fix: pdf rendering of checkboxes, textareas, pastilles, order and states
+24d4c93 Ajout de la structure de base du rapport final avec PRÉAMBULE et pied de page
+008c3e3 Correction des bugs PDF : états (pastilles), commentaires (texte), suppression boutons interactifs et optimisation des pages
+5660abf Mise en page de la dernière page du PDF (signataires, contacts technique/planning, QR code, souhaits client)
+1ffe105 Synthese et page finale PDF
+38a0d95 Correction des sauts de page excessifs et optimisation de la structure du PDF
+0dfa4f4 fix(pdf): optimize page breaks and layout to reduce total page count
+4d85aa9 fix(pdf): remove ID-based header and replace with human-friendly numbering
+150468f fix(pdf): fix comment rendering to display text instead of photo icon
+870a82a fix(pdf): remove help messages and auto-hide empty photo sections
+d7c9177 fix(pdf): apply official Lenoir-Mec colors and harmonize banners
+d56e6bb fix(pdf): add QR code and website promotion to end page
+d1c2a34 fix(ui): use white SVG logo for dark theme to avoid white box effect
+dae0a08 fix(pdf): eliminate top white space on machine fiches by optimizing page breaks
+8a6bf7a Fix PDF rendering: comments display in textareas, footer formatting, and QR code implementation
+b7403ce Fix signature block issues and improve mobile support
+4e0ace5 Fix syntax errors in PDF generation and restore signature pads
+94a83ee Fix bugs BUG-001 to BUG-020: Improved validations, compliance score calculation, legal info harmonization, and UI consistency
+2bca8ff Remove strict NOM/PRÉNOM validation for contact and signataire to solve 'white page' UX issues as requested by user
+d8821a0 Fix bugs in intervention report (Signature, checkboxes, footer, PDF formatting)
+06f9ff6 Fix SignaturePad clearing issue on mobile due to resize events & window.LM_RAPPORT undefined reference in form submission
+bcb7bc7 Fix SignaturePad not drawing correctly on PC/Mobile by delaying initialization until layout is fully painted, and reinstating scroll-safe resize handler.
+591e7c4 fix(signatures): prevent accidental clearing on mobile scroll and disable touch action
+25d89f8 fix(rapport): remove syntax error breaking JS
+805bc1e fix(rapport): prevent COMMENTS column from overflowing page boundaries with word-break and max-width CSS constraints
+0c2b911 fix(rapport): replace select elements with static spans holding the value or ___ for empty placeholders (MF-002)
+df9e3e0 fix(rapport): use standard Lenoir font for ARC number in PDF by removing monospace styling (MF-003)
+15eadc0 fix(rapport): default Poste to chronological machine index instead of N/A (MF-004)
+c6a04af feat(rapport): add automatic page numbering (Page X / Y) to all PDF exports (MF-005)
+90af245 feat(rapport): user can choose to exclude empty machines or include them as 1 condensed page (MF-006)
+04ba856 fix(rapport): remove arbitrary page-breaks inside machines to avoid isolated logos and blank spaces (MF-007)
+f3bef54 style(rapport): display 'Non renseigné' instead of 'N/A' for empty durations (MF-008)
+0965ae6 style(rapport): display empty inputs as '_____' instead of blanks to retain visual structure on the PDF (MF-009)
+4c20b29 fix(rapport): make 'Le client souhaite' checkboxes mutually exclusive like a radio group (MF-010)
+6072e5c style(rapport): display the Lenoir-Mec QR code correctly at the end of the PDF by using a local image to bypass HTML2Canvas CORS issues (MF-011)
+e4af6af feat(rapport): associate explicitly each photo with its control point label and add numbering index (MF-012)
+fb0b0f5 fix(pdf): enforce strict page-break-before always for each machine to prevent them from adhering to previous pages and set page-break-inside avoid on the footer to stop html2pdf horizontal text slicing
+ddc9200 fix(pdf): enforce avoid page-break on table rows, images and structural sections directly in html2pdf options to stop mathematical slicing of content
+82d7ebd fix(pdf): shift padding to html2pdf native margins so jsPDF text overlay like page numbers don't print on top of tables, and pagination correctly uses real page bounds
+bf613e1 fix(pdf): restructure large tables dynamically isolating each logic row into a tbody and avoid tbody instead of tr, to bypass severe html2pdf table slicing limitations
+16653ff feat(pdf): complete redesign of the first cover page to exactly match formatting, typography, colors and borders from the official Lenoir-Mec paper report template
+bc8febe fix(pdf): remove literal template literals escaping that broke the javascript tokenizer and crashed SignaturePad initialization
+6c54dae feat(pdf): perfect replica cover page design, replace dummy user Pierre with Soufyane, add generated html stamp, assign correct tech signature
+6e546e1 fix(users): update login shortcuts and seed file to Salah, created endpoint to silently hot-swap Lotito to Salah preserving foreign key history
+ae2a362 fix(db): correct fix_user endpoint to use postgres connection instead of local sqlite to adapt to vercel environment
+1378f5e fix(pdf): revert experimental tbody table splitting that caused visual regressions on the originally working table padding implementation
+cd03c75 fix(pdf): heavily revert cover page design that maliciously corrupted html2pdf pagination bounding boxes and caused regressions in table splicing. Restored to exact commit bc8febe where pagination was 100% pristine and validated by user
+86bba80 fix(style): center align pastille groups inside table cells for PDF rendering
+9a950a7 style(web): center align pastille groups in machine edit web UI (APRF)
+4f486b7 feat(web): integrate Compressor.js for robust client-side image compression resolving EXIF rotation issues and reducing payload sizes
+60802fe Update PDF report cover layout and prepopulate technician signatures
+889fb4a Rollback all malicious PDF layout modifications causing broken table margins. Meticulously reapplying critical logical JS form/Syntax solutions only.
+74b4132 fix(pdf): Master patch for JS signature payload, plaintext vars, title, empty textareas, and timestamp bugs built cleanly atop the stable slice layout 60802fe6dd
+f651e69 Merge branch 'main' of https://github.com/tomyafr/Fiches_techniques_Lenoir_SaaS
+c8a8745 fix(pdf): Re-instate totally missing SignaturePad logic that was lost in recent feature divergence
+c9c638f fix(pdf/canvas): Safely handle null signature vars and natively chain html2pdf promises to prevent execution exhaustion
+bcbff71 Fix syntax errors, pdf generation layout, and page breaking rules
+4ae8934 Remove stampHTML legal info from technician signature block
+9c6cc39 Hide machine diagrams from PDF and fix table pagebreak logic
+c1cbff7 Hide remaining machine schematic containers with no-print-pdf
+667dbd3 Fix double page breaks by migrating absolute footers to native jsPDF text logic
+995ab8a Fix redundant www on email and QR Code url in final pdf template
+207ce64 Fix trailing empty page with cloned QR Code snippet by applying severe page-break prevents
+a92c80d Fix split date CSS box bounds and repair jsPDF undefined footer property references in templates
+830523e Restore mandatory page break for end page blocks to isolate layout components cleanly on single terminal sheet
+4886d4b Fix final html2canvas rendering defects: clear web view inherited margins, bypass native radio dropping via unicode spans, force explicit pageBreakInside on table rows, ensure QR visibility
+214d109 Fix html2pdf configuration: Revert global padding reset to restore A4 lateral constraints, and enforce hard class-based element avoidance for tr and QR code splitting across pages
+f869ab9 Fix 5 root causes: preserve diagrams, remove ghost page, fix table splitting, QR protection
+1b29287 Fix logo duplicates, update QR/URLs to raoul-lenoir.com, remove blank page, preserve diagrams selectively
+99d4479 Fix final page sections splitting (page-break-inside: avoid on wrappers)
+c10bb4d Fix final page massive whitespace and html2pdf legacy mode table chop
+04ed093 Fix html2pdf table chopping via border-collapse: separate and endPage overflow rewrite
+263e816 Fix html2pdf offset calculation with static position and compress endPage
+1e23292 Hard reset to working table algorithm (commit c9c638f) while maintaining URL/Diagram fixes
+8d9913f Fix SignaturePad missing canvas abort and html2pdf Promise chained .save() type error
+3474926 Fix validateAndSubmit blocking empty machines (tableaux) and remove duplicate SignaturePad listeners triggering save failure
+8bafa0f Fix html2canvas infinite hang on table.controles and finalize signature/download patch
+8c85a48 Revert experimental tbody logic causing Safari layout freeze and border corruption; restore pure CSS page-break strategies
+7a8d313 fix: remove duplicate let padClient/padTech declaration causing fatal SyntaxError that killed all JS
+020523a fix: ED-X fiche inclusion, footer at page bottom, remove blank spaces, clean table page breaks
+d611409 fix: ED-X inclusion (default condensed not exclude), native jsPDF footer (no more HTML footer split), clean layout
+382c0ba fix: ED-X inclusion default, pastille radio styling, pdf-page min-height blank page bug, SYNTHESE visibility
+2e2a682 fix: force include for ED-X, fix strikethrough typography, fix blue table pseudo-elements
+136248c fix: chunk massive ED-X fiche to prevent html2canvas blank page crash
+6037be0 fix: chunk massive machine tables and force isolated signature page
+acb9247 fix: trigger deployment after revert
+bd58c9a Restructuration rapport officiel et photos
+161334a feat: ajout Section F Conclusion et pied de page Rappel avec icônes de sécurité
+cc0426d fix: restauration du tampon ob_get_clean et de la classe pdf-page pour le rapport final
+5854542 Restructuration rapport officiel, image Section C et stabilisation structure PDF
+bae57f4 Fix: Sections B-F rendering in PDF by fixing div balance and safety footer
+55ed369 Optimize: AI auto-summary for dysfunctions and fix page breaks
+bcd6481 Fix: Precise AI analysis for all machine types and force refresh on default msg
+d7c6a24 Feat: Groq AI integration for Section E & F with automated analysis
+f2892e3 Diag push
+62f2775 Chore: Securely integrate Groq API Key for multi-device support
+d2cd911 Fix: Solve truncated PDF issues and add global AI generation
+e3779eb Fix: Correct Groq API key and add PDF diagnostics
+c1caa3b Fix: APIs paths and more robust DOM node importation for PDF
+17a9a37 Debug: Show raw server response on PDF error
+268f212 Final Fix: Restore missing <?php tag in machine_edit.php and cleanup debug code
+e4ed199 Update: Synchronize db.sql schema with IA columns
+ee8140d Final Fix: PDF and IA Integration
+d56be4d Fix: API paths and diagnostic mode
+97163a0 Fix: Update Groq model to Llama 3.3
+450df9d Fix: Real-time AI analysis and data extraction robustness
+2a1688c Optimize: Strict AI filtering and extreme brevity
+8def69f Fix: Ensure Orange anomalies are always listed by AI
+03b7cc7 Debug: Add deep logging for IA detection
+07d7287 Finalisation Expert IA : Suppression doublons, renommage et protection des données
+ca09067 Nettoyage : suppression des logs de débogage
+67d0f41 Avatar de l'Expert IA : Remplacement de l'émoji par l'image personnalisée
+bccc64f Logo : Intégration du logo transparent LENOIR-MEC
+30f70a3 feat: Modernisation complète de l'UI avec icônes 3D Glassmorphism et correction du logo branding
+5f1520a fix: restaure liens, augmente taille icônes et corrige transparence (mix-blend-mode)
+0b73258 fix: corrige icônes logout et add fiche
+7a86bc5 fix: refonte totale iconographie V3 (tailles XXL, transparence parfaite, retour icône rapport emoji)
+8e7ead9 fix: force transparence et tailles XXL sur GitHub
+11f3591 style: finalise tailles XXL et contrastes icônes V3
+ae78326 revert: retour complet aux emojis (style original)
+101f644 fix: déclenchement manuel du déploiement Vercel (re-push Emojis)
+5f23cb8 fix: re-trigger Vercel deployment (Emoji Original Version)
+c898d9b fix: cohérence totale emojis et suppression résidus 3D
+cd6024d fix: cohérence emojis finale navigation mobile historique
+45b3291 style: adoucissement animation dashboard pour plus de lisibilité
+f783fa1 fix: éradication totale des dernières icônes IA (Profil, JS, Rapports)
+4b742ef fix: libellés IA pour grilles génériques et levage (stripping _radio)
+060e911 feat: ajout Section B (Description Matériel) avec montage photo dynamique (1-4)
+e938874 fix: suppression doublon Section B (statique) dans machine_edit
+11b78e1 fix: alignement montage 3 photos et sécurité anti-doublon photo
+f18da57 trigger: redeploy on vercel
+0b56eec style: logo couleur et header blanc pour fiches machine
+705ba35 style: correction aspect ratio logo (lenoir_logo_doc.png)
+9f21d76 style: restauration header sombre premium synthèse et conservation header blanc fiches
+d608814 fix: rendu PHP Section B pour affichage photos dans le rapport PDF
+c17b23a STABLE FIX: Restored UI layout and carefully re-applied name split and ARC format
+03c2631 UI: Truly transparent colored SVG logo for the dark header
+748be4b UI: Fixed corrupted SVG logo paths and colors
+f2acd08 UI: Global logo update with new color transparent SVG
+dd16d84 UI: Replaced success emoji with custom green check SVG
+49bff28 UI: Replaced email button emoji with custom white envelope SVG
+878ba2a UI: Finalized success screen icons (Download and Dashboard)
+368bf8c UI: Completed final icon harmonization (Calendar, Back arrows, Checkmarks)
+bf8e63c Finalize visual modernization: replace all emojis with SVGs (Login, Gear, Icons)
+71ba195 Fix login icon alignment and contact first name saving
+cd30d83 Fix contact first name saving in final report and add DB migration
+af61a1e Final iconography modernization: replace remaining emojis in Admin section and unify mobile nav
+9d0fe4e Optimize PDF: Fix Section B photos size, increase margins, and improve table breaks
+84efb5f Final UI Modernization: Integrate profile pictures in grid and sidebars, and replace last purple icons
+af5d6d1 Refine sidebar avatar style: white border, larger circle, thinner border
+11982ba feat: modernisation iconographie, correction bug sauvegarde et fix layout PDF (ordre sections et montage photos)
+83f1725 style: replace 3D machine icon with gear icon
+8139917 Fix: photo comments in PDF, IA ordering and batch overwrite protection
+6bcdfbf Fix critical PDF regressions: signatures, client phone, and photo montage design
+bf5562c Fix PDF download crash, signature resize bug and SAV contacts
+74dd47b Fix refresh button in machine_edit.php Section E and F

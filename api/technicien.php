@@ -89,7 +89,7 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
     </script>
 </head>
 
-<body>
+<body onload="document.body.classList.add('loaded')">
     <header class="mobile-header">
         <button class="mobile-logo-btn" onclick="toggleSidebar()" aria-label="Menu">
             <img src="/assets/lenoir_logo_trans.svg" alt="Raoul Lenoir" class="mobile-header-logo">
@@ -353,10 +353,13 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
             document.getElementById('sidebar').classList.remove('open');
             document.getElementById('sidebarOverlay').classList.remove('open');
         }
-        document.addEventListener("DOMContentLoaded", function () {
-            if (window.location.search.includes('new=1')) {
-                switchTab('nouvelle');
-            }
+        // Smooth navigation
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.getAttribute('href') && !this.getAttribute('onclick')) {
+                    document.body.style.opacity = '0';
+                }
+            });
         });
     </script>
 </body>

@@ -186,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </script>
 </head>
 
-<body class="bg-main">
+<body class="bg-main" onload="document.body.classList.add('loaded')">
     <!-- Vidéo Background Premium -->
     <div class="video-background">
         <div class="video-overlay"></div>

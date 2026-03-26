@@ -113,10 +113,67 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/assets/icon-192.png">
     <meta name="theme-color" content="#020617">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>if (localStorage.getItem('theme') === 'light') document.documentElement.classList.add('light-mode');</script>
+    <style>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .stat-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-color: var(--primary);
+        }
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .stat-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+        /* Page Transition */
+        body { opacity: 0; transition: opacity 0.5s ease; }
+        body.loaded { opacity: 1; }
+        .animate-up {
+            animation: slideUp 0.6s ease out forwards;
+            opacity: 0;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
 </head>
-
-<body>
+<body onload="document.body.classList.add('loaded')">
     <header class="mobile-header">
         <button class="mobile-logo-btn" onclick="toggleSidebar()" aria-label="Menu">
             <img src="/assets/lenoir_logo_trans.svg" alt="Raoul Lenoir" class="mobile-header-logo">
@@ -205,6 +262,43 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                         </span>
                     <?php endif; ?>
                 </button>
+            </div>
+
+            <!-- DASHBOARD SECTION -->
+            <div class="dashboard-grid animate-up" style="animation-delay: 0.1s;">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Conformité Globale</span>
+                        <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">Score IA</span>
+                    </div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span class="stat-value" id="complianceValue">--</span>
+                        <span style="color: var(--text-dim); font-size: 1rem;">%</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="complianceChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Volume d'Expertises</span>
+                        <span class="badge" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">Mensuel</span>
+                    </div>
+                    <div class="stat-value" id="monthlyTotal">--</div>
+                    <div class="chart-container">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">Répartition par Statut</span>
+                    </div>
+                    <div class="chart-container" style="height: 180px;">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
             </div>
 
             <!-- Modal Nouvelle Intervention -->
@@ -392,12 +486,112 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
             if (window.location.search.includes('new=1')) {
                 document.getElementById('newInterventionModal').style.display = 'flex';
             }
+            initDashboard();
         });
+
         function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('sidebarOverlay').classList.toggle('open');
-            document.body.classList.toggle('sidebar-is-open');
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
         }
+
+        // Initialize Charts
+        async function initDashboard() {
+            try {
+                const response = await fetch('admin_stats.php');
+                const result = await response.json();
+                if (!result.success) return;
+
+                const data = result.data;
+
+                // 1. Compliance (Gauge-like doughnut)
+                document.getElementById('complianceValue').innerText = data.compliance;
+                new Chart(document.getElementById('complianceChart'), {
+                    type: 'doughnut',
+                    data: {
+                        datasets: [{
+                            data: [data.compliance, 100 - data.compliance],
+                            backgroundColor: ['#ffb300', 'rgba(255, 255, 255, 0.05)'],
+                            borderWidth: 0,
+                            circumference: 180,
+                            rotation: 270,
+                        }]
+                    },
+                    options: {
+                        cutout: '80%',
+                        plugins: { legend: { display: false } },
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+
+                // 2. Monthly Trends
+                const monthlyLabels = data.monthly.map(m => {
+                    const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+                    const [year, month] = m.mois.split('-');
+                    return months[parseInt(month) - 1];
+                });
+                document.getElementById('monthlyTotal').innerText = data.monthly.reduce((a, b) => a + parseInt(b.count), 0);
+                new Chart(document.getElementById('monthlyChart'), {
+                    type: 'line',
+                    data: {
+                        labels: monthlyLabels,
+                        datasets: [{
+                            label: 'Interventions',
+                            data: data.monthly.map(m => m.count),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 0
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: { display: false },
+                            x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } }
+                        },
+                        plugins: { legend: { display: false } },
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+
+                // 3. Status Distribution
+                new Chart(document.getElementById('statusChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: data.status.map(s => s.statut),
+                        datasets: [{
+                            data: data.status.map(s => s.count),
+                            backgroundColor: ['#10b981', '#ffb300', '#3b82f6', '#ef4444'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: { color: '#94a3b8', boxWidth: 10, font: { size: 10 } }
+                            }
+                        },
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+
+            } catch (e) {
+                console.error('Stats error:', e);
+            }
+        }
+
+        // Smooth navigation
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.getAttribute('href') && !this.getAttribute('onclick')) {
+                    document.body.style.opacity = '0';
+                }
+            });
+        });
     </script>
 </body>
 
