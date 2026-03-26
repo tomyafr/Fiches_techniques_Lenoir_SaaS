@@ -13,14 +13,24 @@ try {
     $stmt = $db->query("SELECT statut, COUNT(*) as count FROM interventions GROUP BY statut");
     $stats['status'] = $stmt->fetchAll();
 
-    // 2. Volume mensuel (6 derniers mois)
+    // 2. Volume mensuel (6 derniers mois, incluant les mois à 0)
     $stmt = $db->query("
         SELECT 
-            TO_CHAR(date_intervention, 'YYYY-MM') as mois, 
-            COUNT(*) as count 
-        FROM interventions 
-        WHERE date_intervention >= CURRENT_DATE - INTERVAL '6 months'
-        GROUP BY mois 
+            TO_CHAR(m, 'YYYY-MM') as mois,
+            COALESCE(counts.count, 0) as count
+        FROM generate_series(
+            CURRENT_DATE - INTERVAL '5 months', 
+            CURRENT_DATE, 
+            '1 month'
+        ) m
+        LEFT JOIN (
+            SELECT 
+                TO_CHAR(date_intervention, 'YYYY-MM') as month_label, 
+                COUNT(*) as count 
+            FROM interventions 
+            WHERE date_intervention >= CURRENT_DATE - INTERVAL '6 months'
+            GROUP BY month_label
+        ) counts ON TO_CHAR(m, 'YYYY-MM') = counts.month_label
         ORDER BY mois ASC
     ");
     $stats['monthly'] = $stmt->fetchAll();
