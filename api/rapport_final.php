@@ -6,9 +6,9 @@ $db = getDB();
 $userId = $_SESSION['user_id'];
 $id = $_GET['id'] ?? null;
 
-// Self-healing DB migration to add signature_base64
 try {
     $db->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS signature_base64 TEXT");
+    $db->exec("ALTER TABLE interventions ADD COLUMN IF NOT EXISTS contact_prenom VARCHAR(100)");
 } catch (Exception $e) { }
 
 if (!$id) {
@@ -66,13 +66,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     if ($_POST['action'] === 'save_rapport') {
         try {
+            $contactPrenom = trim($_POST['contact_prenom'] ?? '');
             $contactNom = trim($_POST['contact_nom'] ?? '');
             $contactFonction = trim($_POST['contact_fonction'] ?? '');
             $contactEmail = trim($_POST['contact_email'] ?? '');
             $contactTel = trim($_POST['contact_telephone'] ?? '');
             $nomSignataire = trim($_POST['nom_signataire'] ?? '');
 
-            if (empty($contactNom)) { $error = "Le nom du contact est obligatoire."; }
+            if (empty($contactPrenom)) { $error = "Le prénom du contact est obligatoire."; }
+            elseif (empty($contactNom)) { $error = "Le nom du contact est obligatoire."; }
+            elseif (strlen($contactPrenom) > 50) { $error = "Le prénom du contact ne doit pas dépasser 50 caractères."; }
             elseif (strlen($contactNom) > 50) { $error = "Le nom du contact ne doit pas dépasser 50 caractères."; }
             elseif (empty($nomSignataire)) { $error = "Le nom du signataire est obligatoire."; }
 
@@ -108,13 +111,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
             // Update intervention
             $db->prepare('UPDATE interventions SET
-                contact_nom = ?, commentaire_technicien = ?, commentaire_client = ?,
+                contact_prenom = ?, contact_nom = ?, commentaire_technicien = ?, commentaire_client = ?,
                 souhait_rapport_unique = ?, souhait_offre_pieces = ?,
                 souhait_pieces_intervention = ?, souhait_aucune_offre = ?,
                 signature_client = ?, signature_technicien = ?,
                 nom_signataire_client = ?, date_signature = NOW(),
                 statut = ? WHERE id = ?')
                 ->execute([
+                    $contactPrenom,
                     $contactNom,
                     $commentaireTech,
                     $commentaireClient,
@@ -936,7 +940,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             // --- BUG-008: Contrôle de complétude des fiches (Désactivé suite à la demande du client) ---
             // Les machines vides ("Non contrôlées") sont désormais autorisées lors de la finalisation.
 
+            const contactPrenom = document.getElementById('contact_prenom')?.value.trim() || '';
             const contactNom = document.getElementById('contact_nom')?.value.trim() || '';
+            
+            if (!contactPrenom) {
+                alert('Le prénom du contact est obligatoire.');
+                return false;
+            }
             if (!contactNom) {
                 alert('Le nom du contact est obligatoire.');
                 return false;
