@@ -1150,6 +1150,23 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .photo-annexe-item { text-align: center; max-width: 200px; margin-bottom: 10px; }
                 .photo-annexe-item img { width: 180px; height: 135px; object-fit: cover; border: 1px solid #000; }
                 .photo-annexe-item p { font-size: 8pt; margin: 3px 0 0 0; color: #000; line-height: 1.2; }
+                
+                .photo-comment-overlay {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    background: rgba(255, 255, 255, 0.85);
+                    color: #000;
+                    padding: 5px;
+                    font-size: 9px;
+                    text-align: center;
+                    border-top: 1px solid #000;
+                    max-height: 50px;
+                    overflow: hidden;
+                    font-weight: bold;
+                    font-family: Arial, sans-serif;
+                }
 
                 img { max-width: 100%; }
 
@@ -1185,21 +1202,15 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .grid-1 { grid-template-columns: 1fr; }
                 .grid-1 .montage-item { height: 280px; }
                 .grid-2 { grid-template-columns: 1fr 1fr; }
+                .grid-2 .montage-item { height: 220px; }
                 .grid-3 { 
-                    grid-template-columns: 1.2fr 0.8fr; 
-                    grid-template-rows: 250px 250px; 
-                    align-items: stretch;
+                    grid-template-columns: 1fr 1fr; 
+                    grid-template-areas: "p1 p2" "p3 p3";
                 }
-                .grid-3 .montage-item:first-child { 
-                    grid-row: span 2; 
-                    height: 100%; 
-                }
-                .grid-3 .montage-item:nth-child(2),
-                .grid-3 .montage-item:nth-child(3) {
-                    height: 100%;
-                }
-                .grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 200px 200px; }
-                .grid-4 .montage-item { height: 100%; }
+                .grid-3 .montage-item:nth-child(3) { grid-area: p3; height: 220px; }
+                .grid-3 .montage-item:nth-child(1), .grid-3 .montage-item:nth-child(2) { height: 220px; }
+                .grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; }
+                .grid-4 .montage-item { height: 180px; }
             `;
             container.appendChild(styleNode);
 
@@ -1211,6 +1222,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const ville = document.querySelector('[name="ville"]')?.value || '';
             const pays = document.querySelector('[name="pays"]')?.value || '';
             
+            const contactPrenom = document.querySelector('[name="contact_prenom"]')?.value || '';
             const contactNom = document.querySelector('[name="contact_nom"]')?.value || '';
             const contactFonction = document.querySelector('[name="contact_fonction"]')?.value || '';
             const contactTel = document.querySelector('[name="contact_telephone"]')?.value || '';
@@ -1287,7 +1299,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Adresse</td>
                             <td style="padding: 6px; border: 1px solid #000;">${adresse || '_____'}</td>
                             <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Prénom</td>
-                            <td style="padding: 6px; border: 1px solid #000;">_____</td> <!-- Backend n'a pas séparé Nom/Prénom historiquement, on met un placeholder ou on laisse vide -->
+                            <td style="padding: 6px; border: 1px solid #000;">${contactPrenom || '_____'}</td>
                         </tr>
                         <tr>
                             <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">CP</td>
@@ -1650,8 +1662,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const titleClient = commentaryClientRaw.trim() ? `<div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 3px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">COMMENTAIRE DU CLIENT</div>` : '';
 
 
-            const sigTechImg = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
-            const sigClientImg = window.LM_RAPPORT.sigClient || document.getElementById('canvasClient')?.toDataURL() || '';
+            const sigTechImg = (window.LM_RAPPORT.sigTech && window.LM_RAPPORT.sigTech.length > 100) ? window.LM_RAPPORT.sigTech : (document.getElementById('canvasTech')?.toDataURL() || '');
+            const sigClientImg = (window.LM_RAPPORT.sigClient && window.LM_RAPPORT.sigClient.length > 100) ? window.LM_RAPPORT.sigClient : (document.getElementById('canvasClient')?.toDataURL() || '');
 
             endPage.innerHTML = `
                 <div style="font-family: Arial, sans-serif; font-size: 11px; color: #000;">
@@ -1712,13 +1724,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <!-- CONTACTS ORANGE -->
                     <div style="border: 2px solid #000; padding: 0; text-align: center; margin-bottom: 5px;">
                         <div style="background-color: #E67E22; color: white; padding: 3px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR TOUTE INFORMATION TECHNIQUE SUR CE RAPPORT</div>
-                        <div style="background-color: #fff; padding: 4px; border-bottom: 2px solid #000;">
-                            <div style="font-size: 11px;">➤ <strong>Soufyane SALAH</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Chargé d'Affaires</span></div>
+                        <div style="background-color: #fff; padding: 6px; border-bottom: 2px solid #000;">
+                            <div style="font-size: 11px;">➤ <strong>Soufyane SALAH</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Chargé d'Affaires</span> &nbsp;&nbsp;&nbsp; <strong>06 72 91 38 66</strong></div>
                         </div>
                         
-                        <div style="background-color: #E67E22; color: white; padding: 3px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR LA PLANIFICATION D'UNE VÉRIFICATION PÉRIODIQUE</div>
-                        <div style="background-color: #fff; padding: 4px;">
-                            <div style="font-size: 11px;">➤ <strong>Sophie NIAY</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Responsable Service Clients</span></div>
+                        <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR LA PLANIFICATION D'UNE VÉRIFICATION PÉRIODIQUE</div>
+                        <div style="background-color: #fff; padding: 6px;">
+                            <div style="font-size: 11px;">➤ <strong>Sophie NIAY</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Responsable Service Clients</span> &nbsp;&nbsp;&nbsp; <strong>02 33 67 24 24</strong></div>
                         </div>
                     </div>
 
