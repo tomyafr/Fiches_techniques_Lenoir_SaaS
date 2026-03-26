@@ -806,6 +806,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const ratio = Math.max(window.devicePixelRatio || 1, 1);
             const containerWidth = canvas.offsetWidth || canvas.parentElement.offsetWidth || 600;
             
+            // On ne redimensionne que si nécessaire pour éviter de vider le canvas inutilement
+            if (canvas.width === containerWidth * ratio) return;
+
+            // Sauvegarde de l'image actuelle avant redimensionnement
+            const data = pad ? pad.toDataURL() : null;
+            const isEmpty = pad ? pad.isEmpty() : true;
+
             canvas.width = containerWidth * ratio;
             canvas.height = 200 * ratio;
             canvas.style.height = '200px';
@@ -814,23 +821,31 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             context.scale(ratio, ratio);
             
             if (pad) {
-                pad.clear(); // Réinitialise pour éviter les distorsions si on redimensionne
+                pad.clear(); 
+                if (!isEmpty && data) {
+                    pad.fromDataURL(data, { ratio: ratio, width: containerWidth, height: 200 });
+                }
             }
         }
         // Synchronisation automatique du signataire
-        const contactPrenomInput = document.getElementById('contact_prenom');
-        const contactNomInput = document.getElementById('contact_nom');
-        const signataireInput = document.getElementById('nom_signataire');
- 
-        if (contactPrenomInput && contactNomInput && signataireInput) {
-            const updateSignataire = () => {
-                const prenom = contactPrenomInput.value.trim();
-                const nom = contactNomInput.value.trim();
-                signataireInput.value = (prenom + ' ' + nom).trim();
-            };
-            contactPrenomInput.addEventListener('input', updateSignataire);
-            contactNomInput.addEventListener('input', updateSignataire);
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const contactPrenomInput = document.getElementById('contact_prenom');
+            const contactNomInput = document.getElementById('contact_nom');
+            const signataireInput = document.getElementById('nom_signataire');
+     
+            if (contactPrenomInput && contactNomInput && signataireInput) {
+                const updateSignataire = () => {
+                    const prenom = contactPrenomInput.value.trim();
+                    const nom = contactNomInput.value.trim();
+                    signataireInput.value = (prenom + ' ' + nom).trim();
+                };
+                contactPrenomInput.addEventListener('input', updateSignataire);
+                contactNomInput.addEventListener('input', updateSignataire);
+            }
+            initSignatures();
+            setTimeout(initSignatures, 500); 
+            console.log("Rapport prêt.");
+        });
         let canvasWidthT = 0;
         let canvasWidthC = 0;
 
@@ -1021,9 +1036,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 return new Promise(resolve => {
                     img.onload = resolve;
                     img.onerror = resolve;
+                    setTimeout(resolve, 5000); // Sécurité individuelle par image (5s)
                 });
             });
-            await Promise.all(promises);
+            await Promise.race([
+                Promise.all(promises),
+                new Promise(resolve => setTimeout(resolve, 10000)) // Sécurité globale (10s)
+            ]);
             return new Promise(r => setTimeout(r, 200));
         }
 
@@ -1203,12 +1222,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .grid-1 .montage-item { height: 280px; }
                 .grid-2 { grid-template-columns: 1fr 1fr; }
                 .grid-2 .montage-item { height: 220px; }
-                .grid-3 { 
-                    grid-template-columns: 1fr 1fr; 
-                    grid-template-areas: "p1 p2" "p3 p3";
-                }
-                .grid-3 .montage-item:nth-child(3) { grid-area: p3; height: 220px; }
-                .grid-3 .montage-item:nth-child(1), .grid-3 .montage-item:nth-child(2) { height: 220px; }
+                .grid-3 { grid-template-columns: 1fr 1fr; }
+                .grid-3 .montage-item:nth-child(3) { grid-column: span 2; height: 220px; }
+                .grid-3 .montage-item { height: 220px; }
                 .grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; }
                 .grid-4 .montage-item { height: 180px; }
             `;
@@ -1234,8 +1250,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             
             const techName = "<?= htmlspecialchars($techName) ?>";
             const dateExp = window.LM_RAPPORT.dateInt;
-            const sigTechData = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
-            const sigClientData = window.LM_RAPPORT.sigClient || document.getElementById('canvasClient')?.toDataURL() || '';
             
             const stampHTML = '<div style="color: #2b4c80; font-family: Arial, sans-serif; font-size: 9px; line-height: 1.2; font-weight: bold; margin-bottom: 5px;">' +
                 (window.LM_RAPPORT.legal.address || '') + '<br>' +
@@ -1350,7 +1364,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <td style="padding: 15px 10px; border: 1px solid #000; width: 30%; font-weight: bold;">${techName}</td>
                         <td rowspan="2" style="padding: 15px; border: 1px solid #000; width: 45%; text-align: center; vertical-align: middle;">
                             ${stampHTML}
-                            <img src="${sigTechData}" style="max-height:90px; max-width:100%; object-fit: contain;">
+                            ${(window.LM_RAPPORT.sigTech && window.LM_RAPPORT.sigTech.length > 100) ? `<img src="${window.LM_RAPPORT.sigTech}" style="max-height:90px; max-width:100%; object-fit: contain;">` : (document.getElementById('canvasTech') && !padTech.isEmpty() ? `<img src="${padTech.toDataURL()}" style="max-height:90px; max-width:100%; object-fit: contain;">` : '')}
                             <div style="margin-top:5px; font-size: 11px; color:#2b4c80; font-style:italic;">${techName}</div>
                         </td>
                     </tr>
@@ -1662,8 +1676,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const titleClient = commentaryClientRaw.trim() ? `<div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 3px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">COMMENTAIRE DU CLIENT</div>` : '';
 
 
-            const sigTechImg = (window.LM_RAPPORT.sigTech && window.LM_RAPPORT.sigTech.length > 100) ? window.LM_RAPPORT.sigTech : (document.getElementById('canvasTech')?.toDataURL() || '');
-            const sigClientImg = (window.LM_RAPPORT.sigClient && window.LM_RAPPORT.sigClient.length > 100) ? window.LM_RAPPORT.sigClient : (document.getElementById('canvasClient')?.toDataURL() || '');
+            // Signatures gérées directement dans le template literal ci-dessous
 
             endPage.innerHTML = `
                 <div style="font-family: Arial, sans-serif; font-size: 11px; color: #000;">
@@ -1683,7 +1696,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <div style="page-break-inside: avoid;">
                         <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 3px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
                         <div style="border: 2px solid #000; padding: 4px; margin-bottom: 5px;">
-                            <div style="margin-bottom: 2px; font-size: 11px;">${souhaitRapport ? '☑' : '☐'} Ce Rapport d\\'expertise uniquement</div>
+                            <div style="margin-bottom: 2px; font-size: 11px;">${souhaitRapport ? '☑' : '☐'} Ce Rapport d'expertise uniquement</div>
                             <div style="margin-bottom: 2px; font-size: 11px;">${souhaitPieces ? '☑' : '☐'} Une offre de Pièces de Rechange</div>
                             <div style="margin-bottom: 2px; font-size: 11px;">${souhaitIntervention ? '☑' : '☐'} Une offre de PR + intervention mise en place</div>
                             <div style="font-size: 11px;">${souhaitAucune ? '☑' : '☐'} Aucune offre</div>
@@ -1707,14 +1720,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                     <div style="font-weight: bold; text-decoration: underline; margin-bottom: 3px;">Contrôleur (NOM Prénom) :</div>
                                     <div style="margin-bottom: 5px;"><strong>${techNameLabel}</strong></div>
                                     <div style="text-align: center;">
-                                        <img src="${sigTechImg}" style="max-height: 55px; max-width: 90%; object-fit: contain; background: white;">
+                                        ${(window.LM_RAPPORT.sigTech && window.LM_RAPPORT.sigTech.length > 100) ? `<img src="${window.LM_RAPPORT.sigTech}" style="max-height: 55px; max-width: 90%; object-fit: contain; background: white;">` : (document.getElementById('canvasTech') && !padTech.isEmpty() ? `<img src="${padTech.toDataURL()}" style="max-height: 55px; max-width: 90%; object-fit: contain; background: white;">` : '')}
                                     </div>
                                 </td>
                                 <td style="border: 1px solid #000; padding: 4px; vertical-align: top; width: 50%;">
                                     <div style="font-weight: bold; text-decoration: underline; margin-bottom: 3px;">Client (NOM Prénom) :</div>
                                     <div style="margin-bottom: 5px;"><strong>${nomSignataireFin}</strong></div>
                                     <div style="text-align: center;">
-                                        <img src="${sigClientImg}" style="max-height: 55px; max-width: 90%; object-fit: contain; background: white;">
+                                        ${(window.LM_RAPPORT.sigClient && window.LM_RAPPORT.sigClient.length > 100) ? `<img src="${window.LM_RAPPORT.sigClient}" style="max-height: 55px; max-width: 90%; object-fit: contain; background: white;">` : (document.getElementById('canvasClient') && !padClient.isEmpty() ? `<img src="${padClient.toDataURL()}" style="max-height: 55px; max-width: 90%; object-fit: contain; background: white;">` : '')}
                                     </div>
                                 </td>
                             </tr>
@@ -2100,10 +2113,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 const mData = window.LM_RAPPORT.machinesData.find(m => m.id == id) || { designation: 'Machine', dysfonctionnements: '', conclusion: '' };
                 
                 // Sécurité renforcée : Ne pas écraser si le technicien a déjà saisi quelque chose
-                const isD Empty = !mData.dysfonctionnements || mData.dysfonctionnements.trim() === '' || mData.dysfonctionnements.includes('Aucun dysfonctionnement majeur');
-                const isC Empty = !mData.conclusion || mData.conclusion.trim() === '' || mData.conclusion.includes('conforme à nos standards');
+                const isEmptyD = !mData.dysfonctionnements || mData.dysfonctionnements.trim() === '' || mData.dysfonctionnements.includes('Aucun dysfonctionnement majeur');
+                const isEmptyC = !mData.conclusion || mData.conclusion.trim() === '' || mData.conclusion.includes('conforme à nos standards');
 
-                if (!isD Empty && !isC Empty) {
+                if (!isEmptyD && !isEmptyC) {
                     status.innerText = `Saut de: ${mData.designation} (Déjà complété)`;
                     bar.style.width = (current / total * 100) + '%';
                     continue;
@@ -2114,7 +2127,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                 try {
                     // 1. Dysfonctionnements (Seulement si vide ou message par défaut)
-                    if (isD Empty) {
+                    if (isEmptyD) {
                         let resE = await fetch(`generate_ia.php?type=E&id=${id}`);
                         let dataE = await resE.json();
                         if (dataE.content) {
@@ -2127,7 +2140,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     }
 
                     // 2. Conclusion (Seulement si vide ou message par défaut)
-                    if (isC Empty) {
+                    if (isEmptyC) {
                         let resF = await fetch(`generate_ia.php?type=F&id=${id}`);
                         let dataF = await resF.json();
                         if (dataF.content) {
