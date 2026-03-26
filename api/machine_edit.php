@@ -737,14 +737,51 @@ foreach ($recoFreq as $rfk => $rfv) {
                 function newPdfPage() {
                     return '</div><div class="pdf-page bg-white p-4">'; 
                 }
-                function renderSectionB() {
-                    return '
+                function renderSectionB($photosData) {
+                    $photos = $photosData['desc_materiel'] ?? [];
+                    $count = count($photos);
+                    
+                    $html = '
                     <div style="margin-top:20px; page-break-inside: avoid;">
                         <div style="font-weight:bold; font-size:14px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">B) DESCRIPTION DU MATERIEL :</div>
-                        <div id="description_materiel_montage">
-                            <!-- Rempli par renderDescriptionMontage() en JS -->
+                        <div id="description_materiel_montage">';
+                        
+                    if ($count > 0) {
+                        $gridClass = 'grid-' . ($count > 4 ? 4 : $count);
+                        $html .= '<div class="photo-montage-grid ' . $gridClass . '">';
+                        foreach (array_slice($photos, 0, 4) as $i => $p) {
+                            $html .= '
+                            <div class="montage-item">
+                                <img src="' . htmlspecialchars($p['data']) . '" alt="Photo Matériel ' . ($i+1) . '">
+                                <button type="button" class="photo-del-overlay no-print-pdf" onclick="deletePhoto(\'desc_materiel\', ' . $i . ')">×</button>
+                            </div>';
+                        }
+                        $html .= '</div>';
+                    } else {
+                        $html .= '
+                            <div class="photo-montage-grid empty no-print-pdf">
+                                <div class="photo-placeholder">
+                                    <span>📸</span>
+                                    <p>En attente de photo du matériel (max 4)...</p>
+                                    <button type="button" class="photo-btn" onclick="capturePhoto(\'desc_materiel\')">➕ AJOUTER PHOTO</button>
+                                </div>
+                            </div>';
+                    }
+                    
+                    // Bouton d'ajout visible uniquement hors PDF
+                    if ($count < 4 && !isset($_GET['pdf'])) {
+                        $html .= '<div style="text-align:center; margin-top:10px;" class="no-print-pdf">
+                            <button type="button" class="photo-btn" onclick="capturePhoto(\'desc_materiel\')" style="padding:6px 12px; font-size:12px;">
+                                <span>📷</span> Ajouter une photo (' . $count . '/4)
+                            </button>
+                        </div>';
+                    }
+
+                    $html .= '
                         </div>
                     </div>';
+                    
+                    return $html;
                 }
                 function pastille($name, $value, $cssClass, $title, $currentVal)
                 {
@@ -1728,7 +1765,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         endif;
 
                         // --- SECTION B : DESCRIPTION MATERIEL (GLOBAL) ---
-                        echo renderSectionB();
+                        echo renderSectionB($photosData);
                         ?>
 
                         <div style="margin-top:20px; border: 1px solid #000; padding:10px; background: #fff; page-break-inside: avoid;">
@@ -2024,7 +2061,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 html += `
                     <div class="montage-item">
                         <img src="${p.data}" alt="Photo Matériel ${i+1}">
-                        <button type="button" class="photo-del-overlay" onclick="deletePhoto('desc_materiel', ${i})">×</button>
+                        <button type="button" class="photo-del-overlay no-print-pdf" onclick="deletePhoto('desc_materiel', ${i})">×</button>
                     </div>`;
             });
             
