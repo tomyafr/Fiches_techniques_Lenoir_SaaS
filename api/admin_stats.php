@@ -38,23 +38,23 @@ try {
     ");
     $stats['top_clients'] = $stmt->fetchAll();
 
-    // 4. Score de conformité moyen (Estimation via SQL JSON parsing)
-    // On calcule le ratio de 'c' (conforme) par rapport au total des points renseignés
+    // 4. Score de conformité moyen
+    // On calcule le ratio de 'c', 'bon', ou 'OK' par rapport au total des points renseignés
     $stmt = $db->query("
         WITH machine_points AS (
             SELECT 
                 m.id,
-                (SELECT COUNT(*) FROM jsonb_each_text(NULLIF(m.donnees_controle, '')::jsonb) WHERE value IN ('c', 'bon', 'OK')) as points_ok,
-                (SELECT COUNT(*) FROM jsonb_each_text(NULLIF(m.donnees_controle, '')::jsonb) WHERE value IN ('c', 'bon', 'OK', 'aa', 'nc', 'nr', 'hs', 'A améliorer', 'Non conforme', 'A remplacer')) as points_total
+                (SELECT COUNT(*) FROM jsonb_each_text(m.donnees_controle) WHERE value IN ('c', 'bon', 'OK')) as points_ok,
+                (SELECT COUNT(*) FROM jsonb_each_text(m.donnees_controle) WHERE value NOT LIKE '%comment%') as points_total
             FROM machines m
-            WHERE m.donnees_controle IS NOT NULL AND m.donnees_controle <> '{}' AND m.donnees_controle <> ''
+            WHERE m.donnees_controle IS NOT NULL AND m.donnees_controle <> '{}'
         )
         SELECT 
             ROUND(AVG(CASE WHEN points_total > 0 THEN (points_ok::float / points_total) * 100 ELSE NULL END)) as avg_compliance
         FROM machine_points
     ");
     $compliance = $stmt->fetch();
-    $stats['compliance'] = $compliance['avg_compliance'] ?? 0;
+    $stats['compliance'] = (int)($compliance['avg_compliance'] ?? 0);
 
     echo json_encode(['success' => true, 'data' => $stats]);
 

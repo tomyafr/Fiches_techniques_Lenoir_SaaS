@@ -499,7 +499,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
             try {
                 const response = await fetch('admin_stats.php');
                 const result = await response.json();
-                if (!result.success) return;
+                if (!result.success || !result.data) return;
 
                 const data = result.data;
 
@@ -525,10 +525,11 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                 });
 
                 // 2. Monthly Trends
-                const monthlyLabels = data.monthly.map(m => {
+                const monthlyLabels = (data.monthly || []).map(m => {
                     const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
-                    const [year, month] = m.mois.split('-');
-                    return months[parseInt(month) - 1];
+                    const parts = (m.mois || "").split('-');
+                    const monthIdx = parts.length > 1 ? parseInt(parts[1]) - 1 : 0;
+                    return months[monthIdx] || "N/A";
                 });
                 document.getElementById('monthlyTotal').innerText = data.monthly.reduce((a, b) => a + parseInt(b.count), 0);
                 new Chart(document.getElementById('monthlyChart'), {
@@ -560,9 +561,9 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                 new Chart(document.getElementById('statusChart'), {
                     type: 'doughnut',
                     data: {
-                        labels: data.status.map(s => s.statut),
+                        labels: (data.status || []).map(s => s.statut || "N/A"),
                         datasets: [{
-                            data: data.status.map(s => s.count),
+                            data: (data.status || []).map(s => s.count || 0),
                             backgroundColor: ['#10b981', '#ffb300', '#3b82f6', '#ef4444'],
                             borderWidth: 0
                         }]
