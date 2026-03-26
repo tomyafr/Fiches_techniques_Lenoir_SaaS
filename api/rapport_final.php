@@ -506,7 +506,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <!-- Bouton Envoyer PDF par email -->
                         <button type="button" id="btnSendEmail" onclick="lancerEnvoiEmail()"
                             style="padding:0.7rem 1.5rem; background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem;">
-                            <span>📧</span>
+                            <span id="btnSendEmailIcon"><img src="/assets/icon_email_send.svg" style="height: 18px; width: 18px; vertical-align: middle;"></span>
                             <span id="btnSendEmailLabel">Envoyer PDF par email</span>
                         </button>
                         <!-- Bouton Télécharger PDF -->
@@ -1927,7 +1927,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const label = document.getElementById('btnSendEmailLabel');
 
             if (btn) btn.disabled = true;
-            if (icon) icon.textContent = '⏳';
+            if (icon) icon.innerHTML = '⏳';
             if (label) label.textContent = 'Génération du PDF…';
 
             let pdfBase64;
@@ -1935,13 +1935,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 pdfBase64 = await genererPDFBase64();
             } catch (e) {
                 if (btn) btn.disabled = false;
-                if (icon) icon.textContent = '📧';
+                if (icon) icon.innerHTML = '<img src="/assets/icon_email_send.svg" style="height: 18px; width: 18px; vertical-align: middle;">';
                 if (label) label.textContent = 'Envoyer PDF par email';
                 afficherToast('❌ Erreur génération PDF : ' + e.message, 'error');
                 return;
             }
 
-            if (icon) icon.textContent = '📤';
+            if (icon) icon.innerHTML = '📤';
             if (label) label.textContent = 'Envoi en cours…';
 
             // Hors-ligne : mettre en file d'attente
@@ -1958,7 +1958,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     afficherToast('❌ Impossible de mettre l\'email en file d\'attente.', 'error');
                 }
                 if (btn) btn.disabled = false;
-                if (icon) icon.textContent = '📧';
+                if (icon) icon.innerHTML = '<img src="/assets/icon_email_send.svg" style="height: 18px; width: 18px; vertical-align: middle;">';
                 if (label) label.textContent = 'Envoyer PDF par email';
                 return;
             }
@@ -1969,13 +1969,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 if (result.success) {
                     afficherToast('✅ Rapport envoyé avec succès à ' + result.email, 'success');
                     if (btn) btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
-                    if (icon) icon.textContent = '✅';
+                    if (icon) icon.innerHTML = '✅';
                     if (label) label.textContent = 'Email envoyé !';
                     btn.disabled = true; // Ne pas renvoyer
                 } else {
                     afficherToast('❌ ' + (result.message || 'Erreur envoi email'), 'error');
                     if (btn) btn.disabled = false;
-                    if (icon) icon.textContent = '🔄';
+                    if (icon) icon.innerHTML = '🔄';
                     if (label) label.textContent = 'Réessayer l\'envoi';
                 }
             } catch (e) {
@@ -1992,7 +1992,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     afficherToast('❌ Erreur réseau et impossible de mettre en file : ' + e.message, 'error');
                 }
                 if (btn) btn.disabled = false;
-                if (icon) icon.textContent = '🔄';
+                if (icon) icon.innerHTML = '🔄';
                 if (label) label.textContent = 'Réessayer l\'envoi';
             }
         }
