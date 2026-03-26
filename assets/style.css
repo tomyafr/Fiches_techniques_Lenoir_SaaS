@@ -1345,16 +1345,16 @@ html.light-mode .active-status {
 }
 
 .sidebar .premium-icon {
-    height: 22px;
+    height: 30px; /* Encore plus grand */
     margin-right: 12px;
 }
 
 .mobile-nav-icon .premium-icon {
-    height: 28px;
+    height: 40px;
 }
 
 .action-icon {
-    height: 22px !important;
+    height: 32px !important;
 }
 
 .btn-ghost:hover .premium-icon {
