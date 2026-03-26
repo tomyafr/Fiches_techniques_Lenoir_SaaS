@@ -511,12 +511,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         </button>
                         <!-- Bouton Télécharger PDF -->
                         <button type="button" id="btnDownloadPDF" onclick="telechargerPDF()"
-                            style="padding:0.7rem 1.5rem; background:var(--primary); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">
-                            <span>📥</span> Télécharger le PDF
+                            style="padding:0.7rem 1.5rem; background:var(--primary); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem;">
+                            <span><img src="/assets/icon_download.svg" style="height: 18px; width: 18px; vertical-align: middle;"></span> Télécharger le PDF
                         </button>
                         <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>"
-                            style="padding:0.7rem 1.5rem; background:rgba(255,255,255,0.1); color:var(--text); border:1px solid var(--glass-border); border-radius:8px; font-weight:600; text-decoration:none; font-size:0.9rem; display:flex; align-items:center; gap:6px;">
-                            <span>📊</span> Retour au tableau de bord
+                            style="padding:0.7rem 1.5rem; background:rgba(255,255,255,0.1); color:var(--text); border:1px solid var(--glass-border); border-radius:8px; font-weight:600; text-decoration:none; font-size:0.9rem; display:flex; align-items:center; gap:8px;">
+                            <span><img src="/assets/icon_dashboard.svg" style="height: 18px; width: 18px; vertical-align: middle;"></span>
+                            <span style="color:#27AE60;">Retour au tableau de bord</span>
                         </a>
                     </div>
                 </div>
@@ -1804,7 +1805,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             } catch (e) {
                 alert('Erreur génération PDF : ' + e.message);
             } finally {
-                if (btn) { btn.disabled = false; btn.textContent = '⬇️ Télécharger le PDF'; }
+                if (btn) { btn.disabled = false; btn.innerHTML = originalContent; }
             }
         }
 
