@@ -473,10 +473,73 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 opacity: 1;
             }
         }
+
+        /* Premium Downloader Overlay */
+        #pdfDownloadOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #020617;
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .loader-lenoir {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .loader-lenoir::before, .loader-lenoir::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            border-top-color: var(--primary);
+            width: 100%;
+            height: 100%;
+            animation: spin 1.5s linear infinite;
+        }
+
+        .loader-lenoir::after {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            border-top-color: var(--lenoir-blue);
+            animation-duration: 1s;
+            animation-direction: reverse;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .download-status-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
     </style>
 </head>
 
 <body>
+    <div id="pdfDownloadOverlay">
+        <div class="loader-lenoir"></div>
+        <div class="download-status-text">Génération de votre rapport premium</div>
+        <div style="color: var(--text-dim); font-size: 0.9rem;">Veuillez patienter quelques instants...</div>
+    </div>
     <header class="mobile-header">
         <a href="intervention_edit.php?id=<?= $id ?>" class="btn btn-ghost"
             style="padding: 0.5rem; color: var(--accent-cyan); text-decoration: none; display:flex; align-items:center; gap:6px;">
@@ -2167,6 +2230,30 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 location.reload(); 
             }, 1000);
         }
+
+        // --- AUTO-DOWNLOAD LOGIC ---
+        document.addEventListener('DOMContentLoaded', async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('download') === '1') {
+                const overlay = document.getElementById('pdfDownloadOverlay');
+                if (overlay) overlay.style.display = 'flex';
+                
+                try {
+                    // Petit délai pour laisser les composants se stabiliser
+                    await new Promise(r => setTimeout(r, 1000));
+                    await telechargerPDF();
+                    
+                    // Une fois fini, on peut soit fermer, soit afficher un bouton de retour
+                    document.querySelector('.download-status-text').textContent = "Téléchargement terminé !";
+                    document.querySelector('#pdfDownloadOverlay div:last-child').innerHTML = 
+                        '<button onclick="window.close()" class="btn btn-primary" style="margin-top:20px; padding: 0.5rem 1.5rem;">Fermer cet onglet</button>';
+                } catch (e) {
+                    console.error("Auto-download failed:", e);
+                    if (overlay) overlay.style.display = 'none';
+                    alert("Erreur lors du téléchargement automatique. Vous pouvez essayer manuellement via le bouton 'Télécharger le PDF'.");
+                }
+            }
+        });
 
     </script>
 </body>

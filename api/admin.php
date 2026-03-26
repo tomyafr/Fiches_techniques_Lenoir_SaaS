@@ -441,8 +441,8 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                                         </td>
                                         <td style="padding: 1rem; text-align:right;">
                                             <?php if ($i['statut'] !== 'Brouillon'): ?>
-                                                <button class="btn btn-ghost"
-                                                    style="padding:0.4rem 0.6rem; font-size:0.8rem;">PDF</button>
+                                                <a href="rapport_final.php?id=<?= $i['id'] ?>&download=1" target="_blank" class="btn btn-ghost"
+                                                    style="padding:0.4rem 0.6rem; font-size:0.8rem; text-decoration:none;">PDF</a>
                                             <?php else: ?>
                                                 <a href="intervention_edit.php?id=<?= $i['id'] ?>" class="btn btn-ghost"
                                                     style="padding:0.4rem 0.6rem; font-size:0.8rem; text-decoration:none;">Continuer
