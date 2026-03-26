@@ -50,7 +50,15 @@ function extractIssuesFromDonnees($donnees) {
         'ov_ctrl' => 'Etat contrôleur de rotation', 'ov_galets' => 'Etat galets anti-déport', 'ov_detect' => 'Etat détecteurs anti-déport',
         'ov_pal_phuse' => 'Etat paliers PHUSE tendeurs', 'ov_pal_mot' => 'Etat paliers tambour motorisé', 'ov_caisson' => 'Etat caisson acier inoxydable',
         'ov_conn' => 'Contrôle connexions boîte à bornes', 'ov_resist' => 'Mesure de résistance', 'ov_isol' => 'Mesure de l\'isolement',
-        'ov_opt1' => 'Option 1', 'ov_opt2' => 'Option 2'
+        'ov_opt1' => 'Option 1', 'ov_opt2' => 'Option 2',
+        // GENERIC / PAP / TAP
+        'gen_fixation' => 'Fixation de l\'appareil', 'gen_sale' => 'Appareil sale / Nettoyage', 'gen_usure' => 'Usure importante des pièces',
+        'gen_tension' => 'Tension courroies ou chaînes', 'gen_align' => 'Alignement pignons / poulies', 'gen_huile' => 'Graissage chaîne / Niveau d\'huile',
+        'gen_bruit' => 'Échauffement ou Bruit suspect', 'gen_defauts' => 'Test déclenchement défauts', 'gen_au' => 'Tester bouton Arrêt d\'Urgence',
+        'gen_mesures' => 'Mesure isolation & Induction',
+        // LEVAGE
+        'levage_tension' => 'Tension levage', 'levage_intensite' => 'Intensité levage', 'levage_champ_centre' => 'Champ magnétique au centre',
+        'levage_champ_pole' => 'Champ magnétique au pôle'
     ];
 
     $issues = ['aa' => [], 'nc' => [], 'nr' => []];
@@ -58,14 +66,18 @@ function extractIssuesFromDonnees($donnees) {
 
     foreach ($donnees as $k => $v) {
         if (substr($k, -8) === '_comment') continue;
+        
+        // Nettoyage de la clé pour le mapping (retirer _radio et _stat)
+        $cleanKey = str_replace(['_radio', '_stat'], '', $k);
+        
         $v = trim(strtolower((string)$v));
         if (in_array($v, $negativeValues)) {
-            $label = $labelsMap[$k] ?? $k;
-            $comment = $donnees[$k . '_comment'] ?? null;
+            $label = $labelsMap[$cleanKey] ?? $labelsMap[$k] ?? $k;
+            $comment = $donnees[$k . '_comment'] ?? $donnees[$cleanKey . '_comment'] ?? null;
             
             // Si pas de label dans la map, on essaie de nettoyer le nom de la clé
             if ($label === $k) {
-                $label = ucwords(str_replace('_', ' ', str_replace('edx_', '', str_replace('ov_', '', $k))));
+                $label = ucwords(str_replace('_', ' ', str_replace(['edx_', 'ov_', 'gen_', 'aprf_', 'levage_'], '', $cleanKey)));
             }
 
             $issue = ['designation' => $label, 'commentaire' => $comment];
