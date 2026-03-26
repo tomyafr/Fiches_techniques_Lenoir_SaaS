@@ -1933,7 +1933,7 @@ foreach ($recoFreq as $rfk => $rfv) {
         async function generateConclusion() {
             const btn = event.currentTarget;
             const originalText = btn.innerHTML;
-            btn.innerHTML = '<img src="/assets/icons/loading.png" style="height:14px; width:auto; vertical-align:middle; margin-right:4px;"> Analyse expert...';
+            btn.innerHTML = '⏳ Analyse expert...';
             btn.disabled = true;
 
             try {
@@ -1964,7 +1964,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             
             if (textarea.value && textarea.value !== "Aucun dysfonctionnement majeur signalé." && !confirm("Voulez-vous écraser le contenu actuel par l'analyse IA ?")) return;
             
-            btn.innerHTML = '<img src="/assets/icons/loading.png" style="height:14px; width:auto; vertical-align:middle; margin-right:4px;"> Analyse expert...';
+            btn.innerHTML = '⏳ Analyse expert...';
             btn.disabled = true;
 
             try {

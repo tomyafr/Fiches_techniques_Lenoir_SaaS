@@ -514,7 +514,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         </button>
                         <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>"
                             style="padding:0.7rem 1.5rem; background:rgba(255,255,255,0.1); color:var(--text); border:1px solid var(--glass-border); border-radius:8px; font-weight:600; text-decoration:none; font-size:0.9rem; display:flex; align-items:center; gap:6px;">
-                            <img src="/assets/icons/back.png" style="height:14px; width:auto;"> Retour au tableau de bord
+                            <span>📊</span> Retour au tableau de bord
                         </a>
                     </div>
                 </div>
@@ -786,7 +786,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                 <a href="intervention_edit.php?id=<?= $id ?>"
                     style="display:flex; align-items:center; justify-content:center; gap:6px; margin-top:1rem; color:var(--text-dim); font-size:0.85rem; text-decoration:none;">
-                    <img src="/assets/icons/back.png" style="height:12px; width:auto; opacity:0.7;"> Retour aux fiches
+                    <span style="opacity:0.7;">⬅️</span> Retour aux fiches
                 </a>
         </form>
     </div>
@@ -2051,7 +2051,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 bar.style.width = (current / total * 100) + '%';
             }
 
-            status.innerHTML = '<img src="/assets/icons/success.png" style="height:40px; width:auto; margin-bottom:10px; display:block; margin-left:auto; margin-right:auto;"> ✅ Analyse terminée !';
+            status.innerHTML = '<div style="font-size:40px; margin-bottom:10px; text-align:center;">✅</div> Analyse terminée !';
             btn.innerHTML = '<img src="/assets/ai_expert.jpg" style="height:16px; width:16px; border-radius:50%; vertical-align:middle; margin-right:6px;"> Relancer l\'Expert IA';
             btn.disabled = false;
             

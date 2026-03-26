@@ -219,7 +219,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
             onclick="window.location.href='<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>'"
             aria-label="Retour"
             style="background: none; border: none; padding: 0.5rem; display: flex; align-items: center; justify-content: center;">
-            <img src="/assets/icons/back.png" style="height:24px; width:auto; border:none;">
+            <span style="font-size: 24px; color: var(--text-main); cursor: pointer;" onclick="history.back()">⬅️</span>
         </button>
         <span class="mobile-header-title">Mon Profil</span>
         <span class="mobile-header-user">
@@ -255,12 +255,12 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                     <a href="admin.php?new=1#" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <img src="/assets/icons/add.png" style="height:14px; width:auto; margin-right:8px;"> Nouvelle Fiche
+                        <span style="margin-right:8px;">➕</span> Nouvelle Fiche
                     </a>
                     <?php else: ?>
                     <a href="technicien.php?new=1#" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <img src="/assets/icons/add.png" style="height:14px; width:auto; margin-right:8px;"> Nouvelle Fiche
+                        <span style="margin-right:8px;">➕</span> Nouvelle Fiche
                     </a>
                     <?php endif; ?>
 
@@ -337,7 +337,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                 <div
                     style="margin-bottom: 2rem; background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
                     <h4 style="margin-bottom: 1.5rem; color: var(--primary); display:flex; align-items:center; gap:8px;">
-                        <img src="/assets/icons/machine.png" style="height:20px; width:auto;"> Préférences & Statut
+                        <span>⚙️</span> Préférences & Statut
                     </h4>
 
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
