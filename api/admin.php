@@ -280,7 +280,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                     </div>
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card premium-glow">
                     <div class="stat-header">
                         <span class="stat-title">Volume d'Expertises</span>
                         <span class="badge" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">Mensuel</span>
@@ -291,7 +291,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                     </div>
                 </div>
 
-                <div class="stat-card">
+                <div class="stat-card premium-glow">
                     <div class="stat-header">
                         <span class="stat-title">Répartition par Statut</span>
                     </div>
