@@ -620,17 +620,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                 <div class="field-row">
                     <div class="form-group">
-                        <label class="label">Nom et Prénom du contact <span style="color:var(--error);">*</span></label>
-                        <input type="text" name="contact_nom" id="contact_nom" class="input" placeholder="Nom et prénom..."
-                            value="<?= htmlspecialchars($intervention['contact_nom'] ?? '') ?>" required maxlength="50">
-                        <small id="contact_nom_warning" style="color: var(--error); display: none; font-size: 0.75rem; margin-top: 0.25rem;">
-                            ⚠️ Attention: Caractères répétés détectés.
-                        </small>
+                        <label class="label">Prénom du contact <span style="color:var(--error);">*</span></label>
+                        <input type="text" name="contact_prenom" id="contact_prenom" class="input" placeholder="Prénom..."
+                            value="<?= htmlspecialchars($intervention['contact_prenom'] ?? '') ?>" required maxlength="50">
                     </div>
                     <div class="form-group">
-                        <label class="label">Fonction / Rôle</label>
-                        <input type="text" name="contact_fonction" class="input" placeholder="Resp. maintenance..."
-                            value="<?= htmlspecialchars($intervention['contact_fonction'] ?? $intervention['c_fonction'] ?? '') ?>">
+                        <label class="label">Nom du contact <span style="color:var(--error);">*</span></label>
+                        <input type="text" name="contact_nom" id="contact_nom" class="input" placeholder="Nom..."
+                            value="<?= htmlspecialchars($intervention['contact_nom'] ?? '') ?>" required maxlength="50">
                     </div>
                 </div>
 
@@ -746,15 +743,15 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
 
                 <!-- Signature Client -->
-                <div class="sig-zone">
+                <div class="sig-zone" style="margin-top: 1.5rem;">
                     <div class="sig-label">
                         <span>Signature Client</span>
-                        <span class="sig-clear" onclick="padClient.clear()">Effacer</span>
+                        <span class="sig-clear" onclick="clearSig('Client')">Effacer</span>
                     </div>
-                    <div class="form-group" style="margin-bottom: 0.5rem;">
-                        <input type="text" name="nom_signataire" class="input"
+                    <div class="form-group" style="margin-bottom: 5px;">
+                        <input type="text" name="nom_signataire" id="nom_signataire" class="input" 
                             placeholder="NOM Prénom du signataire (ex: DUPONT Jean)"
-                            value="<?= htmlspecialchars($intervention['nom_signataire_client'] ?: ($intervention['contact_nom'] ?? '')) ?>" required>
+                            value="<?= htmlspecialchars($intervention['nom_signataire_client'] ?: (trim(($intervention['contact_prenom'] ?? '') . ' ' . ($intervention['contact_nom'] ?? '')))) ?>" required>
                     </div>
                     <canvas id="canvasClient" width="600" height="200"></canvas>
                     <input type="hidden" name="sigClient" id="sigClientInput">
@@ -814,7 +811,20 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 pad.clear(); // Réinitialise pour éviter les distorsions si on redimensionne
             }
         }
-
+        // Synchronisation automatique du signataire
+        const contactPrenomInput = document.getElementById('contact_prenom');
+        const contactNomInput = document.getElementById('contact_nom');
+        const signataireInput = document.getElementById('nom_signataire');
+ 
+        if (contactPrenomInput && contactNomInput && signataireInput) {
+            const updateSignataire = () => {
+                const prenom = contactPrenomInput.value.trim();
+                const nom = contactNomInput.value.trim();
+                signataireInput.value = (prenom + ' ' + nom).trim();
+            };
+            contactPrenomInput.addEventListener('input', updateSignataire);
+            contactNomInput.addEventListener('input', updateSignataire);
+        }
         let canvasWidthT = 0;
         let canvasWidthC = 0;
 

@@ -31,13 +31,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $db->beginTransaction();
 
                 // Create or find client
-                $stmtClient = $db->prepare('INSERT INTO clients (nom_societe) VALUES (?) RETURNING id');
+                $stmtClient = $db->prepare('INSERT INTO clients (nom_societe) VALUES (?) ON CONFLICT (nom_societe) DO UPDATE SET nom_societe = EXCLUDED.nom_societe RETURNING id');
                 $stmtClient->execute([$clientNom]);
                 $clientId = $stmtClient->fetchColumn();
 
                 // Create intervention
-                $stmtInt = $db->prepare('INSERT INTO interventions (numero_arc, client_id, technicien_id, contact_nom, date_intervention) VALUES (?, ?, ?, ?, ?) RETURNING id');
-                $stmtInt->execute([$arc, $clientId, $userId, $contactNom, $dateInt]);
+                $stmtInt = $db->prepare('INSERT INTO interventions (numero_arc, client_id, technicien_id, contact_prenom, contact_nom, date_intervention) VALUES (?, ?, ?, ?, ?, NOW()) RETURNING id');
+                $stmtInt->execute([$arc, $clientId, $userId, $contactPrenom, $contactNom]);
                 $newId = $stmtInt->fetchColumn();
 
                 $db->commit();
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 if ($e->getCode() == 23505) {
                     $message = 'Ce numéro ARC existe déjà.';
                 } else {
-                    $message = 'Erreur lors de la création.';
+                    $message = 'Erreur lors de la création: ' . $e->getMessage(); // Added error message for debugging
                 }
                 $messageType = 'error';
             }
@@ -254,9 +254,9 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                                 style="color: var(--error);">*</span></label>
                         <p style="font-size: 0.7rem; color: var(--text-dim); margin: 0 0 0.5rem 0;">Référence centrale
                             de l'intervention – reportée sur toutes les fiches</p>
-                        <input type="text" name="numero_arc" class="input" placeholder="ex: ARC-2026-001"
+                        <input type="text" name="numero_arc" class="input" placeholder="ex: ARC-2600182" 
                             style="text-transform: uppercase; font-size: 1.1rem; font-weight: bold; border: 2px solid var(--primary); padding: 1rem;"
-                            required autofocus maxlength="15" pattern="ARC-[a-zA-Z0-9\-_]{1,11}" title="Format attendu: ARC-XXXXXXXXXX (max 15 caractères)">
+                            required autofocus maxlength="25">
                     </div>
 
                     <div class="form-group">
@@ -266,9 +266,6 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                     </div>
 
                     <div class="form-group">
-                        <label class="label">Contact sur place</label>
-                        <input type="text" name="contact_nom" class="input" placeholder="Nom du responsable...">
-                    </div>
 
                     <div class="form-group">
                         <label class="label">Date de l'intervention</label>

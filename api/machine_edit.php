@@ -690,7 +690,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N° O.F. <span style="color:var(--error);">*</span></td>
                         <td style="border:1px solid #000; padding:6px;">
                             <input type="text" name="numero_of" value="<?= htmlspecialchars($machine['numero_of']) ?>"
-                                class="pdf-input" required placeholder="N° O.F.">
+                                class="pdf-input" required placeholder="ex: 123456">
                         </td>
                         <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Année <span style="color:var(--error);">*</span></td>
                         <td style="border:1px solid #000; padding:6px;">
