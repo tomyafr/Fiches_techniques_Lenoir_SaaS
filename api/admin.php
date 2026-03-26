@@ -135,8 +135,8 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
         }
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-color: var(--lenoir-orange);
         }
         .stat-header {
             display: flex;
@@ -266,7 +266,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
 
             <!-- DASHBOARD SECTION -->
             <div class="dashboard-grid animate-up" style="animation-delay: 0.1s;">
-                <div class="stat-card">
+                <div class="stat-card premium-glow">
                     <div class="stat-header">
                         <span class="stat-title">Conformité Globale</span>
                         <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">Score IA</span>
@@ -502,81 +502,110 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                 if (!result.success || !result.data) return;
 
                 const data = result.data;
+                const ctxComp = document.getElementById('complianceChart').getContext('2d');
+                const ctxMonthly = document.getElementById('monthlyChart').getContext('2d');
+                const ctxStatus = document.getElementById('statusChart').getContext('2d');
 
-                // 1. Compliance (Gauge-like doughnut)
+                // 1. Compliance (Gradient Orange Gauge)
+                const gradOrange = ctxComp.createLinearGradient(0, 0, 200, 0);
+                gradOrange.addColorStop(0, '#ffb300');
+                gradOrange.addColorStop(1, '#ff8f00');
+
                 document.getElementById('complianceValue').innerText = data.compliance;
-                new Chart(document.getElementById('complianceChart'), {
+                new Chart(ctxComp, {
                     type: 'doughnut',
                     data: {
                         datasets: [{
                             data: [data.compliance, 100 - data.compliance],
-                            backgroundColor: ['#ffb300', 'rgba(255, 255, 255, 0.05)'],
+                            backgroundColor: [gradOrange, 'rgba(255, 255, 255, 0.03)'],
                             borderWidth: 0,
                             circumference: 180,
                             rotation: 270,
                         }]
                     },
                     options: {
-                        cutout: '80%',
+                        cutout: '82%',
                         plugins: { legend: { display: false } },
                         responsive: true,
-                        maintainAspectRatio: false
+                        maintainAspectRatio: false,
+                        animation: { duration: 2000, easing: 'easeOutQuart' }
                     }
                 });
 
-                // 2. Monthly Trends
+                // 2. Monthly Trends (Deep Blue Area Gradient)
+                const gradBlue = ctxMonthly.createLinearGradient(0, 0, 0, 200);
+                gradBlue.addColorStop(0, 'rgba(0, 74, 153, 0.4)');
+                gradBlue.addColorStop(1, 'rgba(0, 74, 153, 0)');
+
                 const monthlyLabels = (data.monthly || []).map(m => {
                     const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
                     const parts = (m.mois || "").split('-');
                     const monthIdx = parts.length > 1 ? parseInt(parts[1]) - 1 : 0;
                     return months[monthIdx] || "N/A";
                 });
-                document.getElementById('monthlyTotal').innerText = data.monthly.reduce((a, b) => a + parseInt(b.count), 0);
-                new Chart(document.getElementById('monthlyChart'), {
+                document.getElementById('monthlyTotal').innerText = (data.monthly || []).reduce((a, b) => a + parseInt(b.count), 0);
+                
+                new Chart(ctxMonthly, {
                     type: 'line',
                     data: {
                         labels: monthlyLabels,
                         datasets: [{
                             label: 'Interventions',
-                            data: data.monthly.map(m => m.count),
-                            borderColor: '#3b82f6',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            data: (data.monthly || []).map(m => m.count),
+                            borderColor: '#004a99',
+                            borderWidth: 3,
+                            backgroundColor: gradBlue,
                             fill: true,
                             tension: 0.4,
-                            pointRadius: 0
+                            pointRadius: 4,
+                            pointBackgroundColor: '#004a99',
+                            pointHoverRadius: 6,
                         }]
                     },
                     options: {
                         scales: {
-                            y: { display: false },
-                            x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } }
+                            y: { display: false, beginAtZero: true },
+                            x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10, weight: '600' } } }
                         },
-                        plugins: { legend: { display: false } },
+                        plugins: { 
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: '#0f172a',
+                                titleColor: '#fff',
+                                bodyColor: '#cbd5e1',
+                                padding: 12,
+                                cornerRadius: 8,
+                                displayColors: false
+                            }
+                        },
                         responsive: true,
                         maintainAspectRatio: false
                     }
                 });
 
-                // 3. Status Distribution
-                new Chart(document.getElementById('statusChart'), {
+                // 3. Status Distribution (Brand Mix)
+                new Chart(ctxStatus, {
                     type: 'doughnut',
                     data: {
                         labels: (data.status || []).map(s => s.statut || "N/A"),
                         datasets: [{
                             data: (data.status || []).map(s => s.count || 0),
-                            backgroundColor: ['#10b981', '#ffb300', '#3b82f6', '#ef4444'],
-                            borderWidth: 0
+                            backgroundColor: ['#004a99', '#ffb300', '#64748b', '#10b981'],
+                            hoverOffset: 15,
+                            borderWidth: 2,
+                            borderColor: '#020617'
                         }]
                     },
                     options: {
                         plugins: {
                             legend: {
                                 position: 'right',
-                                labels: { color: '#94a3b8', boxWidth: 10, font: { size: 10 } }
+                                labels: { color: '#94a3b8', boxWidth: 10, font: { size: 11, weight: '500' }, padding: 15 }
                             }
                         },
                         responsive: true,
-                        maintainAspectRatio: false
+                        maintainAspectRatio: false,
+                        animation: { animateRotate: true, animateScale: true }
                     }
                 });
 
