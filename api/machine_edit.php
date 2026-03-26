@@ -464,6 +464,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             height: 250px;
             overflow: hidden;
             border: 1px solid #000;
+            background: #eee;
         }
         .montage-item img {
             width: 100%;
@@ -473,30 +474,45 @@ foreach ($recoFreq as $rfk => $rfv) {
         }
         .montage-item .photo-del-overlay {
             position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(220, 53, 69, 0.8);
+            top: 8px;
+            right: 8px;
+            background: #dc3545;
             color: white;
-            border: none;
+            border: 2px solid white;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             cursor: pointer;
-            display: flex;
+            display: flex !important; /* Force visibility */
             align-items: center;
             justify-content: center;
+            font-size: 16px;
             font-weight: bold;
-            z-index: 10;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
-        /* Grid variants */
+        /* Grid variants - Refined for perfect alignment */
         .grid-1 { grid-template-columns: 1fr; }
         .grid-1 .montage-item { height: 400px; }
         
         .grid-2 { grid-template-columns: 1fr 1fr; }
         
-        .grid-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 250px 250px; }
-        .grid-3 .montage-item:first-child { grid-row: span 2; height: 100%; }
+        .grid-3 { 
+            grid-template-columns: 1.2fr 0.8fr; 
+            grid-template-rows: 250px 250px; 
+            align-items: stretch;
+        }
+        /* Left image spans 2 rows */
+        .grid-3 .montage-item:first-child { 
+            grid-row: span 2; 
+            height: 100%; 
+        }
+        /* Right images (2nd and 3rd) must fill their row height */
+        .grid-3 .montage-item:nth-child(2),
+        .grid-3 .montage-item:nth-child(3) {
+            height: 100%;
+        }
         
         .grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 200px 200px; }
         .grid-4 .montage-item { height: 100%; }
@@ -1857,6 +1873,7 @@ foreach ($recoFreq as $rfk => $rfv) {
         // ========== PHOTO SYSTEM ==========
         var allPhotos = {};
         var currentPhotoKey = '';
+        var isUploading = false;
 
         // Load from safely injected PHP variable
         if (typeof _photosFromDB === 'object' && _photosFromDB !== null && !Array.isArray(_photosFromDB)) {
@@ -1880,18 +1897,32 @@ foreach ($recoFreq as $rfk => $rfv) {
 
         // Implémentation de Compressor.js (remplace l'ancienne compression Canvas très lente et buggée sur iOS)
         document.getElementById('cameraInput').addEventListener('change', function (e) {
+            if (isUploading) return;
             var file = e.target.files[0];
             if (!file) return;
 
+            isUploading = true;
+
             // Visual feedback
             const btn = document.querySelector(`.photo-btn[onclick*="${currentPhotoKey}"]`);
-            if (btn) btn.innerHTML = '⌛';
+            if (btn) {
+                btn.innerHTML = '⌛';
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+                btn.style.pointerEvents = 'none';
+            }
 
             // --- BUG-013: Validation de la taille de l'image ---
             if (file.size < 50 * 1024) { // lowered to 50KB to be safe
                 alert("❌ Image rejetée : Le fichier est trop petit. Veuillez prendre une photo nette.");
-                if (btn) btn.innerHTML = '📷';
+                if (btn) {
+                    btn.innerHTML = '📷';
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.pointerEvents = 'auto';
+                }
                 e.target.value = '';
+                isUploading = false;
                 return;
             }
 
@@ -1911,7 +1942,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                     syncPhotos();
                     renderThumbsForKey(currentPhotoKey);
                     renderAnnexes();
-                    if (btn) btn.innerHTML = '📷';
+                    if (btn) {
+                        btn.innerHTML = '📷';
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
+                        btn.style.pointerEvents = 'auto';
+                    }
+                    isUploading = false;
                 };
                 reader.readAsDataURL(result);
             };
@@ -1934,6 +1971,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                 });
             }
             e.target.value = '';
+            // Safety timeout if something hangs
+            setTimeout(() => { if(isUploading) isUploading = false; }, 10000);
         });
 
         function deletePhoto(key, index) {
