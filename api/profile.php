@@ -239,7 +239,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                 <!-- Logo cliquable vers le dashboard -->
                 <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>" class="brand-icon"
                     style="display: block; width: 180px; height: auto; margin: 0 0 1rem 0;">
-                    <img src="/assets/logo-raoul-lenoir.svg" alt="Raoul Lenoir">
+                    <img src="/assets/lenoir_logo_trans.svg" alt="Raoul Lenoir">
                 </a>
                 <h2 style="font-size: 1.15rem;"><span class="text-gradient">Raoul Lenoir</span></h2>
                 <p style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Mon Profil</p>

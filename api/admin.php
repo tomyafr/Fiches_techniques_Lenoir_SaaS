@@ -119,8 +119,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
 <body>
     <header class="mobile-header">
         <button class="mobile-logo-btn" onclick="toggleSidebar()" aria-label="Menu">
-            <img src="/assets/logo-raoul-lenoir.svg" alt="Raoul Lenoir" class="mobile-header-logo"
-                style="filter:brightness(0) saturate(100%) invert(73%) sepia(86%) saturate(1063%) hue-rotate(358deg) brightness(101%) contrast(106%);">
+            <img src="/assets/lenoir_logo_trans.svg" alt="Raoul Lenoir" class="mobile-header-logo">
         </button>
         <span class="mobile-header-title">Admin</span>
         <span class="mobile-header-user"><?= htmlspecialchars($_SESSION['user_prenom']) ?></span>
@@ -133,7 +132,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
             <div style="margin-bottom: 2.5rem;">
                 <a href="admin.php" class="brand-icon"
                     style="display: block; width: 180px; height: auto; margin: 0 0 1rem 0;"><img
-                        src="/assets/logo-raoul-lenoir.svg"></a>
+                        src="/assets/lenoir_logo_trans.svg"></a>
                 <h2 style="font-size: 1.15rem;"><span class="text-gradient">Raoul Lenoir</span></h2>
                 <p style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Administrateur</p>
             </div>

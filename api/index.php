@@ -199,8 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- Logo -->
         <div class="login-header animate-in">
             <div class="brand-icon" style="width: 280px; height: auto; margin: 0 auto 1.5rem auto;">
-                <img src="/assets/logo-raoul-lenoir.svg" alt="Raoul Lenoir"
-                    style="filter: brightness(0) saturate(100%) invert(73%) sepia(86%) saturate(1063%) hue-rotate(358deg) brightness(101%) contrast(106%);">
+                <img src="/assets/lenoir_logo_trans.svg" alt="Raoul Lenoir">
             </div>
             <h1 class="login-title" style="color: #ffb300;">LM Expert</h1>
             <p class="login-subtitle">Expertise Terrain · Lenoir-Mec</p>
