@@ -735,8 +735,8 @@ h4 {
 }
 
 .stat-item:hover .stat-value {
-    transform: scale(1.1);
-    text-shadow: 0 0 20px var(--primary-glow);
+    transform: scale(1.05); /* Réduit de 1.1 à 1.05 pour la lisibilité */
+    text-shadow: 0 0 12px var(--primary-glow); /* Réduit de 20px à 12px */
 }
 
 /* ═══════════ WEEKLY PROGRESS BAR ═══════════ */
