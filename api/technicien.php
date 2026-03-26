@@ -14,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($_POST['action'] === 'nouvelle_intervention') {
         $arc = strtoupper(trim($_POST['numero_arc'] ?? ''));
         $clientNom = trim($_POST['nom_societe'] ?? '');
+        $contactPrenom = trim($_POST['contact_prenom'] ?? '');
         $contactNom = trim($_POST['contact_nom'] ?? '');
         $dateInt = $_POST['date_intervention'] ?? date('Y-m-d');
 
@@ -264,7 +265,16 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                             required>
                     </div>
 
-                    <div class="form-group">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom: 1.5rem;">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="label">Prénom du contact</label>
+                            <input type="text" name="contact_prenom" class="input" placeholder="Prénom...">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="label">Nom du contact</label>
+                            <input type="text" name="contact_nom" class="input" placeholder="Nom...">
+                        </div>
+                    </div>
 
                     <div class="form-group">
                         <label class="label">Date de l'intervention</label>

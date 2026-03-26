@@ -226,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="form-group">
                 <label for="nom" class="label">Identifiant</label>
                 <div class="input-wrapper">
-                    <img src="/assets/icon_profile_gray.svg" style="height: 18px; width: 18px;" class="input-icon-svg">
+                    <img src="/assets/icon_profile_gray.svg" class="input-icon" style="height: 18px; width: 18px;">
                     <input type="text" name="nom" id="nom" class="input" placeholder="Votre identifiant" required
                         autocomplete="off" spellcheck="false" maxlength="100">
                     <button type="button" class="input-clear" id="resetNom">✕</button>
@@ -236,7 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="form-group">
                 <label for="password" class="label">Mot de passe</label>
                 <div class="input-wrapper">
-                    <img src="/assets/icon_lock_gray.svg" style="height: 18px; width: 18px;" class="input-icon-svg">
+                    <img src="/assets/icon_lock_gray.svg" class="input-icon" style="height: 18px; width: 18px;">
                     <input type="password" name="password" id="password" class="input" placeholder="••••••••" required
                         autocomplete="new-password" maxlength="128">
                     <button type="button" class="password-toggle" id="togglePassword">
@@ -289,7 +289,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="form-group">
                         <label class="label">Votre Identifiant</label>
                         <div class="input-wrapper">
-                            <img src="/assets/icon_profile_gray.svg" style="height: 18px; width: 18px;" class="input-icon-svg">
+                            <img src="/assets/icon_profile_gray.svg" class="input-icon" style="height: 18px; width: 18px;">
                             <input type="text" name="nom_oubli" id="nom_oubli" class="input"
                                 placeholder="Votre identifiant" required autocomplete="off" spellcheck="false"
                                 maxlength="100" style="text-transform: uppercase;">
@@ -300,7 +300,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="form-group">
                         <label class="label">Nouveau mot de passe souhaité</label>
                         <div class="input-wrapper">
-                            <img src="/assets/icon_lock_gray.svg" style="height: 18px; width: 18px;" class="input-icon-svg">
+                            <img src="/assets/icon_lock_gray.svg" class="input-icon" style="height: 18px; width: 18px;">
                             <input type="password" name="new_pass_oubli" id="new_pass_oubli" class="input"
                                 placeholder="••••••••" required maxlength="128">
                             <button type="button" class="password-toggle" id="togglePasswordOubli">
