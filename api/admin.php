@@ -364,19 +364,19 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
     <nav class="mobile-bottom-nav">
         <div class="mobile-bottom-nav-inner">
             <a href="admin.php" class="mobile-nav-item active" style="color: inherit; text-decoration:none;">
-                                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">📊</span>
+                <img src="/assets/icon_dashboard_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Tableau</span>
             </a>
             <a href="historique.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">🕒</span>
+                <img src="/assets/icon_history_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Historique</span>
             </a>
             <a href="equipe.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">👥</span>
+                <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Équipe</span>
             </a>
             <a href="profile.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">👤</span>
+                <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Profil</span>
             </a>
         </div>

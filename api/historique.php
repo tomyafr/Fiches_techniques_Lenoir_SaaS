@@ -392,7 +392,7 @@ $nbClients = count($clientsSet);
 
                 <?php if (empty($interventions)): ?>
                     <div style="padding:3rem;text-align:center;color:var(--text-dim);">
-                        <div style="font-size: 60px; margin-bottom: 1rem; opacity: 0.3; text-align: center;">⚙️</div>
+                        <div style="font-size: 60px; margin-bottom: 1rem; opacity: 0.3; text-align: center;"><img src="/assets/icon_gear_orange.svg" style="height: 60px; width: 60px;"></div>
                         <p>Aucune intervention pour cette période.</p>
                     </div>
                 <?php else: ?>

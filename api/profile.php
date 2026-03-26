@@ -271,7 +271,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                     <a href="equipe.php" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <span style="margin-right:8px;">👥</span> Équipe
+                        <img src="/assets/icon_profile_blue.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Équipe
                     </a>
                     <?php endif; ?>
                 <?php endif; ?>
@@ -615,6 +615,30 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
             }
         }
     </script>
+
+        <!-- Bottom nav mobile -->
+        <nav class="mobile-bottom-nav">
+            <div class="mobile-bottom-nav-inner">
+                <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>" class="mobile-nav-item">
+                    <img src="/assets/icon_dashboard_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
+                    <span class="mobile-nav-label">Tableau</span>
+                </a>
+                <a href="historique.php" class="mobile-nav-item">
+                    <img src="/assets/icon_history_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
+                    <span class="mobile-nav-label">Historique</span>
+                </a>
+                <?php if ($_SESSION['role'] === 'admin'): ?>
+                <a href="equipe.php" class="mobile-nav-item">
+                    <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
+                    <span class="mobile-nav-label">Équipe</span>
+                </a>
+                <?php endif; ?>
+                <a href="profile.php" class="mobile-nav-item active">
+                    <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
+                    <span class="mobile-nav-label">Profil</span>
+                </a>
+            </div>
+        </nav>
 </body>
 
 </html>
