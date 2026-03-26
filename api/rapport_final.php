@@ -575,11 +575,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
             <?php endif; ?>
 
-            <div class="rapport-header card" style="background:#fff; padding: 2rem; border: 1px solid #ddd; text-align: center;">
-                <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC" class="rapport-logo"
-                    style="height: 60px; width: auto; object-fit: contain; margin: 0 auto 1.5rem auto; display: block; max-width: 100%;">
-                <h1 style="color: #000; margin-bottom: 0.5rem; font-size: 24px;">Rapport d'expertise sur site</h1>
-                <div class="arc-badge" style="background: rgba(27, 79, 114, 0.1); color: #1B4F72; border: 1px solid rgba(27, 79, 114, 0.2); font-weight: bold; padding: 5px 15px; border-radius: 20px; display: inline-block;">
+            <!-- EN-TÊTE PREMIUM -->
+            <div class="rapport-header card glass" style="background:#020617; padding: 2.5rem; border-color: rgba(255,255,255,0.1); text-align: center;">
+                <div style="background: #fff; display: inline-block; padding: 10px 20px; border-radius: 8px; margin-bottom: 1.5rem;">
+                    <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC" 
+                        style="height: 50px; width: auto; object-fit: contain; display: block;">
+                </div>
+                <h1 style="color: #fff; margin-bottom: 0.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Rapport d'expertise sur site</h1>
+                <div class="arc-badge" style="background: rgba(255,179,0,0.15); color: #ffb300; border: 1px solid rgba(255,179,0,0.3); font-weight: bold;">
                     ARC <?= htmlspecialchars($intervention['numero_arc']) ?>
                 </div>
             </div>
