@@ -435,9 +435,10 @@ foreach ($recoFreq as $rfk => $rfv) {
         .photo-montage-grid {
             display: grid;
             gap: 10px;
-            margin-top: 10px;
+            margin: 15px auto 10px auto;
             width: 100%;
-            min-height: 150px;
+            max-width: 550px;
+            min-height: 100px;
             background: #fdfdfd;
             border: 1px solid #eee;
             padding: 10px;
@@ -469,7 +470,8 @@ foreach ($recoFreq as $rfk => $rfv) {
         .montage-item img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            background: #f8f8f8;
             display: block;
         }
         .montage-item .photo-del-overlay {
@@ -494,7 +496,7 @@ foreach ($recoFreq as $rfk => $rfv) {
         
         /* Grid variants - Refined for perfect alignment */
         .grid-1 { grid-template-columns: 1fr; }
-        .grid-1 .montage-item { height: 400px; }
+        .grid-1 .montage-item { height: 280px; }
         
         .grid-2 { grid-template-columns: 1fr 1fr; }
         

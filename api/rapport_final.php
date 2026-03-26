@@ -1481,6 +1481,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 hDiv.style.marginBottom = '20px';
                                 hDiv.style.borderBottom = '3px solid #d35400';
                                 hDiv.style.paddingBottom = '5px';
+                                hDiv.style.breakAfter = 'avoid';
+                                hDiv.style.pageBreakAfter = 'avoid';
                                 hDiv.innerHTML = `
                                     <div style="font-size: 14px; font-weight: bold; color: #1B4F72;">FICHE ${mIdx + 1} / ${totalMachines}</div>
                                     <img src="/assets/lenoir_logo_doc.png" style="height: 45px;">
@@ -1702,12 +1704,17 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             container.querySelectorAll('.pdf-section').forEach(sec => {
                 sec.style.pageBreakInside = 'avoid';
             });
-            // 3) Les petits tableaux (< 15 lignes) ne peuvent pas être coupés du tout
+            // 3) Les petits tableaux (< 25 lignes) ne peuvent pas être coupés du tout
             container.querySelectorAll('table').forEach(tbl => {
-                if (tbl.querySelectorAll('tr').length <= 15) {
+                if (tbl.querySelectorAll('tr').length <= 25) {
                     tbl.style.pageBreakInside = 'avoid';
                     tbl.classList.add('avoid-break');
                 }
+            });
+            // 4) Titres de section : on évite qu'ils soient seuls en bas de page
+            container.querySelectorAll('.pdf-section-title, .pdf-section, h2').forEach(el => {
+                el.style.pageBreakAfter = 'avoid';
+                el.style.breakAfter = 'avoid';
             });
 
             await waitForImages(container);
@@ -1723,12 +1730,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const container = await buildFullPdfContainer();
 
             const opt = {
-                margin: [10, 0, 15, 0], // Top, Left, Bottom, Right
+                margin: [10, 0, 20, 0], // Top, Left, Bottom (20mm), Right
                 filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.avoid-break'] }
+                pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.avoid-break', '.pdf-page-title'] }
             };
 
             return new Promise(async (resolve, reject) => {
@@ -1742,15 +1749,15 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             pdf.setFont('helvetica', 'normal');
                             pdf.setFontSize(9);
                             pdf.setTextColor(50, 50, 50);
-                            pdf.text('Page ' + i + ' / ' + totalPages, 105, 282, { align: 'center' });
+                            pdf.text('Page ' + i + ' / ' + totalPages, 105, 287, { align: 'center' });
                             // Legal footer
                             pdf.setFontSize(6);
                             pdf.setTextColor(0, 0, 0);
                             pdf.setFont('helvetica', 'bold');
                             const leg = window.LM_RAPPORT.legal;
-                            pdf.text(leg.address, 105, 286, { align: 'center' });
-                            pdf.text(leg.contact, 105, 289, { align: 'center' });
-                            pdf.text(leg.siret, 105, 292, { align: 'center' });
+                            pdf.text(leg.address, 105, 291, { align: 'center' });
+                            pdf.text(leg.contact, 105, 293, { align: 'center' });
+                            pdf.text(leg.siret, 105, 295, { align: 'center' });
                         }
                     });
                     const pdfBlob = await worker.outputPdf('blob');
@@ -1800,15 +1807,15 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         pdf.setFont('helvetica', 'normal');
                         pdf.setFontSize(9);
                         pdf.setTextColor(50, 50, 50);
-                        pdf.text('Page ' + i + ' / ' + totalPages, 105, 282, { align: 'center' });
+                        pdf.text('Page ' + i + ' / ' + totalPages, 105, 287, { align: 'center' });
                         // Legal footer
                         pdf.setFontSize(6);
                         pdf.setTextColor(0, 0, 0);
                         pdf.setFont('helvetica', 'bold');
                         const leg = window.LM_RAPPORT.legal;
-                        pdf.text(leg.address, 105, 286, { align: 'center' });
-                        pdf.text(leg.contact, 105, 289, { align: 'center' });
-                        pdf.text(leg.siret, 105, 292, { align: 'center' });
+                        pdf.text(leg.address, 105, 291, { align: 'center' });
+                        pdf.text(leg.contact, 105, 293, { align: 'center' });
+                        pdf.text(leg.siret, 105, 295, { align: 'center' });
                     }
                 });
                 await worker.save();
