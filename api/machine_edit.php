@@ -1708,24 +1708,6 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <?php endif; ?>
 
-                        <?php 
-                        // SECTION B : DESCRIPTION DU MATÉRIEL (uniquement si photos présentes)
-                        $descPhotos = $photosData['desc_materiel'] ?? [];
-                        if (!empty($descPhotos)): ?>
-                            <div style="margin-top:20px; page-break-inside: avoid;">
-                                <div style="font-weight:bold; font-size:14px; color:#d35400; margin-bottom:10px;">B) DESCRIPTION DU MATÉRIEL :</div>
-                                <div class="photo-grid-<?= min(4, count($descPhotos)) ?>" style="display:grid; gap:10px;">
-                                    <?php foreach ($descPhotos as $idx => $p): ?>
-                                        <div style="border:1px solid #000; padding:2px; text-align:center; background:#fff;">
-                                            <img src="<?= htmlspecialchars($p['data']) ?>" style="max-width:100%; height:auto; display:block; margin:0 auto;">
-                                            <?php if (!empty($p['caption'])): ?>
-                                                <p style="font-size:10px; margin:3px 0;"><?= htmlspecialchars($p['caption']) ?></p>
-                                            <?php endif; ?>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-                        <?php endif; ?>
 
                         <?php 
                         // SECTION C & D (uniquement PDF)
