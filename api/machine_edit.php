@@ -531,7 +531,7 @@ foreach ($recoFreq as $rfk => $rfv) {
         .grid-4 .montage-item { height: 100%; }
 
         @media print {
-            .photo-montage-grid.empty, .photo-del-overlay { display: none !important; }
+            .photo-montage-grid.empty, .photo-del-overlay, .no-print-pdf { display: none !important; }
         }
 
         .pdf-textarea {
@@ -741,8 +741,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </td>
                         <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">T. prévu</td>
                         <td style="border:1px solid #000; padding:6px;">
-                            <span id="tempsCalc" style="font-weight:bold; color:#1B4F72; font-size:14px;"></span>
-                            <button type="button" id="chronoControl" class="btn btn-ghost" style="color:#27ae60; padding:0.4rem;" title="Lancer/Arrêter le chrono">
+                            <span style="font-weight:bold; color:#1B4F72; font-size:14px;"><?= htmlspecialchars($tempsPrev) ?> h</span>
+                            <button type="button" id="chronoControl" class="btn btn-ghost no-print-pdf" style="color:#27ae60; padding:0.4rem;" title="Lancer/Arrêter le chrono">
                                 <span id="chronoIcon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
                             </button>
                         </td>
@@ -761,8 +761,12 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#e8f4e8;">T. réalisé
                         </td>
                         <td style="border:1px solid #000; padding:6px;">
-                            <span id="tempsCalc" style="font-weight:bold; color:#1B4F72; font-size:14px;"></span>
-                            <button type="button" id="btnChrono" onclick="toggleChrono()"
+                            <input type="text" class="pdf-input"
+                                style="width:40px; text-align:center; font-weight:bold; color:#1B4F72;"
+                                name="mesures[temps_realise]" id="inputTempsRealise"
+                                value="<?= htmlspecialchars($mesures['temps_realise'] ?? '') ?>"> h
+                            <span id="tempsCalc" style="font-weight:bold; color:#1B4F72; font-size:14px; margin-left:5px;"></span>
+                            <button type="button" id="btnChrono" onclick="toggleChrono()" class="no-print-pdf"
                                 style="background:#28a745; color:white; border:none; border-radius:4px; padding:3px 10px; font-size:11px; cursor:pointer; margin-left:8px; vertical-align:middle;">▶
                                 Chrono</button>
                         </td>
@@ -905,13 +909,6 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <!-- DYNAMIC CONTENT DEPENDING ON MACHINE TYPE -->
                 <?php if ($isAPRF): ?>
 
-                    <div style="display:flex; justify-content:space-between; margin-bottom:15px; padding:10px;">
-                        <div><strong>Temps prévisionnel :</strong> 1h</div>
-                        <div><strong>Temps réalisé :</strong> <input type="text" class="pdf-input"
-                                style="width:80px; text-align:center; border-bottom:1px solid #000;"
-                                name="mesures[temps_realise]"
-                                value="<?= htmlspecialchars($mesures['temps_realise'] ?? '') ?>"> h</div>
-                    </div>
 
 
 
@@ -1036,13 +1033,6 @@ foreach ($recoFreq as $rfk => $rfv) {
                     <!-- EDX SCHEMA -->
                 <?php elseif ($isEDX): ?>
 
-                    <div style="display:flex; justify-content:space-between; margin-bottom:15px; padding:10px;">
-                        <div><strong>Temps prévisionnel :</strong> 3,5h</div>
-                        <div><strong>Temps réalisé :</strong> <input type="text" class="pdf-input"
-                                style="width:80px; text-align:center; border-bottom:1px solid #000;"
-                                name="mesures[temps_realise]"
-                                value="<?= htmlspecialchars($mesures['temps_realise'] ?? '') ?>"> h</div>
-                    </div>
 
                     <?php
                     function renderEdxEtatRadios($key, $donnees)
@@ -1231,13 +1221,6 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </div>
 
                 <?php elseif ($isOV): ?>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:15px; padding:10px;">
-                        <div><strong>Temps prévisionnel :</strong> 1,5h</div>
-                        <div><strong>Temps réalisé :</strong> <input type="text" class="pdf-input"
-                                style="width:80px; text-align:center; border-bottom:1px solid #000;"
-                                name="mesures[temps_realise]"
-                                value="<?= htmlspecialchars($mesures['temps_realise'] ?? '') ?>"> h</div>
-                    </div>
 
                     <?php
                     function renderOvEtatRadios($key, $donnees)
@@ -1397,15 +1380,6 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 <?php elseif ($isLevage): ?>
 
-                    <div
-                        style="display:flex; justify-content:space-between; margin-bottom:15px; padding:10px; border:1px solid #000; background:#f9f9f9; color:black;">
-                        <div style="font-size:11px;"><strong>Temps prévisionnel :</strong> 25min/aimant + 25min/palonnier +
-                            30min/armoire</div>
-                        <div style="font-size:11px;"><strong>Temps réalisé :</strong> <input type="text" class="pdf-input"
-                                style="width:80px; text-align:center; border-bottom:1px solid #000;"
-                                name="mesures[temps_realise]"
-                                value="<?= htmlspecialchars($mesures['temps_realise'] ?? '') ?>"> h</div>
-                    </div>
 
                     <table class="pdf-table controles" style="font-size:11px; color:black;">
                         <tr>
@@ -2277,28 +2251,30 @@ foreach ($recoFreq as $rfk => $rfv) {
             var d = document.getElementById('heureDebut').value;
             var f = document.getElementById('heureFin').value;
             var span = document.getElementById('tempsCalc');
-            var realInput = document.querySelector('[name="mesures[temps_realise]"]');
+            var realInput = document.getElementById('inputTempsRealise');
             
             if (d && f) {
                 var dp = d.split(':'), fp = f.split(':');
                 var mins = (parseInt(fp[0]) * 60 + parseInt(fp[1])) - (parseInt(dp[0]) * 60 + parseInt(dp[1]));
                 if (mins <= 0) {
-                    if (mins === 0) {
-                        alert("⚠️ L'heure de fin est identique à l'heure de début.");
-                    } else {
+                    if (mins === 0 && d !== '') {
+                        // Just silence if empty
+                    } else if (mins < 0) {
                         mins += 1440; // Over Midnight
                     }
                 }
                 
-                if (mins < 15 && mins > 0) {
-                    console.log("Durée très courte détectée: " + mins + "min");
-                }
-
                 var h = Math.floor(mins / 60), m = mins % 60;
-                var formatted = h + 'h' + pad2(m);
-                span.textContent = '= ' + formatted;
+                var formatted = h + (m > 0 ? '.' + Math.round((m/60)*100)/100 : ''); // Decimal format as requested by user often in these SaaS
+                // But wait, the previous format was hHmm. Let's stick to a readable format or what they had.
+                // The user said "Met bien les valeurs de chaque fiche genre les valeur du temps prévisionnel dans le tableau du T.Prévu"
+                // Temps prévisionnel is "1h", "3h30", etc.
+                var display = h + 'h' + pad2(m);
+                span.textContent = '= ' + display;
+                
                 if (realInput && !chronoRunning) {
-                    realInput.value = formatted;
+                    realInput.value = (h + (m/60)).toFixed(1).replace('.0', '');
+                    // Update: The user might prefer decimal for the input but hHmm for display.
                 }
             } else if (d && chronoRunning) {
                 // Live display
@@ -2307,12 +2283,11 @@ foreach ($recoFreq as $rfk => $rfv) {
                 var mins2 = (now.getHours() * 60 + now.getMinutes()) - (parseInt(dp2[0]) * 60 + parseInt(dp2[1]));
                 if (mins2 < 0) mins2 += 1440;
                 var h2 = Math.floor(mins2 / 60), m2 = mins2 % 60;
-                var formatted2 = h2 + 'h' + pad2(m2);
-                span.textContent = '⏱ ' + formatted2;
-                if (realInput) realInput.value = formatted2;
+                span.textContent = '⏱ ' + h2 + 'h' + pad2(m2);
+                if (realInput) realInput.value = (h2 + (m2/60)).toFixed(1).replace('.0', '');
             } else {
-                span.textContent = '—';
-                if (realInput) realInput.value = '';
+                span.textContent = '';
+                // Don't clear realInput if manually filled
             }
         }
 
