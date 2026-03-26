@@ -708,8 +708,11 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 class="pdf-input" placeholder="DD/MM/YYYY" style="width:85px;">
                         </td>
                         <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">T. prévu</td>
-                        <td style="border:1px solid #000; padding:6px; font-weight:bold; color:#0070c0;">
-                            <?= $tempsPrev ?>
+                        <td style="border:1px solid #000; padding:6px;">
+                            <span id="tempsCalc" style="font-weight:bold; color:#1B4F72; font-size:14px;"></span>
+                            <button type="button" id="chronoControl" class="btn btn-ghost" style="color:#27ae60; padding:0.4rem;" title="Lancer/Arrêter le chrono">
+                                <span id="chronoIcon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+                            </button>
                         </td>
                     </tr>
                     <tr>
@@ -762,11 +765,12 @@ foreach ($recoFreq as $rfk => $rfv) {
                     } else {
                         $html .= '
                             <div class="photo-montage-grid empty no-print-pdf">
-                                <div class="photo-placeholder">
-                                    <span>📸</span>
-                                    <p>En attente de photo du matériel (max 4)...</p>
-                                    <button type="button" class="photo-btn" onclick="capturePhoto(\'desc_materiel\')">➕ AJOUTER PHOTO</button>
+                                <div id="photo_placeholder" style="flex:1; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.03); border:1px dashed var(--glass-border); border-radius:8px; height:100px; color:var(--text-dim);">
+                                    <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                                 </div>
+                                <button type="button" class="btn btn-primary" onclick="triggerPhoto()" style="height:38px; padding:0 1rem; display:flex; align-items:center; gap:8px;">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Photo
+                                </button>
                             </div>';
                     }
                     
@@ -1760,14 +1764,14 @@ foreach ($recoFreq as $rfk => $rfv) {
 
 
                         <?php 
+                        // --- SECTION B : DESCRIPTION MATERIEL (GLOBAL) ---
+                        echo renderSectionB($photosData);
+
                         // SECTION C & D (uniquement PDF)
                         if (isset($_GET['pdf'])):
                             renderSectionC($isEDX, $isOV);
                             renderSectionD($isEDX, $mesures);
                         endif;
-
-                        // --- SECTION B : DESCRIPTION MATERIEL (GLOBAL) ---
-                        echo renderSectionB($photosData);
                         ?>
 
                         <div style="margin-top:20px; border: 1px solid #000; padding:10px; background: #fff; page-break-inside: avoid;">
@@ -1775,8 +1779,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?php if (!isset($_GET['pdf'])): ?>
                                 <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette zone est pré-remplie avec les points "Non conformes" ou "À améliorer" détectés. Vous pouvez éditer le texte ci-dessous.</p>
                                 <textarea name="dysfonctionnements" id="dysfonctionnementsText" class="pdf-textarea" style="min-height:100px; font-size:13px; border: 1px solid #ccc; background:#fff; padding:5px;"><?= htmlspecialchars($machine['dysfonctionnements'] ?? '') ?></textarea>
-                                <button type="button" onclick="generateDysfunctions()" style="margin-top:5px; background:#e67e22; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:11px; display:flex; align-items:center; gap:6px;">
-                                <span>🔄</span> Actualiser (Expert IA)
+                                <button type="button" class="btn-ia-action" onclick="generateAI('dysfonctionnements')" style="background:rgba(211, 84, 0, 0.1); color:#e67e22;">
+                                    <img src="/assets/icons/refresh.png" style="height: 14px; width: 14px; vertical-align: middle; margin-right: 4px;"> Actualiser
+                                </button>
                             <?php else: ?>
                                 <?php 
                                     $dysText = trim($machine['dysfonctionnements'] ?? '');
