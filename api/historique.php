@@ -281,7 +281,7 @@ $nbClients = count($clientsSet);
                 <?php if ($isAdmin): ?>
                     <a href="equipe.php" class="btn btn-ghost sidebar-link"
                         style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
-                        <span style="margin-right:8px;">👥</span> Équipe
+                        <img src="/assets/icon_profile_blue.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Équipe
                     </a>
                 <?php endif; ?>
             </nav>
@@ -289,6 +289,11 @@ $nbClients = count($clientsSet);
             <div style="margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--glass-border);">
                 <p style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase;">Connecté</p>
                 <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                    <?php if (!empty($_SESSION['avatar'])): ?>
+                        <div style="width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--primary); overflow: hidden; flex-shrink: 0;">
+                            <img src="<?= htmlspecialchars($_SESSION['avatar']) ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    <?php endif; ?>
                     <p
                         style="font-weight: 600; font-size: 0.85rem; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">
                         <?= htmlspecialchars($_SESSION['user_prenom'] . ' ' . $_SESSION['user_nom']) ?>

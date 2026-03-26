@@ -11,6 +11,7 @@ $stmtUsers = $db->prepare('
         u.role,
         u.actif,
         u.created_at,
+        u.avatar_base64,
         (SELECT COUNT(*) FROM interventions i WHERE i.technicien_id = u.id) as total_interventions,
         (SELECT date_intervention FROM interventions i WHERE i.technicien_id = u.id ORDER BY date_intervention DESC LIMIT 1) as derniere_intervention
     FROM users u
@@ -75,6 +76,11 @@ $equipe = $stmtUsers->fetchAll();
             <div style="margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--glass-border);">
                 <p style="font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase;">Connecté</p>
                 <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                    <?php if (!empty($_SESSION['avatar'])): ?>
+                        <div style="width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--primary); overflow: hidden; flex-shrink: 0;">
+                            <img src="<?= htmlspecialchars($_SESSION['avatar']) ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    <?php endif; ?>
                     <p
                         style="font-weight: 600; font-size: 0.85rem; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">
                         <?= htmlspecialchars($_SESSION['user_prenom'] . ' ' . $_SESSION['user_nom']) ?>
@@ -98,10 +104,14 @@ $equipe = $stmtUsers->fetchAll();
                 <?php foreach ($equipe as $membre): ?>
                     <div class="card glass" style="padding: 1.5rem; display: flex; flex-direction: column;">
                         <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
-                            <div
-                                style="width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 800; color: var(--primary);">
-                                <?= strtoupper(substr($membre['prenom'], 0, 1) . substr($membre['nom'], 0, 1)) ?>
-                            </div>
+                            <?php if (!empty($membre['avatar_base64'])): ?>
+                                <img src="<?= htmlspecialchars($membre['avatar_base64']) ?>" 
+                                     style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 1px solid var(--primary);">
+                            <?php else: ?>
+                                <div style="width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 800; color: var(--primary);">
+                                    <?= strtoupper(substr($membre['prenom'], 0, 1) . substr($membre['nom'], 0, 1)) ?>
+                                </div>
+                            <?php endif; ?>
                             <div>
                                 <h3 style="font-size: 1.15rem; margin-bottom: 0.2rem;">
                                     <?= htmlspecialchars($membre['prenom'] . ' ' . $membre['nom']) ?>
