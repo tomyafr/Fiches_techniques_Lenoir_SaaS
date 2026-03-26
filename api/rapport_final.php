@@ -1436,7 +1436,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 }
                             });
 
-                            p.querySelectorAll('.photo-btn, .photo-thumbs, #btnChrono').forEach(el => el.remove());
+                            p.querySelectorAll('.photo-btn, .photo-thumbs, .photo-del-overlay, #btnChrono').forEach(el => el.remove());
                             p.querySelectorAll('img.no-print-pdf').forEach(el => el.remove());
                             p.querySelectorAll('div.no-print-pdf').forEach(el => el.classList.remove('no-print-pdf'));
                             

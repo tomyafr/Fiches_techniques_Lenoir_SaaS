@@ -431,6 +431,80 @@ foreach ($recoFreq as $rfk => $rfv) {
             border-radius: 0;
         }
 
+        /* --- SECTION B : MONTAGE PHOTO --- */
+        .photo-montage-grid {
+            display: grid;
+            gap: 10px;
+            margin-top: 10px;
+            width: 100%;
+            min-height: 150px;
+            background: #fdfdfd;
+            border: 1px solid #eee;
+            padding: 10px;
+            box-sizing: border-box;
+            page-break-inside: avoid;
+        }
+        .photo-montage-grid.empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #ccc;
+            background: #fafafa;
+        }
+        .photo-placeholder {
+            text-align: center;
+            color: #999;
+        }
+        .photo-placeholder span { font-size: 40px; display: block; margin-bottom: 10px; }
+        .photo-placeholder p { font-size: 13px; margin: 0 0 10px 0; font-style: italic; }
+
+        .montage-item {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            border: 1px solid #000;
+        }
+        .montage-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .montage-item .photo-del-overlay {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(220, 53, 69, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            z-index: 10;
+        }
+        
+        /* Grid variants */
+        .grid-1 { grid-template-columns: 1fr; }
+        .grid-1 .montage-item { height: 400px; }
+        
+        .grid-2 { grid-template-columns: 1fr 1fr; }
+        
+        .grid-3 { grid-template-columns: 1fr 1fr; grid-template-rows: 250px 250px; }
+        .grid-3 .montage-item:first-child { grid-row: span 2; height: 100%; }
+        
+        .grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 200px 200px; }
+        .grid-4 .montage-item { height: 100%; }
+
+        @media print {
+            .photo-montage-grid.empty, .photo-del-overlay { display: none !important; }
+        }
+
         .pdf-textarea {
             width: 100%;
             min-height: 30px;
@@ -651,6 +725,15 @@ foreach ($recoFreq as $rfk => $rfv) {
                 // === HELPERS ===
                 function newPdfPage() {
                     return '</div><div class="pdf-page bg-white p-4">'; 
+                }
+                function renderSectionB() {
+                    return '
+                    <div style="margin-top:20px; page-break-inside: avoid;">
+                        <div style="font-weight:bold; font-size:14px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">B) DESCRIPTION DU MATERIEL :</div>
+                        <div id="description_materiel_montage">
+                            <!-- Rempli par renderDescriptionMontage() en JS -->
+                        </div>
+                    </div>';
                 }
                 function pastille($name, $value, $cssClass, $title, $currentVal)
                 {
@@ -1650,6 +1733,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                             renderSectionC($isEDX, $isOV);
                             renderSectionD($isEDX, $mesures);
                         endif;
+
+                        // --- SECTION B : DESCRIPTION MATERIEL (GLOBAL) ---
+                        echo renderSectionB();
                         ?>
 
                         <div style="margin-top:20px; border: 1px solid #000; padding:10px; background: #fff; page-break-inside: avoid;">
@@ -1881,6 +1967,9 @@ foreach ($recoFreq as $rfk => $rfv) {
 
         function renderThumbsForKey(key) {
             var container = document.getElementById('thumbs_' + key);
+            if (key === 'desc_materiel') {
+                renderDescriptionMontage();
+            }
             if (!container) return;
             container.innerHTML = '';
             var photos = allPhotos[key] || [];
@@ -1891,6 +1980,50 @@ foreach ($recoFreq as $rfk => $rfv) {
                     '<button type="button" class="photo-del" onclick="deletePhoto(\'' + key + '\',' + i + ')">×</button>';
                 container.appendChild(wrap);
             });
+        }
+
+        function renderDescriptionMontage() {
+            var container = document.getElementById('description_materiel_montage');
+            if (!container) return;
+            
+            var photos = allPhotos['desc_materiel'] || [];
+            var count = photos.length;
+            
+            if (count === 0) {
+                container.innerHTML = `
+                    <div class="photo-montage-grid empty">
+                        <div class="photo-placeholder">
+                            <span>📸</span>
+                            <p>En attente de photo du matériel (max 4)...</p>
+                            <button type="button" class="photo-btn" onclick="capturePhoto('desc_materiel')">➕ AJOUTER PHOTO</button>
+                        </div>
+                    </div>`;
+                return;
+            }
+            
+            var gridClass = 'grid-' + (count > 4 ? 4 : count);
+            var html = `<div class="photo-montage-grid ${gridClass}">`;
+            
+            photos.slice(0, 4).forEach(function(p, i) {
+                html += `
+                    <div class="montage-item">
+                        <img src="${p.data}" alt="Photo Matériel ${i+1}">
+                        <button type="button" class="photo-del-overlay" onclick="deletePhoto('desc_materiel', ${i})">×</button>
+                    </div>`;
+            });
+            
+            html += '</div>';
+            
+            // Si moins de 4, on affiche quand même le bouton d'ajout en dessous
+            if (count < 4) {
+                html += `<div style="text-align:center; margin-top:10px;">
+                    <button type="button" class="photo-btn" onclick="capturePhoto('desc_materiel')" style="padding:6px 12px; font-size:12px;">
+                        <span>📷</span> Ajouter une photo (${count}/4)
+                    </button>
+                </div>`;
+            }
+            
+            container.innerHTML = html;
         }
 
         function renderAnnexes() {
@@ -2086,6 +2219,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             Object.keys(allPhotos).forEach(function (key) {
                 renderThumbsForKey(key);
             });
+            renderDescriptionMontage();
             renderAnnexes();
             syncPhotos();
 
