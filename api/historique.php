@@ -453,17 +453,17 @@ $nbClients = count($clientsSet);
                                         <td style="text-align:center; white-space:nowrap;">
                                             <?php if ($i['statut'] === 'Terminee'): ?>
                                                 <a href="rapport_final.php?id=<?= $i['id'] ?>&msg=ok" class="btn btn-ghost"
-                                                    style="padding: 0.35rem 0.6rem;"
-                                                    title="Voir le rapport"><img src="/assets/icons/print.png" class="premium-icon action-icon" title="Voir le rapport"></a>
+                                                    style="padding: 0.35rem 0.6rem; font-size: 1.25rem; color: var(--success);"
+                                                    title="Voir le rapport">📄</a>
                                             <?php endif; ?>
                                             <a href="intervention_edit.php?id=<?= $i['id'] ?>" class="btn btn-ghost"
                                                 style="padding: 0.35rem 0.6rem;"
-                                                title="Modifier l'intervention"><img src="/assets/icons/add.png" class="premium-icon action-icon"></a>
+                                                title="Modifier l'intervention"><img src="/assets/icons/add.png" class="premium-icon action-icon" style="height:24px;"></a>
                                             <a href="#"
                                                 onclick="if(confirm('Supprimer cette fiche définitivement ?')) window.location.href='delete_intervention.php?id=<?= $i['id'] ?>';"
                                                 class="btn btn-ghost"
                                                 style="padding: 0.35rem 0.6rem; color: var(--error);"
-                                                title="Supprimer"><img src="/assets/icons/error.png" class="premium-icon action-icon"></a>
+                                                title="Supprimer"><img src="/assets/icons/error.png" class="premium-icon action-icon" style="height:24px;"></a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
