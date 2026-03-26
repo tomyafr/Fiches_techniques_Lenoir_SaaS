@@ -474,6 +474,17 @@ foreach ($recoFreq as $rfk => $rfv) {
             background: #f8f8f8;
             display: block;
         }
+        .photo-comment-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            font-size: 11px;
+            padding: 4px 8px;
+            text-align: center;
+        }
         .montage-item .photo-del-overlay {
             position: absolute;
             top: 8px;
@@ -759,6 +770,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <div class="montage-item">
                                 <img src="' . htmlspecialchars($p['data']) . '" alt="Photo Matériel ' . ($i+1) . '">
                                 <button type="button" class="photo-del-overlay no-print-pdf" onclick="deletePhoto(\'desc_materiel\', ' . $i . ')">×</button>
+                                ' . (!empty($p['comment']) ? '<div class="photo-comment-overlay">' . htmlspecialchars($p['comment']) . '</div>' : '') . '
                             </div>';
                         }
                         $html .= '</div>';
@@ -1780,7 +1792,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette zone est pré-remplie avec les points "Non conformes" ou "À améliorer" détectés. Vous pouvez éditer le texte ci-dessous.</p>
                                 <textarea name="dysfonctionnements" id="dysfonctionnementsText" class="pdf-textarea" style="min-height:100px; font-size:13px; border: 1px solid #ccc; background:#fff; padding:5px;"><?= htmlspecialchars($machine['dysfonctionnements'] ?? '') ?></textarea>
                                 <button type="button" class="btn-ia-action" onclick="generateAI('dysfonctionnements')" style="background:rgba(211, 84, 0, 0.1); color:#e67e22;">
-                                    <img src="/assets/icons/refresh.png" style="height: 14px; width: 14px; vertical-align: middle; margin-right: 4px;"> Actualiser
+                                    <img src="/assets/icons/refresh.png" class="premium-icon" style="height: 14px; width: 14px; vertical-align: middle; margin-right: 4px;"> Actualiser
                                 </button>
                             <?php else: ?>
                                 <?php 

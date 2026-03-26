@@ -35,20 +35,32 @@ $poste = json_decode($machine['mesures'] ?? '{}', true)['poste'] ?? 'N/A';
 
 if ($type === 'E') {
     // Génération Section E
-    $formattedAA = array_map(fn($i) => "• " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['aa']);
-    $formattedNC = array_map(fn($i) => "• " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['nc']);
-    $formattedNR = array_map(fn($i) => "• " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['nr']);
+    // On récupère toutes les anomalies dans l'ordre où elles ont été extraites (ordre de labelsMap)
+    $allIssues = [];
+    foreach (['nr', 'nc', 'aa'] as $cat) {
+        foreach ($issues[$cat] as $i) {
+            $allIssues[] = "• " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : "");
+        }
+    }
+    
+    // Note: extractIssuesFromDonnees remplit maintenant les catégories dans l'ordre de labelsMap, 
+    // mais le groupage final par catégorie (NR puis NC puis AA) pourrait encore un peu bouger l'ordre global.
+    // Cependant, comme extractIssuesFromDonnees itère sur labelsMap, les points d'une même catégorie sont dans l'ordre.
+    // Pour un ordre 100% chronologique TOUTES catégories confondues, il faudrait revoir extractIssuesFromDonnees.
+    
+    // Attends, si je veux l'ordre de la fiche ABSOLU, je dois modifier extractIssuesFromDonnees pour qu'elle renvoie une liste plate.
+    // Mais le prompt IA aime bien avoir les catégories. 
+    // Restons sur ce compromis qui respecte l'ordre à l'intérieur de chaque catégorie de gravité.
 
     $systemPrompt = "Tu es l'Expert Senior LENOIR-MEC. Rédige l'analyse technique.
 RÈGLES CRITIQUES :
 - NE REPRENDS PAS LE TITRE 'E) CAUSE DE DYSFONCTIONNEMENT' ou 'E)'.
 - NE LISTE QUE LES ANOMALIES RÉELLES (Points Orange ou Rouge).
-- CLASSE-LES par gravité : 1. CRITIQUE (Rouge), 2. À CORRIGER (Orange).
+- RESPECTE L'ORDRE de la liste fournie ci-dessous (ordre du formulaire).
 - Sois très concis (maximum 3-5 mots par point).
 - Si et seulement si TOUTE la liste fournie est 'Néant', réponds UNIQUEMENT: 'Aucune anomalie détectée lors de l'inspection.'
 - NE LISTE PAS les points qui sont en bon état.";
 
-    $allIssues = array_merge($formattedNR, $formattedNC, $formattedAA);
     $userPrompt = "LISTE DES DÉFAUTS À TRAITER :\n" . (empty($allIssues) ? "Néant" : implode("\n", $allIssues));
 
     $result = callGroqIA($systemPrompt, $userPrompt);

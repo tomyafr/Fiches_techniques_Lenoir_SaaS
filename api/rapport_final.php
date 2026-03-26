@@ -579,7 +579,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <?php if (!empty($error)): ?>
                 <div
                     style="background: rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.4); color:#f43f5e; padding:1rem; border-radius:8px; margin-bottom:1.5rem; font-size:0.85rem; display:flex; align-items:center; gap:10px;">
-                    <img src="/assets/icons/warning.png" style="height: 18px; width: 18px;"> <?= htmlspecialchars($error) ?>
+                    <img src="/assets/icons/warning.png" class="premium-icon" style="height: 18px; width: 18px;"> <?= htmlspecialchars($error) ?>
                 </div>
             <?php endif; ?>
 
@@ -604,7 +604,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         $statusColor = ($m['points_count'] > 5) ? 'var(--accent-cyan)' : 'var(--error)';
                     ?>
                     <span class="machine-tag" style="border-left: 4px solid <?= $statusColor ?>;">
-                        <img src="/assets/icons/machine.png" style="height: 14px; width: 14px; vertical-align: middle; margin-right: 4px;">
+                        <img src="/assets/icons/machine.png" class="premium-icon" style="height: 14px; width: 14px; vertical-align: middle; margin-right: 4px;">
                         <?= htmlspecialchars($m['designation']) ?>
                         <?php $mm = json_decode($m['mesures'] ?? '{}', true); ?>
                         <?php if (!empty($mm['repere'])): ?>
@@ -1994,7 +1994,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const label = document.getElementById('btnSendEmailLabel');
 
             if (btn) btn.disabled = true;
-            if (icon) icon.innerHTML = '<img src="/assets/icons/loading.png" class="fa-spin" style="height: 18px; width: 18px; vertical-align: middle;">';
+            if (icon) icon.innerHTML = '<img src="/assets/icons/loading.png" class="fa-spin premium-icon" style="height: 18px; width: 18px; vertical-align: middle;">';
             if (label) label.textContent = 'Génération du PDF…';
 
             let pdfBase64;
@@ -2008,7 +2008,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 return;
             }
 
-            if (icon) icon.innerHTML = '<img src="/assets/icons/loading.png" class="fa-spin" style="height: 18px; width: 18px; vertical-align: middle;">';
+            if (icon) icon.innerHTML = '<img src="/assets/icons/loading.png" class="fa-spin premium-icon" style="height: 18px; width: 18px; vertical-align: middle;">';
             if (label) label.textContent = 'Envoi en cours…';
 
             // Hors-ligne : mettre en file d'attente
@@ -2036,13 +2036,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 if (result.success) {
                     afficherToast('✅ Rapport envoyé avec succès à ' + result.email, 'success');
                     if (btn) btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
-                    if (icon) icon.innerHTML = '<img src="/assets/icons/success.png" style="height: 18px; width: 18px; vertical-align: middle;">';
+                    if (icon) icon.innerHTML = '<img src="/assets/icons/success.png" class="premium-icon" style="height: 18px; width: 18px; vertical-align: middle;">';
                     if (label) label.textContent = 'Email envoyé !';
                     btn.disabled = true; // Ne pas renvoyer
                 } else {
                     afficherToast('❌ ' + (result.message || 'Erreur envoi email'), 'error');
                     if (btn) btn.disabled = false;
-                    if (icon) icon.innerHTML = '<img src="/assets/icons/refresh.png" style="height: 18px; width: 18px; vertical-align: middle;">';
+                    if (icon) icon.innerHTML = '<img src="/assets/icons/refresh.png" class="premium-icon" style="height: 18px; width: 18px; vertical-align: middle;">';
                     if (label) label.textContent = 'Réessayer l\'envoi';
                 }
             } catch (e) {
@@ -2059,7 +2059,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     afficherToast('❌ Erreur réseau et impossible de mettre en file : ' + e.message, 'error');
                 }
                 if (btn) btn.disabled = false;
-                if (icon) icon.innerHTML = '<img src="/assets/icons/refresh.png" style="height: 18px; width: 18px; vertical-align: middle;">';
+                if (icon) icon.innerHTML = '<img src="/assets/icons/refresh.png" class="premium-icon" style="height: 18px; width: 18px; vertical-align: middle;">';
                 if (label) label.textContent = 'Réessayer l\'envoi';
             }
         }
@@ -2077,7 +2077,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const mIds = window.LM_RAPPORT.machinesIds;
 
             btn.disabled = true;
-            btn.innerHTML = '<img src="/assets/icons/loading.png" class="fa-spin" style="height: 18px; width: 18px; vertical-align: middle; margin-right: 6px;"> Analyse par l\'Expert IA...';
+            btn.innerHTML = '<img src="/assets/icons/loading.png" class="fa-spin premium-icon" style="height: 18px; width: 18px; vertical-align: middle; margin-right: 6px;"> Analyse par l\'Expert IA...';
             progress.style.display = 'block';
             
             let current = 0;
@@ -2087,9 +2087,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 current++;
                 const mData = window.LM_RAPPORT.machinesData.find(m => m.id == id) || { designation: 'Machine', dysfonctionnements: '', conclusion: '' };
                 
-                // Sécurité : Ne pas écraser si déjà rempli
-                if (mData.dysfonctionnements && mData.conclusion && mData.dysfonctionnements.trim() !== '' && mData.conclusion.trim() !== '') {
-                    status.innerText = `Saut de: ${mData.designation} (Déjà rempli)`;
+                // Sécurité renforcée : Ne pas écraser si le technicien a déjà saisi quelque chose
+                const isD Empty = !mData.dysfonctionnements || mData.dysfonctionnements.trim() === '' || mData.dysfonctionnements.includes('Aucun dysfonctionnement majeur');
+                const isC Empty = !mData.conclusion || mData.conclusion.trim() === '' || mData.conclusion.includes('conforme à nos standards');
+
+                if (!isD Empty && !isC Empty) {
+                    status.innerText = `Saut de: ${mData.designation} (Déjà complété)`;
                     bar.style.width = (current / total * 100) + '%';
                     continue;
                 }
@@ -2098,8 +2101,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 bar.style.width = ((current - 0.5) / total * 100) + '%';
 
                 try {
-                    // 1. Dysfonctionnements (Seulement si vide)
-                    if (!mData.dysfonctionnements || mData.dysfonctionnements.trim() === '') {
+                    // 1. Dysfonctionnements (Seulement si vide ou message par défaut)
+                    if (isD Empty) {
                         let resE = await fetch(`generate_ia.php?type=E&id=${id}`);
                         let dataE = await resE.json();
                         if (dataE.content) {
@@ -2111,8 +2114,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         }
                     }
 
-                    // 2. Conclusion (Seulement si vide)
-                    if (!mData.conclusion || mData.conclusion.trim() === '') {
+                    // 2. Conclusion (Seulement si vide ou message par défaut)
+                    if (isC Empty) {
                         let resF = await fetch(`generate_ia.php?type=F&id=${id}`);
                         let dataF = await resF.json();
                         if (dataF.content) {
@@ -2130,7 +2133,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 bar.style.width = (current / total * 100) + '%';
             }
 
-            status.innerHTML = '<div style="margin-bottom:10px; text-align:center;"><img src="/assets/icons/success.png" style="height: 48px; width: 48px;"></div> Analyse terminée !';
+            status.innerHTML = '<div style="margin-bottom:10px; text-align:center;"><img src="/assets/icons/success.png" class="premium-icon" style="height: 48px; width: 48px;"></div> Analyse terminée !';
             btn.innerHTML = '<img src="/assets/ai_expert.jpg" style="height:16px; width:16px; border-radius:50%; vertical-align:middle; margin-right:6px;"> Relancer l\'Expert IA';
             btn.disabled = false;
             

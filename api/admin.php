@@ -197,7 +197,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                 </button>
                 <button onclick="document.getElementById('pwdInboxModal').style.display='flex'" class="btn btn-ghost"
                     style="padding:0.6rem 1rem;">
-                    <span><img src="/assets/icons/notification.png" style="height: 18px; width: 18px; vertical-align: middle; margin-right: 4px;"></span> Demandes MDP
+                    <span><img src="/assets/icons/notification.png" class="premium-icon" style="height: 18px; width: 18px; vertical-align: middle; margin-right: 4px;"></span> Demandes MDP
                     <?php if (count($pendingPwdRequests) > 0): ?>
                         <span
                             style="background:var(--error); color:white; border-radius:50%; width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:bold; margin-left:0.5rem;">
@@ -252,7 +252,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                     style="width:100%; max-width:500px; padding:2rem; position:relative;">
                     <button onclick="document.getElementById('pwdInboxModal').style.display='none'"
                         style="position:absolute; top:1rem; right:1.5rem; background:none; border:none; color:var(--text-dim); font-size:1.5rem; cursor:pointer;">&times;</button>
-                    <h3 style="display:flex; align-items:center; gap:8px;"><img src="/assets/icons/email.png" style="height: 24px; width: 24px;"> Demandes de mot de passe</h3>
+                    <h3 style="display:flex; align-items:center; gap:8px;"><img src="/assets/icons/email.png" class="premium-icon" style="height: 24px; width: 24px;"> Demandes de mot de passe</h3>
                     <?php if (count($pendingPwdRequests) === 0): ?>
                         <p style="color:var(--text-dim); font-size:0.85rem; padding: 1rem 0;">Aucune demande en attente.</p>
                     <?php else: ?>

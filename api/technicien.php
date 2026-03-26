@@ -161,7 +161,7 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
         <main class="main-content">
             <?php if ($message): ?>
                 <div class="alert alert-<?= $messageType ?> animate-in" style="display:flex; align-items:center; gap:10px;">
-                    <img src="/assets/icons/<?= $messageType === 'success' ? 'success' : 'warning' ?>.png" style="height: 20px; width: 20px;">
+                    <img src="/assets/icons/<?= $messageType === 'success' ? 'success' : 'warning' ?>.png" class="premium-icon" style="height: 20px; width: 20px;">
                     <span><?= htmlspecialchars($message) ?></span>
                 </div>
             <?php endif; ?>

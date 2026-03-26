@@ -120,7 +120,7 @@ $machines = $stmtMach->fetchAll();
     <main class="main-content" style="padding-top: 5rem; padding-bottom: 6rem;">
         <?php if ($message): ?>
             <div class="alert alert-success animate-in" style="display:flex; align-items:center; gap:10px;">
-                <img src="/assets/icons/success.png" style="height: 20px; width: 20px;">
+                <img src="/assets/icons/success.png" class="premium-icon" style="height: 20px; width: 20px;">
                 <span>
                     <?= htmlspecialchars($message) ?>
                 </span>

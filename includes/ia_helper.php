@@ -62,28 +62,28 @@ function extractIssuesFromDonnees($donnees) {
     ];
 
     $issues = ['aa' => [], 'nc' => [], 'nr' => []];
-    $negativeValues = ['nc', 'nr', 'aa', 'r', 'hs'];
+    $negativeValues = ['nc', 'nr', 'aa', 'r', 'hs', 'a ameliorer', 'non conforme', 'a remplacer'];
 
-    foreach ($donnees as $k => $v) {
-        if (substr($k, -8) === '_comment') continue;
-        
-        // Nettoyage de la clé pour le mapping (retirer _radio et _stat)
-        $cleanKey = str_replace(['_radio', '_stat'], '', $k);
-        
-        $v = trim(strtolower((string)$v));
-        if (in_array($v, $negativeValues)) {
-            $label = $labelsMap[$cleanKey] ?? $labelsMap[$k] ?? $k;
-            $comment = $donnees[$k . '_comment'] ?? $donnees[$cleanKey . '_comment'] ?? null;
-            
-            // Si pas de label dans la map, on essaie de nettoyer le nom de la clé
-            if ($label === $k) {
-                $label = ucwords(str_replace('_', ' ', str_replace(['edx_', 'ov_', 'gen_', 'aprf_', 'levage_'], '', $cleanKey)));
+    // Itérer sur labelsMap pour garantir l'ordre de la fiche de contrôle
+    foreach ($labelsMap as $cleanKey => $label) {
+        // On cherche la valeur dans $donnees avec trois variantes de clés possibles
+        $val = null;
+        $actualKey = null;
+
+        foreach ([$cleanKey . '_radio', $cleanKey . '_stat', $cleanKey] as $kVariant) {
+            if (isset($donnees[$kVariant])) {
+                $val = trim(strtolower((string)$donnees[$kVariant]));
+                $actualKey = $kVariant;
+                break;
             }
+        }
 
+        if ($val && in_array($val, $negativeValues)) {
+            $comment = $donnees[$cleanKey . '_comment'] ?? $donnees[$actualKey . '_comment'] ?? null;
             $issue = ['designation' => $label, 'commentaire' => $comment];
             
-            if ($v === 'nc' || $v === 'hs') $issues['nc'][] = $issue;
-            elseif ($v === 'nr' || $v === 'r') $issues['nr'][] = $issue;
+            if ($val === 'nc' || $val === 'hs' || $val === 'non conforme') $issues['nc'][] = $issue;
+            elseif ($val === 'nr' || $val === 'r' || $val === 'a remplacer') $issues['nr'][] = $issue;
             else $issues['aa'][] = $issue;
         }
     }
