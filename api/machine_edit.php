@@ -632,6 +632,27 @@ foreach ($recoFreq as $rfk => $rfv) {
                 transform-origin: top left;
             }
         }
+        .btn-ia-refresh {
+            background: rgba(230, 126, 34, 0.1);
+            color: #d35400;
+            border: 1px solid rgba(230, 126, 34, 0.4);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+        .btn-ia-refresh:hover {
+            background: rgba(230, 126, 34, 0.2);
+            border-color: #d35400;
+        }
+        .btn-ia-refresh img {
+            filter: sepia(1) saturate(5) hue-rotate(-30deg);
+        }
     </style>
 </head>
 
@@ -2193,7 +2214,25 @@ foreach ($recoFreq as $rfk => $rfv) {
             }
         }
 
-        // ========== PASTILLE CLICK MANAGEMENT ==========
+        async function refreshIA(type) {
+            const btn = event.currentTarget;
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '⏳...';
+
+            try {
+                if (type === 'E') {
+                    await generateDysfunctions();
+                } else if (type === 'F') {
+                    await generateConclusion();
+                }
+            } catch (e) {
+                console.error("Erreur refreshIA:", e);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            }
+        }
         document.addEventListener('click', function (e) {
             var label = e.target.closest('.pastille-group label');
             if (!label) return;
