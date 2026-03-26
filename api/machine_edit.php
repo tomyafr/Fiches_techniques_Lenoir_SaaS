@@ -1812,7 +1812,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?php if (!isset($_GET['pdf'])): ?>
                                 <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette zone est pré-remplie avec les points "Non conformes" ou "À améliorer" détectés. Vous pouvez éditer le texte ci-dessous.</p>
                                 <textarea name="dysfonctionnements" id="dysfonctionnementsText" class="pdf-textarea" style="min-height:100px; font-size:13px; border: 1px solid #ccc; background:#fff; padding:5px;"><?= htmlspecialchars($machine['dysfonctionnements'] ?? '') ?></textarea>
-                                <button type="button" class="btn-ia-action" onclick="generateDysfunctions()" style="margin-top:5px; background:#2980b9; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:11px;">
+                                <button type="button" class="btn-ia-action" onclick="generateDysfunctions(this)" style="margin-top:5px; background:#2980b9; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:11px;">
                                     <img src="/assets/ai_expert.jpg" style="height: 14px; width: 14px; vertical-align: middle; border-radius:3px; margin-right: 4px;"> Actualiser
                                 </button>
                             <?php else: ?>
@@ -1853,7 +1853,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?php if (!isset($_GET['pdf'])): ?>
                                 <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette conclusion peut être générée par l'IA en fonction des résultats du contrôle.</p>
                                 <textarea name="conclusion" id="conclusionText" class="pdf-textarea" style="min-height:80px; font-size:13px; border: 1px solid #ccc; background:#fff; padding:5px;"><?= htmlspecialchars($machine['conclusion'] ?? '') ?></textarea>
-                                <button type="button" onclick="generateConclusion()" style="margin-top:5px; background:#2980b9; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:11px;"><img src="/assets/ai_expert.jpg" style="height:14px; width:14px; vertical-align:middle; border-radius:3px; margin-right:4px;"> Générer par l'Expert IA</button>
+                                <button type="button" onclick="generateConclusion(this)" style="margin-top:5px; background:#2980b9; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:11px;"><img src="/assets/ai_expert.jpg" style="height:14px; width:14px; vertical-align:middle; border-radius:3px; margin-right:4px;"> Générer par l'Expert IA</button>
                             <?php else: ?>
                                 <?php 
                                     $concText = trim($machine['conclusion'] ?? '');
@@ -2156,22 +2156,23 @@ foreach ($recoFreq as $rfk => $rfv) {
             el.style.height = el.scrollHeight + 'px';
         }
         // ========== SECTION E & F GENERATION IA ==========
-        async function generateConclusion() {
-            const btn = event.currentTarget;
+        async function generateConclusion(btn) {
             const originalText = btn.innerHTML;
             btn.innerHTML = '⏳ Analyse expert...';
             btn.disabled = true;
 
             try {
-                const formData = new FormData(document.querySelector('form'));
+                const form = document.getElementById('machineForm');
+                const formData = new FormData(form);
                 const res = await fetch(`generate_ia.php?type=F&id=<?= $id ?>`, {
                     method: 'POST',
                     body: formData
                 });
                 const data = await res.json();
                 if (data.content) {
-                    document.getElementById('conclusionText').value = data.content;
-                    autoGrow(document.getElementById('conclusionText'));
+                    const textNode = document.getElementById('conclusionText');
+                    textNode.value = data.content;
+                    autoGrow(textNode);
                 } else {
                     alert('Erreur IA : ' + (data.error || 'Indisponible'));
                 }
@@ -2183,8 +2184,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             }
         }
 
-        async function generateDysfunctions() {
-            const btn = event.currentTarget;
+        async function generateDysfunctions(btn) {
             const originalText = btn.innerHTML;
             const textarea = document.getElementById('dysfonctionnementsText');
             
@@ -2194,7 +2194,8 @@ foreach ($recoFreq as $rfk => $rfv) {
             btn.disabled = true;
 
             try {
-                const formData = new FormData(document.querySelector('form'));
+                const form = document.getElementById('machineForm');
+                const formData = new FormData(form);
                 const res = await fetch(`generate_ia.php?type=E&id=<?= $id ?>`, {
                     method: 'POST',
                     body: formData

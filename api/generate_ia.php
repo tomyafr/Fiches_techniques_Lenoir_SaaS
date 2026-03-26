@@ -52,11 +52,11 @@ if ($type === 'E') {
     // Mais le prompt IA aime bien avoir les catégories. 
     // Restons sur ce compromis qui respecte l'ordre à l'intérieur de chaque catégorie de gravité.
 
-    $systemPrompt = "Tu es l'Expert Senior LENOIR-MEC. Rédige l'analyse technique.
+    $systemPrompt = "Tu es l'Expert Senior LENOIR-MEC. Rédige l'analyse technique globale.
 RÈGLES CRITIQUES :
 - NE REPRENDS PAS LE TITRE 'E) CAUSE DE DYSFONCTIONNEMENT' ou 'E)'.
-- NE LISTE QUE LES ANOMALIES RÉELLES (Points Orange ou Rouge).
-- RESPECTE L'ORDRE de la liste fournie ci-dessous (ordre du formulaire).
+- LISTE TOUTES LES ANOMALIES (Points Orange/À améliorer OU Points Rouges/Non conformes).
+- RESPECTE L'ORDRE de la liste fournie.
 - Sois très concis (maximum 3-5 mots par point).
 - Si et seulement si TOUTE la liste fournie est 'Néant', réponds UNIQUEMENT: 'Aucune anomalie détectée lors de l'inspection.'
 - NE LISTE PAS les points qui sont en bon état.";
@@ -73,8 +73,7 @@ RÈGLES CRITIQUES :
 
     // Fallback si IA échoue complètement ou pas de clé
     if (!$result) {
-        $all = array_merge($formattedNR, $formattedNC, $formattedAA);
-        $result = !empty($all) ? implode("\n", $all) : "Aucun dysfonctionnement majeur signalé.";
+        $result = !empty($allIssues) ? implode("\n", $allIssues) : "Aucun dysfonctionnement majeur signalé.";
     }
 
     echo json_encode(['content' => $result]);
