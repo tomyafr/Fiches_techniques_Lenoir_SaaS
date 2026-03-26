@@ -262,8 +262,7 @@ $nbClients = count($clientsSet);
             <nav style="display:flex;flex-direction:column;gap:0.4rem;margin-bottom:2rem;">
                 <a href="<?= $isAdmin ? 'admin.php' : 'technicien.php' ?>" class="btn btn-ghost sidebar-link"
                     style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
-                    <img src="/assets/icons/dashboard.png" class="premium-icon" style="height:28px;">
- Tableau de bord
+                    <span style="margin-right:8px;">📊</span> Tableau de bord
                 </a>
                 <?php if ($isAdmin): ?>
                     <a href="admin.php?new=1#" class="btn btn-ghost sidebar-link"
@@ -278,14 +277,12 @@ $nbClients = count($clientsSet);
                 <?php endif; ?>
                 <a href="historique.php" class="btn btn-primary sidebar-link"
                     style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
-                    <img src="/assets/icons/history.png" class="premium-icon" style="height:28px;">
- Historique
+                    <span style="margin-right:8px;">🕒</span> Historique
                 </a>
                 <?php if ($isAdmin): ?>
                     <a href="equipe.php" class="btn btn-ghost sidebar-link"
                         style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
-                        <img src="/assets/icons/team.png" class="premium-icon" style="height:28px;">
- Équipe
+                        <span style="margin-right:8px;">👥</span> Équipe
                     </a>
                 <?php endif; ?>
             </nav>
@@ -457,13 +454,13 @@ $nbClients = count($clientsSet);
                                                     title="Voir le rapport">📄</a>
                                             <?php endif; ?>
                                             <a href="intervention_edit.php?id=<?= $i['id'] ?>" class="btn btn-ghost"
-                                                style="padding: 0.35rem 0.6rem;"
-                                                title="Modifier l'intervention"><img src="/assets/icons/add.png" class="premium-icon action-icon" style="height:24px;"></a>
+                                                style="padding: 0.35rem 0.6rem; font-size: 1rem;"
+                                                title="Modifier l'intervention">✏️</a>
                                             <a href="#"
                                                 onclick="if(confirm('Supprimer cette fiche définitivement ?')) window.location.href='delete_intervention.php?id=<?= $i['id'] ?>';"
                                                 class="btn btn-ghost"
-                                                style="padding: 0.35rem 0.6rem; color: var(--error);"
-                                                title="Supprimer"><img src="/assets/icons/error.png" class="premium-icon action-icon" style="height:24px;"></a>
+                                                style="padding: 0.35rem 0.6rem; font-size: 1rem; color: var(--error);"
+                                                title="Supprimer">🗑️</a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

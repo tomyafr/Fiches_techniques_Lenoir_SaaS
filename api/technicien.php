@@ -121,15 +121,15 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
             <nav style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 2rem;">
                 <button class="btn btn-primary sidebar-link" onclick="switchTab('dashboard')" id="nav-dashboard"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/icons/dashboard.png" class="premium-icon"> Tableau de bord
+                    <span style="margin-right:8px;">📊</span> Tableau de bord
                 </button>
                 <button class="btn btn-ghost sidebar-link" onclick="switchTab('nouvelle')" id="nav-nouvelle"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/icons/add.png" class="premium-icon"> Nouvelle Fiche
+                    <span style="margin-right:8px;">➕</span> Nouvelle Fiche
                 </button>
                 <a href="historique.php" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; text-decoration: none; color: inherit;">
-                    <img src="/assets/icons/history.png" class="premium-icon"> Historique
+                    <span style="margin-right:8px;">🕒</span> Historique
                 </a>
             </nav>
 
@@ -148,7 +148,7 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                 </a>
                 <a href="profile.php" class="btn btn-ghost sidebar-link"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/icons/profile.png" class="premium-icon"> Mon Profil
+                    <span style="margin-right:8px;">👤</span> Mon Profil
                 </a>
             </div>
         </aside>
@@ -293,19 +293,19 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
         <div class="mobile-bottom-nav-inner">
             <button class="mobile-nav-item active" onclick="switchTab('dashboard'); setActiveNav(this)"
                 id="nav-mob-dashboard">
-                <img src="/assets/icons/dashboard.png" class="premium-icon" style="height:28px;">
+                                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">📊</span>
                 <span class="mobile-nav-label">Dashboard</span>
             </button>
             <button class="mobile-nav-item" onclick="switchTab('nouvelle'); setActiveNav(this)" id="nav-mob-nouvelle">
-                <img src="/assets/icons/add.png" class="premium-icon" style="height:28px;">
+                                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">➕</span>
                 <span class="mobile-nav-label">+ Fiche</span>
             </button>
             <a href="historique.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                <img src="/assets/icons/history.png" class="premium-icon" style="height:28px;">
+                                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">🕒</span>
                 <span class="mobile-nav-label">Historique</span>
             </a>
             <a href="profile.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                <img src="/assets/icons/profile.png" class="premium-icon" style="height:28px;">
+                                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">👤</span>
                 <span class="mobile-nav-label">Profil</span>
             </a>
         </div>
