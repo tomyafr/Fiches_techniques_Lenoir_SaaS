@@ -219,7 +219,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
             onclick="window.location.href='<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>'"
             aria-label="Retour"
             style="background: none; border: none; padding: 0.5rem; display: flex; align-items: center; justify-content: center;">
-            <span style="font-size: 24px; color: var(--text-main); cursor: pointer;" onclick="history.back()">⬅️</span>
+            <img src="/assets/icon_back_blue.svg" style="height: 24px; width: 24px;">
         </button>
         <span class="mobile-header-title">Mon Profil</span>
         <span class="mobile-header-user">
@@ -249,24 +249,24 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                 <?php if (!$forceChange): ?>
                     <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <span style="margin-right:8px;">📊</span> Tableau de bord
+                        <img src="/assets/icon_dashboard_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Tableau de bord
                     </a>
                     
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                     <a href="admin.php?new=1#" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <span style="margin-right:8px;">➕</span> Nouvelle Fiche
+                        <img src="/assets/icon_add_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Nouvelle Fiche
                     </a>
                     <?php else: ?>
                     <a href="technicien.php?new=1#" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <span style="margin-right:8px;">➕</span> Nouvelle Fiche
+                        <img src="/assets/icon_add_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Nouvelle Fiche
                     </a>
                     <?php endif; ?>
 
                     <a href="historique.php" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <span style="margin-right:8px;">🕒</span> Historique
+                        <img src="/assets/icon_history_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Historique
                     </a>
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                     <a href="equipe.php" class="btn btn-ghost sidebar-link"
@@ -286,11 +286,11 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                 </div>
                 
                 <a href="logout.php" class="btn btn-ghost" style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; color: var(--error); margin-bottom: 0.4rem;">
-                    <span>🚪</span> Se déconnecter
+                    <img src="/assets/icon_logout_red.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Se déconnecter
                 </a>
                 <a href="profile.php" class="btn btn-primary sidebar-link"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span style="margin-right:8px;">👤</span> Mon Profil
+                    <img src="/assets/icon_profile_blue.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Mon Profil
                 </a>
             </div>
         </aside>

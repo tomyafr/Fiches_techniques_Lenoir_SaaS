@@ -140,16 +140,16 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
             <nav style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 2rem;">
                 <a href="admin.php" class="btn btn-primary sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span style="margin-right:8px;">📊</span> Tableau de bord
+                    <img src="/assets/icon_dashboard_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Tableau de bord
                 </a>
                 <button onclick="document.getElementById('newInterventionModal').style.display='flex'"
                     class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span style="margin-right:8px;">➕</span> Nouvelle Fiche
+                    <img src="/assets/icon_add_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Nouvelle Fiche
                 </button>
                 <a href="historique.php" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span style="margin-right:8px;">🕒</span> Historique
+                    <img src="/assets/icon_history_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Historique
                 </a>
                 <a href="equipe.php" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
@@ -168,11 +168,11 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
 
                 <a href="logout.php" class="btn btn-ghost"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; color: var(--error); margin-bottom: 0.4rem;">
-                    <span>🚪</span> Se déconnecter
+                    <img src="/assets/icon_logout_red.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Se déconnecter
                 </a>
                 <a href="profile.php" class="btn btn-ghost sidebar-link"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span style="margin-right:8px;">👤</span> Mon Profil
+                    <img src="/assets/icon_profile_blue.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Mon Profil
                 </a>
             </div>
         </aside>
@@ -188,7 +188,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
             <div style="display:flex; justify-content:space-between; margin-bottom: 2rem; align-items: center;">
                 <button class="btn btn-primary"
                     onclick="document.getElementById('newInterventionModal').style.display='flex'">
-                    <span>➕</span> NOUVELLE FICHE TECHNIQUE
+                    <img src="/assets/icon_add_white.svg" style="height: 18px; width: 18px; margin-right: 8px; vertical-align: middle;"> NOUVELLE FICHE TECHNIQUE
                 </button>
                 <button onclick="document.getElementById('pwdInboxModal').style.display='flex'" class="btn btn-ghost"
                     style="padding:0.6rem 1rem;">

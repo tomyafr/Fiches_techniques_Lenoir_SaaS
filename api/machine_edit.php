@@ -640,7 +640,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 </label>
                 <button type="button" class="btn btn-ghost" onclick="window.print()"
                     style="background:#2b2d31; color:white; border:1px solid #444; display:flex; align-items:center; gap:6px;">
-                    <span>📄</span> IMPRIMER
+                    <img src="/assets/icon_document_white.svg" style="height: 16px; width: 16px; margin-right: 8px; vertical-align: middle;"> IMPRIMER
                 </button>
                 <button type="submit" class="btn btn-primary" style="background:#e6b12a; color:#000;">ENREGISTRER</button>
             </div>

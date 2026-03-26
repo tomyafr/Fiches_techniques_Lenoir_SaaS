@@ -120,15 +120,15 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
             <nav style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 2rem;">
                 <button class="btn btn-primary sidebar-link" onclick="switchTab('dashboard')" id="nav-dashboard"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span style="margin-right:8px;">📊</span> Tableau de bord
+                    <img src="/assets/icon_dashboard_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Tableau de bord
                 </button>
                 <button class="btn btn-ghost sidebar-link" onclick="switchTab('nouvelle')" id="nav-nouvelle"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span style="margin-right:8px;">➕</span> Nouvelle Fiche
+                    <img src="/assets/icon_add_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Nouvelle Fiche
                 </button>
                 <a href="historique.php" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; text-decoration: none; color: inherit;">
-                    <span style="margin-right:8px;">🕒</span> Historique
+                    <img src="/assets/icon_history_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Historique
                 </a>
             </nav>
 
@@ -143,11 +143,11 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
 
                 <a href="logout.php" class="btn btn-ghost"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; color: var(--error); margin-bottom: 0.4rem;">
-                    <span>🚪</span> Se déconnecter
+                    <img src="/assets/icon_logout_red.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Se déconnecter
                 </a>
                 <a href="profile.php" class="btn btn-ghost sidebar-link"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span style="margin-right:8px;">👤</span> Mon Profil
+                    <img src="/assets/icon_profile_blue.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Mon Profil
                 </a>
             </div>
         </aside>
@@ -179,7 +179,7 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                 </h3>
                 <?php if (empty($encours)): ?>
                     <div class="card glass" style="text-align: center; padding: 4rem 2rem;">
-                        <div style="font-size: 60px; margin-bottom: 1rem; opacity: 0.3; text-align: center;">⚙️</div>
+                        <div style="margin-bottom: 1rem; opacity: 0.1; text-align: center;"><img src="/assets/icon_gear_orange.svg" style="height: 80px; width: 80px;"></div>
                         <p style="color: var(--text-dim); font-size: 0.9rem;">Aucune intervention en cours</p>
                     </div>
                 <?php else: ?>
@@ -225,7 +225,7 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                                     <?php if ($i['statut'] === 'Terminee'): ?>
                                         <a href="rapport_final.php?id=<?= $i['id'] ?>&msg=ok"
                                             style="font-size:0.75rem; padding:0.3rem 0.6rem; background:rgba(16,185,129,0.1); color:var(--success); border-radius:4px; text-decoration:none; white-space:nowrap;">
-                                            📄 Rapport
+                                            <img src="/assets/icon_document_blue.svg" style="height: 14px; width: 14px; vertical-align: middle; margin-right: 4px;"> Rapport
                                         </a>
                                     <?php endif; ?>
                                     <span
@@ -245,7 +245,7 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                     <input type="hidden" name="action" value="nouvelle_intervention">
                     <?= csrfField() ?>
                     <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-                        <span>➕</span> Nouvelle Intervention
+                        <img src="/assets/icon_add_white.svg" style="height: 20px; width: 20px;"> Nouvelle Intervention
                     </h3>
 
                     <div class="form-group">
@@ -289,19 +289,19 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
         <div class="mobile-bottom-nav-inner">
             <button class="mobile-nav-item active" onclick="switchTab('dashboard'); setActiveNav(this)"
                 id="nav-mob-dashboard">
-                                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">📊</span>
+                                <img src="/assets/icon_dashboard_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Dashboard</span>
             </button>
             <button class="mobile-nav-item" onclick="switchTab('nouvelle'); setActiveNav(this)" id="nav-mob-nouvelle">
-                                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">➕</span>
+                                <img src="/assets/icon_add_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">+ Fiche</span>
             </button>
             <a href="historique.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">🕒</span>
+                                <img src="/assets/icon_history_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Historique</span>
             </a>
             <a href="profile.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">👤</span>
+                                <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Profil</span>
             </a>
         </div>

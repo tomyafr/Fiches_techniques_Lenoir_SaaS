@@ -261,22 +261,22 @@ $nbClients = count($clientsSet);
             <nav style="display:flex;flex-direction:column;gap:0.4rem;margin-bottom:2rem;">
                 <a href="<?= $isAdmin ? 'admin.php' : 'technicien.php' ?>" class="btn btn-ghost sidebar-link"
                     style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
-                    <span style="margin-right:8px;">📊</span> Tableau de bord
+                    <img src="/assets/icon_dashboard_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Tableau de bord
                 </a>
                 <?php if ($isAdmin): ?>
                     <a href="admin.php?new=1#" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <span style="margin-right:8px;">➕</span> Nouvelle Fiche
+                        <img src="/assets/icon_add_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Nouvelle Fiche
                     </a>
                 <?php else: ?>
                     <a href="technicien.php?new=1#" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <span style="margin-right:8px;">➕</span> Nouvelle Fiche
+                        <img src="/assets/icon_add_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Nouvelle Fiche
                     </a>
                 <?php endif; ?>
                 <a href="historique.php" class="btn btn-primary sidebar-link"
                     style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
-                    <span style="margin-right:8px;">🕒</span> Historique
+                    <img src="/assets/icon_history_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Historique
                 </a>
                 <?php if ($isAdmin): ?>
                     <a href="equipe.php" class="btn btn-ghost sidebar-link"
@@ -297,11 +297,11 @@ $nbClients = count($clientsSet);
 
                 <a href="logout.php" class="btn btn-ghost"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; color: var(--error); margin-bottom: 0.4rem;">
-                    <span style="margin-right:8px;">🚪</span> Se déconnecter
+                    <img src="/assets/icon_logout_red.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Se déconnecter
                 </a>
                 <a href="profile.php" class="btn btn-ghost sidebar-link"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span style="margin-right:8px;">👤</span> Mon Profil
+                    <img src="/assets/icon_profile_blue.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Mon Profil
                 </a>
             </div>
         </aside>
@@ -450,16 +450,16 @@ $nbClients = count($clientsSet);
                                             <?php if ($i['statut'] === 'Terminee'): ?>
                                                 <a href="rapport_final.php?id=<?= $i['id'] ?>&msg=ok" class="btn btn-ghost"
                                                     style="padding: 0.35rem 0.6rem; font-size: 1.25rem; color: var(--success);"
-                                                    title="Voir le rapport">📄</a>
+                                                    title="Voir le rapport"><img src="/assets/icon_document_blue.svg" style="height: 20px; width: 20px;"></a>
                                             <?php endif; ?>
                                             <a href="intervention_edit.php?id=<?= $i['id'] ?>" class="btn btn-ghost"
                                                 style="padding: 0.35rem 0.6rem; font-size: 1rem;"
-                                                title="Modifier l'intervention">✏️</a>
+                                                title="Modifier l'intervention"><img src="/assets/icon_edit_orange.svg" style="height: 18px; width: 18px;"></a>
                                             <a href="#"
                                                 onclick="if(confirm('Supprimer cette fiche définitivement ?')) window.location.href='delete_intervention.php?id=<?= $i['id'] ?>';"
                                                 class="btn btn-ghost"
                                                 style="padding: 0.35rem 0.6rem; font-size: 1rem; color: var(--error);"
-                                                title="Supprimer">🗑️</a>
+                                                title="Supprimer"><img src="/assets/icon_delete_red.svg" style="height: 18px; width: 18px;"></a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -479,15 +479,15 @@ $nbClients = count($clientsSet);
     <nav class="mobile-bottom-nav">
         <div class="mobile-bottom-nav-inner">
             <a href="<?= $isAdmin ? 'admin.php' : 'technicien.php' ?>" class="mobile-nav-item">
-                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">📊</span>
+                <img src="/assets/icon_dashboard_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Tableau</span>
             </a>
             <a href="historique.php" class="mobile-nav-item active">
-                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">🕒</span>
+                <img src="/assets/icon_history_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Historique</span>
             </a>
             <a href="profile.php" class="mobile-nav-item">
-                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">👤</span>
+                <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Profil</span>
             </a>
         </div>

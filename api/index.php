@@ -226,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="form-group">
                 <label for="nom" class="label">Identifiant</label>
                 <div class="input-wrapper">
-                    <span class="input-icon">👤</span>
+                    <img src="/assets/icon_profile_gray.svg" style="height: 18px; width: 18px;" class="input-icon-svg">
                     <input type="text" name="nom" id="nom" class="input" placeholder="Votre identifiant" required
                         autocomplete="off" spellcheck="false" maxlength="100">
                     <button type="button" class="input-clear" id="resetNom">✕</button>
@@ -236,10 +236,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="form-group">
                 <label for="password" class="label">Mot de passe</label>
                 <div class="input-wrapper">
-                    <span class="input-icon">🔒</span>
+                    <img src="/assets/icon_lock_gray.svg" style="height: 18px; width: 18px;" class="input-icon-svg">
                     <input type="password" name="password" id="password" class="input" placeholder="••••••••" required
                         autocomplete="new-password" maxlength="128">
-                    <button type="button" class="password-toggle" id="togglePassword">👁</button>
+                    <button type="button" class="password-toggle" id="togglePassword">
+                        <img src="/assets/icon_eye_gray.svg" style="height: 18px; width: 18px;">
+                    </button>
                 </div>
             </div>
 
@@ -251,10 +253,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div style="display:flex; gap:10px; margin-top:20px;">
                 <button type="button" class="btn btn-ghost"
                     onclick="document.getElementById('nom').value='TG'; document.getElementById('password').value='password123'; document.querySelector('.login-card').submit();"
-                    style="flex:1; font-size:11px; padding:0.5rem;">🚀 Admin (TG)</button>
+                    style="flex:1; font-size:11px; padding:0.5rem; display:flex; align-items:center; justify-content:center; gap:6px;">
+                    <img src="/assets/icon_key_white.svg" style="height: 14px; width: 14px;"> ADMIN (TG)
+                </button>
                 <button type="button" class="btn btn-ghost"
                     onclick="document.getElementById('nom').value='SALAH'; document.getElementById('password').value='password123'; document.querySelector('.login-card').submit();"
-                    style="flex:1; font-size:11px; padding:0.5rem;">🚀 Tech (Salah)</button>
+                    style="flex:1; font-size:11px; padding:0.5rem; display:flex; align-items:center; justify-content:center; gap:6px;">
+                    <img src="/assets/icon_key_white.svg" style="height: 14px; width: 14px;"> TECH (Salah)
+                </button>
             </div>
 
             <button type="button" class="btn btn-ghost" style="width: 100%; margin-top: 1rem; font-size: 0.75rem;"
@@ -283,7 +289,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="form-group">
                         <label class="label">Votre Identifiant</label>
                         <div class="input-wrapper">
-                            <span class="input-icon">👤</span>
+                            <img src="/assets/icon_profile_gray.svg" style="height: 18px; width: 18px;" class="input-icon-svg">
                             <input type="text" name="nom_oubli" id="nom_oubli" class="input"
                                 placeholder="Votre identifiant" required autocomplete="off" spellcheck="false"
                                 maxlength="100" style="text-transform: uppercase;">
@@ -294,10 +300,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="form-group">
                         <label class="label">Nouveau mot de passe souhaité</label>
                         <div class="input-wrapper">
-                            <span class="input-icon">🔒</span>
+                            <img src="/assets/icon_lock_gray.svg" style="height: 18px; width: 18px;" class="input-icon-svg">
                             <input type="password" name="new_pass_oubli" id="new_pass_oubli" class="input"
                                 placeholder="••••••••" required maxlength="128">
-                            <button type="button" class="password-toggle" id="togglePasswordOubli">👁</button>
+                            <button type="button" class="password-toggle" id="togglePasswordOubli">
+                                <img src="/assets/icon_eye_gray.svg" style="height: 18px; width: 18px;">
+                            </button>
                         </div>
                     </div>
 
@@ -336,14 +344,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         .then(data => {
                             if (data.success && data.status === 'accepted') {
                                 clearInterval(pollingInterval);
-                                document.getElementById('statusIcon').innerHTML = '✅';
+                                document.getElementById('statusIcon').innerHTML = '<img src="/assets/icon_check_white.svg" style="height:32px;width:32px;background:var(--success);border-radius:50%;padding:4px;">';
                                 document.getElementById('statusTitle').innerHTML = 'Mot de passe validé !';
                                 document.getElementById('statusTitle').style.color = 'var(--success)';
                                 document.getElementById('statusDesc').innerHTML = 'Votre demande a été acceptée par l\'administrateur. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.';
                                 document.getElementById('successBtn').style.display = 'block';
                             } else if (data.success && data.status === 'rejected') {
                                 clearInterval(pollingInterval);
-                                document.getElementById('statusIcon').innerHTML = '❌';
+                                document.getElementById('statusIcon').innerHTML = '<img src="/assets/icon_close_red.svg" style="height:32px;width:32px;">';
                                 document.getElementById('statusTitle').innerHTML = 'Demande refusée';
                                 document.getElementById('statusTitle').style.color = 'var(--error)';
                                 document.getElementById('statusDesc').innerHTML = 'Votre demande a été refusée par l\'administrateur. Veuillez vous rapprocher de lui.';
@@ -363,7 +371,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             togglePassword.addEventListener('click', function () {
                 const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
                 password.setAttribute('type', type);
-                this.textContent = type === 'password' ? '👁' : '🔒';
+                this.querySelector('img').src = type === 'password' ? '/assets/icon_eye_gray.svg' : '/assets/icon_eye_off_gray.svg';
             });
         }
 
@@ -387,7 +395,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             togglePasswordOubli.addEventListener('click', function () {
                 const type = passwordOubli.getAttribute('type') === 'password' ? 'text' : 'password';
                 passwordOubli.setAttribute('type', type);
-                this.textContent = type === 'password' ? '👁' : '🔒';
+                this.querySelector('img').src = type === 'password' ? '/assets/icon_eye_gray.svg' : '/assets/icon_eye_off_gray.svg';
             });
         }
 
