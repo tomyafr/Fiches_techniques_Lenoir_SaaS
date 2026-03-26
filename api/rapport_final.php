@@ -576,8 +576,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <?php endif; ?>
 
             <div class="rapport-header card" style="background:#fff; padding: 2rem; border: 1px solid #ddd; text-align: center;">
-                <img src="/assets/logo-raoul-lenoir.png" alt="LENOIR-MEC" class="rapport-logo"
-                    style="height: 70px; width: auto; object-fit: contain; margin: 0 auto 1rem auto; display: block; max-width: 100%;">
+                <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC" class="rapport-logo"
+                    style="height: 60px; width: auto; object-fit: contain; margin: 0 auto 1.5rem auto; display: block; max-width: 100%;">
                 <h1 style="color: #000; margin-bottom: 0.5rem; font-size: 24px;">Rapport d'expertise sur site</h1>
                 <div class="arc-badge" style="background: rgba(27, 79, 114, 0.1); color: #1B4F72; border: 1px solid rgba(27, 79, 114, 0.2); font-weight: bold; padding: 5px 15px; border-radius: 20px; display: inline-block;">
                     ARC <?= htmlspecialchars($intervention['numero_arc']) ?>

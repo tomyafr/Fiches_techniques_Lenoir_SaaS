@@ -653,8 +653,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                     <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:15px; color:#000;">
                         <tr>
                             <td style="width:40%; border-right:1px solid #000; padding:15px; vertical-align:middle; background:#fff; text-align:center;">
-                                <img src="/assets/logo-raoul-lenoir.png" alt="LENOIR-MEC" 
-                                    style="max-width:180px; display:block; margin:0 auto;">
+                                <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC" 
+                                    style="max-width:220px; width:100%; height:auto; display:block; margin:0 auto;">
                             </td>
                             <td style="width:60%; text-align:center; vertical-align:middle;">
                                 <span style="font-size:26px; font-weight:bold; color:#000;">
