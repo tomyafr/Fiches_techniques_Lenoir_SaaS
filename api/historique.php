@@ -479,12 +479,18 @@ $nbClients = count($clientsSet);
     <!-- Bottom nav mobile -->
     <nav class="mobile-bottom-nav">
         <div class="mobile-bottom-nav-inner">
-            <a href="<?= $isAdmin ? 'admin.php' : 'technicien.php' ?>" class="mobile-nav-item"><img src="/assets/icons/dashboard.png" style="height:20px; width:auto; margin-bottom:4px;"><span
-                    class="mobile-nav-icon"></span><span class="mobile-nav-label">Tableau</span></a>
-            <a href="historique.php" class="mobile-nav-item active"><img src="/assets/icons/history.png" style="height:20px; width:auto; margin-bottom:4px;"><span
-                    class="mobile-nav-label">Historique</span></a>
-            <a href="profile.php" class="mobile-nav-item"><img src="/assets/icons/profile.png" style="height:20px; width:auto; margin-bottom:4px;"><span
-                    class="mobile-nav-label">Profil</span></a>
+            <a href="<?= $isAdmin ? 'admin.php' : 'technicien.php' ?>" class="mobile-nav-item">
+                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">📊</span>
+                <span class="mobile-nav-label">Tableau</span>
+            </a>
+            <a href="historique.php" class="mobile-nav-item active">
+                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">🕒</span>
+                <span class="mobile-nav-label">Historique</span>
+            </a>
+            <a href="profile.php" class="mobile-nav-item">
+                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">👤</span>
+                <span class="mobile-nav-label">Profil</span>
+            </a>
         </div>
     </nav>
     <script>
