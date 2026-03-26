@@ -164,7 +164,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
         body { opacity: 0; transition: opacity 0.5s ease; }
         body.loaded { opacity: 1; }
         .animate-up {
-            animation: slideUp 0.6s ease out forwards;
+            animation: slideUp 0.6s ease-out forwards;
             opacity: 0;
         }
         @keyframes slideUp {
