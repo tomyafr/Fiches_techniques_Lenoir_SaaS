@@ -632,7 +632,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             <button type="button" class="btn btn-ghost"
                 onclick="window.location.href='intervention_edit.php?id=<?= $machine['intervention_id'] ?>'"
                 style="color:white; border-color:white; display:flex; align-items:center; gap:6px;">
-                <span>⬅️</span> REVENIR</button>
+                <img src="/assets/icon_back_white.svg" style="height: 18px; width: 18px;"> REVENIR</button>
             <div style="display:flex; gap:10px; align-items:center;">
                 <label style="color:white; font-size:0.8rem; display:flex; align-items:center; gap:5px; cursor:pointer; background:rgba(255,255,255,0.1); padding:5px 10px; border-radius:5px;">
                     <input type="checkbox" name="mesures[excluded]" value="1" <?= ($mesures['excluded'] ?? false) ? 'checked' : '' ?>>

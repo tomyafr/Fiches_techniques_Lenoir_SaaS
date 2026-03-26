@@ -475,7 +475,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     <header class="mobile-header">
         <a href="intervention_edit.php?id=<?= $id ?>" class="btn btn-ghost"
             style="padding: 0.5rem; color: var(--accent-cyan); text-decoration: none; display:flex; align-items:center; gap:6px;">
-            <span>⬅️</span> Retour
+            <img src="/assets/icon_back_blue.svg" style="height: 18px; width: 18px;"> Retour
         </a>
         <span class="mobile-header-title">Rapport Final</span>
         <span class="mobile-header-user"></span>
@@ -516,7 +516,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         </button>
                         <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>"
                             style="padding:0.7rem 1.5rem; background:rgba(255,255,255,0.1); color:var(--text); border:1px solid var(--glass-border); border-radius:8px; font-weight:600; text-decoration:none; font-size:0.9rem; display:flex; align-items:center; gap:8px;">
-                            <span><img src="/assets/icon_dashboard.svg" style="height: 18px; width: 18px; vertical-align: middle;"></span>
+                            <span><img src="/assets/icon_back_green.svg" style="height: 18px; width: 18px; vertical-align: middle;"></span>
                             <span style="color:#27AE60;">Retour au tableau de bord</span>
                         </a>
                     </div>
@@ -722,7 +722,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <!-- DATE & HEURE -->
             <div class="section-title">Date et heure</div>
             <div class="datetime-display">
-                📅
+                <img src="/assets/icon_calendar_blue.svg" style="height: 24px; width: 24px; vertical-align: middle; margin-right: 8px;">
                 <?= $now ?>
             </div>
 
@@ -781,12 +781,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             <!-- BOUTON FINAL -->
             <button type="submit" class="btn-final" onclick="return validateAndSubmit()">
-                <span>✅</span> Finaliser le rapport et terminer l'intervention
+                <span><img src="/assets/icon_check_white.svg" style="height: 20px; width: 20px; vertical-align: middle; margin-right: 8px;"></span> Finaliser le rapport et terminer l'intervention
             </button>
 
                 <a href="intervention_edit.php?id=<?= $id ?>"
                     style="display:flex; align-items:center; justify-content:center; gap:6px; margin-top:1rem; color:var(--text-dim); font-size:0.85rem; text-decoration:none;">
-                    <span style="opacity:0.7;">⬅️</span> Retour aux fiches
+                    <img src="/assets/icon_back_blue.svg" style="height: 16px; width: 16px; opacity:0.7;"> Retour aux fiches
                 </a>
         </form>
     </div>
