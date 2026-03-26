@@ -652,14 +652,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                     <!-- Header exact LENOIR (Edit Mode Only) -->
                     <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:15px; color:#000;">
                         <tr>
-                            <td style="width:40%; border-right:1px solid #000; padding:15px; vertical-align:middle; background:#020617; text-align:center;">
-                                <img src="/assets/logo-raoul-lenoir.svg" alt="LENOIR-MEC" 
+                            <td style="width:40%; border-right:1px solid #000; padding:15px; vertical-align:middle; background:#fff; text-align:center;">
+                                <img src="/assets/logo-raoul-lenoir.png" alt="LENOIR-MEC" 
                                     style="max-width:180px; display:block; margin:0 auto;">
-                                <div style="text-align:right; font-weight:bold; color:#1B4F72; font-size:16px;">
-                                    Poste<input type="text" name="mesures[poste]"
-                                        value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>"
-                                        style="width:100px; border:none; border-bottom:1px solid #1B4F72; outline:none; color:#1B4F72; background:transparent; font-weight:bold;">
-                                </div>
                             </td>
                             <td style="width:60%; text-align:center; vertical-align:middle;">
                                 <span style="font-size:26px; font-weight:bold; color:#000;">
