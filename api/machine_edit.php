@@ -542,7 +542,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             <button type="button" class="btn btn-ghost"
                 onclick="window.location.href='intervention_edit.php?id=<?= $machine['intervention_id'] ?>'"
                 style="color:white; border-color:white; display:flex; align-items:center; gap:6px;">
-                <img src="/assets/icons/back.png" style="height:14px; width:auto;"> REVENIR</button>
+                <span>⬅️</span> REVENIR</button>
             <div style="display:flex; gap:10px; align-items:center;">
                 <label style="color:white; font-size:0.8rem; display:flex; align-items:center; gap:5px; cursor:pointer; background:rgba(255,255,255,0.1); padding:5px 10px; border-radius:5px;">
                     <input type="checkbox" name="mesures[excluded]" value="1" <?= ($mesures['excluded'] ?? false) ? 'checked' : '' ?>>
@@ -550,7 +550,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 </label>
                 <button type="button" class="btn btn-ghost" onclick="window.print()"
                     style="background:#2b2d31; color:white; border:1px solid #444; display:flex; align-items:center; gap:6px;">
-                    <img src="/assets/icons/print.png" style="height:14px; width:auto;"> IMPRIMER
+                    <span>📄</span> IMPRIMER
                 </button>
                 <button type="submit" class="btn btn-primary" style="background:#e6b12a; color:#000;">ENREGISTRER</button>
             </div>
@@ -1658,7 +1658,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette zone est pré-remplie avec les points "Non conformes" ou "À améliorer" détectés. Vous pouvez éditer le texte ci-dessous.</p>
                                 <textarea name="dysfonctionnements" id="dysfonctionnementsText" class="pdf-textarea" style="min-height:100px; font-size:13px; border: 1px solid #ccc; background:#fff; padding:5px;"><?= htmlspecialchars($machine['dysfonctionnements'] ?? '') ?></textarea>
                                 <button type="button" onclick="generateDysfunctions()" style="margin-top:5px; background:#e67e22; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:11px; display:flex; align-items:center; gap:6px;">
-                                <img src="/assets/icons/refresh.png" style="height:12px; width:auto;"> Actualiser (Expert IA)</button>
+                                <span>🔄</span> Actualiser (Expert IA)
                             <?php else: ?>
                                 <?php 
                                     $dysText = trim($machine['dysfonctionnements'] ?? '');

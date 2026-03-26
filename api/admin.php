@@ -189,11 +189,11 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
             <div style="display:flex; justify-content:space-between; margin-bottom: 2rem; align-items: center;">
                 <button class="btn btn-primary"
                     onclick="document.getElementById('newInterventionModal').style.display='flex'">
-                    <img src="/assets/icons/add.png" style="height:18px; width:auto; margin-right:8px;"> NOUVELLE FICHE TECHNIQUE
+                    <span>➕</span> NOUVELLE FICHE TECHNIQUE
                 </button>
                 <button onclick="document.getElementById('pwdInboxModal').style.display='flex'" class="btn btn-ghost"
                     style="padding:0.6rem 1rem;">
-                    <img src="/assets/icons/notification.png" style="height:16px; width:auto; margin-right:6px;"> Demandes MDP
+                    <span>🔔</span> Demandes MDP
                     <?php if (count($pendingPwdRequests) > 0): ?>
                         <span
                             style="background:var(--error); color:white; border-radius:50%; width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:bold; margin-left:0.5rem;">
@@ -377,7 +377,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                 <span class="mobile-nav-label">Équipe</span>
             </a>
             <a href="profile.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                <img src="/assets/icons/profile.png" style="height:20px; width:auto; margin-bottom:4px; display:block; margin-left:auto; margin-right:auto;">
+                <span style="font-size: 1.25rem; display:block; margin-bottom:4px; text-align:center;">👤</span>
                 <span class="mobile-nav-label">Profil</span>
             </a>
         </div>

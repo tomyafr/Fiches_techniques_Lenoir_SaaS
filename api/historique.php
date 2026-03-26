@@ -267,12 +267,12 @@ $nbClients = count($clientsSet);
                 <?php if ($isAdmin): ?>
                     <a href="admin.php?new=1#" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <img src="/assets/icons/add.png" style="height:14px; width:auto; margin-right:8px;"> Nouvelle Fiche
+                        <span style="margin-right:8px;">➕</span> Nouvelle Fiche
                     </a>
                 <?php else: ?>
                     <a href="technicien.php?new=1#" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <img src="/assets/icons/add.png" style="height:14px; width:auto; margin-right:8px;"> Nouvelle Fiche
+                        <span style="margin-right:8px;">➕</span> Nouvelle Fiche
                     </a>
                 <?php endif; ?>
                 <a href="historique.php" class="btn btn-primary sidebar-link"
@@ -298,11 +298,11 @@ $nbClients = count($clientsSet);
 
                 <a href="logout.php" class="btn btn-ghost"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; color: var(--error); margin-bottom: 0.4rem;">
-                    <img src="/assets/icons/error.png" style="height:14px; width:auto; margin-right:8px;"> Se déconnecter
+                    <span style="margin-right:8px;">🚪</span> Se déconnecter
                 </a>
                 <a href="profile.php" class="btn btn-ghost sidebar-link"
                     style="width: 100%; justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/icons/profile.png" style="height:14px; width:auto; margin-right:8px;"> Mon Profil
+                    <span style="margin-right:8px;">👤</span> Mon Profil
                 </a>
             </div>
         </aside>
@@ -393,7 +393,7 @@ $nbClients = count($clientsSet);
 
                 <?php if (empty($interventions)): ?>
                     <div style="padding:3rem;text-align:center;color:var(--text-dim);">
-                        <img src="/assets/icons/machine.png" style="height:60px; width:auto; display:block; margin:0 auto 1rem auto; opacity:0.3;">
+                        <div style="font-size: 60px; margin-bottom: 1rem; opacity: 0.3; text-align: center;">⚙️</div>
                         <p>Aucune intervention pour cette période.</p>
                     </div>
                 <?php else: ?>

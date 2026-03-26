@@ -180,7 +180,7 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                 </h3>
                 <?php if (empty($encours)): ?>
                     <div class="card glass" style="text-align: center; padding: 4rem 2rem;">
-                        <img src="/assets/icons/machine.png" style="height:60px; width:auto; display:block; margin:0 auto 1rem auto; opacity:0.3;">
+                        <div style="font-size: 60px; margin-bottom: 1rem; opacity: 0.3; text-align: center;">⚙️</div>
                         <p style="color: var(--text-dim); font-size: 0.9rem;">Aucune intervention en cours</p>
                     </div>
                 <?php else: ?>
@@ -246,7 +246,7 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
                     <input type="hidden" name="action" value="nouvelle_intervention">
                     <?= csrfField() ?>
                     <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
-                        <img src="/assets/icons/add.png" style="height:20px; width:auto;"> Nouvelle Intervention
+                        <span>➕</span> Nouvelle Intervention
                     </h3>
 
                     <div class="form-group">

@@ -475,7 +475,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     <header class="mobile-header">
         <a href="intervention_edit.php?id=<?= $id ?>" class="btn btn-ghost"
             style="padding: 0.5rem; color: var(--accent-cyan); text-decoration: none; display:flex; align-items:center; gap:6px;">
-            <img src="/assets/icons/back.png" style="height:14px; width:auto;"> Retour
+            <span>⬅️</span> Retour
         </a>
         <span class="mobile-header-title">Rapport Final</span>
         <span class="mobile-header-user"></span>
@@ -489,7 +489,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <?php if (isset($_GET['msg']) && $_GET['msg'] === 'ok'): ?>
                 <div id="successBanner"
                     style="background: rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.4); color:#10b981; padding:1.5rem; border-radius:12px; margin-bottom:1.5rem; text-align:center;">
-                    <div style="margin-bottom:1rem;"><img src="/assets/icons/success.png" style="height:80px; width:auto; display:block; margin:0 auto;"></div>
+                    <div style="margin-bottom:1rem; font-size: 80px; text-align:center;">✅</div>
                     <h3 style="margin:0 0 0.5rem 0; color:#10b981;">Rapport finalisé avec succès !</h3>
                     <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1rem;">L'intervention ARC
                         <?= htmlspecialchars($intervention['numero_arc']) ?> a été clôturée.
@@ -504,13 +504,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <!-- Bouton Envoyer PDF par email -->
                         <button type="button" id="btnSendEmail" onclick="lancerEnvoiEmail()"
                             style="padding:0.7rem 1.5rem; background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem;">
-                            <img src="/assets/icons/email.png" style="height:1.2rem; width:auto; vertical-align:middle;">
+                            <span>📧</span>
                             <span id="btnSendEmailLabel">Envoyer PDF par email</span>
                         </button>
                         <!-- Bouton Télécharger PDF -->
                         <button type="button" id="btnDownloadPDF" onclick="telechargerPDF()"
                             style="padding:0.7rem 1.5rem; background:var(--primary); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">
-                            <img src="/assets/icons/download.png" style="height:1.2rem; width:auto; vertical-align:middle;"> Télécharger le PDF
+                            <span>📥</span> Télécharger le PDF
                         </button>
                         <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>"
                             style="padding:0.7rem 1.5rem; background:rgba(255,255,255,0.1); color:var(--text); border:1px solid var(--glass-border); border-radius:8px; font-weight:600; text-decoration:none; font-size:0.9rem; display:flex; align-items:center; gap:6px;">
@@ -571,7 +571,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <?php if (!empty($error)): ?>
                 <div
                     style="background: rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.4); color:#f43f5e; padding:1rem; border-radius:8px; margin-bottom:1.5rem; font-size:0.85rem; display:flex; align-items:center; gap:10px;">
-                    <img src="/assets/icons/warning.png" style="height:20px; width:auto;"> <?= htmlspecialchars($error) ?>
+                    <span>⚠️</span> <?= htmlspecialchars($error) ?>
                 </div>
             <?php endif; ?>
 
@@ -596,7 +596,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         $statusColor = ($m['points_count'] > 5) ? 'var(--accent-cyan)' : 'var(--error)';
                     ?>
                     <span class="machine-tag" style="border-left: 4px solid <?= $statusColor ?>;">
-                        <img src="/assets/icons/machine.png" style="height:1.2rem; width:auto; vertical-align:middle; margin-right:4px;">
+                        <span>⚙️</span>
                         <?= htmlspecialchars($m['designation']) ?>
                         <?php $mm = json_decode($m['mesures'] ?? '{}', true); ?>
                         <?php if (!empty($mm['repere'])): ?>
@@ -781,7 +781,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             <!-- BOUTON FINAL -->
             <button type="submit" class="btn-final" onclick="return validateAndSubmit()">
-                <img src="/assets/icons/success.png" style="height:18px; width:auto; vertical-align:middle; margin-right:6px;"> Finaliser le rapport et terminer l'intervention
+                <span>✅</span> Finaliser le rapport et terminer l'intervention
             </button>
 
                 <a href="intervention_edit.php?id=<?= $id ?>"
