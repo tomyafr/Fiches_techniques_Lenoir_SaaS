@@ -1812,8 +1812,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?php if (!isset($_GET['pdf'])): ?>
                                 <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette zone est pré-remplie avec les points "Non conformes" ou "À améliorer" détectés. Vous pouvez éditer le texte ci-dessous.</p>
                                 <textarea name="dysfonctionnements" id="dysfonctionnementsText" class="pdf-textarea" style="min-height:100px; font-size:13px; border: 1px solid #ccc; background:#fff; padding:5px;"><?= htmlspecialchars($machine['dysfonctionnements'] ?? '') ?></textarea>
-                                <button type="button" class="btn-ia-action" onclick="generateAI('dysfonctionnements')" style="background:rgba(211, 84, 0, 0.1); color:#e67e22;">
-                                    <img src="/assets/icons/refresh.png" class="premium-icon" style="height: 14px; width: 14px; vertical-align: middle; margin-right: 4px;"> Actualiser
+                                <button type="button" class="btn-ia-action" onclick="generateDysfunctions()" style="margin-top:5px; background:#2980b9; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:11px;">
+                                    <img src="/assets/ai_expert.jpg" style="height: 14px; width: 14px; vertical-align: middle; border-radius:3px; margin-right: 4px;"> Actualiser
                                 </button>
                             <?php else: ?>
                                 <?php 
