@@ -695,6 +695,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <span style="font-size:26px; font-weight:bold; color:#000;">
                                     <?php if ($isAPRF): ?>
                                         Aimant permanent rectangulaire fixe<br>APRF
+                                    <?php elseif ($isEDX): ?>
+                                        Séparateur à courants de foucault ED-X
                                     <?php else: ?>
                                         <?= htmlspecialchars($machine['designation']) ?>
                                     <?php endif; ?>
@@ -707,6 +709,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">A) FICHE DE CONTRÔLE : 
                     <?php if ($isAPRF): ?>
                         Aimant permanent rectangulaire fixe APRF
+                    <?php elseif ($isEDX): ?>
+                        Séparateur à courants de foucault ED-X
                     <?php else: ?>
                         <?= htmlspecialchars($machine['designation']) ?>
                     <?php endif; ?>
