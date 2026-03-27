@@ -214,7 +214,7 @@ $machines = $stmtMach->fetchAll();
                                 <td style="padding:0.6rem 0.8rem; font-weight:600; <?php 
                                     $mDesignation = $m['designation'];
                                     $isValidated = (strpos($mDesignation, 'OVAP') !== false || strpos($mDesignation, 'APRF') !== false);
-                                    $isMissingDoc = (strpos($mDesignation, 'OV (Electromagnétique)') !== false || strpos($mDesignation, 'RDE') !== false);
+                                    $isMissingDoc = (strpos($mDesignation, 'OV (Electromagnétique)') !== false || strpos($mDesignation, 'RD') !== false);
 
                                     if ($isValidated) {
                                         echo '';
@@ -291,10 +291,9 @@ $machines = $stmtMach->fetchAll();
                         <option value="OVERBAND OVAP (Permanent)">OVERBAND OVAP (Permanent)</option>
                         <option value="OVERBAND OV (Electromagnétique)">OVERBAND OV (Electromagnétique)</option>
                         <option value="AIMANT FIXE APRF (Permanent)">AIMANT FIXE APRF (Permanent)</option>
-                        <option value="COURANT FOUCAULT ED-X">COURANT FOUCAULT ED-X</option>
-                        <option value="ELECTROAIMANT FIXE RDE">ELECTROAIMANT FIXE RDE</option>
-                        <option value="TAMBOUR TAP(N)">TAMBOUR TAP(N)</option>
-                        <option value="POULIE PAP(N)">POULIE PAP(N)</option>
+                        <option value="Séparateur à courants de foucault ED-X">Séparateur à courants de foucault ED-X</option>
+                        <option value="ELECTROAIMANT FIXE RD">ELECTROAIMANT FIXE RD</option>
+                        <option value="Tambour ou Poulie (TAP/PAP)">Tambour ou Poulie (TAP/PAP)</option>
                     </select>
                 </div>
 

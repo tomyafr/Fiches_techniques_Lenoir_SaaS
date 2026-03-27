@@ -62,12 +62,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 }
 
 $designation = strtoupper(trim($machine['designation']));
-$isAPRF = strpos($designation, 'APRF') !== false || strpos($designation, 'APRM') !== false;
-$isEDX = strpos($designation, 'ED-X') !== false || strpos($designation, 'EDX') !== false || strpos($designation, 'FOUCAULT') !== false;
+$isAPRF = strpos($designation, 'APRF') !== false || strpos($designation, 'RD') !== false;
+$isEDX = strpos($designation, 'ED-X') !== false || strpos($designation, 'FOUCAULT') !== false;
 $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') === false;
 $isOVAP = $isOV && strpos($designation, 'OVAP') !== false;
 $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AIMANT') !== false;
-$isPAP = strpos($designation, 'PAP') !== false || strpos($designation, 'TAP') !== false;
+$isPAP = strpos($designation, 'TAP/PAP') !== false || strpos($designation, 'PAP') !== false || strpos($designation, 'TAP') !== false;
 
 // Temps prévisionnel par type
 if ($isEDX)
@@ -694,11 +694,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <td style="width:60%; text-align:center; vertical-align:middle;">
                                 <span style="font-size:26px; font-weight:bold; color:#000;">
                                     <?php if ($isAPRF): ?>
-                                        Aimant permanent rectangulaire fixe<br>APRF
+                                        <?php if (strpos($designation, 'RD') !== false): ?>
+                                            Electroaimant de triage fixe RD
+                                        <?php else: ?>
+                                            Aimant permanent rectangulaire fixe<br>APRF
+                                        <?php endif; ?>
                                     <?php elseif ($isEDX): ?>
                                         Séparateur à courants de foucault ED-X
-                                    <?php elseif ($isPAP): ?>
-                                        Tambour ou Poulie à Aimants<br>Permanents TAP/PAP
                                     <?php else: ?>
                                         <?= htmlspecialchars($machine['designation']) ?>
                                     <?php endif; ?>
@@ -710,11 +712,9 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">A) FICHE DE CONTRÔLE : 
                     <?php if ($isAPRF): ?>
-                        Aimant permanent rectangulaire fixe APRF
+                        <?= (strpos($designation, 'RD') !== false) ? 'Electroaimant de triage fixe RD' : 'Aimant permanent rectangulaire fixe APRF' ?>
                     <?php elseif ($isEDX): ?>
                         Séparateur à courants de foucault ED-X
-                    <?php elseif ($isPAP): ?>
-                        Tambour ou Poulie à Aimants Permanents TAP/PAP
                     <?php else: ?>
                         <?= htmlspecialchars($machine['designation']) ?>
                     <?php endif; ?>
@@ -1386,25 +1386,11 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <table class="pdf-table controles" style="font-size:11px;">
                         <tr>
-                            <th rowspan="2" style="width:40%; text-align:center; background:#e0e0e0; padding:0;">
-                                <div style="border-bottom:1px solid #000; padding:4px;">DESIGNATIONS</div>
-                                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:normal; padding:2px 4px; text-align:left;">
-                                    <span>Temps prévisionnel : 1h</span>
-                                    <span>Temps réalisé : <?= htmlspecialchars($tempsRealise) ?> h</span>
+                            <th colspan="3" style="background:#e0e0e0; padding:6px; font-size:12px; font-weight:bold; text-align:left;">
+                                <div style="display:flex; justify-content:space-between; width:100%;">
+                                    <span>TEMPS PRÉVISIONNEL : 1H</span>
+                                    <span>TEMPS RÉALISÉ : <?= htmlspecialchars($tempsRealise ?: '—') ?> h</span>
                                 </div>
-                            </th>
-                            <th style="text-align:center; padding:0; background:#e0e0e0;">ETAT</th>
-                            <th rowspan="2" style="width:30%; text-align:center; background:#e0e0e0;">COMMENTAIRES</th>
-                        </tr>
-                        <tr>
-                            <th style="padding:0; background:#e0e0e0;">
-                                <table style="width:100%; border-collapse:collapse; text-align:center; font-size:10px;">
-                                    <tr>
-                                        <td style="width:33%; border:none; border-right:1px solid #000; padding:2px; font-weight:bold;">Bon</td>
-                                        <td style="width:34%; border:none; border-right:1px solid #000; padding:2px; font-weight:bold;">A remplacer<br>sous :</td>
-                                        <td style="width:33%; border:none; padding:2px; font-weight:bold;">H.S.</td>
-                                    </tr>
-                                </table>
                             </th>
                         </tr>
 
@@ -1505,7 +1491,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </table>
 
                     <div style="text-align:center; margin-top:20px;">
-                        <img src="/assets/machines/pap-tap_diagram.jpeg" style="max-width:100%; height:auto;" alt="Schémas PAP/TAP">
+                        <div style="font-weight:bold; margin-bottom:10px;">Schéma TAP :</div>
+                        <img src="/assets/machines/tap_diagram.png" style="max-width:100%; height:auto;" alt="Schéma TAP">
+                        <div style="font-weight:bold; margin-top:20px; margin-bottom:10px;">Schéma PAP :</div>
+                        <img src="/assets/machines/pap_diagram.png" style="max-width:100%; height:auto;" alt="Schéma PAP">
                     </div>
 
                 <?php elseif ($isLevage): ?>
