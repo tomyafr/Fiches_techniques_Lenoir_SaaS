@@ -978,9 +978,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                         ];
                         foreach($attractions as $akey => $alabel): ?>
                         <tr>
-                            <td style="padding:4px; font-size:11px; display:flex; align-items:center; justify-content:space-between;">
-                                <span><?= $alabel ?></span>
-                                <input type="checkbox" name="donnees[aprf_attr_<?= $akey ?>]" value="1" <?= ($donnees["aprf_attr_$akey"] ?? '') == '1' ? 'checked' : '' ?> style="transform: scale(1.2);">
+                            <td style="padding:4px; font-size:11px;">
+                                <?= $alabel ?>
+                            </td>
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
+                                <?= renderAprfEtatRadios("aprf_attr_$akey", $donnees) ?>
+                            </td>
+                            <td style="padding:0;">
+                                <textarea name="donnees[aprf_attr_<?= $akey ?>_comment]" class="pdf-textarea" style="height:25px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_attr_$akey" . "_comment"] ?? '') ?></textarea>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -1317,37 +1322,28 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <th colspan="3" style="background:#5b9bd5; color:white;">Partie B - Les performances</th>
                         </tr>
                         <tr>
-                            <td colspan="2"
-                                style="font-weight:bold; font-size:11px; vertical-align:middle; padding-left:10px;">Bille
-                                diamètre 20</td>
-                            <td style="padding:0;"><textarea name="donnees[ov_perf_bille]" class="pdf-textarea"
-                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["ov_perf_bille"] ?? "") ?></textarea>
-                            </td>
+                            <th style="width:40%; text-align:center; background:#e0e0e0;">DESIGNATIONS</th>
+                            <th style="text-align:center; background:#e0e0e0;">ETAT</th>
+                            <th style="width:30%; text-align:center; background:#e0e0e0;">COMMENTAIRES</th>
                         </tr>
+                        <?php
+                        $ovPerfs = [
+                            'ov_perf_bille'   => 'Bille diamètre 20',
+                            'ov_perf_ecrou'   => 'Ecrou M4',
+                            'ov_perf_rond50'  => 'Rond diamètre 6 longueur 50',
+                            'ov_perf_rond100' => 'Rond diamètre 6 longueur 100'
+                        ];
+                        foreach($ovPerfs as $key => $label): ?>
                         <tr>
-                            <td colspan="2"
-                                style="font-weight:bold; font-size:11px; vertical-align:middle; padding-left:10px;">Ecrou M4
+                            <td style="font-weight:bold; font-size:11px; padding-left:10px;"><?= $label ?></td>
+                            <td style="padding:0; vertical-align:middle; text-align:center;">
+                                <?= renderAprfEtatRadios($key . "_stat", $donnees) ?>
                             </td>
-                            <td style="padding:0;"><textarea name="donnees[ov_perf_ecrou]" class="pdf-textarea"
-                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["ov_perf_ecrou"] ?? "") ?></textarea>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2"
-                                style="font-weight:bold; font-size:11px; vertical-align:middle; padding-left:10px;">Rond
-                                diamètre 6 longueur 50</td>
-                            <td style="padding:0;"><textarea name="donnees[ov_perf_rond50]" class="pdf-textarea"
-                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["ov_perf_rond50"] ?? "") ?></textarea>
+                            <td style="padding:0;">
+                                <textarea name="donnees[<?= $key ?>]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees[$key] ?? "") ?></textarea>
                             </td>
                         </tr>
-                        <tr>
-                            <td colspan="2"
-                                style="font-weight:bold; font-size:11px; vertical-align:middle; padding-left:10px;">Rond
-                                diamètre 6 longueur 100</td>
-                            <td style="padding:0;"><textarea name="donnees[ov_perf_rond100]" class="pdf-textarea"
-                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["ov_perf_rond100"] ?? "") ?></textarea>
-                            </td>
-                        </tr>
+                        <?php endforeach; ?>
                     </table>
 
                     <?= newPdfPage() ?>
