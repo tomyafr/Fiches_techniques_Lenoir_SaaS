@@ -692,7 +692,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </td>
                             <td style="width:60%; text-align:center; vertical-align:middle;">
                                 <span style="font-size:26px; font-weight:bold; color:#000;">
-                                    <?= $isAPRF ? 'Aimant permanent rectangulaire fixe APRF' : ($isEDX ? 'Séparateur à courants de foucault ED-X' : ($isOV ? 'Overband Electromagnétique OV' : ($isLevage ? 'Electroaimants de Levage' : htmlspecialchars($machine['designation'])))) ?>
+                                    <?= htmlspecialchars($machine['designation']) ?>
                                 </span>
                             </td>
                         </tr>

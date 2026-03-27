@@ -274,12 +274,13 @@ $machines = $stmtMach->fetchAll();
                     <label class="label">Type de Fiche / Désignation <span style="color:var(--error);">*</span></label>
                     <select name="designation" class="input" required style="background: rgba(15, 23, 42, 0.6);">
                         <option value="">— Choisir le type —</option>
-                        <option value="SÉPARATEUR OV - SÉRIE 30">SÉPARATEUR OV - SÉRIE 30</option>
-                        <option value="OVERBAND OV (AUTRES SÉRIES)">OVERBAND OV (AUTRES SÉRIES)</option>
-                        <option value="SÉPARATEURS APRF-APRM">SÉPARATEURS APRF-APRM</option>
-                        <option value="SÉPARATEUR ED-X">SÉPARATEUR ED-X</option>
-                        <option value="SÉPARATEUR LEVAGE">SÉPARATEUR LEVAGE</option>
-                        <option value="PAP / TAP">PAP / TAP</option>
+                        <option value="OVERBAND OVAP (Permanent)">OVERBAND OVAP (Permanent)</option>
+                        <option value="OVERBAND OV (Electromagnétique)">OVERBAND OV (Electromagnétique)</option>
+                        <option value="AIMANT FIXE APRF (Permanent)">AIMANT FIXE APRF (Permanent)</option>
+                        <option value="COURANT FOUCAULT ED-X">COURANT FOUCAULT ED-X</option>
+                        <option value="ELECTROAIMANT FIXE RDE">ELECTROAIMANT FIXE RDE</option>
+                        <option value="TAMBOUR TAP(N)">TAMBOUR TAP(N)</option>
+                        <option value="POULIE PAP(N)">POULIE PAP(N)</option>
                     </select>
                 </div>
 
