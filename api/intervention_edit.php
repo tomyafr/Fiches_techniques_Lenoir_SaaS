@@ -213,20 +213,18 @@ $machines = $stmtMach->fetchAll();
                                     <?= htmlspecialchars($m['numero_of'] ?: '—') ?></td>
                                 <td style="padding:0.6rem 0.8rem; font-weight:600; <?php 
                                     $mDesignation = $m['designation'];
-                                    if (strpos($mDesignation, 'OVAP') !== false) {
-                                        // Validated
+                                    $isValidated = (strpos($mDesignation, 'OVAP') !== false || strpos($mDesignation, 'APRF') !== false);
+                                    $isMissingDoc = (strpos($mDesignation, 'OV (Electromagnétique)') !== false || strpos($mDesignation, 'RDE') !== false);
+
+                                    if ($isValidated) {
                                         echo '';
-                                    } elseif (strpos($mDesignation, 'OV (Electromagnétique)') !== false) {
-                                        // No official sheet
-                                        echo 'color: #ff9800;'; // Still orange as not treated really, but we'll add asterisk
                                     } else {
-                                        // Untreated
                                         echo 'color: #ff9800;';
                                     }
                                 ?>">
                                     <?= htmlspecialchars($m['designation']) ?>
-                                    <?php if (strpos($mDesignation, 'OV (Electromagnétique)') !== false): ?>
-                                        <span style="color:red; font-weight:bold; margin-left:4px;">*</span>
+                                    <?php if ($isMissingDoc): ?>
+                                        <span style="color:red; font-weight:bold; margin-left:4px;" title="Pas de fiche officielle">*</span>
                                     <?php endif; ?>
                                 </td>
                                 <td style="padding:0.6rem 0.8rem;"><?= htmlspecialchars($mMesures['repere'] ?? '—') ?></td>
