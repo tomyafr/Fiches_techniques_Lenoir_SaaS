@@ -280,13 +280,6 @@ $machines = $stmtMach->fetchAll();
                         <option value="SÉPARATEUR ED-X">SÉPARATEUR ED-X</option>
                         <option value="SÉPARATEUR LEVAGE">SÉPARATEUR LEVAGE</option>
                         <option value="PAP / TAP">PAP / TAP</option>
-                        <option value="SÉPARATEUR SGA">SÉPARATEUR SGA</option>
-                        <option value="SÉPARATEUR SGCP / SGCM">SÉPARATEUR SGCP / SGCM</option>
-                        <option value="SÉPARATEUR SGSA">SÉPARATEUR SGSA</option>
-                        <option value="SÉPARATEUR SLT">SÉPARATEUR SLT</option>
-                        <option value="SÉPARATEUR SPM">SÉPARATEUR SPM</option>
-                        <option value="SÉPARATEUR SRM">SÉPARATEUR SRM</option>
-                        <option value="SÉPARATEUR PM">SÉPARATEUR PM</option>
                     </select>
                 </div>
 
