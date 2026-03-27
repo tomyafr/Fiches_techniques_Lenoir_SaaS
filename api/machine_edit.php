@@ -742,9 +742,6 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">T. prévu</td>
                         <td style="border:1px solid #000; padding:6px;">
                             <span style="font-weight:bold; color:#1B4F72; font-size:14px;"><?= htmlspecialchars($tempsPrev) ?> h</span>
-                            <button type="button" id="chronoControl" class="btn btn-ghost no-print-pdf" style="color:#27ae60; padding:0.4rem;" title="Lancer/Arrêter le chrono">
-                                <span id="chronoIcon"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-                            </button>
                         </td>
                     </tr>
                     <tr>
