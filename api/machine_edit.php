@@ -1365,8 +1365,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?php if ($isOVAP): ?>
                             <img src="/assets/machines/ovap_diagram.png"
                                 style="max-width:100%; height:auto; display:block; margin:0 auto 15px auto;" alt="Schéma OVAP">
+                            <div style="font-size:11px; font-weight:bold; margin-bottom:5px; color:#d35400;">Détail Motorisation (Rep. 4 et 5) :</div>
                             <img src="/assets/machines/ovap_diagram_2.png"
-                                style="max-width:80%; height:auto; display:block; margin:0 auto 15px auto;" alt="Schéma Motorisation OVAP">
+                                style="max-width:85%; height:auto; display:block; margin:0 auto 20px auto; border:1px solid #ddd; padding:5px; background:white;" alt="Détail Motorisation OVAP">
                         <?php else: ?>
                             <img src="/assets/machines/ov_diagram.png"
                                 style="max-width:100%; height:auto; display:block; margin:0 auto 15px auto;" alt="Schéma OV">
