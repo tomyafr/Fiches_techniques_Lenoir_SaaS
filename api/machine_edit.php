@@ -1801,14 +1801,6 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </div>
                         </div>
 
-                        <div style="font-weight:bold; margin-bottom:10px; border-bottom:1px solid #eee; padding-top:15px; padding-bottom:5px;">• Electroaimant rectangulaire :</div>
-                        <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-                            <img src="/assets/machines/levage_side_diagram.png" style="width:65%; height:auto;" alt="Rectangulaire">
-                            <div style="width:30%; font-size:11px; background:#f8f9fa; padding:10px; border:1px solid #ddd;">
-                                <strong>Epaisseur 1 :</strong> <input type="text" name="mesures[levage_ep1]" value="<?= htmlspecialchars($mesures['levage_ep1'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"> mm<br>
-                                <strong>Epaisseur 2 :</strong> <input type="text" name="mesures[levage_ep2]" value="<?= htmlspecialchars($mesures['levage_ep2'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"> mm
-                            </div>
-                        </div>
                     </div>
                         <!-- Handled globally -->
 
