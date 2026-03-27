@@ -697,6 +697,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                                         Aimant permanent rectangulaire fixe<br>APRF
                                     <?php elseif ($isEDX): ?>
                                         Séparateur à courants de foucault ED-X
+                                    <?php elseif ($isPAP): ?>
+                                        Tambour ou Poulie à Aimants<br>Permanents TAP/PAP
                                     <?php else: ?>
                                         <?= htmlspecialchars($machine['designation']) ?>
                                     <?php endif; ?>
@@ -711,6 +713,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                         Aimant permanent rectangulaire fixe APRF
                     <?php elseif ($isEDX): ?>
                         Séparateur à courants de foucault ED-X
+                    <?php elseif ($isPAP): ?>
+                        Tambour ou Poulie à Aimants Permanents TAP/PAP
                     <?php else: ?>
                         <?= htmlspecialchars($machine['designation']) ?>
                     <?php endif; ?>
@@ -1377,6 +1381,132 @@ foreach ($recoFreq as $rfk => $rfv) {
                             style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma Overband">
 
                     <!-- Photo section removed here, handled globally at bottom -->
+
+                <?php elseif ($isPAP): ?>
+
+                    <table class="pdf-table controles" style="font-size:11px;">
+                        <tr>
+                            <th rowspan="2" style="width:40%; text-align:center; background:#e0e0e0; padding:0;">
+                                <div style="border-bottom:1px solid #000; padding:4px;">DESIGNATIONS</div>
+                                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:normal; padding:2px 4px; text-align:left;">
+                                    <span>Temps prévisionnel : 1h</span>
+                                    <span>Temps réalisé : <?= htmlspecialchars($tempsRealise) ?> h</span>
+                                </div>
+                            </th>
+                            <th style="text-align:center; padding:0; background:#e0e0e0;">ETAT</th>
+                            <th rowspan="2" style="width:30%; text-align:center; background:#e0e0e0;">COMMENTAIRES</th>
+                        </tr>
+                        <tr>
+                            <th style="padding:0; background:#e0e0e0;">
+                                <table style="width:100%; border-collapse:collapse; text-align:center; font-size:10px;">
+                                    <tr>
+                                        <td style="width:33%; border:none; border-right:1px solid #000; padding:2px; font-weight:bold;">Bon</td>
+                                        <td style="width:34%; border:none; border-right:1px solid #000; padding:2px; font-weight:bold;">A remplacer<br>sous :</td>
+                                        <td style="width:33%; border:none; padding:2px; font-weight:bold;">H.S.</td>
+                                    </tr>
+                                </table>
+                            </th>
+                        </tr>
+
+                        <!-- Section PAP/TAP -->
+                        <tr>
+                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">PAP/TAP</th>
+                        </tr>
+                        <?= renderAprfRow("Satisfaction de fonctionnement", "paptap_satisfaction", $donnees) ?>
+                        <?= renderAprfRow("Aspect général", "paptap_aspect", $donnees) ?>
+
+                        <!-- Section PRODUIT -->
+                        <tr>
+                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">PRODUIT</th>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px;">
+                                Type de produit : 
+                                <input type="text" name="mesures[paptap_produit]" value="<?= htmlspecialchars($mesures['paptap_produit'] ?? '') ?>" class="pdf-input" style="width:100px; border-bottom:1px solid #000;">
+                            </td>
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <?= renderAprfEtatRadios("paptap_produit_stat", $donnees) ?>
+                            </td>
+                            <td style="padding:4px;">
+                                Aciers de <input type="text" name="mesures[paptap_acier_min]" value="<?= htmlspecialchars($mesures['paptap_acier_min'] ?? '') ?>" style="width:30px; border:none; border-bottom:1px solid #000; text-align:center;">
+                                à <input type="text" name="mesures[paptap_acier_max]" value="<?= htmlspecialchars($mesures['paptap_acier_max'] ?? '') ?>" style="width:30px; border:none; border-bottom:1px solid #000; text-align:center;"> mm
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px;">
+                                Granulométrie : 
+                                <input type="text" name="mesures[paptap_granu_min]" value="<?= htmlspecialchars($mesures['paptap_granu_min'] ?? '') ?>" style="width:40px; border:none; border-bottom:1px solid #000; text-align:center;"> à 
+                                <input type="text" name="mesures[paptap_granu_max]" value="<?= htmlspecialchars($mesures['paptap_granu_max'] ?? '') ?>" style="width:40px; border:none; border-bottom:1px solid #000; text-align:center;"> mm
+                            </td>
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
+                                <?= renderAprfEtatRadios("paptap_granu_stat", $donnees) ?>
+                            </td>
+                            <td style="padding:0;"><textarea name="donnees[paptap_granu_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;"><?= htmlspecialchars($donnees['paptap_granu_comment'] ?? '') ?></textarea></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px;">
+                                Débit : 
+                                <input type="text" name="mesures[paptap_debit]" value="<?= htmlspecialchars($mesures['paptap_debit'] ?? '') ?>" style="width:60px; border:none; border-bottom:1px solid #000; text-align:center;"> t/h
+                            </td>
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
+                                <?= renderAprfEtatRadios("paptap_debit_stat", $donnees) ?>
+                            </td>
+                            <td style="padding:4px;">
+                                Avec densité de <input type="text" name="mesures[paptap_densite]" value="<?= htmlspecialchars($mesures['paptap_densite'] ?? '') ?>" style="width:50px; border:none; border-bottom:1px solid #000; text-align:center;">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px;">
+                                Montage sur : Convoyeur / Trémie / Autre :
+                            </td>
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
+                                <?= renderAprfEtatRadios("paptap_montage_stat", $donnees) ?>
+                            </td>
+                            <td style="padding:0;"><textarea name="donnees[paptap_montage_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" placeholder="Précisez..."><?= htmlspecialchars($donnees['paptap_montage_comment'] ?? '') ?></textarea></td>
+                        </tr>
+
+                        <!-- Section MECANIQUE -->
+                        <tr>
+                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">MECANIQUE</th>
+                        </tr>
+                        <?= renderAprfRow("Etat d’usure de la virole inox", "paptap_virole", $donnees) ?>
+                        <?= renderAprfRow("Revêtement caoutchouc lisse ou losange", "paptap_revetement", $donnees) ?>
+                        <?= renderAprfRow("Nombre et taille des tasseaux", "paptap_tasseaux", $donnees) ?>
+                        <?= renderAprfRow("Etat de l’arbre d’entrainement", "paptap_arbre", $donnees) ?>
+                        <?= renderAprfRow("Etat des paliers et graissage", "paptap_paliers", $donnees) ?>
+                        <?= renderAprfRow("Rotation sans difficulté", "paptap_rotation", $donnees) ?>
+
+                        <!-- Section MAGNETIQUE -->
+                        <tr>
+                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">MAGNETIQUE</th>
+                        </tr>
+                        <tr>
+                            <td style="padding:4px;">Position correcte du circuit (pour TAP)</td>
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
+                                <?= renderAprfEtatRadios("paptap_pos_circuit_stat", $donnees) ?>
+                            </td>
+                            <td style="padding:4px;">
+                                Réglage : <input type="text" name="mesures[paptap_reglage]" value="<?= htmlspecialchars($mesures['paptap_reglage'] ?? '') ?>" style="width:80px; border:none; border-bottom:1px solid #000; text-align:center;"> °
+                            </td>
+                        </tr>
+                        <?= renderAprfRow("Type de circuit : Agitateur / Linéaire / Croisé", "paptap_type_circuit", $donnees) ?>
+                        <?= renderAprfRow("Bon maintien du palier fixe", "paptap_palier_fixe", $donnees) ?>
+                        <tr>
+                            <td style="padding:4px;">
+                                Induction sur la virole : <input type="text" name="mesures[paptap_induction]" value="<?= htmlspecialchars($mesures['paptap_induction'] ?? '') ?>" style="width:60px; border:none; border-bottom:1px solid #000; text-align:center;"> Gauss
+                            </td>
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
+                                <?= renderAprfEtatRadios("paptap_induction_stat", $donnees) ?>
+                            </td>
+                            <td style="padding:0;"><textarea name="donnees[paptap_induction_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;"><?= htmlspecialchars($donnees['paptap_induction_comment'] ?? '') ?></textarea></td>
+                        </tr>
+                        <?= renderAprfRow("Aimants : Ferrite ou Néodyme", "paptap_aimants", $donnees) ?>
+                        <?= renderAprfRow("Présence et position correcte d’un volet de séparation", "paptap_volet", $donnees) ?>
+                    </table>
+
+                    <div style="text-align:center; margin-top:20px;">
+                        <img src="/assets/machines/pap-tap_diagram.jpeg" style="max-width:100%; height:auto;" alt="Schémas PAP/TAP">
+                    </div>
 
                 <?php elseif ($isLevage): ?>
 
