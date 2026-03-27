@@ -959,9 +959,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                         <?= renderAprfRow("Caisson Inox", "aprf_inox", $donnees) ?>
                         
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">Contrôle de l’attraction sur échantillon</th>
-                        </tr>
+                        <?= renderAprfRow("Contrôle de l’attraction sur échantillon", "aprf_attraction_main", $donnees) ?>
                         <?php 
                         $attractions = [
                             'bille'   => 'Bille diamètre 20 mm',
@@ -971,7 +969,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         ];
                         foreach($attractions as $akey => $alabel): ?>
                         <tr>
-                            <td style="padding:4px; font-size:11px;"><?= $alabel ?></td>
+                            <td style="padding:4px; padding-left:25px; font-size:11px;"><?= $alabel ?></td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
                                 <?= renderAprfEtatRadios("aprf_attr_$akey", $donnees) ?>
                             </td>
