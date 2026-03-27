@@ -1361,39 +1361,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderFreqRow("Graissage des paliers", "ov_freq_graiss", $donnees) ?>
                     </table>
 
-                    <div class="pdf-section no-print-pdf" style="margin-top:20px; border:1px solid #f29b43; padding:10px; text-align:center;">
-                        <?php if ($isOVAP): ?>
-                            <img src="/assets/machines/ovap_diagram.png"
-                                style="max-width:100%; height:auto; display:block; margin:0 auto 15px auto;" alt="Schéma OVAP">
-                            <div style="font-size:11px; font-weight:bold; margin-bottom:5px; color:#d35400;">Détail Motorisation (Rep. 4 et 5) :</div>
-                            <img src="/assets/machines/ovap_diagram_2.png"
-                                style="max-width:85%; height:auto; display:block; margin:0 auto 20px auto; border:1px solid #ddd; padding:5px; background:white;" alt="Détail Motorisation OVAP">
-                        <?php else: ?>
-                            <img src="/assets/machines/ov_diagram.png"
-                                style="max-width:100%; height:auto; display:block; margin:0 auto 15px auto;" alt="Schéma OV">
-
-                            <!-- Tableau de Légende Gris -->
-                            <div style="display:inline-block; background:white; border:1px solid #000; width:350px;">
-                                <table style="width:100%; border-collapse:collapse; font-size:10px; text-align:center; color:#000;">
-                                    <tr style="background:#e0e0e0; font-weight:bold;">
-                                        <td style="border:1px solid #000; padding:2px; width:40px;">Rep.</td>
-                                        <td style="border:1px solid #000; padding:2px;">DESIGNATION</td>
-                                    </tr>
-                                    <tr><td style="border:1px solid #000; padding:2px;">1</td><td style="border:1px solid #000; padding:2px; text-align:left;">Motoreducteur Rossi</td></tr>
-                                    <tr><td style="border:1px solid #000; padding:2px;">2</td><td style="border:1px solid #000; padding:2px; text-align:left;">Motoreducteur Leroy Somer</td></tr>
-                                    <tr><td style="border:1px solid #000; padding:2px;">3</td><td style="border:1px solid #000; padding:2px; text-align:left;">Motoreducteur SEW</td></tr>
-                                    <tr><td style="border:1px solid #000; padding:2px;">4</td><td style="border:1px solid #000; padding:2px; text-align:left;">Moteur Hydraulique</td></tr>
-                                    <tr><td style="border:1px solid #000; padding:2px;">5</td><td style="border:1px solid #000; padding:2px; text-align:left;">Accouplement élastique</td></tr>
-                                    <tr><td style="border:1px solid #000; padding:2px;">6</td><td style="border:1px solid #000; padding:2px; text-align:left;">Paliers fixes du tambour moteur</td></tr>
-                                    <tr><td style="border:1px solid #000; padding:2px;">7</td><td style="border:1px solid #000; padding:2px; text-align:left;">Paliers tendeurs du tambour mené</td></tr>
-                                    <tr><td style="border:1px solid #000; padding:2px;">8</td><td style="border:1px solid #000; padding:2px; text-align:left;">Contrôleur de rotation</td></tr>
-                                    <tr><td style="border:1px solid #000; padding:2px;">9</td><td style="border:1px solid #000; padding:2px; text-align:left;">Tambour mené</td></tr>
-                                    <tr><td style="border:1px solid #000; padding:2px;">10</td><td style="border:1px solid #000; padding:2px; text-align:left;">(Galets guides)</td></tr>
-                                    <tr><td style="border:1px solid #000; padding:2px;">11</td><td style="border:1px solid #000; padding:2px; text-align:left;">Tambour moteur</td></tr>
-                                    <tr><td style="border:1px solid #000; padding:2px;">12</td><td style="border:1px solid #000; padding:2px; text-align:left;">Bande</td></tr>
-                                </table>
-                            </div>
-                        <?php endif; ?>
+                    <div class="pdf-section" style="margin-top:20px; border:1px solid #f29b43; padding:10px; text-align:center;">
+                        <img src="/assets/machines/ovap_diagram.png"
+                            style="max-width:100%; height:auto; display:block; margin:0 auto 15px auto;" alt="Schéma Overband">
+                        <div style="font-size:11px; font-weight:bold; margin-bottom:5px; color:#d35400;">Détail Motorisation (Rep. 4 et 5) :</div>
+                        <img src="/assets/machines/ovap_diagram_2.png"
+                            style="max-width:85%; height:auto; display:block; margin:0 auto 20px auto; border:1px solid #ddd; padding:5px; background:white;" alt="Détail Motorisation">
+                    </div>
                     </div>
 
                     <!-- Photo section removed here, handled globally at bottom -->
