@@ -710,15 +710,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </table>
                 <?php endif; ?>
 
-                <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">A) FICHE DE CONTRÔLE : 
-                    <?php if ($isAPRF): ?>
-                        <?= (strpos($designation, 'RD') !== false) ? 'Electroaimant de triage fixe RD' : 'Aimant permanent rectangulaire fixe APRF' ?>
-                    <?php elseif ($isPAP): ?>
-                        Tambour ou Poulie à Aimants Permanents TAP/PAP
-                    <?php else: ?>
-                        <?= htmlspecialchars($machine['designation']) ?>
-                    <?php endif; ?>
-                </div>
+                <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">A) FICHE DE CONTRÔLE :</div>
                 
                 <div style="font-weight:bold; color:#1B4F72; margin-bottom:10px; font-size:14px;">
                     Poste : <?= htmlspecialchars($mesures['poste'] ?? 'N/A') ?>
