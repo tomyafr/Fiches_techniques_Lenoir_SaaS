@@ -293,7 +293,7 @@ $machines = $stmtMach->fetchAll();
                         <option value="AIMANT FIXE APRF (Permanent)">AIMANT FIXE APRF (Permanent)</option>
                         <option value="Séparateur à courants de foucault ED-X">Séparateur à courants de foucault ED-X</option>
                         <option value="ELECTROAIMANT FIXE RD">ELECTROAIMANT FIXE RD</option>
-                        <option value="Tambour ou Poulie (TAP/PAP)">Tambour ou Poulie (TAP/PAP)</option>
+                        <option value="Tambour ou Poulie à Aimants Permanents TAP/PAP">Tambour ou Poulie à Aimants Permanents TAP/PAP</option>
                     </select>
                 </div>
 

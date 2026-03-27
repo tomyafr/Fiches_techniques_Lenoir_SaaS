@@ -67,7 +67,7 @@ $isEDX = strpos($designation, 'ED-X') !== false || strpos($designation, 'FOUCAUL
 $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') === false;
 $isOVAP = $isOV && strpos($designation, 'OVAP') !== false;
 $isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AIMANT') !== false;
-$isPAP = strpos($designation, 'TAP/PAP') !== false || strpos($designation, 'PAP') !== false || strpos($designation, 'TAP') !== false;
+$isPAP = strpos($designation, 'À AIMANTS PERMANENTS') !== false || strpos($designation, 'TAP/PAP') !== false || strpos($designation, 'PAP') !== false || strpos($designation, 'TAP') !== false;
 
 // Temps prévisionnel par type
 if ($isEDX)
@@ -699,8 +699,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                                         <?php else: ?>
                                             Aimant permanent rectangulaire fixe<br>APRF
                                         <?php endif; ?>
-                                    <?php elseif ($isEDX): ?>
-                                        Séparateur à courants de foucault ED-X
+                                    <?php elseif ($isPAP): ?>
+                                        Tambour ou Poulie à Aimants Permanents<br>TAP/PAP
                                     <?php else: ?>
                                         <?= htmlspecialchars($machine['designation']) ?>
                                     <?php endif; ?>
@@ -713,8 +713,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">A) FICHE DE CONTRÔLE : 
                     <?php if ($isAPRF): ?>
                         <?= (strpos($designation, 'RD') !== false) ? 'Electroaimant de triage fixe RD' : 'Aimant permanent rectangulaire fixe APRF' ?>
-                    <?php elseif ($isEDX): ?>
-                        Séparateur à courants de foucault ED-X
+                    <?php elseif ($isPAP): ?>
+                        Tambour ou Poulie à Aimants Permanents TAP/PAP
                     <?php else: ?>
                         <?= htmlspecialchars($machine['designation']) ?>
                     <?php endif; ?>
@@ -1525,6 +1525,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <select name="mesures[levage_type]" required 
                                     style="background:#1B4F72; border:1px solid white; color:white; outline:none; font-weight:bold; width:220px; font-size:11px; padding:2px;">
                                     <option value="">-- Choisir le type --</option>
+                                    <option value="Séparateur à courants de foucault ED-X" <?= ($mesures['levage_type'] ?? '') == 'Séparateur à courants de foucault ED-X' ? 'selected' : '' ?>>Séparateur à courants de foucault ED-X</option>
+                                    <option value="ELECTROAIMANT FIXE RD" <?= ($mesures['levage_type'] ?? '') == 'ELECTROAIMANT FIXE RD' ? 'selected' : '' ?>>ELECTROAIMANT FIXE RD</option>
+                                    <option value="Tambour ou Poulie à Aimants Permanents TAP/PAP" <?= ($mesures['levage_type'] ?? '') == 'Tambour ou Poulie à Aimants Permanents TAP/PAP' ? 'selected' : '' ?>>Tambour ou Poulie à Aimants Permanents TAP/PAP</option>
                                     <option value="Electroaimant Circulaire" <?= ($mesures['levage_type'] ?? '') == 'Electroaimant Circulaire' ? 'selected' : '' ?>>Electroaimant Circulaire</option>
                                     <option value="Electroaimant Rectangulaire" <?= ($mesures['levage_type'] ?? '') == 'Electroaimant Rectangulaire' ? 'selected' : '' ?>>Electroaimant Rectangulaire</option>
                                     <option value="Palonnier Fixe" <?= ($mesures['levage_type'] ?? '') == 'Palonnier Fixe' ? 'selected' : '' ?>>Palonnier Fixe</option>
