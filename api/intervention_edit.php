@@ -275,11 +275,18 @@ $machines = $stmtMach->fetchAll();
                     <select name="designation" class="input" required style="background: rgba(15, 23, 42, 0.6);">
                         <option value="">— Choisir le type —</option>
                         <option value="SÉPARATEUR OV - SÉRIE 30">SÉPARATEUR OV - SÉRIE 30</option>
-                        <option value="SÉPARATEUR OVERBAND OV (AUTRES SÉRIES)">OVERBAND OV (AUTRES SÉRIES)</option>
+                        <option value="OVERBAND OV (AUTRES SÉRIES)">OVERBAND OV (AUTRES SÉRIES)</option>
                         <option value="SÉPARATEURS APRF-APRM">SÉPARATEURS APRF-APRM</option>
-                        <option value="ED-X">SÉPARATEUR ED-X</option>
-                        <option value="LEVAGE">SÉPARATEUR LEVAGE</option>
-                        <option value="PAP/TAP">PAP / TAP</option>
+                        <option value="SÉPARATEUR ED-X">SÉPARATEUR ED-X</option>
+                        <option value="SÉPARATEUR LEVAGE">SÉPARATEUR LEVAGE</option>
+                        <option value="PAP / TAP">PAP / TAP</option>
+                        <option value="SÉPARATEUR SGA">SÉPARATEUR SGA</option>
+                        <option value="SÉPARATEUR SGCP / SGCM">SÉPARATEUR SGCP / SGCM</option>
+                        <option value="SÉPARATEUR SGSA">SÉPARATEUR SGSA</option>
+                        <option value="SÉPARATEUR SLT">SÉPARATEUR SLT</option>
+                        <option value="SÉPARATEUR SPM">SÉPARATEUR SPM</option>
+                        <option value="SÉPARATEUR SRM">SÉPARATEUR SRM</option>
+                        <option value="SÉPARATEUR PM">SÉPARATEUR PM</option>
                     </select>
                 </div>
 
