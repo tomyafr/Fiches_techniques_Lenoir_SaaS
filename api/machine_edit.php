@@ -1786,18 +1786,18 @@ foreach ($recoFreq as $rfk => $rfv) {
                                  style="width:100%; height:auto;" 
                                  alt="Circulaire">
                             
-                            <!-- Diamètre pôle (83.6% / 23.4%) -->
-                            <div style="position:absolute; left:83.6%; top:23.4%; transform:translate(-50%, -50%); font-size:10px;">
+                            <!-- Diamètre pôle (83.6% / 21.8%) - Adjusted HIGHER -->
+                            <div style="position:absolute; left:83.6%; top:21.8%; transform:translate(-50%, -50%); font-size:10px;">
                                 <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:50px; border-bottom:1px solid #000; background:transparent; text-align:center;">
                             </div>
 
-                            <!-- Diamètre noyau (85.5% / 28.4%) -->
-                            <div style="position:absolute; left:85.5%; top:28.4%; transform:translate(-50%, -50%); font-size:10px;">
+                            <!-- Diamètre noyau (85.5% / 26.8%) - Adjusted HIGHER -->
+                            <div style="position:absolute; left:85.5%; top:26.8%; transform:translate(-50%, -50%); font-size:10px;">
                                 <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>" class="pdf-input" style="width:50px; border-bottom:1px solid #000; background:transparent; text-align:center;">
                             </div>
 
-                            <!-- Epaisseur pôle (85.6% / 40.5%) -->
-                            <div style="position:absolute; left:85.6%; top:40.5%; transform:translate(-50%, -50%); font-size:10px;">
+                            <!-- Epaisseur pôle (85.6% / 38.9%) - Adjusted HIGHER -->
+                            <div style="position:absolute; left:85.6%; top:38.9%; transform:translate(-50%, -50%); font-size:10px;">
                                 <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:55px; border-bottom:1px solid #000; background:transparent; text-align:center;">
                             </div>
 
