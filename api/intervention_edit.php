@@ -215,7 +215,7 @@ $machines = $stmtMach->fetchAll();
                                     $mDesignation = $m['designation'];
                                     $isValidated = (strpos($mDesignation, 'OVAP') !== false || strpos($mDesignation, 'APRF') !== false 
                                         || strpos($mDesignation, 'TAP/PAP') !== false || strpos($mDesignation, 'ED-X') !== false);
-                                    $isMissingDoc = (strpos($mDesignation, 'OV (Electromagnétique)') !== false || strpos($mDesignation, 'RD') !== false);
+                                    $isMissingDoc = (strpos($mDesignation, 'OV (Electromagnétique)') !== false || strpos($mDesignation, 'RD') !== false || strpos($mDesignation, 'LEVAGE') !== false);
 
                                     if ($isValidated) {
                                         echo '';
@@ -295,6 +295,7 @@ $machines = $stmtMach->fetchAll();
                         <option value="Séparateur à courants de foucault ED-X">Séparateur à courants de foucault ED-X</option>
                         <option value="ELECTROAIMANT FIXE RD" style="color:red;">ELECTROAIMANT FIXE RD *</option>
                         <option value="Tambour ou Poulie à Aimants Permanents TAP/PAP">Tambour ou Poulie à Aimants Permanents TAP/PAP</option>
+                        <option value="ELECTROAIMANTS DE LEVAGE" style="color:red;">ELECTROAIMANTS DE LEVAGE *</option>
                     </select>
                 </div>
 

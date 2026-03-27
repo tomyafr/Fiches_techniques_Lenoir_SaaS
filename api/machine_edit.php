@@ -66,7 +66,7 @@ $isAPRF = strpos($designation, 'APRF') !== false || strpos($designation, 'RD') !
 $isEDX = strpos($designation, 'ED-X') !== false || strpos($designation, 'FOUCAULT') !== false;
 $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') === false;
 $isOVAP = $isOV && strpos($designation, 'OVAP') !== false;
-$isLevage = strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AIMANT') !== false;
+$isLevage = (strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AIMANT') !== false) && !$isAPRF && !$isPAP;
 $isPAP = strpos($designation, 'À AIMANTS PERMANENTS') !== false || strpos($designation, 'TAP/PAP') !== false || strpos($designation, 'PAP') !== false || strpos($designation, 'TAP') !== false;
 
 // Temps prévisionnel par type
@@ -701,6 +701,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                                         <?php endif; ?>
                                     <?php elseif ($isPAP): ?>
                                         Tambour ou Poulie à Aimants Permanents<br>TAP/PAP
+                                    <?php elseif ($isLevage): ?>
+                                        Electroaimants de Levage
                                     <?php else: ?>
                                         <?= htmlspecialchars($machine['designation']) ?>
                                     <?php endif; ?>
@@ -919,12 +921,16 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <table class="pdf-table controles" style="font-size:11px;">
                         <tr>
+                            <th colspan="3" style="background:#e0e0e0; padding:6px; font-size:12px; font-weight:bold; text-align:left;">
+                                <div style="display:flex; justify-content:space-between; width:100%;">
+                                    <span>TEMPS PRÉVISIONNEL : 25min/aimant + 25min/palonnier + 30min/armoire</span>
+                                    <span>TEMPS RÉALISÉ : <?= htmlspecialchars($tempsRealise ?: '—') ?> h</span>
+                                </div>
+                            </th>
+                        </tr>
+                        <tr>
                             <th rowspan="2" style="width:40%; text-align:center; background:#e0e0e0; padding:0;">
                                 <div style="border-bottom:1px solid #000; padding:4px;">DESIGNATIONS</div>
-                                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:normal; padding:2px 4px; text-align:left;">
-                                    <span>Temps prévisionnel : 1h</span>
-                                    <span>Temps réalisé : <?= htmlspecialchars($tempsRealise) ?> h</span>
-                                </div>
                             </th>
                             <th style="text-align:center; padding:0; background:#e0e0e0;">ETAT</th>
                             <th rowspan="2" style="width:30%; text-align:center; background:#e0e0e0;">COMMENTAIRES</th>
@@ -1775,31 +1781,22 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <div style="margin-top:20px;"></div>
 
-                    <div class="pdf-section no-print-pdf" style="margin-top:20px; border:1px solid #000; padding:10px; color:black;">
-                        <!-- Main schema enlarged without absolute positioning inside -->
-                        <div style="display:flex; justify-content:center; align-items: flex-end; margin-bottom:10px;">
-                            <img src="/assets/machines/levage_diagram.png"
-                                class="no-print-pdf"
-                                style="width:100%; max-width:600px; height:auto; display:block;" alt="Schéma Levage">
+                    <div style="margin-top:20px; display:flex; flex-direction:column; gap:20px; color:#000;">
+                        <div style="border:2px solid #d35400; padding:10px;">
+                            <div style="font-weight:bold; margin-bottom:5px;">• Electroaimant circulaire :</div>
+                            <img src="/assets/machines/levage_diagram.png" style="width:100%; height:auto;" alt="Circulaire">
                         </div>
-
-                        <!-- Inputs below the image, standard style "comme les autres" -->
-                        <div style="display:flex; gap:10px;">
-                            <div style="flex:1; border:1px solid #000; padding:5px; font-size:11px;">
-                                <strong>Diamètre du pôle :</strong> <input type="text" name="mesures[levage_diam_pole]"
-                                    value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input"
-                                    style="width:60px; border-bottom: 1px solid #000;"> mm<br>
-                                <strong>Diamètre du noyau :</strong> <input type="text" name="mesures[levage_diam_noyau]"
-                                    value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>" class="pdf-input"
-                                    style="width:60px; border-bottom: 1px solid #000;"> mm
-                            </div>
-                            <div style="flex:1; border:1px solid #000; padding:5px; font-size:11px;">
-                                <strong>Epaisseur du pôle :</strong> <input type="text"
-                                    name="mesures[levage_epaisseur_pole]"
-                                    value="<?= htmlspecialchars($mesures['levage_epaisseur_pole'] ?? '') ?>"
-                                    class="pdf-input" style="width:60px; border-bottom: 1px solid #000;"> mm
+                        <div style="border:2px solid #d35400; padding:10px;">
+                            <div style="font-weight:bold; margin-bottom:5px;">• Electroaimant rectangulaire :</div>
+                            <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+                                <img src="/assets/machines/levage_side_diagram.png" style="width:70%; height:auto;" alt="Rectangulaire">
+                                <div style="width:25%; font-size:11px; font-weight:bold;">
+                                    Epaisseur 1 : <input type="text" name="mesures[levage_ep1]" value="<?= htmlspecialchars($mesures['levage_ep1'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"> mm<br>
+                                    Epaisseur 2 : <input type="text" name="mesures[levage_ep2]" value="<?= htmlspecialchars($mesures['levage_ep2'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"> mm
+                                </div>
                             </div>
                         </div>
+                    </div>
                         <!-- Handled globally -->
 
                     <?php else: ?>
