@@ -1773,34 +1773,35 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </td>
                             <td style="border:1px solid #000; text-align:center;"></td>
                             <td style="padding:0;"><textarea name="donnees[levage_facteur_service_comment]"
-                                    class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_facteur_service_comment"] ?? '') ?></textarea>
                             </td>
                         </tr>
                     </table>
 
-                    <div style="margin-top:20px;"></div>
-
                     <div style="margin-top:20px; border:1px solid #d35400; padding:15px; color:#000; position:relative;">
-                        <!-- Titres sections -->
                         <div style="font-weight:bold; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">• Electroaimant circulaire :</div>
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:30px;">
-                            <img src="/assets/machines/levage_diagram.png" style="width:65%; height:auto;" alt="Circulaire">
-                            <div style="width:30%; font-size:11px; display:flex; flex-direction:column; gap:8px;">
-                                <div style="background:#f8f9fa; padding:8px; border:1px solid #ddd;">
-                                    <strong>Diamètre pôle :</strong> <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"> mm<br>
-                                    <strong>Diamètre noyau :</strong> <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"> mm<br>
-                                    <strong>Epaisseur pôle :</strong> <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"> mm
-                                </div>
-                                <div style="background:#eaf2f8; padding:8px; border:1px solid #ddd;">
-                                    <strong>Ø ext 2 :</strong> <input type="text" name="mesures[levage_ext2]" value="<?= htmlspecialchars($mesures['levage_ext2'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"><br>
-                                    <strong>Ø ext 1 :</strong> <input type="text" name="mesures[levage_ext1]" value="<?= htmlspecialchars($mesures['levage_ext1'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"><br>
-                                    <strong>Ø int 2 :</strong> <input type="text" name="mesures[levage_int2]" value="<?= htmlspecialchars($mesures['levage_int2'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"><br>
-                                    <strong>Ø int 1 :</strong> <input type="text" name="mesures[levage_int1]" value="<?= htmlspecialchars($mesures['levage_int1'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;">
-                                </div>
+                        <div style="position:relative; width:100%; max-width:650px; margin:0 auto;">
+                            <img src="/assets/machines/levage_diagram.png" style="width:100%; height:auto;" alt="Circulaire">
+                            
+                            <!-- Diamètre pôle/noyau (Right top) -->
+                            <div style="position:absolute; right:12%; top:22%; font-size:10px; font-weight:bold;">
+                                <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"> mm<br><br>
+                                <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"> mm
+                            </div>
+
+                            <!-- Epaisseur pôle (Right middle) -->
+                            <div style="position:absolute; right:8%; top:45%; font-size:10px; font-weight:bold;">
+                                <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"> mm
+                            </div>
+
+                            <!-- Ø ext/int (Left bottom) -->
+                            <div style="position:absolute; left:6%; bottom:28%; font-size:10px; font-weight:bold; color:#1B4F72; line-height:1.6;">
+                                Ø ext 2 : <input type="text" name="mesures[levage_ext2]" value="<?= htmlspecialchars($mesures['levage_ext2'] ?? '') ?>" class="pdf-input" style="width:35px; border-bottom:1px solid #000;"><br>
+                                Ø ext 1 : <input type="text" name="mesures[levage_ext1]" value="<?= htmlspecialchars($mesures['levage_ext1'] ?? '') ?>" class="pdf-input" style="width:35px; border-bottom:1px solid #000;"><br>
+                                Ø int 2 : <input type="text" name="mesures[levage_int2]" value="<?= htmlspecialchars($mesures['levage_int2'] ?? '') ?>" class="pdf-input" style="width:35px; border-bottom:1px solid #000;"><br>
+                                Ø int 1 : <input type="text" name="mesures[levage_int1]" value="<?= htmlspecialchars($mesures['levage_int1'] ?? '') ?>" class="pdf-input" style="width:35px; border-bottom:1px solid #000;">
                             </div>
                         </div>
-
                     </div>
                         <!-- Handled globally -->
 
