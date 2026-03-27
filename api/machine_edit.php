@@ -1361,14 +1361,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderFreqRow("Graissage des paliers", "ov_freq_graiss", $donnees) ?>
                     </table>
 
-                    <div class="pdf-section" style="margin-top:20px; border:1px solid #f29b43; padding:10px; text-align:center;">
                         <img src="/assets/machines/ovap_diagram.png"
-                            style="max-width:100%; height:auto; display:block; margin:0 auto 15px auto;" alt="Schéma Overband">
-                        <div style="font-size:11px; font-weight:bold; margin-bottom:5px; color:#d35400;">Détail Motorisation (Rep. 4 et 5) :</div>
-                        <img src="/assets/machines/ovap_diagram_2.png"
-                            style="max-width:85%; height:auto; display:block; margin:0 auto 20px auto; border:1px solid #ddd; padding:5px; background:white;" alt="Détail Motorisation">
-                    </div>
-                    </div>
+                            style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma Overband">
 
                     <!-- Photo section removed here, handled globally at bottom -->
 
