@@ -211,7 +211,23 @@ $machines = $stmtMach->fetchAll();
                                     <?= htmlspecialchars($intervention['numero_arc']) ?></td>
                                 <td style="padding:0.6rem 0.8rem; white-space:nowrap;">
                                     <?= htmlspecialchars($m['numero_of'] ?: '—') ?></td>
-                                <td style="padding:0.6rem 0.8rem; font-weight:600;"><?= htmlspecialchars($m['designation']) ?>
+                                <td style="padding:0.6rem 0.8rem; font-weight:600; <?php 
+                                    $mDesignation = $m['designation'];
+                                    if (strpos($mDesignation, 'OVAP') !== false) {
+                                        // Validated
+                                        echo '';
+                                    } elseif (strpos($mDesignation, 'OV (Electromagnétique)') !== false) {
+                                        // No official sheet
+                                        echo 'color: #ff9800;'; // Still orange as not treated really, but we'll add asterisk
+                                    } else {
+                                        // Untreated
+                                        echo 'color: #ff9800;';
+                                    }
+                                ?>">
+                                    <?= htmlspecialchars($m['designation']) ?>
+                                    <?php if (strpos($mDesignation, 'OV (Electromagnétique)') !== false): ?>
+                                        <span style="color:red; font-weight:bold; margin-left:4px;">*</span>
+                                    <?php endif; ?>
                                 </td>
                                 <td style="padding:0.6rem 0.8rem;"><?= htmlspecialchars($mMesures['repere'] ?? '—') ?></td>
                                 <td style="padding:0.6rem 0.8rem; text-align:center;">

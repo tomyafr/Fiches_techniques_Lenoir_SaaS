@@ -693,14 +693,24 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </td>
                             <td style="width:60%; text-align:center; vertical-align:middle;">
                                 <span style="font-size:26px; font-weight:bold; color:#000;">
-                                    <?= htmlspecialchars($machine['designation']) ?>
+                                    <?php if ($isAPRF): ?>
+                                        Aimant permanent rectangulaire fixe<br>APRF
+                                    <?php else: ?>
+                                        <?= htmlspecialchars($machine['designation']) ?>
+                                    <?php endif; ?>
                                 </span>
                             </td>
                         </tr>
                     </table>
                 <?php endif; ?>
 
-                <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">A) FICHE DE CONTRÔLE : <?= htmlspecialchars($machine['designation']) ?></div>
+                <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">A) FICHE DE CONTRÔLE : 
+                    <?php if ($isAPRF): ?>
+                        Aimant permanent rectangulaire fixe APRF
+                    <?php else: ?>
+                        <?= htmlspecialchars($machine['designation']) ?>
+                    <?php endif; ?>
+                </div>
                 
                 <div style="font-weight:bold; color:#1B4F72; margin-bottom:10px; font-size:14px;">
                     Poste : <?= htmlspecialchars($mesures['poste'] ?? 'N/A') ?>
@@ -907,12 +917,15 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <!-- DYNAMIC CONTENT DEPENDING ON MACHINE TYPE -->
                 <?php if ($isAPRF): ?>
 
-
-
-
                     <table class="pdf-table controles" style="font-size:11px;">
                         <tr>
-                            <th rowspan="2" style="width:40%; text-align:center; background:#e0e0e0;">DESIGNATIONS</th>
+                            <th rowspan="2" style="width:40%; text-align:center; background:#e0e0e0; padding:0;">
+                                <div style="border-bottom:1px solid #000; padding:4px;">DESIGNATIONS</div>
+                                <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:normal; padding:2px 4px; text-align:left;">
+                                    <span>Temps prévisionnel : 1h</span>
+                                    <span>Temps réalisé : <?= htmlspecialchars($tempsRealise) ?> h</span>
+                                </div>
+                            </th>
                             <th style="text-align:center; padding:0; background:#e0e0e0;">ETAT</th>
                             <th rowspan="2" style="width:30%; text-align:center; background:#e0e0e0;">COMMENTAIRES</th>
                         </tr>
@@ -933,8 +946,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
 
                         <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white;">Aimants permanent fixe de triage type
-                                APRF</th>
+                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">Aimants permanent fixe de triage type APRF</th>
                         </tr>
                         <?= renderAprfRow("Satisfaction de fonctionnement", "aprf_satisfaction", $donnees) ?>
                         <?= renderAprfRow("État et type de la bande", "aprf_bande", $donnees) ?>
@@ -943,83 +955,94 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderAprfRow("Options (à préciser)", "aprf_options", $donnees) ?>
 
                         <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white;">AIMANT PERMANENT</th>
+                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">AIMANT PERMANENT</th>
                         </tr>
                         <?= renderAprfRow("Caisson Inox", "aprf_inox", $donnees) ?>
+                        
+                        <tr>
+                            <td style="font-weight:bold; padding:4px;">Contrôle de l’attraction sur échantillon</td>
+                            <td rowspan="5" style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <?= renderAprfEtatRadios("aprf_attraction_stat", $donnees) ?>
+                            </td>
+                            <td rowspan="5" style="padding:0;">
+                                <textarea name="donnees[aprf_attraction_comment]" class="pdf-textarea"
+                                    style="height:110px; border:none; width:100%; box-sizing:border-box; padding:4px;" placeholder="Commentaires..."><?= htmlspecialchars($donnees["aprf_attraction_comment"] ?? '') ?></textarea>
+                            </td>
+                        </tr>
+                        <?php 
+                        $attractions = [
+                            'bille'   => 'Bille diamètre 20 mm',
+                            'ecrou'   => 'Écrou M4',
+                            'rond50'  => 'Rond diamètre 6 Lg 50 mm',
+                            'rond100' => 'Rond diamètre 6 Lg 100 mm'
+                        ];
+                        foreach($attractions as $akey => $alabel): ?>
+                        <tr>
+                            <td style="padding:4px; font-size:11px; display:flex; align-items:center; justify-content:space-between;">
+                                <span><?= $alabel ?></span>
+                                <input type="checkbox" name="donnees[aprf_attr_<?= $akey ?>]" value="1" <?= ($donnees["aprf_attr_$akey"] ?? '') == '1' ? 'checked' : '' ?> style="transform: scale(1.2);">
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
 
                         <tr>
-                        <tr>
-                            <td style="vertical-align:top; font-size:11px;">
-                                Contrôle de l'attraction sur échantillon<br><br>
-                                Bille diamètre 20<br>
-                                Écrou M4<br>
-                                Rond diamètre 6 Lg 50<br>
-                                Rond diamètre 6 Lg 100
-                            </td>
-                            <td style="padding:0; vertical-align:middle;">
-                                <?= renderAprfEtatRadios("aprf_attraction", $donnees) ?>
-                            </td>
-                            <td style="padding:0;"><textarea name="donnees[aprf_attraction_comment]" class="pdf-textarea"
-                                    style="height:120px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_attraction_comment"] ?? '') ?></textarea>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white;">APPLICATION CLIENT</th>
+                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">APPLICATION CLIENT</th>
                         </tr>
                         <tr>
-                            <td style="font-weight:bold; padding:8px;">Type de produit : <input type="text"
-                                    class="pdf-input" style="width:auto;" name="mesures[produit]"
-                                    value="<?= htmlspecialchars($mesures['produit'] ?? '') ?>"></td>
-                            <td style="padding:0; vertical-align:middle;"><?= renderAprfEtatRadios("aprf_prod", $donnees) ?>
+                            <td style="padding:4px; font-weight:bold;">
+                                Type de produit : 
+                                <input type="text" name="mesures[aprf_produit]" value="<?= htmlspecialchars($mesures['aprf_produit'] ?? '') ?>" class="pdf-input" style="width:150px; border-bottom:1px solid #000;">
                             </td>
-                            <td style="padding:0;"><textarea name="donnees[aprf_prod_comment]" class="pdf-textarea"
-                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_prod_comment"] ?? '') ?></textarea>
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <?= renderAprfEtatRadios("aprf_produit_stat", $donnees) ?>
                             </td>
+                            <td style="padding:0;"><textarea name="donnees[aprf_produit_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_produit_comment"] ?? '') ?></textarea></td>
                         </tr>
                         <tr>
-                            <td style="font-weight:bold; padding:8px;">Granulométrie : <input type="text" class="pdf-input"
-                                    style="width:40px; text-align:center;" name="mesures[granulometrie]"
-                                    value="<?= htmlspecialchars($mesures['granulometrie'] ?? '') ?>"> mm</td>
-                            <td style="padding:0; vertical-align:middle;">
-                                <?= renderAprfEtatRadios("aprf_granu", $donnees) ?>
+                            <td style="padding:4px; font-weight:bold;">
+                                Granulométrie : 
+                                <input type="text" name="mesures[aprf_granu]" value="<?= htmlspecialchars($mesures['aprf_granu'] ?? '') ?>" class="pdf-input" style="width:60px; border-bottom:1px solid #000; text-align:center;"> mm
                             </td>
-                            <td style="padding:0;"><textarea name="donnees[aprf_granu_comment]" class="pdf-textarea"
-                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_granu_comment"] ?? '') ?></textarea>
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <?= renderAprfEtatRadios("aprf_granu_stat", $donnees) ?>
                             </td>
+                            <td style="padding:0;"><textarea name="donnees[aprf_granu_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_granu_comment"] ?? '') ?></textarea></td>
                         </tr>
                         <tr>
-                            <td style="font-weight:bold; padding:8px;">Distance aimants / bande : <input type="text"
-                                    class="pdf-input" style="width:40px; text-align:center;" name="mesures[distance]"
-                                    value="<?= htmlspecialchars($mesures['distance'] ?? '') ?>"> mm</td>
-                            <td style="padding:0; vertical-align:middle;"><?= renderAprfEtatRadios("aprf_dist", $donnees) ?>
+                            <td style="padding:4px; font-weight:bold;">
+                                Distance aimants / bande : 
+                                <input type="text" name="mesures[aprf_dist_min]" value="<?= htmlspecialchars($mesures['aprf_dist_min'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000; text-align:center;"> à 
+                                <input type="text" name="mesures[aprf_dist_max]" value="<?= htmlspecialchars($mesures['aprf_dist_max'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000; text-align:center;"> mm
                             </td>
-                            <td style="padding:0;"><textarea name="donnees[aprf_dist_comment]" class="pdf-textarea"
-                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_dist_comment"] ?? '') ?></textarea>
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <?= renderAprfEtatRadios("aprf_dist_stat", $donnees) ?>
                             </td>
+                            <td style="padding:0;"><textarea name="donnees[aprf_dist_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_dist_comment"] ?? '') ?></textarea></td>
                         </tr>
                         <tr>
-                            <td style="font-weight:bold; padding:8px;">Hauteur de la couche : <input type="text"
-                                    class="pdf-input" style="width:40px; text-align:center;" name="mesures[hauteur]"
-                                    value="<?= htmlspecialchars($mesures['hauteur'] ?? '') ?>"> mm</td>
-                            <td style="padding:0; vertical-align:middle;"><?= renderAprfEtatRadios("aprf_haut", $donnees) ?>
+                            <td style="padding:4px; font-weight:bold;">
+                                Hauteur de la couche : 
+                                <input type="text" name="mesures[aprf_H_couche]" value="<?= htmlspecialchars($mesures['aprf_H_couche'] ?? '') ?>" class="pdf-input" style="width:80px; border-bottom:1px solid #000; text-align:center;"> mm
                             </td>
-                            <td style="padding:0;"><textarea name="donnees[aprf_haut_comment]" class="pdf-textarea"
-                                    style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_haut_comment"] ?? '') ?></textarea>
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <?= renderAprfEtatRadios("aprf_H_stat", $donnees) ?>
                             </td>
+                            <td style="padding:0;"><textarea name="donnees[aprf_H_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_H_comment"] ?? '') ?></textarea></td>
                         </tr>
                         <tr>
-                            <td style="font-weight:bold; padding:8px;">Débit : <input type="text" class="pdf-input"
-                                    style="width:50px; text-align:center;" name="mesures[debit]"
-                                    value="<?= htmlspecialchars($mesures['debit'] ?? '') ?>"> t/h</td>
-                            <td style="padding:0; vertical-align:middle;">
-                                <?= renderAprfEtatRadios("aprf_debit", $donnees) ?>
+                            <td style="padding:4px; font-weight:bold;">
+                                Débit : 
+                                <input type="text" name="mesures[aprf_debit]" value="<?= htmlspecialchars($mesures['aprf_debit'] ?? '') ?>" class="pdf-input" style="width:60px; border-bottom:1px solid #000; text-align:center;"> t/h
                             </td>
-                            <td style="padding:4px;">Avec densité de <input type="text" class="pdf-input"
-                                    style="width:50px; text-align:center;" name="mesures[densite]"
-                                    value="<?= htmlspecialchars($mesures['densite'] ?? '') ?>"></td>
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <?= renderAprfEtatRadios("aprf_debit_stat", $donnees) ?>
+                            </td>
+                            <td style="padding:4px;">
+                                Avec densité de <input type="text" name="mesures[aprf_densite]" value="<?= htmlspecialchars($mesures['aprf_densite'] ?? '') ?>" class="pdf-input" style="width:60px; border-bottom:1px solid #000; text-align:center;">
+                            </td>
                         </tr>
                     </table>
+
 
                     <div class="pdf-section no-print-pdf" style="margin-top:20px;">
                         <img src="/assets/machines/aprf_diagram.png"
