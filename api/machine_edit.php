@@ -1783,29 +1783,26 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <div style="position:relative; width:100%; max-width:650px; margin:0 auto;">
                             <!-- Diagram includes Rep section and boxes -->
                             <img src="/assets/machines/levage_diagram.png" 
-                                 id="debug-levage-img"
-                                 style="width:100%; height:auto; cursor:crosshair;" 
-                                 alt="Circulaire"
-                                 onclick="let rect = this.getBoundingClientRect(); let x = ((event.clientX - rect.left) / rect.width * 100).toFixed(1); let y = ((event.clientY - rect.top) / rect.height * 100).toFixed(1); alert('COORDONNÉES : \nleft: ' + x + '%\ntop: ' + y + '%');">
+                                 style="width:100%; height:auto;" 
+                                 alt="Circulaire">
                             
-                            <div style="background:#fff3cd; color:#856404; padding:5px; font-size:10px; text-align:center; border:1px solid #ffeeba;">
-                                🛠️ **MODE DEBUG ACTIF** : Clique sur n'importe quel point de l'image pour voir ses coordonnées X/Y exactes. Dis-moi les chiffres pour chaque trait !
+                            <!-- Diamètre pôle (83.6% / 23.4%) -->
+                            <div style="position:absolute; left:83.6%; top:23.4%; transform:translate(-50%, -50%); font-size:10px;">
+                                <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:50px; border-bottom:1px solid #000; background:transparent; text-align:center;">
                             </div>
 
-                            <!-- Diamètre pôle/noyau (Right top) - LOWERED -->
-                            <div style="position:absolute; right:12%; top:21.8%; font-size:10px;">
-                                <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:45px; border-bottom:1px solid #000; background:transparent; text-align:center;"><br>
-                                <div style="margin-top:10px;"></div>
-                                <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>" class="pdf-input" style="width:45px; border-bottom:1px solid #000; background:transparent; text-align:center; margin-top:14px;">
+                            <!-- Diamètre noyau (85.5% / 28.4%) -->
+                            <div style="position:absolute; left:85.5%; top:28.4%; transform:translate(-50%, -50%); font-size:10px;">
+                                <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>" class="pdf-input" style="width:50px; border-bottom:1px solid #000; background:transparent; text-align:center;">
                             </div>
 
-                            <!-- Epaisseur pôle (Right middle) - LOWERED -->
-                            <div style="position:absolute; right:8.5%; top:39.6%; font-size:10px;">
-                                <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:45px; border-bottom:1px solid #000; background:transparent; text-align:center;">
+                            <!-- Epaisseur pôle (85.6% / 40.5%) -->
+                            <div style="position:absolute; left:85.6%; top:40.5%; transform:translate(-50%, -50%); font-size:10px;">
+                                <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:55px; border-bottom:1px solid #000; background:transparent; text-align:center;">
                             </div>
 
-                            <!-- Ø ext/int (Left center) - LOWERED between 3 and 5 -->
-                            <div style="position:absolute; left:2.5%; top:33%; font-size:11px; font-weight:bold; color:#000; line-height:1.2;">
+                            <!-- Ø ext/int (5.3% / 45.4%) -->
+                            <div style="position:absolute; left:5.3%; top:45.4%; transform:translate(0, -50%); font-size:11px; font-weight:bold; color:#000; line-height:1.2;">
                                 Ø ext 2 : <input type="text" name="mesures[levage_ext2]" value="<?= htmlspecialchars($mesures['levage_ext2'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000; background:transparent;"><br>
                                 Ø ext 1 : <input type="text" name="mesures[levage_ext1]" value="<?= htmlspecialchars($mesures['levage_ext1'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000; background:transparent;"><br>
                                 Ø int 2 : <input type="text" name="mesures[levage_int2]" value="<?= htmlspecialchars($mesures['levage_int2'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000; background:transparent;"><br>
