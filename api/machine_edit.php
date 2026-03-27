@@ -1781,19 +1781,32 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <div style="margin-top:20px;"></div>
 
-                    <div style="margin-top:20px; display:flex; flex-direction:column; gap:20px; color:#000;">
-                        <div style="border:2px solid #d35400; padding:10px;">
-                            <div style="font-weight:bold; margin-bottom:5px;">• Electroaimant circulaire :</div>
-                            <img src="/assets/machines/levage_diagram.png" style="width:100%; height:auto;" alt="Circulaire">
-                        </div>
-                        <div style="border:2px solid #d35400; padding:10px;">
-                            <div style="font-weight:bold; margin-bottom:5px;">• Electroaimant rectangulaire :</div>
-                            <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-                                <img src="/assets/machines/levage_side_diagram.png" style="width:70%; height:auto;" alt="Rectangulaire">
-                                <div style="width:25%; font-size:11px; font-weight:bold;">
-                                    Epaisseur 1 : <input type="text" name="mesures[levage_ep1]" value="<?= htmlspecialchars($mesures['levage_ep1'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"> mm<br>
-                                    Epaisseur 2 : <input type="text" name="mesures[levage_ep2]" value="<?= htmlspecialchars($mesures['levage_ep2'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"> mm
+                    <div style="margin-top:20px; border:1px solid #d35400; padding:15px; color:#000; position:relative;">
+                        <!-- Titres sections -->
+                        <div style="font-weight:bold; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">• Electroaimant circulaire :</div>
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:30px;">
+                            <img src="/assets/machines/levage_diagram.png" style="width:65%; height:auto;" alt="Circulaire">
+                            <div style="width:30%; font-size:11px; display:flex; flex-direction:column; gap:8px;">
+                                <div style="background:#f8f9fa; padding:8px; border:1px solid #ddd;">
+                                    <strong>Diamètre pôle :</strong> <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"> mm<br>
+                                    <strong>Diamètre noyau :</strong> <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"> mm<br>
+                                    <strong>Epaisseur pôle :</strong> <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"> mm
                                 </div>
+                                <div style="background:#eaf2f8; padding:8px; border:1px solid #ddd;">
+                                    <strong>Ø ext 2 :</strong> <input type="text" name="mesures[levage_ext2]" value="<?= htmlspecialchars($mesures['levage_ext2'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"><br>
+                                    <strong>Ø ext 1 :</strong> <input type="text" name="mesures[levage_ext1]" value="<?= htmlspecialchars($mesures['levage_ext1'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"><br>
+                                    <strong>Ø int 2 :</strong> <input type="text" name="mesures[levage_int2]" value="<?= htmlspecialchars($mesures['levage_int2'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"><br>
+                                    <strong>Ø int 1 :</strong> <input type="text" name="mesures[levage_int1]" value="<?= htmlspecialchars($mesures['levage_int1'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="font-weight:bold; margin-bottom:10px; border-bottom:1px solid #eee; padding-top:15px; padding-bottom:5px;">• Electroaimant rectangulaire :</div>
+                        <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+                            <img src="/assets/machines/levage_side_diagram.png" style="width:65%; height:auto;" alt="Rectangulaire">
+                            <div style="width:30%; font-size:11px; background:#f8f9fa; padding:10px; border:1px solid #ddd;">
+                                <strong>Epaisseur 1 :</strong> <input type="text" name="mesures[levage_ep1]" value="<?= htmlspecialchars($mesures['levage_ep1'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"> mm<br>
+                                <strong>Epaisseur 2 :</strong> <input type="text" name="mesures[levage_ep2]" value="<?= htmlspecialchars($mesures['levage_ep2'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000;"> mm
                             </div>
                         </div>
                     </div>
