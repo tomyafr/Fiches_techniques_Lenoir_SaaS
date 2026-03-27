@@ -1385,14 +1385,6 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <?php elseif ($isPAP): ?>
 
                     <table class="pdf-table controles" style="font-size:11px;">
-                        <tr>
-                            <th colspan="3" style="background:#e0e0e0; padding:6px; font-size:12px; font-weight:bold; text-align:left;">
-                                <div style="display:flex; justify-content:space-between; width:100%;">
-                                    <span>TEMPS PRÉVISIONNEL : 1H</span>
-                                    <span>TEMPS RÉALISÉ : <?= htmlspecialchars($tempsRealise ?: '—') ?> h</span>
-                                </div>
-                            </th>
-                        </tr>
 
                         <!-- Section PAP/TAP -->
                         <tr>
