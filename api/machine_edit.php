@@ -1782,10 +1782,18 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <div style="font-weight:bold; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">• Electroaimant circulaire :</div>
                         <div style="position:relative; width:100%; max-width:650px; margin:0 auto;">
                             <!-- Diagram includes Rep section and boxes -->
-                            <img src="/assets/machines/levage_diagram.png" style="width:100%; height:auto;" alt="Circulaire">
+                            <img src="/assets/machines/levage_diagram.png" 
+                                 id="debug-levage-img"
+                                 style="width:100%; height:auto; cursor:crosshair;" 
+                                 alt="Circulaire"
+                                 onclick="let rect = this.getBoundingClientRect(); let x = ((event.clientX - rect.left) / rect.width * 100).toFixed(1); let y = ((event.clientY - rect.top) / rect.height * 100).toFixed(1); alert('COORDONNÉES : \nleft: ' + x + '%\ntop: ' + y + '%');">
                             
-                            <!-- Diamètre pôle/noyau (Right top) - HIGHER -->
-                            <div style="position:absolute; right:19%; top:17.4%; font-size:10px;">
+                            <div style="background:#fff3cd; color:#856404; padding:5px; font-size:10px; text-align:center; border:1px solid #ffeeba;">
+                                🛠️ **MODE DEBUG ACTIF** : Clique sur n'importe quel point de l'image pour voir ses coordonnées X/Y exactes. Dis-moi les chiffres pour chaque trait !
+                            </div>
+
+                            <!-- Diamètre pôle/noyau (Right top) - Adjusted LEFT and HIGHER -->
+                            <div style="position:absolute; right:19%; top:18.4%; font-size:10px;">
                                 <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:50px; border-bottom:1px solid #000; background:transparent; text-align:center;"><br>
                                 <div style="margin-top:10px;"></div>
                                 <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>" class="pdf-input" style="width:50px; border-bottom:1px solid #000; background:transparent; text-align:center; margin-top:13px;">
