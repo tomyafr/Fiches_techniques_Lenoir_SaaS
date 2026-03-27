@@ -960,14 +960,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderAprfRow("Caisson Inox", "aprf_inox", $donnees) ?>
                         
                         <tr>
-                            <td style="font-weight:bold; padding:4px;">Contrôle de l’attraction sur échantillon</td>
-                            <td rowspan="5" style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
-                                <?= renderAprfEtatRadios("aprf_attraction_stat", $donnees) ?>
-                            </td>
-                            <td rowspan="5" style="padding:0;">
-                                <textarea name="donnees[aprf_attraction_comment]" class="pdf-textarea"
-                                    style="height:110px; border:none; width:100%; box-sizing:border-box; padding:4px;" placeholder="Commentaires..."><?= htmlspecialchars($donnees["aprf_attraction_comment"] ?? '') ?></textarea>
-                            </td>
+                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">Contrôle de l’attraction sur échantillon</th>
                         </tr>
                         <?php 
                         $attractions = [
@@ -978,14 +971,12 @@ foreach ($recoFreq as $rfk => $rfv) {
                         ];
                         foreach($attractions as $akey => $alabel): ?>
                         <tr>
-                            <td style="padding:4px; font-size:11px;">
-                                <?= $alabel ?>
-                            </td>
-                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
+                            <td style="padding:4px; font-size:11px;"><?= $alabel ?></td>
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
                                 <?= renderAprfEtatRadios("aprf_attr_$akey", $donnees) ?>
                             </td>
                             <td style="padding:0;">
-                                <textarea name="donnees[aprf_attr_<?= $akey ?>_comment]" class="pdf-textarea" style="height:25px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_attr_$akey" . "_comment"] ?? '') ?></textarea>
+                                <textarea name="donnees[aprf_attr_<?= $akey ?>_comment]" class="pdf-textarea" style="height:25px; border:none; width:100%; box-sizing:border-box; padding:4px;" placeholder="Commentaires..."><?= htmlspecialchars($donnees["aprf_attr_$akey" . "_comment"] ?? '') ?></textarea>
                             </td>
                         </tr>
                         <?php endforeach; ?>
