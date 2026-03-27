@@ -290,10 +290,10 @@ $machines = $stmtMach->fetchAll();
                     <select name="designation" class="input" required style="background: rgba(15, 23, 42, 0.6);">
                         <option value="">— Choisir le type —</option>
                         <option value="OVERBAND OVAP (Permanent)">OVERBAND OVAP (Permanent)</option>
-                        <option value="OVERBAND OV (Electromagnétique)">OVERBAND OV (Electromagnétique)</option>
+                        <option value="OVERBAND OV (Electromagnétique)" style="color:red;">OVERBAND OV (Electromagnétique) *</option>
                         <option value="AIMANT FIXE APRF (Permanent)">AIMANT FIXE APRF (Permanent)</option>
                         <option value="Séparateur à courants de foucault ED-X">Séparateur à courants de foucault ED-X</option>
-                        <option value="ELECTROAIMANT FIXE RD">ELECTROAIMANT FIXE RD</option>
+                        <option value="ELECTROAIMANT FIXE RD" style="color:red;">ELECTROAIMANT FIXE RD *</option>
                         <option value="Tambour ou Poulie à Aimants Permanents TAP/PAP">Tambour ou Poulie à Aimants Permanents TAP/PAP</option>
                     </select>
                 </div>
