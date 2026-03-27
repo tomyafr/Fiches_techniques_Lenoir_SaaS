@@ -1491,7 +1491,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </table>
 
                     <div style="text-align:center; margin-top:20px;">
-                        <img src="/assets/machines/pap-tap_diagram.jpeg" style="max-width:100%; height:auto;" alt="Schémas PAP/TAP">
+                        <img src="/assets/machines/Image_TAP-PAP_Lenoir.png" style="max-width:100%; height:auto;" alt="Schémas PAP/TAP">
                     </div>
 
                 <?php elseif ($isLevage): ?>
