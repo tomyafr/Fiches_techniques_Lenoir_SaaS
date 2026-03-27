@@ -550,7 +550,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     </header>
 
     <div class="rapport-page">
-        <form method="POST" id="rapportForm">
+        <form method="POST" id="rapportForm" autocomplete="off">
             <?= csrfField() ?>
             <input type="hidden" name="action" value="save_rapport">
 

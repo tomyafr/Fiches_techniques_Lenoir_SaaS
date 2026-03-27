@@ -403,7 +403,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                 </div>
 
                 <!-- FORM PHOTO DE PROFIL -->
-                <form method="POST" id="avatarForm"
+                <form method="POST" id="avatarForm" autocomplete="off"
                     style="margin-bottom: 2rem; background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
                     <?= csrfField() ?>
                     <input type="hidden" name="action" value="update_avatar">
@@ -479,7 +479,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                 </script>
 
                 <!-- FORM MOT DE PASSE -->
-                <form method="POST" class="glass" id="passwordForm"
+                <form method="POST" class="glass" id="passwordForm" autocomplete="off"
                     style="padding: 2rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.02);">
                     <?= csrfField() ?>
                     <input type="hidden" name="action" value="change_password">

@@ -352,7 +352,7 @@ $nbClients = count($clientsSet);
 
             <!-- Filtres -->
             <div class="card glass animate-in-delay-1" style="padding:1.5rem;margin-bottom:1.5rem;">
-                <form method="GET" class="filter-bar" id="filterForm">
+                <form method="GET" class="filter-bar" id="filterForm" autocomplete="off">
                     <select name="period" onchange="this.form.submit()">
                         <option value="all" <?= $filterPeriod === 'all' ? 'selected' : '' ?>>Tout l'historique</option>
                         <option value="today" <?= $filterPeriod === 'today' ? 'selected' : '' ?>>Aujourd'hui</option>

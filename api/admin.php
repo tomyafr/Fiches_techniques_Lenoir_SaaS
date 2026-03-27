@@ -309,7 +309,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                     <button type="button" onclick="document.getElementById('newInterventionModal').style.display='none'"
                         style="position:absolute; top:1rem; right:1.5rem; background:none; border:none; color:var(--text-dim); font-size:1.5rem; cursor:pointer;">&times;</button>
                     <h3 style="margin-bottom: 1.5rem;">Nouvelle Fiche Technique</h3>
-                    <form method="POST">
+                    <form method="POST" autocomplete="off">
                         <input type="hidden" name="action" value="nouvelle_intervention">
                         <?= csrfField() ?>
                         <div class="form-group">
@@ -390,7 +390,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                 <div
                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
                     <h3 style="font-size: 1.3rem;">Toutes les Fiches Techniques</h3>
-                    <form method="GET" style="display: flex; gap: 0.5rem;">
+                    <form method="GET" style="display: flex; gap: 0.5rem;" autocomplete="off">
                         <input type="text" name="arc" class="input" style="width: 160px; padding: 0.5rem;"
                             placeholder="Recherche ARC..." value="<?= htmlspecialchars($filterArc) ?>">
                         <button type="submit" class="btn btn-ghost" style="padding: 0.5rem;">Filtrer</button>

@@ -269,7 +269,7 @@ $machines = $stmtMach->fetchAll();
             <button onclick="document.getElementById('modalNewMachine').style.display='none'"
                 style="position:absolute; top:1rem; right:1.5rem; background:none; border:none; color:var(--text-dim); font-size:1.5rem; cursor:pointer;">&times;</button>
             <h3 style="margin-bottom: 1.5rem;">Ajouter une Machine</h3>
-            <form method="POST">
+            <form method="POST" autocomplete="off">
                 <?= csrfField() ?>
                 <input type="hidden" name="action" value="ajouter_machine">
 
@@ -328,7 +328,7 @@ $machines = $stmtMach->fetchAll();
             <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 1.5rem;">Faites signer le client pour
                 valider l'intervention.</p>
 
-            <form method="POST">
+            <form method="POST" autocomplete="off">
                 <?= csrfField() ?>
                 <input type="hidden" name="action" value="save_signatures">
 

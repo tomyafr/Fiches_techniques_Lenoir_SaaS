@@ -247,7 +247,7 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
 
             <!-- Tab Nouvelle Fiche -->
             <div id="tab-nouvelle" style="display: none;" class="animate-in">
-                <form method="POST" class="card glass" style="margin-bottom: 1.5rem;">
+                <form method="POST" class="card glass" style="margin-bottom: 1.5rem;" autocomplete="off">
                     <input type="hidden" name="action" value="nouvelle_intervention">
                     <?= csrfField() ?>
                     <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
