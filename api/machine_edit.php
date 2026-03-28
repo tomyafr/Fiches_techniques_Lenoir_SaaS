@@ -608,7 +608,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             flex-shrink: 0;
         }
         .diag-col.col-3 {
-            width: 46.6px;
+            flex: 1; /* Aligne parfaitement sur 1/3 de 140px */
         }
         /* Ligne verticale basse (zone grise) */
         .diag-col::after {
@@ -958,7 +958,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 function renderEtatRadios($key, $donnees, $nbCols = 5)
                 {
                     $val = $donnees[$key] ?? '';
-                    $w = ($nbCols == 3) ? '46.6px' : '28px';
+                    $w = ($nbCols == 3) ? '33.33%' : '28px';
                     
                     if ($nbCols == 5) {
                         $items = [
@@ -978,7 +978,8 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     $html = '<div class="pastille-group">';
                     foreach ($items as $item) {
-                        $html .= '<div style="width:'.$w.'; display:flex; justify-content:flex-end; align-items:center;">'
+                        $style = ($nbCols == 3) ? 'flex: 1; display:flex; justify-content:flex-end; align-items:center;' : 'width:28px; display:flex; justify-content:flex-end; align-items:center;';
+                        $html .= '<div style="'.$style.'">'
                                . pastille($key, $item[0], $item[1], $item[2], $val)
                                . '</div>';
                     }
@@ -1031,7 +1032,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </tr>';
                 }
                 function renderSectionHeader($title, $nbCols = 5) {
-                    $w = ($nbCols == 3) ? '46.6px' : '28px';
+                    $w = ($nbCols == 3) ? '33.33%' : '28px';
                     $tds = '';
                     for ($i = 0; $i < $nbCols; $i++) {
                         $tds .= '<td style="width:'.$w.'; border:none !important; border-right:1px solid #000 !important; padding:0; height:30px;"></td>';
@@ -1117,12 +1118,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 }
                 function renderAprfEtatRadios($key, $donnees)
                 {
-                    $val = $donnees[$key] ?? '';
-                    return '<div class="pastille-group">'
-                        . pastille($key, 'bon', 'p-ok', 'Bon', $val)
-                        . pastille($key, 'r', 'p-aa', 'À remplacer', $val)
-                        . pastille($key, 'hs', 'p-nc', 'HS', $val)
-                        . '</div>';
+                    return renderEtatRadios($key, $donnees, 3);
                 }
                 ?>
 
@@ -1400,7 +1396,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <?= newPdfPage() ?>
                     <table class="pdf-table controles" style="font-size:11px;">
-                        <?= renderSectionHeader("Partie B - Les performances", 5) ?>
+                        <?= renderSectionHeader("Partie B - Les performances", 3) ?>
                         <?php
                         $ovPerfs = [
                             'ov_perf_bille'   => 'Bille diamètre 20',
@@ -1412,7 +1408,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <tr>
                             <td style="font-weight:bold; font-size:11px; padding-left:10px;"><?= $label ?></td>
                             <td style="padding:0; vertical-align:middle; text-align:center;">
-                                <?= renderAprfEtatRadios($key . "_stat", $donnees) ?>
+                                <?= renderEtatRadios($key . "_stat", $donnees, 3) ?>
                             </td>
                             <td style="padding:0;">
                                 <textarea name="donnees[<?= $key ?>]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees[$key] ?? "") ?></textarea>
