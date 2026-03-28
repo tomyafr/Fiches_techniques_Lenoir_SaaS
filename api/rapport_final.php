@@ -1408,15 +1408,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .diag-col.col-3 { width: 46.6px; }
                 .diag-text {
                     position: absolute;
-                    bottom: 45px;
-                    left: 20px;
+                    bottom: 40px;
+                    left: 14px;
                     transform: rotate(-55deg);
                     transform-origin: bottom left;
                     white-space: nowrap;
                     font-size: 8px;
                     font-weight: bold;
                     color: #000;
-                    width: 100px;
+                    width: 120px;
+                    line-height: 1.1;
+                }
+                .diag-text.col-3 {
+                    left: 23px;
                 }
 
                 .section-header-row {

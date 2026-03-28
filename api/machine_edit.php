@@ -628,15 +628,19 @@ foreach ($recoFreq as $rfk => $rfv) {
         }
         .diag-text {
             position: absolute;
-            bottom: 45px;
-            left: 20px;
+            bottom: 40px;
+            left: 14px; /* Center of 28px */
             transform: rotate(-55deg);
             transform-origin: bottom left;
             white-space: nowrap;
             font-size: 8px;
             font-weight: bold;
             color: #000;
-            width: 100px;
+            width: 120px;
+            line-height: 1.1;
+        }
+        .diag-text.col-3 {
+            left: 23px; /* Center of 46.6px */
         }
 
         /* --- SECTION BLUE BAR WITH LINES --- */
@@ -1014,13 +1018,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                 }
                 function renderDiagonalHeader($nbCols = 5) {
                     $labels = ($nbCols == 5) 
-                        ? ['Pas concerné', 'Correct', 'A améliorer', 'Pas correct', 'Nécessite remplacement']
-                        : ['Bon', 'A remp. sous :', 'H.S.'];
+                        ? ['Pas concerné', 'Correct', 'A améliorer', 'Pas correct', 'Nécessite<br>remplacement']
+                        : ['Bon', 'A remp.<br>sous :', 'H.S.'];
                     
                     $colsHtml = '';
                     $colClass = ($nbCols == 3) ? ' col-3' : '';
                     foreach ($labels as $lbl) {
-                        $colsHtml .= '<div class="diag-col' . $colClass . '"><div class="diag-text">' . $lbl . '</div></div>';
+                        $colsHtml .= '<div class="diag-col' . $colClass . '"><div class="diag-text' . $colClass . '">' . $lbl . '</div></div>';
                     }
                     
                     $commentTitle = ($nbCols == 5) ? 'COMMENTAIRES / VALEURS' : 'COMMENTAIRES';
