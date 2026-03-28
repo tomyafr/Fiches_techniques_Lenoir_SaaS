@@ -253,64 +253,37 @@ foreach ($recoFreq as $rfk => $rfv) {
             flex-shrink: 0;
         }
 
+        .pastille-group input[type="radio"] {
+            display: none !important;
+        }
+
+        /* Couleurs pastilles par défaut (non sélectionnées) */
         .pastille-group label {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             cursor: pointer;
-            border: 2px solid #ccc;
+            border: 1px solid #ccc;
+            background: #f8f8f8 !important;
             transition: all 0.15s ease;
             position: relative;
             font-size: 0;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
 
-        .pastille-group label:active {
-            transform: scale(0.9);
-        }
-
-        .pastille-group input[type="radio"] {
-            position: absolute;
-            opacity: 0;
-            width: 0;
-            height: 0;
-            pointer-events: none;
-        }
-
-        /* Couleurs pastilles */
-        .pastille-group label.p-na {
-            background: #bbb;
-            border-color: #999;
-        }
-
-        .pastille-group label.p-ok {
-            background: #28a745;
-            border-color: #1e7e34;
-        }
-
-        .pastille-group label.p-aa {
-            background: #e67e22;
-            border-color: #d35400;
-        }
-
-        .pastille-group label.p-nc {
-            background: #dc3545;
-            border-color: #bd2130;
-        }
-
-        .pastille-group label.p-nr {
-            background: #8b0000;
-            border-color: #5a0000;
-        }
-
-        /* Etat sélectionné */
+        /* Couleurs quand sélectionné - Rendu "Gomette" vive */
+        .pastille-group label.p-na.selected { background: #bbb !important; border-color: #999 !important; }
+        .pastille-group label.p-ok.selected { background: #28a745 !important; border-color: #1e7e34 !important; }
+        .pastille-group label.p-aa.selected { background: #e67e22 !important; border-color: #d35400 !important; }
+        .pastille-group label.p-nc.selected { background: #dc3545 !important; border-color: #bd2130 !important; }
+        .pastille-group label.p-nr.selected { background: #8b0000 !important; border-color: #5a0000 !important; }
         .pastille-group label.selected {
-            transform: scale(1.15);
-            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.25);
+            transform: scale(1.1);
+            box-shadow: 0 0 3px rgba(0,0,0,0.2);
         }
 
         .pastille-group label.selected::after {
@@ -590,6 +563,8 @@ foreach ($recoFreq as $rfk => $rfv) {
             background: #e0e0e0 !important;
             overflow: visible;
             border-right: none !important;
+            page-break-after: avoid;
+            break-after: avoid;
         }
         .diagonal-header + th {
             border-left: none !important;
@@ -827,14 +802,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </tr>
                 </table>
 
-                <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">A) FICHE DE CONTRÔLE :</div>
+                <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px; page-break-after: avoid; break-after: avoid;">A) FICHE DE CONTRÔLE :</div>
                 
-                <div style="font-weight:bold; color:#1B4F72; margin-bottom:10px; font-size:14px;">
+                <div style="font-weight:bold; color:#1B4F72; margin-bottom:10px; font-size:14px; page-break-after: avoid; break-after: avoid;">
                     Poste : <input type="text" name="mesures[poste]" value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>" style="border:none; border-bottom:1px dashed #000; font-weight:bold; width:30px; background:transparent;" autocomplete="off">
                 </div>
 
                 <table
-                    style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000;">
+                    style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000; page-break-after: avoid; break-after: avoid;">
                     <tr>
                         <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N°
                             A.R.C.</td>
@@ -911,17 +886,26 @@ foreach ($recoFreq as $rfk => $rfv) {
                     $count = count($photos);
                     $isPdf = isset($_GET['pdf']);
                     
-                    // Si on est en PDF et qu'il n'y a pas de photo, on reste sobre ou on ne met rien
-                    if ($count == 0 && $isPdf) {
-                        return ''; // Option : Ne pas afficher la section du tout si vide en PDF
-                    }
-
                     $html = '
                     <div style="margin-top:20px; page-break-inside: avoid;">
                         <div style="font-weight:bold; font-size:14px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">B) DESCRIPTION DU MATERIEL :</div>
                         <div id="description_materiel_montage">';
-                        
-                    if ($count > 0) {
+                    
+                    // Si aucune photo et mode édition, on affiche le placeholder avec bouton
+                    // Si aucune photo et mode PDF, on affiche seulement le rectangle avec la croix
+                    if ($count == 0) {
+                        $html .= '
+                        <div style="position:relative; width:100%; height:80px; border:1px solid #ddd; background:#fdfdfd; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:10px;">
+                            <svg style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;" preserveAspectRatio="none">
+                                <line x1="0" y1="0" x2="100%" y2="100%" style="stroke:#e0e0e0; stroke-width:1;" />
+                                <line x1="0" y1="100%" x2="100%" y2="0" style="stroke:#e0e0e0; stroke-width:1;" />
+                            </svg>
+                            <div style="position:relative; z-index:1; font-size:13px; color:#999; font-weight:bold; text-align:center;">
+                                Aucune photo prise pour la partie B
+                                ' . (!$isPdf ? '<br><button type="button" class="btn btn-primary" onclick="capturePhoto(\'desc_materiel\')" style="margin-top:10px; height:32px; font-size:11px;">📷 Ajouter une photo</button>' : '') . '
+                            </div>
+                        </div>';
+                    } else {
                         $gridClass = 'grid-' . ($count > 4 ? 4 : $count);
                         $html .= '<div class="photo-montage-grid ' . $gridClass . '">';
                         foreach (array_slice($photos, 0, 4) as $i => $p) {
@@ -933,17 +917,6 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </div>';
                         }
                         $html .= '</div>';
-                    } else {
-                        // Place-holder visible uniquement en édition
-                        $html .= '
-                            <div class="photo-montage-grid empty no-print-pdf">
-                                <div id="photo_placeholder" style="flex:1; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.03); border:1px dashed var(--glass-border); border-radius:8px; height:100px; color:var(--text-dim);">
-                                    <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                                </div>
-                                <button type="button" class="btn btn-primary no-print-pdf" onclick="triggerPhoto()" style="height:38px; padding:0 1rem; display:flex; align-items:center; gap:8px;">
-                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Photo
-                                </button>
-                            </div>';
                     }
                     
                     if ($count < 4 && !$isPdf) {
@@ -1047,8 +1020,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                     for ($i = 0; $i < $nbCols; $i++) {
                         $tds .= '<td style="width:'.$w.'; border:none !important; border-right:1px solid #000 !important; padding:0; height:100%;"></td>';
                     }
-                    return '<tr class="section-header-row" style="background:#5b9bd5 !important;">
-                        <td style="width:35%; font-weight:bold; color:white; padding:4px 10px; font-size:11px;">' . htmlspecialchars($title) . '</td>
+                    return '<tr class="section-header-row" style="background:#5b9bd5 !important; page-break-before: avoid; break-before: avoid;">
+                        <td style="width:35%; font-weight:bold; color:white; padding:4px 10px; font-size:11px; page-break-before: avoid; break-before: avoid;">' . htmlspecialchars($title) . '</td>
                         <td style="width:140px; padding:0; vertical-align:middle; height:1px;">
                             <table style="width:140px; border-collapse:collapse; height:100%; margin: 0 auto; border:none; border-right:1px solid #000 !important;">
                                 <tr style="height:100%;">' . $tds . '</tr>
@@ -1118,9 +1091,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                     
                     $commentTitle = ($nbCols == 5) ? 'COMMENTAIRES / VALEURS' : 'COMMENTAIRES';
                     
-                    return '<tr>
-                        <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">DESIGNATIONS</th>
-                        <th class="diagonal-header" style="width:140px;">
+                    return '<tr style="page-break-after: avoid; break-after: avoid;">
+                        <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px; page-break-after: avoid; break-after: avoid;">DESIGNATIONS</th>
+                        <th class="diagonal-header" style="width:140px; page-break-after: avoid; break-after: avoid;">
                             <div class="diagonal-wrapper">' . $colsHtml . '</div>
                         </th>
                         <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">' . $commentTitle . '</th>
