@@ -1119,14 +1119,6 @@ foreach ($recoFreq as $rfk => $rfv) {
                         . pastille($key, 'hs', 'p-nc', 'HS', $val)
                         . '</div>';
                 }
-                function renderAprfRow($label, $key, $donnees)
-                {
-                    return '<tr>
-                        <td style="font-weight:normal; font-size:11px; width:35%;">' . htmlspecialchars($label) . '</td>
-                        <td style="padding:2px 4px; vertical-align:middle; text-align:center; width:140px;">' . renderAprfEtatRadios($key, $donnees) . '</td>
-                        <td style="padding:0; width:35%;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
-                    </tr>';
-                }
                 ?>
 
                 <!-- DYNAMIC CONTENT DEPENDING ON MACHINE TYPE -->
