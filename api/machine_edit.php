@@ -600,7 +600,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             height: 100%;
             align-items: stretch;
             margin: 0 auto; /* Centrage pour aligner avec les pastilles */
-            border-right: 1px solid #000; /* Trait vertical de séparation Choice / Comment */
+            position: relative; /* Pour positionner le dernier trait */
             box-sizing: border-box;
         }
         .diag-col {
@@ -612,11 +612,10 @@ foreach ($recoFreq as $rfk => $rfv) {
         .diag-col.col-3 {
             flex: 1; /* Aligne parfaitement sur 1/3 de 140px */
         }
-        /* Ligne verticale basse (zone grise) */
         .diag-col::after {
             content: "";
             position: absolute;
-            left: 100%; /* BORD DROIT de la gommette */
+            left: 0; /* BORD GAUCHE du box -> Label au dessus du box */
             bottom: 0;
             width: 1px;
             height: 35px;
@@ -626,7 +625,7 @@ foreach ($recoFreq as $rfk => $rfv) {
         .diag-col::before {
             content: "";
             position: absolute;
-            left: 100%;
+            left: 0;
             top: 0;
             bottom: 35px;
             width: 1px;
@@ -634,10 +633,31 @@ foreach ($recoFreq as $rfk => $rfv) {
             transform: skewX(-35deg); /* Inclinaison vers la DROITE */
             transform-origin: bottom left;
         }
+        /* Dernier trait à droite (clôture) */
+        .diagonal-wrapper::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 1px;
+            height: 35px;
+            background: #000;
+        }
+        .diagonal-wrapper::before {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 35px;
+            width: 1px;
+            background: #000;
+            transform: skewX(-35deg);
+            transform-origin: bottom left;
+        }
         .diag-text {
             position: absolute;
             bottom: 38px;
-            left: 100%;
+            left: 0;
             padding-left: 4px; /* Décalage pour être à droite du trait */
             transform: rotate(-55deg);
             transform-origin: bottom left;
