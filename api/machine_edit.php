@@ -950,18 +950,37 @@ foreach ($recoFreq as $rfk => $rfv) {
                 function pastille($name, $value, $cssClass, $title, $currentVal)
                 {
                     $sel = ($currentVal == $value) ? ' selected' : '';
-                    return '<label class="' . $cssClass . $sel . '" title="' . $title . '"><input type="radio" name="donnees[' . $name . ']" value="' . $value . '" ' . ($currentVal == $value ? 'checked' : '') . '></label>';
+                    return '<label class="' . $cssClass . $sel . '" title="' . $title . '" style="margin:0;"><input type="radio" name="donnees[' . $name . ']" value="' . $value . '" ' . ($currentVal == $value ? 'checked' : '') . '></label>';
                 }
-                function renderEtatRadios($key, $donnees)
+                function renderEtatRadios($key, $donnees, $nbCols = 5)
                 {
                     $val = $donnees[$key] ?? '';
-                    return '<div class="pastille-group">'
-                        . pastille($key, 'pc', 'p-na', 'Pas concerné / NA', $val)
-                        . pastille($key, 'c', 'p-ok', 'Correct', $val)
-                        . pastille($key, 'aa', 'p-aa', 'À améliorer', $val)
-                        . pastille($key, 'nc', 'p-nc', 'Non correct', $val)
-                        . pastille($key, 'nr', 'p-nr', 'Non réparé / À revoir', $val)
-                        . '</div>';
+                    $w = ($nbCols == 3) ? '46.6px' : '28px';
+                    
+                    if ($nbCols == 5) {
+                        $items = [
+                            ['pc', 'p-na', 'Pas concerné / NA'],
+                            ['c', 'p-ok', 'Correct'],
+                            ['aa', 'p-aa', 'À améliorer'],
+                            ['nc', 'p-nc', 'Non correct'],
+                            ['nr', 'p-nr', 'Non réparé / À revoir']
+                        ];
+                    } else {
+                        $items = [
+                            ['bon', 'p-ok', 'Bon'],
+                            ['r', 'p-aa', 'À remplacer'],
+                            ['hs', 'p-nc', 'HS']
+                        ];
+                    }
+
+                    $html = '<div class="pastille-group">';
+                    foreach ($items as $item) {
+                        $html .= '<div style="width:'.$w.'; display:flex; justify-content:center; align-items:center;">'
+                               . pastille($key, $item[0], $item[1], $item[2], $val)
+                               . '</div>';
+                    }
+                    $html .= '</div>';
+                    return $html;
                 }
                 function photoCamBtn($key, $label = '')
                 {
@@ -1014,14 +1033,12 @@ foreach ($recoFreq as $rfk => $rfv) {
                     for ($i = 0; $i < $nbCols; $i++) {
                         $colsHtml .= '<div class="section-header-col' . $colClass . '"></div>';
                     }
-                    return '<tr>
-                        <td colspan="3" class="section-header-row">
-                            <div class="section-header-wrapper">
-                                <div style="width:35%;" class="section-header-title">' . htmlspecialchars($title) . '</div>
-                                <div class="section-header-cols">' . $colsHtml . '</div>
-                                <div class="section-header-comment"></div>
-                            </div>
+                    return '<tr class="section-header-row">
+                        <td style="width:35%; font-weight:bold; color:white; padding:4px 10px; font-size:11px;">' . htmlspecialchars($title) . '</td>
+                        <td style="width:140px; padding:0; vertical-align:stretch;">
+                            <div class="section-header-cols">' . $colsHtml . '</div>
                         </td>
+                        <td style="width:35%; background:#5b9bd5;"></td>
                     </tr>';
                 }
                 function renderDiagonalHeader($nbCols = 5) {
@@ -1100,7 +1117,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <tr>
                             <td style="padding:4px; padding-left:25px; font-size:11px; width:35%;"><?= $alabel ?></td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
-                                <?= renderAprfEtatRadios("aprf_attr_$akey", $donnees) ?>
+                                <?= renderEtatRadios("aprf_attr_$akey", $donnees, 3) ?>
                             </td>
                             <td style="padding:0; width:35%;">
                                 <textarea name="donnees[aprf_attr_<?= $akey ?>_comment]" class="pdf-textarea" style="height:25px; border:none; width:100%; box-sizing:border-box; padding:4px;" placeholder="Commentaires..."><?= htmlspecialchars($donnees["aprf_attr_$akey" . "_comment"] ?? '') ?></textarea>
@@ -1115,7 +1132,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <input type="text" name="mesures[aprf_produit]" value="<?= htmlspecialchars($mesures['aprf_produit'] ?? '') ?>" class="pdf-input" style="width:150px; border-bottom:1px solid #000;">
                             </td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
-                                <?= renderAprfEtatRadios("aprf_produit_stat", $donnees) ?>
+                                <?= renderEtatRadios("aprf_produit_stat", $donnees, 3) ?>
                             </td>
                             <td style="padding:0; width:35%;"><textarea name="donnees[aprf_produit_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_produit_comment"] ?? '') ?></textarea></td>
                         </tr>
@@ -1176,22 +1193,11 @@ foreach ($recoFreq as $rfk => $rfv) {
 
 
                     <?php
-                    function renderEdxEtatRadios($key, $donnees)
-                    {
-                        $val = $donnees[$key] ?? '';
-                        return '<div class="pastille-group">'
-                            . pastille($key, 'pc', 'p-na', 'Pas concerné', $val)
-                            . pastille($key, 'c', 'p-ok', 'Correct', $val)
-                            . pastille($key, 'aa', 'p-aa', 'À améliorer', $val)
-                            . pastille($key, 'nc', 'p-nc', 'Pas correct', $val)
-                            . pastille($key, 'nr', 'p-nr', 'Nécessite remplacement', $val)
-                            . '</div>';
-                    }
                     function renderEdxRow($label, $key, $donnees)
                     {
                         return '<tr>
                             <td style="font-weight:normal; font-size:11px; width:35%;">' . htmlspecialchars($label) . '</td>
-                            <td style="padding:2px 4px; vertical-align:middle; text-align:center; width:140px;">' . renderEdxEtatRadios($key, $donnees) . '</td>
+                            <td style="padding:2px 4px; vertical-align:middle; text-align:center; width:140px;">' . renderEtatRadios($key, $donnees, 5) . '</td>
                             <td style="padding:0; width:35%;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
                         </tr>';
                     }
@@ -1344,22 +1350,11 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <?php elseif ($isOV): ?>
 
                     <?php
-                    function renderOvEtatRadios($key, $donnees)
-                    {
-                        $val = $donnees[$key] ?? '';
-                        return '<div class="pastille-group">'
-                            . pastille($key, 'pc', 'p-na', 'Pas concerné', $val)
-                            . pastille($key, 'c', 'p-ok', 'Correct', $val)
-                            . pastille($key, 'aa', 'p-aa', 'À améliorer', $val)
-                            . pastille($key, 'nc', 'p-nc', 'Pas correct', $val)
-                            . pastille($key, 'nr', 'p-nr', 'Nécessite remplacement', $val)
-                            . '</div>';
-                    }
                     function renderOvRow($label, $key, $donnees)
                     {
                         return '<tr>
                             <td style="font-weight:bold; font-size:11px; width:35%;">' . htmlspecialchars($label) . '</td>
-                            <td style="padding:2px 4px; vertical-align:middle; text-align:center; width:140px;">' . renderOvEtatRadios($key, $donnees) . '</td>
+                            <td style="padding:2px 4px; vertical-align:middle; text-align:center; width:140px;">' . renderEtatRadios($key, $donnees, 5) . '</td>
                             <td style="padding:0; width:35%;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
                         </tr>';
                     }
@@ -1609,7 +1604,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </td>
                             <td
                                 style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
-                                <?= renderAprfEtatRadios('levage_isolement_stat', $donnees) ?>
+                                <?= renderEtatRadios('levage_isolement_stat', $donnees, 3) ?>
                             </td>
                             <td style="padding:0; width:35%;"><textarea name="donnees[levage_isolement_comment]" class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_isolement_comment"] ?? '') ?></textarea>
@@ -1625,7 +1620,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </td>
                             <td
                                 style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
-                                <?= renderAprfEtatRadios('levage_resistance_stat', $donnees) ?>
+                                <?= renderEtatRadios('levage_resistance_stat', $donnees, 3) ?>
                             </td>
                             <td style="padding:0; width:35%;"><textarea name="donnees[levage_resistance_comment]" class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_resistance_comment"] ?? '') ?></textarea>
@@ -1642,7 +1637,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </td>
                             <td
                                 style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
-                                <?= renderAprfEtatRadios('levage_temp_carcasse_stat', $donnees) ?>
+                                <?= renderEtatRadios('levage_temp_carcasse_stat', $donnees, 3) ?>
                             </td>
                             <td style="padding:0; width:35%;"><textarea name="donnees[levage_temp_carcasse_comment]"
                                     class="pdf-textarea"
@@ -1650,7 +1645,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding:4px; font-weight:bold;">
+                            <td style="padding:4px; font-weight:bold; width:35%;">
                                 Température ambiante :
                                 <input type="text" name="mesures[levage_temp_ambiante]"
                                     value="<?= htmlspecialchars($mesures['levage_temp_ambiante'] ?? '') ?>"
@@ -1659,16 +1654,16 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 °C
                             </td>
                             <td
-                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
-                                <?= renderAprfEtatRadios('levage_temp_ambiante_stat', $donnees) ?>
+                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                <?= renderEtatRadios('levage_temp_ambiante_stat', $donnees, 3) ?>
                             </td>
-                            <td style="padding:0;"><textarea name="donnees[levage_temp_ambiante_comment]"
+                            <td style="padding:0; width:35%;"><textarea name="donnees[levage_temp_ambiante_comment]"
                                     class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_temp_ambiante_comment"] ?? '') ?></textarea>
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding:4px; font-weight:bold;">
+                            <td style="padding:4px; font-weight:bold; width:35%;">
                                 Electroaimant arrêté depuis
                                 <input type="text" name="mesures[levage_arrete_depuis]"
                                     value="<?= htmlspecialchars($mesures['levage_arrete_depuis'] ?? '') ?>"
@@ -1676,10 +1671,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     style="width:60px; border-bottom:1px solid #000; text-align:center; margin-left:5px;"> h
                             </td>
                             <td
-                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
-                                <?= renderAprfEtatRadios('levage_arrete_depuis_stat', $donnees) ?>
+                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                <?= renderEtatRadios('levage_arrete_depuis_stat', $donnees, 3) ?>
                             </td>
-                            <td style="padding:0;"><textarea name="donnees[levage_arrete_depuis_comment]"
+                            <td style="padding:0; width:35%;"><textarea name="donnees[levage_arrete_depuis_comment]"
                                     class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_arrete_depuis_comment"] ?? '') ?></textarea>
                             </td>
