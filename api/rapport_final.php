@@ -974,73 +974,80 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         });
         let canvasWidthT = 0;
         let canvasWidthC = 0;
-
         function initSignatures() {
             const canvasC = document.getElementById('canvasClient');
             const canvasT = document.getElementById('canvasTech');
             
-            if (!window.SignaturePad) {
-                console.error("SignaturePad library not loaded");
-                return;
-            }
+            if (!window.SignaturePad) return;
             if (!canvasC || !canvasT) return;
 
-            const dpr = Math.max(window.devicePixelRatio || 1, 1);
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
 
-            // Tech Pad
-            if (!padTech) {
-                resizeCanvas(canvasT);
-                canvasWidthT = canvasT.offsetWidth;
-                padTech = new SignaturePad(canvasT, { 
-                    penColor: 'black',
-                    throttle: 16,
-                    minWidth: 1.5,
-                    maxWidth: 4.5
-                });
-                if (window.LM_RAPPORT && window.LM_RAPPORT.sigTech) {
-                    try {
-                        padTech.fromDataURL(window.LM_RAPPORT.sigTech, { ratio: dpr, width: canvasT.width / dpr, height: canvasT.height / dpr });
-                    } catch(e) { console.error("Error loading tech sig:", e); }
+            // Fonction interne simplifiée pour redimensionner
+            const doResize = (canvas, pad, dataUrl) => {
+                const containerWidth = canvas.offsetWidth || canvas.parentElement.offsetWidth || 500;
+                if (containerWidth < 10) return false;
+                
+                canvas.width = containerWidth * ratio;
+                canvas.height = 200 * ratio;
+                canvas.style.height = '200px';
+                canvas.getContext('2d').scale(ratio, ratio);
+                
+                if (pad) {
+                    pad.clear();
+                    if (dataUrl && dataUrl.length > 50) {
+                        pad.fromDataURL(dataUrl, { ratio: ratio, width: containerWidth, height: 200 });
+                    }
                 }
-            } else {
-                // If pad already exists, just ensure size is correct (resizeCanvas will handle restoration if width changed)
-                resizeCanvas(canvasT, padTech);
+                return true;
+            };
+
+            // Init Tech
+            if (!padTech) {
+                doResize(canvasT, null, null);
+                padTech = new SignaturePad(canvasT, { penColor: 'black', throttle: 16, minWidth: 1.5, maxWidth: 4.5 });
+                if (window.LM_RAPPORT && window.LM_RAPPORT.sigTech) {
+                    padTech.fromDataURL(window.LM_RAPPORT.sigTech, { ratio: ratio, width: canvasT.width / ratio, height: 200 });
+                }
+                canvasWidthT = canvasT.offsetWidth;
             }
 
-            // Client Pad
+            // Init Client
             if (!padClient) {
-                resizeCanvas(canvasC);
-                canvasWidthC = canvasC.offsetWidth;
-                padClient = new SignaturePad(canvasC, { 
-                    penColor: 'blue',
-                    throttle: 16,
-                    minWidth: 1.5,
-                    maxWidth: 4.5
-                });
+                doResize(canvasC, null, null);
+                padClient = new SignaturePad(canvasC, { penColor: 'blue', throttle: 16, minWidth: 1.5, maxWidth: 4.5 });
                 if (window.LM_RAPPORT && window.LM_RAPPORT.sigClient) {
-                    try {
-                        padClient.fromDataURL(window.LM_RAPPORT.sigClient, { ratio: dpr, width: canvasC.width / dpr, height: canvasC.height / dpr });
-                    } catch(e) { console.error("Error loading client sig:", e); }
+                    padClient.fromDataURL(window.LM_RAPPORT.sigClient, { ratio: ratio, width: canvasC.width / ratio, height: 200 });
                 }
-            } else {
-                resizeCanvas(canvasC, padClient);
+                canvasWidthC = canvasC.offsetWidth;
             }
         }
 
-
-
+        // Événement Redimensionnement
         window.addEventListener('resize', () => {
-            const cT = document.getElementById('canvasTech');
-            const cC = document.getElementById('canvasClient');
-            
-            // Only resize and clear if the actual container width changed (to avoid scroll-resize issues on mobile)
-            if (cT && padTech && cT.offsetWidth && cT.offsetWidth !== canvasWidthT) {
-                canvasWidthT = cT.offsetWidth;
-                resizeCanvas(cT, padTech);
+            const canvasC = document.getElementById('canvasClient');
+            const canvasT = document.getElementById('canvasTech');
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+
+            if (canvasT && padTech && canvasT.offsetWidth !== canvasWidthT) {
+                const data = padTech.toDataURL();
+                const curWidth = canvasT.offsetWidth;
+                canvasT.width = curWidth * ratio;
+                canvasT.height = 200 * ratio;
+                canvasT.getContext('2d').scale(ratio, ratio);
+                padTech.clear();
+                padTech.fromDataURL(data, { ratio: ratio, width: curWidth, height: 200 });
+                canvasWidthT = curWidth;
             }
-            if (cC && padClient && cC.offsetWidth && cC.offsetWidth !== canvasWidthC) {
-                canvasWidthC = cC.offsetWidth;
-                resizeCanvas(cC, padClient);
+            if (canvasC && padClient && canvasC.offsetWidth !== canvasWidthC) {
+                const data = padClient.toDataURL();
+                const curWidth = canvasC.offsetWidth;
+                canvasC.width = curWidth * ratio;
+                canvasC.height = 200 * ratio;
+                canvasC.getContext('2d').scale(ratio, ratio);
+                padClient.clear();
+                padClient.fromDataURL(data, { ratio: ratio, width: curWidth, height: 200 });
+                canvasWidthC = curWidth;
             }
         });
 
