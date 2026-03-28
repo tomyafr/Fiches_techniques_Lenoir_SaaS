@@ -600,19 +600,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             height: 100%;
             align-items: stretch;
             margin: 0 auto; /* Centrage pour aligner avec les pastilles */
-            position: relative;
             box-sizing: border-box;
-        }
-        /* Le bon trait vertical (jaune dans votre screen, noir ici) */
-        .diagonal-wrapper::after {
-            content: "";
-            position: absolute;
-            right: 0;
-            bottom: 0;
-            width: 1px;
-            height: 35px;
-            background: #000;
-            z-index: 10;
         }
         .diag-col {
             width: 28px;
