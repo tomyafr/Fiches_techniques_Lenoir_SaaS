@@ -903,10 +903,19 @@ foreach ($recoFreq as $rfk => $rfv) {
                 function newPdfPage() {
                     return '</div><div class="pdf-page bg-white p-4">'; 
                 }
-                function renderSectionB($photosData) {
+                function renderSectionB($photosData)
+                {
                     $photos = $photosData['desc_materiel'] ?? [];
+                    // Filtrer les entrées vides
+                    $photos = array_values(array_filter($photos, function($p) { return !empty($p['data']); }));
                     $count = count($photos);
+                    $isPdf = isset($_GET['pdf']);
                     
+                    // Si on est en PDF et qu'il n'y a pas de photo, on reste sobre ou on ne met rien
+                    if ($count == 0 && $isPdf) {
+                        return ''; // Option : Ne pas afficher la section du tout si vide en PDF
+                    }
+
                     $html = '
                     <div style="margin-top:20px; page-break-inside: avoid;">
                         <div style="font-weight:bold; font-size:14px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">B) DESCRIPTION DU MATERIEL :</div>
@@ -925,21 +934,21 @@ foreach ($recoFreq as $rfk => $rfv) {
                         }
                         $html .= '</div>';
                     } else {
+                        // Place-holder visible uniquement en édition
                         $html .= '
                             <div class="photo-montage-grid empty no-print-pdf">
                                 <div id="photo_placeholder" style="flex:1; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.03); border:1px dashed var(--glass-border); border-radius:8px; height:100px; color:var(--text-dim);">
                                     <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                                 </div>
-                                <button type="button" class="btn btn-primary" onclick="triggerPhoto()" style="height:38px; padding:0 1rem; display:flex; align-items:center; gap:8px;">
+                                <button type="button" class="btn btn-primary no-print-pdf" onclick="triggerPhoto()" style="height:38px; padding:0 1rem; display:flex; align-items:center; gap:8px;">
                                     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Photo
                                 </button>
                             </div>';
                     }
                     
-                    // Bouton d'ajout visible uniquement hors PDF
-                    if ($count < 4 && !isset($_GET['pdf'])) {
+                    if ($count < 4 && !$isPdf) {
                         $html .= '<div style="text-align:center; margin-top:10px;" class="no-print-pdf">
-                            <button type="button" class="photo-btn" onclick="capturePhoto(\'desc_materiel\')" style="padding:6px 12px; font-size:12px;">
+                            <button type="button" class="photo-btn no-print-pdf" onclick="capturePhoto(\'desc_materiel\')" style="padding:6px 12px; font-size:12px;">
                                 <span>📷</span> Ajouter une photo (' . $count . '/4)
                             </button>
                         </div>';
