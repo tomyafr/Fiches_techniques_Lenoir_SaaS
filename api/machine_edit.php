@@ -628,19 +628,25 @@ foreach ($recoFreq as $rfk => $rfv) {
         }
         .diag-text {
             position: absolute;
-            bottom: 40px;
-            left: 14px; /* Center of 28px */
+            bottom: 38px; /* Proche de la cassure du trait */
+            left: 50%;
+            width: 120px;
+            margin-left: -60px; /* Centrage parfait sur le point 50% */
             transform: rotate(-55deg);
-            transform-origin: bottom left;
-            white-space: nowrap;
+            transform-origin: bottom center;
+            text-align: center;
+            white-space: normal; /* Permet le <br> */
             font-size: 8px;
             font-weight: bold;
-            color: #000;
-            width: 120px;
-            line-height: 1.1;
+            color: #111;
+            line-height: 0.95;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
         }
         .diag-text.col-3 {
-            left: 23px; /* Center of 46.6px */
+            /* Hérite du centrage 50% de sa colonne parente */
         }
 
         /* --- SECTION BLUE BAR WITH LINES --- */
