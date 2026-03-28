@@ -246,10 +246,11 @@ foreach ($recoFreq as $rfk => $rfv) {
         /* === PASTILLE SYSTEM === */
         .pastille-group {
             display: flex;
-            gap: 6px;
+            gap: 2px;
             align-items: center;
-            justify-content: center;
-            width: 100%;
+            justify-content: space-around;
+            width: 140px;
+            margin: 0 auto;
             flex-shrink: 0;
         }
 
@@ -580,6 +581,40 @@ foreach ($recoFreq as $rfk => $rfv) {
             z-index: 100;
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .diagonal-header {
+            height: 90px;
+            vertical-align: bottom;
+            padding: 0;
+            position: relative;
+            background: #e0e0e0 !important;
+            overflow: hidden;
+        }
+        .diagonal-wrapper {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding-bottom: 5px;
+        }
+        .diag-label {
+            transform: rotate(-55deg);
+            transform-origin: bottom left;
+            white-space: nowrap;
+            font-size: 8px;
+            font-weight: bold;
+            width: 0;
+            margin-left: 10px;
+            color: #000;
+        }
+        .diag-line {
+            position: absolute;
+            bottom: 0;
+            width: 1px;
+            height: 15px;
+            background: #999;
         }
 
         @media print {
@@ -1078,12 +1113,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <tr>
                             <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0;">
                                 DESIGNATIONS</th>
-                            <th style="text-align:center; background:#e0e0e0; font-size:8px; line-height:1.3; padding:4px;">
-                                <span style="color:#bbb;">●</span>N/A
-                                <span style="color:#28a745;">●</span>OK
-                                <span style="color:#e67e22;">●</span>A.A
-                                <span style="color:#dc3545;">●</span>N.C
-                                <span style="color:#8b0000;">●</span>N.R
+                            <th class="diagonal-header" style="width:140px;">
+                                <div class="diagonal-wrapper">
+                                    <div class="diag-label">Pas concerné</div>
+                                    <div class="diag-label">Correct</div>
+                                    <div class="diag-label">A améliorer</div>
+                                    <div class="diag-label">Pas correct</div>
+                                    <div class="diag-label">Nécessite remplacement</div>
+                                </div>
                             </th>
                             <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0;">
                                 COMMENTAIRES</th>
@@ -1812,9 +1849,17 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                         <table class="pdf-table controles">
                             <tr>
-                                <th>Point de Contrôle / Désignation</th>
-                                <th style="text-align:center">État</th>
-                                <th>Commentaires / Valeurs Mesurées</th>
+                                <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">DESIGNATIONS</th>
+                                <th class="diagonal-header" style="width:140px;">
+                                    <div class="diagonal-wrapper">
+                                        <div class="diag-label">Pas concerné</div>
+                                        <div class="diag-label">Correct</div>
+                                        <div class="diag-label">A améliorer</div>
+                                        <div class="diag-label">Pas correct</div>
+                                        <div class="diag-label">Nécessite remplacement</div>
+                                    </div>
+                                </th>
+                                <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">COMMENTAIRES / VALEURS</th>
                             </tr>
                             <tr>
                                 <th colspan="3" style="background:#ddd;">Examen de l'appareil</th>
