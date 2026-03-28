@@ -1031,17 +1031,19 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </tr>';
                 }
                 function renderSectionHeader($title, $nbCols = 5) {
-                    $colsHtml = '';
-                    $colClass = ($nbCols == 3) ? ' col-3' : '';
+                    $w = ($nbCols == 3) ? '46.6px' : '28px';
+                    $tds = '';
                     for ($i = 0; $i < $nbCols; $i++) {
-                        $colsHtml .= '<div class="section-header-col' . $colClass . '"></div>';
+                        $tds .= '<td style="width:'.$w.'; border-right:1px solid #000; padding:0; height:30px;"></td>';
                     }
-                    return '<tr class="section-header-row">
+                    return '<tr class="section-header-row" style="background:#5b9bd5 !important;">
                         <td style="width:35%; font-weight:bold; color:white; padding:4px 10px; font-size:11px;">' . htmlspecialchars($title) . '</td>
-                        <td style="width:140px; padding:0; vertical-align:stretch;">
-                            <div class="section-header-cols">' . $colsHtml . '</div>
+                        <td style="width:140px; padding:0; vertical-align:middle;">
+                            <table style="width:140px; border-collapse:collapse; height:30px; margin: 0 auto; border:none;">
+                                <tr>' . $tds . '</tr>
+                            </table>
                         </td>
-                        <td style="width:35%; background:#5b9bd5;"></td>
+                        <td style="width:35%; background:#5b9bd5 !important;"></td>
                     </tr>';
                 }
                 function renderEdxRow($label, $key, $donnees)
