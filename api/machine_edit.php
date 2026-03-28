@@ -248,7 +248,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             display: flex;
             align-items: center;
             justify-content: space-around;
-            width: 180px;
+            width: 140px;
             margin: 0 auto;
             flex-shrink: 0;
         }
@@ -596,19 +596,19 @@ foreach ($recoFreq as $rfk => $rfv) {
         }
         .diagonal-wrapper {
             display: flex;
-            width: 180px;
+            width: 140px;
             height: 100%;
             align-items: stretch;
             margin: 0 auto; /* Centrage pour aligner avec les pastilles */
         }
         .diag-col {
-            width: 36px;
+            width: 28px;
             height: 100%;
             position: relative;
             flex-shrink: 0;
         }
         .diag-col.col-3 {
-            width: 60px;
+            width: 46.6px;
         }
         /* Ligne verticale basse (zone grise) */
         .diag-col::after {
@@ -674,12 +674,12 @@ foreach ($recoFreq as $rfk => $rfv) {
         }
         .section-header-cols {
             display: flex;
-            width: 180px;
+            width: 140px;
             height: 100%;
             margin: 0 auto; /* Centrage pour aligner avec les pastilles */
         }
         .section-header-col {
-            width: 36px;
+            width: 28px;
             flex-shrink: 0;
             height: 100%;
             position: relative;
@@ -687,7 +687,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             box-sizing: border-box;
         }
         .section-header-col.col-3 {
-            width: 60px;
+            width: 46.6px;
         }
         .section-header-comment {
             flex: 1;
@@ -958,7 +958,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 function renderEtatRadios($key, $donnees, $nbCols = 5)
                 {
                     $val = $donnees[$key] ?? '';
-                    $w = ($nbCols == 3) ? '60px' : '36px';
+                    $w = ($nbCols == 3) ? '46.6px' : '28px';
                     
                     if ($nbCols == 5) {
                         $items = [
@@ -1107,7 +1107,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     
                     return '<tr>
                         <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">DESIGNATIONS</th>
-                        <th class="diagonal-header" style="width:180px;">
+                        <th class="diagonal-header" style="width:140px;">
                             <div class="diagonal-wrapper">' . $colsHtml . '</div>
                         </th>
                         <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">' . $commentTitle . '</th>
