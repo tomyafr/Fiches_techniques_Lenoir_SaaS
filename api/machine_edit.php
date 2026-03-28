@@ -1781,18 +1781,18 @@ foreach ($recoFreq as $rfk => $rfv) {
                                  style="width:100%; height:auto;" 
                                  alt="Circulaire">
                             
-                            <!-- Diamètre pôle (83.6% / 22.4%) - Micro-lowered, no border -->
-                            <div style="position:absolute; left:83.6%; top:22.4%; transform:translate(-50%, -50%); font-size:9px;">
+                            <!-- Diamètre pôle (83.6% / 22.6%) - Micro-lowered, no border -->
+                            <div style="position:absolute; left:83.6%; top:22.6%; transform:translate(-50%, -50%); font-size:9px;">
                                 <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:55px; border:none; background:transparent; text-align:center; font-size:9px;" autocomplete="off">
                             </div>
 
-                            <!-- Diamètre noyau (85.5% / 27.4%) - Micro-lowered, no border -->
-                            <div style="position:absolute; left:85.5%; top:27.4%; transform:translate(-50%, -50%); font-size:9px;">
+                            <!-- Diamètre noyau (85.5% / 27.6%) - Micro-lowered, no border -->
+                            <div style="position:absolute; left:85.5%; top:27.6%; transform:translate(-50%, -50%); font-size:9px;">
                                 <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>" class="pdf-input" style="width:55px; border:none; background:transparent; text-align:center; font-size:9px;" autocomplete="off">
                             </div>
 
-                            <!-- Epaisseur pôle (85.6% / 39.4%) - No border, micro-lowered -->
-                            <div style="position:absolute; left:85.6%; top:39.4%; transform:translate(-50%, -50%); font-size:9px;">
+                            <!-- Epaisseur pôle (85.6% / 39.6%) - No border, micro-lowered -->
+                            <div style="position:absolute; left:85.6%; top:39.6%; transform:translate(-50%, -50%); font-size:9px;">
                                 <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:60px; border:none; background:transparent; text-align:center; font-size:9px;" autocomplete="off">
                             </div>
 
