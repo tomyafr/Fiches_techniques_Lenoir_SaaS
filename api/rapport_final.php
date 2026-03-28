@@ -1069,19 +1069,22 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const testPatterns = [/test/i, /lorem/i, /(.)\1{4,}/];
             const forbiddenWords = ['nul', 'rien', 'sans', 'na', 'n/a'];
 
-            for (let f of fieldsToCheck) {
-                const val = document.querySelector('[name="' + f.name + '"]')?.value || '';
-                if (val.length < 2 && val.length > 0) continue; // Skip very shorts handled elsewhere
+            for (var i = 0; i < fieldsToCheck.length; i++) {
+                var f = fieldsToCheck[i];
+                var el = document.querySelector('[name="' + f.name + '"]');
+                var val = el ? el.value : '';
+                if (val.length < 2 && val.length > 0) continue; 
                 
-                let foundMatch = false;
-                for (let p of testPatterns) {
+                var foundMatch = false;
+                for (var j = 0; j < testPatterns.length; j++) {
+                    var p = testPatterns[j];
                     if (p.test(val)) {
                         foundMatch = true;
                         break;
                     }
                 }
                 
-                if (!foundMatch && forbiddenWords.includes(val.toLowerCase().trim())) {
+                if (!foundMatch && forbiddenWords.indexOf(val.toLowerCase().trim()) !== -1) {
                     foundMatch = true;
                 }
 
@@ -1092,7 +1095,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 }
             }
 
-            const nomSignataire = document.querySelector('[name="nom_signataire"]')?.value.trim() || '';
+            var elSignataire = document.querySelector('[name="nom_signataire"]');
+            var nomSignataire = elSignataire ? elSignataire.value.trim() : '';
             if (!nomSignataire) {
                 alert('Le nom du signataire est obligatoire.');
                 return false;
@@ -1101,8 +1105,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             // --- BUG-008: Contrôle de complétude des fiches (Désactivé suite à la demande du client) ---
             // Les machines vides ("Non contrôlées") sont désormais autorisées lors de la finalisation.
 
-            const contactPrenom = document.getElementById('contact_prenom')?.value.trim() || '';
-            const contactNom = document.getElementById('contact_nom')?.value.trim() || '';
+            var elCP = document.getElementById('contact_prenom');
+            var contactPrenom = elCP ? elCP.value.trim() : '';
+            var elCN = document.getElementById('contact_nom');
+            var contactNom = elCN ? elCN.value.trim() : '';
             
             if (!contactPrenom) {
                 alert('Le prénom du contact est obligatoire.');
@@ -1510,22 +1516,41 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             container.appendChild(styleNode);
 
             // Fetch data from form for Page 1
-            const numArc = window.LM_RAPPORT.arc;
-            const nomSociete = document.querySelector('[name="nom_societe_display"]')?.value || window.LM_RAPPORT.nomSociete;
-            const adresse = document.querySelector('[name="adresse"]')?.value || '';
-            const cp = document.querySelector('[name="code_postal"]')?.value || '';
-            const ville = document.querySelector('[name="ville"]')?.value || '';
-            const pays = document.querySelector('[name="pays"]')?.value || '';
+            var elNomSociete = document.querySelector('[name="nom_societe_display"]');
+            var nomSociete = elNomSociete ? elNomSociete.value : window.LM_RAPPORT.nomSociete;
             
-            const contactPrenom = document.querySelector('[name="contact_prenom"]')?.value || '';
-            const contactNom = document.querySelector('[name="contact_nom"]')?.value || '';
-            const contactFonction = document.querySelector('[name="contact_fonction"]')?.value || '';
-            const contactTel = document.querySelector('[name="contact_telephone"]')?.value || '';
-            const contactEmail = document.querySelector('[name="contact_email"]')?.value || '';
+            var elAdresse = document.querySelector('[name="adresse"]');
+            var adresse = elAdresse ? elAdresse.value : '';
             
-            const nomSignataire = document.querySelector('[name="nom_signataire"]')?.value || '_____';
+            var elCP = document.querySelector('[name="code_postal"]');
+            var cp = elCP ? elCP.value : '';
             
-            const commentaire = document.querySelector('[name="commentaire_technicien"]')?.value || '';
+            var elVille = document.querySelector('[name="ville"]');
+            var ville = elVille ? elVille.value : '';
+            
+            var elPays = document.querySelector('[name="pays"]');
+            var pays = elPays ? elPays.value : '';
+            
+            var elCPres = document.querySelector('[name="contact_prenom"]');
+            var contactPrenom = elCPres ? elCPres.value : '';
+            
+            var elCNom = document.querySelector('[name="contact_nom"]');
+            var contactNom = elCNom ? elCNom.value : '';
+            
+            var elCFonc = document.querySelector('[name="contact_fonction"]');
+            var contactFonction = elCFonc ? elCFonc.value : '';
+            
+            var elCTel = document.querySelector('[name="contact_telephone"]');
+            var contactTel = elCTel ? elCTel.value : '';
+            
+            var elCEmail = document.querySelector('[name="contact_email"]');
+            var contactEmail = elCEmail ? elCEmail.value : '';
+            
+            var elSign = document.querySelector('[name="nom_signataire"]');
+            var nomSignataire = elSign ? elSign.value : '_____';
+            
+            var elComm = document.querySelector('[name="commentaire_technicien"]');
+            var commentaire = elComm ? elComm.value : '';
             
             const techName = "<?= htmlspecialchars($techName) ?>";
             const dateExp = window.LM_RAPPORT.dateInt;
@@ -1878,7 +1903,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             });
 
                             p.querySelectorAll('select').forEach(sel => {
-                                let valText = sel.options[sel.selectedIndex]?.text || '';
+                                var opt = sel.options[sel.selectedIndex];
+                                var valText = opt ? opt.text : '';
                                 if (!sel.value) {
                                     valText = '_____';
                                 }
@@ -1953,8 +1979,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const techNameLabel = "<?= htmlspecialchars($techName) ?>";
             const dateStr = window.LM_RAPPORT.dateInt;
 
-            const commentaryTechRaw = originalRapport.querySelector('[name="commentaire_technicien"]')?.value || '';
-            const commentaryClientRaw = originalRapport.querySelector('[name="commentaire_client"]')?.value || '';
+            var elCTechRaw = originalRapport.querySelector('[name="commentaire_technicien"]');
+            var commentaryTechRaw = elCTechRaw ? elCTechRaw.value : '';
+            var elCClientRaw = originalRapport.querySelector('[name="commentaire_client"]');
+            var commentaryClientRaw = elCClientRaw ? elCClientRaw.value : '';
             
             const commentaryTech = commentaryTechRaw.trim() ? `<div style="border: 2px solid #000; padding: 4px; min-height: 40px; font-size: 11px; white-space: pre-wrap; margin-bottom: 5px;">${commentaryTechRaw}</div>` : '';
             const commentaryClient = commentaryClientRaw.trim() ? `<div style="border: 2px solid #000; padding: 4px; font-size: 11px; white-space: pre-wrap; margin-bottom: 5px;">${commentaryClientRaw}</div>` : '';
