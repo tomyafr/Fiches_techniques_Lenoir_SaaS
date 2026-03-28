@@ -172,7 +172,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             color: black;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
             position: relative;
-            padding: 1cm;
+            padding: 1.5cm 1cm 1cm 1cm; /* Augmentation du padding top pour éviter les textes coupés */
             box-sizing: border-box;
             border-radius: 4px;
             overflow: hidden;
@@ -422,7 +422,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             border: 1px solid #eee;
             padding: 10px;
             box-sizing: border-box;
-            page-break-inside: avoid;
+            page-break-inside: avoid; /* Empêche la coupure au milieu des photos B */
         }
         .photo-montage-grid.empty {
             display: flex;
@@ -542,6 +542,13 @@ foreach ($recoFreq as $rfk => $rfv) {
             margin-bottom: -1px;
             color: black;
             text-transform: uppercase;
+            page-break-inside: avoid;
+            page-break-after: avoid;
+        }
+
+        .section-wrapper-pdf {
+            page-break-inside: avoid; /* Règle CRITIQUE pour éviter que B, C, D, E, F soient coupés */
+            margin-bottom: 20px;
         }
 
         /* Top Save bar */
@@ -808,9 +815,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </tr>
                 </table>
 
-                <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px; page-break-after: avoid; break-after: avoid;">A) FICHE DE CONTRÔLE :</div>
+                <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:5px; border-bottom: 2px solid #d35400; padding-bottom:5px; page-break-after: avoid;">A) FICHE DE CONTRÔLE :</div>
                 
-                <div style="font-weight:bold; color:#1B4F72; margin-bottom:10px; font-size:14px; page-break-after: avoid; break-after: avoid;">
+                <div style="font-weight:bold; color:#1B4F72; margin-bottom:5px; font-size:14px; page-break-after: avoid;">
                     Poste : <input type="text" name="mesures[poste]" value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>" style="border:none; border-bottom:1px dashed #000; font-weight:bold; width:30px; background:transparent;" autocomplete="off">
                 </div>
 
@@ -1915,16 +1922,19 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                         <?php 
                         // --- SECTION B : DESCRIPTION MATERIEL (GLOBAL) ---
-                        echo renderSectionB($photosData);
+                        echo '<div class="section-wrapper-pdf">' . renderSectionB($photosData) . '</div>';
 
                         // SECTION C & D (uniquement PDF)
                         if (isset($_GET['pdf'])):
+                            echo '<div class="section-wrapper-pdf">';
                             renderSectionC($isEDX, $isOV);
+                            echo '</div><div class="section-wrapper-pdf">';
                             renderSectionD($isEDX, $mesures);
+                            echo '</div>';
                         endif;
                         ?>
 
-                        <div style="margin-top:20px; border: 1px solid #000; padding:10px; background: #fff; page-break-inside: avoid;">
+                        <div class="section-wrapper-pdf" style="margin-top:20px; border: 1px solid #000; padding:10px; background: #fff;">
                             <div style="font-weight:bold; font-size:14px; margin-bottom:5px; color:#d35400;">E) CAUSE DE DYSFONCTIONNEMENT :</div>
                             <?php if (!isset($_GET['pdf'])): ?>
                                 <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette zone est pré-remplie avec les points "Non conformes" ou "À améliorer" détectés. Vous pouvez éditer le texte ci-dessous.</p>
@@ -1965,7 +1975,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?php endif; ?>
                         </div>
 
-                        <div style="margin-top:20px; border: 1px solid #000; padding:10px; background: #fff; page-break-inside: avoid;">
+                        <div class="section-wrapper-pdf" style="margin-top:20px; border: 1px solid #000; padding:10px; background: #fff;">
                             <div style="font-weight:bold; font-size:14px; margin-bottom:5px; color:#d35400;">F) CONCLUSION :</div>
                             <?php if (!isset($_GET['pdf'])): ?>
                                 <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette conclusion peut être générée par l'IA en fonction des résultats du contrôle.</p>
@@ -2008,7 +2018,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </div>
                         <?php endif; ?>
 
-                    <div class="pdf-section photos-annexes-wrapper" style="margin-top:20px; page-break-inside: avoid;">
+                    <div class="section-wrapper-pdf photos-annexes-wrapper" style="margin-top:20px;">
                         <div
                             style="background:#d35400; color:white; font-weight:bold; font-size:12px; padding:5px; border:1px solid #000;">
                             PHOTOS ANNEXES</div>
