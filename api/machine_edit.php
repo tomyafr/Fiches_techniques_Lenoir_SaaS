@@ -1034,7 +1034,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     $w = ($nbCols == 3) ? '46.6px' : '28px';
                     $tds = '';
                     for ($i = 0; $i < $nbCols; $i++) {
-                        $tds .= '<td style="width:'.$w.'; border-right:1px solid #000; padding:0; height:30px;"></td>';
+                        $tds .= '<td style="width:'.$w.'; border:none !important; border-right:1px solid #000 !important; padding:0; height:30px;"></td>';
                     }
                     return '<tr class="section-header-row" style="background:#5b9bd5 !important;">
                         <td style="width:35%; font-weight:bold; color:white; padding:4px 10px; font-size:11px;">' . htmlspecialchars($title) . '</td>
