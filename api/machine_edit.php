@@ -1256,9 +1256,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <table class="pdf-table controles" style="font-size:11px;">
                         <?= renderDiagonalHeader(5) ?>
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white;">Environnement / Aspect général</th>
-                        </tr>
+                        <?= renderSectionHeader("Environnement / Aspect général", 5) ?>
                         <?= renderEdxRow("Accès au séparateur", "edx_acces", $donnees) ?>
                         <?= renderEdxRow("Etat général du séparateur", "edx_etat_gen", $donnees) ?>
 
@@ -1522,9 +1520,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
 
                         <!-- Section MECANIQUE -->
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">MECANIQUE</th>
-                        </tr>
+                        <?= renderSectionHeader("MECANIQUE", 3) ?>
                         <?= renderAprfRow("Etat d’usure de la virole inox", "paptap_virole", $donnees) ?>
                         <?= renderAprfRow("Revêtement caoutchouc lisse ou losange", "paptap_revetement", $donnees) ?>
                         <?= renderAprfRow("Nombre et taille des tasseaux", "paptap_tasseaux", $donnees) ?>
@@ -1533,9 +1529,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderAprfRow("Rotation sans difficulté", "paptap_rotation", $donnees) ?>
 
                         <!-- Section MAGNETIQUE -->
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">MAGNETIQUE</th>
-                        </tr>
+                        <?= renderSectionHeader("MAGNETIQUE", 3) ?>
                         <tr>
                             <td style="padding:4px;">Position correcte du circuit (pour TAP)</td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
@@ -1589,10 +1583,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderAprfRow("Aspect général", "levage_aspect", $donnees) ?>
 
                         <!-- Section MECANIQUE -->
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">MECANIQUE
-                            </th>
-                        </tr>
+                        <?= renderSectionHeader("MECANIQUE", 3) ?>
                         <?= renderAprfRow("Planéité des pôles et du noyau", "levage_planeite", $donnees) ?>
                         <?= renderAprfRow("Jeu entre bouclier et pôles", "levage_jeu_bouclier", $donnees) ?>
                         <?= renderAprfRow("Etanchéité de la boite de connexion (Joint/PE)", "levage_etanch_boite", $donnees) ?>
@@ -1602,10 +1593,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderAprfRow("Etat des chaines", "levage_chaines", $donnees) ?>
 
                         <!-- Section ELECTRIQUE HORS TENSION -->
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">
-                                ELECTRIQUE HORS TENSION</th>
-                        </tr>
+                        <?= renderSectionHeader("ELECTRIQUE HORS TENSION", 3) ?>
                         <tr>
                             <td style="padding:4px; font-weight:bold; width:35%;">
                                 Isolement sous 1000 Vcc :
