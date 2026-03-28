@@ -1198,9 +1198,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     min-height: 100px; 
                     background: white;
                     color: black;
-                    padding: 0 15mm; /* Margins are now handled by html2pdf natively! */
+                    padding: 0 15mm; /* Marges réduites au maximum en haut */
                     box-sizing: border-box;
-                    margin: 0;
+                    margin: 0 !important;
                     font-family: Arial, sans-serif;
                     font-size: 13px;
                     position: relative; 
@@ -1666,8 +1666,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
             if (!moisProchainText) moisProchainText = "[MOIS PROCHAIN]";
 
-            synthPreambulePage.innerHTML = `
-                <div style="padding-top: 10px;">
+                <div>
                     <div style="border: 2px solid #000; padding: 20px; color: #000; background: #fff; margin-bottom: 30px; page-break-inside: avoid;">
                         <h2 style="text-align: center; margin-top: 0; margin-bottom: 20px; text-decoration: none; font-size: 16px; text-transform: uppercase; color: #000; font-weight: 900;"><span style="border-bottom: 2px solid #000; padding-bottom: 2px;">SYNTHÈSE DE L'INTERVENTION</span></h2>
                         
@@ -2081,7 +2080,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const container = await buildFullPdfContainer();
 
             const opt = {
-                margin: [10, 0, 20, 0], // Top, Left, Bottom (20mm), Right
+                margin: [0, 0, 15, 0], // Top=0 pour coller au bord, Left, Bottom (15mm), Right
                 filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
@@ -2141,7 +2140,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 }
 
                 const opt = {
-                    margin: [10, 0, 15, 0], // Top, Left, Bottom, Right
+                    margin: [0, 0, 15, 0], // Top=0, Left, Bottom, Right
                     filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true, logging: false },
