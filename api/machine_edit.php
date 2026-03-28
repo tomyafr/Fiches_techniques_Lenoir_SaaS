@@ -589,6 +589,10 @@ foreach ($recoFreq as $rfk => $rfv) {
             position: relative;
             background: #e0e0e0 !important;
             overflow: visible;
+            border-right: none !important;
+        }
+        .diagonal-header + th {
+            border-left: none !important;
         }
         .diagonal-wrapper {
             display: flex;
