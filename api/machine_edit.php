@@ -603,33 +603,33 @@ foreach ($recoFreq as $rfk => $rfv) {
             position: relative;
             flex-shrink: 0;
         }
+        /* Ligne verticale basse (zone grise) */
         .diag-col::after {
             content: "";
             position: absolute;
-            left: 0; /* Align with previous divider */
+            left: 50%; /* CENTRE de la gommette */
             bottom: 0;
             width: 1px;
             height: 35px;
             background: #000;
         }
+        /* Ligne diagonale haute (zone grise) */
         .diag-col::before {
             content: "";
             position: absolute;
-            left: 0;
+            left: 50%;
             top: 0;
             bottom: 35px;
             width: 1px;
             background: #000;
-            transform: skewX(35deg); /* Leans UP-RIGHT */
+            transform: skewX(35deg); /* Inclinaison vers la droite */
             transform-origin: bottom left;
-        }
-        .diag-col:first-child::after, .diag-col:first-child::before {
-            display: none; /* No divider before first column */
         }
         .diag-text {
             position: absolute;
             bottom: 38px;
-            left: 14px; /* EXACT CENTER of the 28px gomette */
+            left: 50%;
+            padding-left: 4px; /* Décalage pour être à droite du trait */
             transform: rotate(-55deg);
             transform-origin: bottom left;
             text-align: left;
@@ -641,7 +641,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             line-height: 1.1;
         }
         .diag-text.col-3 {
-            left: 23px; /* Center of 46.6px */
+            /* Suit le left: 50% de sa colonne parente */
         }
 
         /* --- SECTION BLUE BAR WITH LINES --- */
@@ -673,11 +673,18 @@ foreach ($recoFreq as $rfk => $rfv) {
         .section-header-col {
             width: 28px;
             flex-shrink: 0;
-            border-left: 1px solid #000;
             height: 100%;
+            position: relative;
         }
-        .section-header-col:first-child {
-            border-left: none;
+        /* Trait vertical traversant la zone bleue au centre */
+        .section-header-col::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #000;
         }
         .section-header-comment {
             flex: 1;

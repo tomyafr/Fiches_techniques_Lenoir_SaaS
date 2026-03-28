@@ -1414,7 +1414,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .diag-col::after {
                     content: "";
                     position: absolute;
-                    left: 0;
+                    left: 50%;
                     bottom: 0;
                     width: 1px;
                     height: 35px;
@@ -1423,7 +1423,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .diag-col::before {
                     content: "";
                     position: absolute;
-                    left: 0;
+                    left: 50%;
                     top: 0;
                     bottom: 35px;
                     width: 1px;
@@ -1431,14 +1431,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     transform: skewX(35deg);
                     transform-origin: bottom left;
                 }
-                .diag-col:first-child::after, .diag-col:first-child::before {
-                    display: none;
-                }
                 .diag-col.col-3 { width: 46.6px; }
                 .diag-text {
                     position: absolute;
                     bottom: 38px;
-                    left: 14px;
+                    left: 50%;
+                    padding-left: 4px;
                     transform: rotate(-55deg);
                     transform-origin: bottom left;
                     white-space: nowrap;
@@ -1447,9 +1445,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     color: #000;
                     width: 200px;
                     line-height: 1.1;
-                }
-                .diag-text.col-3 {
-                    left: 23px;
                 }
 
                 .section-header-row {
@@ -1480,13 +1475,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .section-header-col {
                     width: 28px;
                     flex-shrink: 0;
-                    border-left: 1px solid #000;
                     height: 100%;
+                    position: relative;
+                }
+                .section-header-col::after {
+                    content: "";
+                    position: absolute;
+                    left: 50%;
+                    top: 0;
+                    bottom: 0;
+                    width: 1px;
+                    background: #000;
                 }
                 .section-header-col.col-3 { width: 46.6px; }
-                .section-header-col:first-child {
-                    border-left: none;
-                }
                 .section-header-comment {
                     flex: 1;
                     padding: 4px 10px;
