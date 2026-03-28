@@ -1633,6 +1633,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 </tr>
                             </table>
                             
+                            <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">A) FICHE DE CONTRÔLE :</div>
+                            <div style="font-weight:bold; color:#1B4F72; margin-bottom:10px; font-size:14px;">Poste : ${mIdx + 1}</div>
+                            
                             <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000;">
                                 <tr>
                                     <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N° A.R.C.</td>

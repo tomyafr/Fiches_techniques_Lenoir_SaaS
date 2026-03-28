@@ -713,7 +713,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">A) FICHE DE CONTRÔLE :</div>
                 
                 <div style="font-weight:bold; color:#1B4F72; margin-bottom:10px; font-size:14px;">
-                    Poste : <?= htmlspecialchars($mesures['poste'] ?? 'N/A') ?>
+                    Poste : <input type="text" name="mesures[poste]" value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>" style="border:none; border-bottom:1px dashed #000; font-weight:bold; width:30px; background:transparent;" autocomplete="off">
                 </div>
 
                 <table
