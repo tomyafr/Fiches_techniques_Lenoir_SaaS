@@ -692,12 +692,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         machinesIds: [<?= implode(',', array_column($machines, 'id')) ?>],
                         machinesData: <?= json_encode(array_values(array_map(function($m) use ($intervention) {
                             return [
-                                'id' function $m['id'],
-                                'arc' function $intervention['numero_arc'],
-                                'of' function $m['numero_of'] ?? '',
-                                'designation' function $m['designation'] ?? '',
-                                'annee' function $m['annee_fabrication'] ?? '',
-                                'points_count' function $m['points_count'] ?? 0
+                                'id' => $m['id'],
+                                'arc' => $intervention['numero_arc'],
+                                'of' => $m['numero_of'] ?? '',
+                                'designation' => $m['designation'] ?? '',
+                                'annee' => $m['annee_fabrication'] ?? '',
+                                'points_count' => $m['points_count'] ?? 0
                             ];
                         }, $machines))) ?>
                     };
@@ -1457,14 +1457,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 '</div>';
 
             // Generate HTML lines for machines
-            const machinesTrs = window.LM_RAPPORT.machinesData.map(m function `
+            const machinesTrs = window.LM_RAPPORT.machinesData.map(function(m) { return `
                 <tr style="border-bottom:1px solid #000;">
                     <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.arc || '—'}</td>
                     <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.of || '—'}</td>
                     <td style="padding:6px; border-right:1px solid #000;">${m.designation || '—'}</td>
                     <td style="padding:6px; text-align:center;">${m.annee || '—'}</td>
                 </tr>
-            `).join('');
+            `; }).join('');
 
             // --- 1. PAGE RAPPORT FINAL (COUVERTURE + INFOS) ---
             const rapportCloneWrapper = document.createElement('div');
@@ -1546,13 +1546,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 30%;">N° A.R.C (N° de série)</td>
                             <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 60%;">Désignation du Produit</td>
                         </tr>
-                        ${window.LM_RAPPORT.machinesData.map((m, idx) function `
+                        ${window.LM_RAPPORT.machinesData.map(function(m, idx) { return `
                             <tr>
                                 <td style="text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000;">${m.poste || (idx + 1)}</td>
                                 <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.arc || '—'} ${m.of ? ' - ' + m.of : ''}</td>
                                 <td style="padding: 6px; border: 1px solid #000;">${m.designation || '—'}</td>
                             </tr>
-                        `).join('')}
+                        `; }).join('')}
                     </table>
                 </div>
 
@@ -1662,7 +1662,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                 // Si option = 'exclude', on retire les machines vides de la boucle
                 if (emptyOption === 'exclude' && emptyIds.length > 0) {
-                    reportMachineIds = reportMachineIds.filter(id function !emptyIds.includes(parseInt(id, 10)) && !emptyIds.includes(String(id)));
+                    reportMachineIds = reportMachineIds.filter(function(id) { return !emptyIds.includes(parseInt(id, 10)) && !emptyIds.includes(String(id)); });
                 }
 
                 const totalMachines = reportMachineIds.length;
@@ -1677,7 +1677,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     
                     // Si on a gardé la machine mais qu'elle est vide et qu'on voulait 'condensed'
                     if (emptyOption === 'condensed' && (emptyIds.includes(parseInt(mId, 10)) || emptyIds.includes(String(mId)))) {
-                        const mData = window.LM_RAPPORT.machinesData.find(m function parseInt(m.id, 10) === parseInt(mId, 10)) || {};
+                        const mData = window.LM_RAPPORT.machinesData.find(function(m) { return parseInt(m.id, 10) === parseInt(mId, 10); }) || {};
                         const mDesignation = mData.designation || 'Équipement';
                         const mArc = mData.arc || numArc;
                         
@@ -1732,19 +1732,18 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                         const pages = doc.querySelectorAll('.pdf-page');
 
-                        pages.forEach((p, pIdx) function {
-                            // Bug 5 & New Fix: Remove empty photos section
+                        pages.forEach(function(p, pIdx) {
                             // Bug 5 & New Fix: Remove empty photos section
                             const hasPhotos = p.querySelectorAll('.photo-annexe-item img').length > 0;
-                            p.querySelectorAll('.photos-annexes-wrapper').forEach(wrapper function {
+                            p.querySelectorAll('.photos-annexes-wrapper').forEach(function(wrapper) {
                                 if (!wrapper.querySelector('.photo-annexe-item')) {
                                     wrapper.remove();
                                 }
                             });
 
-                            p.querySelectorAll('.photo-btn, .photo-thumbs, .photo-del-overlay, #btnChrono').forEach(el function el.remove());
-                            p.querySelectorAll('img.no-print-pdf').forEach(el function el.remove());
-                            p.querySelectorAll('div.no-print-pdf').forEach(el function el.classList.remove('no-print-pdf'));
+                            p.querySelectorAll('.photo-btn, .photo-thumbs, .photo-del-overlay, #btnChrono').forEach(function(el) { el.remove(); });
+                            p.querySelectorAll('img.no-print-pdf').forEach(function(el) { el.remove(); });
+                            p.querySelectorAll('div.no-print-pdf').forEach(function(el) { el.classList.remove('no-print-pdf'); });
                             
                             // If it's a diagram/photo page and it's empty after cleanup, skip it
                             const contentText = p.textContent.trim();
@@ -1771,7 +1770,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 p.insertBefore(hDiv, p.firstChild);
                             }
 
-                            p.querySelectorAll('input[type="radio"]').forEach(r function {
+                            p.querySelectorAll('input[type="radio"]').forEach(function(r) {
                                 const lbl = r.closest('label');
                                 if (lbl) {
                                     if (r.checked) lbl.classList.add('selected');
@@ -1785,7 +1784,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 }
                             });
 
-                            p.querySelectorAll('input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"]):not([type="file"])').forEach(inp function {
+                            p.querySelectorAll('input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"]):not([type="file"])').forEach(function(inp) {
                                 let val = (inp.value || '').trim();
                                 // Bug 4: Handle "Poste"
                                 if (inp.name === 'mesures[poste]') {
@@ -1806,12 +1805,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 sel.outerHTML = `<span style="border-bottom:1px dashed black; display:inline-block; min-width:30px; padding:0 3px; font-weight:bold; color:black;">${valText}</span>`;
                             });
 
-                            p.querySelectorAll('textarea').forEach(ta function {
+                            p.querySelectorAll('textarea').forEach(function(ta) {
                                 let val = ta.value || ta.innerHTML;
                                 
                                 // NEW FIX FOR PERFORMANCE / NON REALISE Bug:
                                 const specialKeys = ['aprf_attraction_comment', 'ov_perf_bille', 'ov_perf_ecrou', 'ov_perf_rond50', 'ov_perf_rond100', 'levage_charge_maxi_comment', 'levage_temp_maxi_comment'];
-                                if (specialKeys.some(k function ta.name && ta.name.includes(k))) {
+                                if (specialKeys.some(function(k) { return ta.name && ta.name.includes(k); })) {
                                     if (!val.trim()) val = "Non réalisé";
                                 }
 
@@ -1972,30 +1971,30 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             // CHANGEMENT MAJEUR CONTRE LA COUPURE DE CANVAS : border-collapse empêche html2pdf de calculer la hauteur des TR
             // On le force en "separate" pour donner à html2pdf des hauteurs de TR nettes et mesurables sans overlap.
-            container.querySelectorAll('table.pdf-table, table.controles').forEach(tbl function {
+            container.querySelectorAll('table.pdf-table, table.controles').forEach(function(tbl) {
                 tbl.style.borderCollapse = 'separate';
                 tbl.style.borderSpacing = '0';
             });
 
             // Blindage ultime anti-coupure de tableaux
             // 1) Chaque ligne <tr> ne peut pas être coupée
-            container.querySelectorAll('tr').forEach(tr function {
+            container.querySelectorAll('tr').forEach(function(tr) {
                 tr.style.pageBreakInside = 'avoid';
                 tr.classList.add('avoid-break');
             });
             // 2) Les sections pdf-section ne sont pas coupées
-            container.querySelectorAll('.pdf-section').forEach(sec function {
+            container.querySelectorAll('.pdf-section').forEach(function(sec) {
                 sec.style.pageBreakInside = 'avoid';
             });
             // 3) Les petits tableaux (< 25 lignes) ne peuvent pas être coupés du tout
-            container.querySelectorAll('table').forEach(tbl function {
+            container.querySelectorAll('table').forEach(function(tbl) {
                 if (tbl.querySelectorAll('tr').length <= 25) {
                     tbl.style.pageBreakInside = 'avoid';
                     tbl.classList.add('avoid-break');
                 }
             });
             // 4) Titres de section : on évite qu'ils soient seuls en bas de page
-            container.querySelectorAll('.pdf-section-title, .pdf-section, h2').forEach(el function {
+            container.querySelectorAll('.pdf-section-title, .pdf-section, h2').forEach(function(el) {
                 el.style.pageBreakAfter = 'avoid';
                 el.style.breakAfter = 'avoid';
             });
@@ -2021,10 +2020,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.avoid-break', '.pdf-page-title'] }
             };
 
-            return new Promise(async (resolve, reject) function {
+            return new Promise(function(resolve, reject) {
                 try {
                     const worker = html2pdf().set(opt).from(container);
-                    await worker.toPdf().get('pdf').then(function (pdf) {
+                    worker.toPdf().get('pdf').then(function (pdf) {
                         const totalPages = pdf.internal.getNumberOfPages();
                         for (let i = 1; i <= totalPages; i++) {
                             pdf.setPage(i);
@@ -2042,12 +2041,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             pdf.text(leg.contact, 105, 293, { align: 'center' });
                             pdf.text(leg.siret, 105, 295, { align: 'center' });
                         }
+                    }).save();
+                    
+                    worker.outputPdf('blob').then(function(pdfBlob) {
+                        const reader = new FileReader();
+                        reader.onload = function() { resolve(reader.result.split(',')[1]); };
+                        reader.onerror = reject;
+                        reader.readAsDataURL(pdfBlob);
                     });
-                    const pdfBlob = await worker.outputPdf('blob');
-                    const reader = new FileReader();
-                    reader.onload = () function resolve(reader.result.split(',')[1]);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(pdfBlob);
                 } catch (e) {
                     reject(e);
                 }
@@ -2142,13 +2143,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         const STORE_NAME = 'pendingEmails';
 
         function ouvrirIDB() {
-            return new Promise((resolve, reject) function {
+            return new Promise(function(resolve, reject) {
                 const req = indexedDB.open(DB_NAME, DB_VERSION);
-                req.onupgradeneeded = e function {
+                req.onupgradeneeded = function(e) {
                     e.target.result.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
                 };
-                req.onsuccess = e function resolve(e.target.result);
-                req.onerror = e function reject(e.target.error);
+                req.onsuccess = function(e) { resolve(e.target.result); };
+                req.onerror = function(e) { reject(e.target.error); };
             });
         }
 
@@ -2156,8 +2157,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const db = await ouvrirIDB();
             const tx = db.transaction(STORE_NAME, 'readwrite');
             const store = tx.objectStore(STORE_NAME);
-            store.add({ ...payload, queued_at: Date.now() });
-            return new Promise((res, rej) function {
+            store.add(Object.assign({}, payload, { queued_at: Date.now() }));
+            return new Promise(function(res, rej) {
                 tx.oncomplete = res;
                 tx.onerror = rej;
             });
@@ -2168,25 +2169,23 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const tx = db.transaction(STORE_NAME, 'readwrite');
             const store = tx.objectStore(STORE_NAME);
             const req = store.getAll();
-            req.onsuccess = async () function {
+            req.onsuccess = function() {
                 const items = req.result;
-                for (const item of items) {
-                    try {
-                        const res = await envoyerParAPI(item.intervention_id, item.pdf_data, item.client_email, item.csrf_token);
-                        if (res.success) {
-                            // Supprimer de la file
-                            db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME).delete(item.id);
-                            console.log('[LM] Email rejoué avec succès :', item.client_email);
-                        }
-                    } catch (e) {
-                        console.warn('[LM] Rejouer échoué :', e);
-                    }
+                for (var i = 0; i < items.length; i++) {
+                    (function(item) {
+                        envoyerParAPI(item.intervention_id, item.pdf_data, item.client_email, item.csrf_token)
+                        .then(function(res) {
+                            if (res.success) {
+                                db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME).delete(item.id);
+                            }
+                        });
+                    })(items[i]);
                 }
             };
         }
 
         // Écouter la reconnexion réseau
-        window.addEventListener('online', () function {
+        window.addEventListener('online', function() {
             console.log('[LM] Connexion rétablie – rejouer la file d\'attente email');
             rejouerFileDAttente();
         });
