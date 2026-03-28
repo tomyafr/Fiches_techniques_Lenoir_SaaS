@@ -835,10 +835,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             
             <script>
                 // MF-010: Mutual exclusivity for "Le client souhaite" options (radio-group behavior)
-                document.querySelectorAll('.chk-souhait').forEach(chk function {
+                document.querySelectorAll('.chk-souhait').forEach(function(chk) {
                     chk.addEventListener('change', function() {
                         if (this.checked) {
-                            document.querySelectorAll('.chk-souhait').forEach(other function {
+                            document.querySelectorAll('.chk-souhait').forEach(function(other) {
                                 if (other !== this) other.checked = false;
                             });
                         }
@@ -1796,7 +1796,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 inp.outerHTML = `<span style="border-bottom:1px dashed black; display:inline-block; min-width:30px; padding:0 3px; font-weight:bold;">${val}</span>`;
                             });
 
-                            p.querySelectorAll('select').forEach(sel function {
+                            p.querySelectorAll('select').forEach(function(sel) {
                                 var opt = sel.options[sel.selectedIndex];
                                 var valText = opt ? opt.text : '';
                                 if (!sel.value) {
