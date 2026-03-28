@@ -1133,10 +1133,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
                             <?= renderSectionHeader("Aimants permanent fixe de triage type APRF", 3) ?>
+                            <?= renderAprfRow("Satisfaction de fonctionnement", "aprf_satisfaction", $donnees) ?>
+                            <?= renderAprfRow("État et type de la bande", "aprf_bande", $donnees) ?>
                         </thead>
                         <tbody>
-                        <?= renderAprfRow("Satisfaction de fonctionnement", "aprf_satisfaction", $donnees) ?>
-                        <?= renderAprfRow("État et type de la bande", "aprf_bande", $donnees) ?>
                         <?= renderAprfRow("État des réglettes", "aprf_reglettes", $donnees) ?>
                         <?= renderAprfRow("État des boutons étoile :", "aprf_boutons", $donnees) ?>
                         <?= renderAprfRow("Options (à préciser)", "aprf_options", $donnees) ?>
@@ -1236,10 +1236,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <thead>
                             <?= renderDiagonalHeader(5) ?>
                             <?= renderSectionHeader("Environnement / Aspect général", 5) ?>
+                            <?= renderEdxRow("Accès au séparateur", "edx_acces", $donnees) ?>
+                            <?= renderEdxRow("Etat général du séparateur", "edx_etat_gen", $donnees) ?>
                         </thead>
                         <tbody>
-                         <?= renderEdxRow("Accès au séparateur", "edx_acces", $donnees) ?>
-                        <?= renderEdxRow("Etat général du séparateur", "edx_etat_gen", $donnees) ?>
 
                         <?= renderSectionHeader("Partie A - Convoyeur", 5) ?>
                         <?= renderEdxRow("Etat général des verrous", "edx_verrous", $donnees) ?>
@@ -1381,10 +1381,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <thead>
                             <?= renderDiagonalHeader(5) ?>
                             <?= renderSectionHeader("Environnement / Aspect général", 5) ?>
+                            <?= renderOvRow("Accès au séparateur", "ov_acces", $donnees) ?>
+                            <?= renderOvRow("Etat général du séparateur", "ov_etat_gen", $donnees) ?>
                         </thead>
                         <tbody>
-                        <?= renderOvRow("Accès au séparateur", "ov_acces", $donnees) ?>
-                        <?= renderOvRow("Etat général du séparateur", "ov_etat_gen", $donnees) ?>
 
                         <?= renderSectionHeader("Partie A - Le séparateur", 5) ?>
                         <?= renderOvRow("Etat de la bande", "ov_bande", $donnees) ?>
@@ -1467,10 +1467,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
                             <?= renderSectionHeader("PAP/TAP", 3) ?>
+                            <?= renderAprfRow("Satisfaction de fonctionnement", "paptap_satisfaction", $donnees) ?>
+                            <?= renderAprfRow("Aspect général", "paptap_aspect", $donnees) ?>
                         </thead>
                         <tbody>
-                        <?= renderAprfRow("Satisfaction de fonctionnement", "paptap_satisfaction", $donnees) ?>
-                        <?= renderAprfRow("Aspect général", "paptap_aspect", $donnees) ?>
 
                         <?= renderSectionHeader("PRODUIT", 3) ?>
                         <tr>
@@ -1565,26 +1565,25 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
                             <?= renderSectionHeader("CONTROLES", 3) ?>
+                            <tr>
+                                <th style="background:#4472c4; color:white; font-weight:bold; padding:4px;" colspan="3">Produit
+                                    de Levage type : 
+                                    <select name="mesures[levage_type]" required 
+                                        style="background:white; border:1px solid #ccc; color:black; outline:none; font-weight:bold; width:220px; font-size:11px; padding:2px;">
+                                        <option value="">-- Choisir le type --</option>
+                                        <option value="Electroaimant Circulaire" <?= ($mesures['levage_type'] ?? '') == 'Electroaimant Circulaire' ? 'selected' : '' ?>>Electroaimant Circulaire</option>
+                                        <option value="Electroaimant Rectangulaire" <?= ($mesures['levage_type'] ?? '') == 'Electroaimant Rectangulaire' ? 'selected' : '' ?>>Electroaimant Rectangulaire</option>
+                                        <option value="Palonnier Fixe" <?= ($mesures['levage_type'] ?? '') == 'Palonnier Fixe' ? 'selected' : '' ?>>Palonnier Fixe</option>
+                                        <option value="Palonnier Telescopique" <?= ($mesures['levage_type'] ?? '') == 'Palonnier Telescopique' ? 'selected' : '' ?>>Palonnier Telescopique</option>
+                                        <option value="Armoire de Commande" <?= ($mesures['levage_type'] ?? '') == 'Armoire de Commande' ? 'selected' : '' ?>>Armoire de Commande</option>
+                                        <option value="Autre / Accessoire" <?= ($mesures['levage_type'] ?? '') == 'Autre / Accessoire' ? 'selected' : '' ?>>Autre / Accessoire</option>
+                                    </select>
+                                </th>
+                             </tr>
+                            <?= renderAprfRow("Satisfaction de fonctionnement", "levage_satisfaction", $donnees) ?>
+                            <?= renderAprfRow("Aspect général", "levage_aspect", $donnees) ?>
                         </thead>
                         <tbody>
-
-                        <tr>
-                            <th style="background:#4472c4; color:white; font-weight:bold; padding:4px;" colspan="3">Produit
-                                de Levage type : 
-                                <select name="mesures[levage_type]" required 
-                                    style="background:white; border:1px solid #ccc; color:black; outline:none; font-weight:bold; width:220px; font-size:11px; padding:2px;">
-                                    <option value="">-- Choisir le type --</option>
-                                    <option value="Electroaimant Circulaire" <?= ($mesures['levage_type'] ?? '') == 'Electroaimant Circulaire' ? 'selected' : '' ?>>Electroaimant Circulaire</option>
-                                    <option value="Electroaimant Rectangulaire" <?= ($mesures['levage_type'] ?? '') == 'Electroaimant Rectangulaire' ? 'selected' : '' ?>>Electroaimant Rectangulaire</option>
-                                    <option value="Palonnier Fixe" <?= ($mesures['levage_type'] ?? '') == 'Palonnier Fixe' ? 'selected' : '' ?>>Palonnier Fixe</option>
-                                    <option value="Palonnier Telescopique" <?= ($mesures['levage_type'] ?? '') == 'Palonnier Telescopique' ? 'selected' : '' ?>>Palonnier Telescopique</option>
-                                    <option value="Armoire de Commande" <?= ($mesures['levage_type'] ?? '') == 'Armoire de Commande' ? 'selected' : '' ?>>Armoire de Commande</option>
-                                    <option value="Autre / Accessoire" <?= ($mesures['levage_type'] ?? '') == 'Autre / Accessoire' ? 'selected' : '' ?>>Autre / Accessoire</option>
-                                </select>
-                            </th>
-                         </tr>
-                        <?= renderAprfRow("Satisfaction de fonctionnement", "levage_satisfaction", $donnees) ?>
-                        <?= renderAprfRow("Aspect général", "levage_aspect", $donnees) ?>
 
                         <!-- Section MECANIQUE -->
                         <?= renderSectionHeader("MECANIQUE", 3) ?>
