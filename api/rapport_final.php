@@ -1362,6 +1362,34 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .grid-3 .montage-item { height: 220px; }
                 .grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; }
                 .grid-4 .montage-item { height: 180px; }
+
+                .diagonal-header {
+                    height: 90px;
+                    vertical-align: bottom;
+                    padding: 0;
+                    position: relative;
+                    background: #e0e0e0 !important;
+                    overflow: hidden;
+                    border: 1px solid #000;
+                }
+                .diagonal-wrapper {
+                    display: flex;
+                    width: 100%;
+                    height: 100%;
+                    align-items: flex-end;
+                    justify-content: space-around;
+                    padding-bottom: 5px;
+                }
+                .diag-label {
+                    transform: rotate(-55deg);
+                    transform-origin: bottom left;
+                    white-space: nowrap;
+                    font-size: 8px;
+                    font-weight: bold;
+                    width: 0;
+                    margin-left: 10px;
+                    color: #000;
+                }
             `;
             container.appendChild(styleNode);
 

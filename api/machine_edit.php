@@ -962,26 +962,15 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </th>
                         </tr>
                         <tr>
-                            <th rowspan="2" style="width:40%; text-align:center; background:#e0e0e0; padding:0;">
-                                <div style="border-bottom:1px solid #000; padding:4px;">DESIGNATIONS</div>
+                            <th style="width:40%; text-align:center; vertical-align:middle; background:#e0e0e0;">DESIGNATIONS</th>
+                            <th class="diagonal-header" style="width:140px;">
+                                <div class="diagonal-wrapper">
+                                    <div class="diag-label">Bon</div>
+                                    <div class="diag-label" style="margin-left: 15px;">A remp.<br>sous :</div>
+                                    <div class="diag-label" style="margin-left: 20px;">H.S.</div>
+                                </div>
                             </th>
-                            <th style="text-align:center; padding:0; background:#e0e0e0;">ETAT</th>
-                            <th rowspan="2" style="width:30%; text-align:center; background:#e0e0e0;">COMMENTAIRES</th>
-                        </tr>
-                        <tr>
-                            <th style="padding:0; background:#e0e0e0;">
-                                <table style="width:100%; border-collapse:collapse; text-align:center; font-size:10px;">
-                                    <tr>
-                                        <td
-                                            style="width:33%; border:none; border-right:1px solid #000; padding:2px; font-weight:bold;">
-                                            Bon</td>
-                                        <td
-                                            style="width:34%; border:none; border-right:1px solid #000; padding:2px; font-weight:bold;">
-                                            A remplacer<br>sous :</td>
-                                        <td style="width:33%; border:none; padding:2px; font-weight:bold;">H.S.</td>
-                                    </tr>
-                                </table>
-                            </th>
+                            <th style="width:30%; text-align:center; vertical-align:middle; background:#e0e0e0;">COMMENTAIRES</th>
                         </tr>
 
                         <tr>
@@ -1178,6 +1167,19 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <tr>
                             <th colspan="3" style="background:#5b9bd5; color:white;">Partie B - Caisson de séparation</th>
                         </tr>
+                        <tr>
+                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">DESIGNATIONS</th>
+                            <th class="diagonal-header" style="width:140px;">
+                                <div class="diagonal-wrapper">
+                                    <div class="diag-label">Pas concerné</div>
+                                    <div class="diag-label">Correct</div>
+                                    <div class="diag-label">A améliorer</div>
+                                    <div class="diag-label">Pas correct</div>
+                                    <div class="diag-label">Nécessite remplacement</div>
+                                </div>
+                            </th>
+                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">COMMENTAIRES / VALEURS</th>
+                        </tr>
                         <?= renderEdxRow("Etat général des verrous", "edx_B_verrous", $donnees) ?>
                         <?= renderEdxRow("Etat général des grenouillères", "edx_B_grenouilles", $donnees) ?>
                         <?= renderEdxRow("Etat général des poignées de portes", "edx_B_poignees", $donnees) ?>
@@ -1196,6 +1198,19 @@ foreach ($recoFreq as $rfk => $rfv) {
                     <table class="pdf-table controles" style="font-size:11px;">
                         <tr>
                             <th colspan="3" style="background:#5b9bd5; color:white;">Partie C - Armoire électrique</th>
+                        </tr>
+                        <tr>
+                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">DESIGNATIONS</th>
+                            <th class="diagonal-header" style="width:140px;">
+                                <div class="diagonal-wrapper">
+                                    <div class="diag-label">Pas concerné</div>
+                                    <div class="diag-label">Correct</div>
+                                    <div class="diag-label">A améliorer</div>
+                                    <div class="diag-label">Pas correct</div>
+                                    <div class="diag-label">Nécessite remplacement</div>
+                                </div>
+                            </th>
+                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">COMMENTAIRES / VALEURS</th>
                         </tr>
                         <tr>
                             <th colspan="3" style="background:#e0e0e0; font-weight:normal;">Hors Tension</th>
@@ -1301,12 +1316,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <tr>
                             <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0;">
                                 DESIGNATIONS</th>
-                            <th style="text-align:center; background:#e0e0e0; font-size:8px; line-height:1.3; padding:4px;">
-                                <span style="color:#bbb;">●</span>N/A
-                                <span style="color:#28a745;">●</span>OK
-                                <span style="color:#e67e22;">●</span>A.A
-                                <span style="color:#dc3545;">●</span>N.C
-                                <span style="color:#8b0000;">●</span>N.R
+                            <th class="diagonal-header" style="width:140px;">
+                                <div class="diagonal-wrapper">
+                                    <div class="diag-label">Pas concerné</div>
+                                    <div class="diag-label">Correct</div>
+                                    <div class="diag-label">A améliorer</div>
+                                    <div class="diag-label">Pas correct</div>
+                                    <div class="diag-label">Nécessite remplacement</div>
+                                </div>
                             </th>
                             <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0;">
                                 COMMENTAIRES</th>
@@ -1347,6 +1364,19 @@ foreach ($recoFreq as $rfk => $rfv) {
                     <table class="pdf-table controles" style="font-size:11px;">
                         <tr>
                             <th colspan="3" style="background:#5b9bd5; color:white;">Partie B - Les performances</th>
+                        </tr>
+                        <tr>
+                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">DESIGNATIONS</th>
+                            <th class="diagonal-header" style="width:140px;">
+                                <div class="diagonal-wrapper">
+                                    <div class="diag-label">Pas concerné</div>
+                                    <div class="diag-label">Correct</div>
+                                    <div class="diag-label">A améliorer</div>
+                                    <div class="diag-label">Pas correct</div>
+                                    <div class="diag-label">Nécessite remplacement</div>
+                                </div>
+                            </th>
+                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">COMMENTAIRES / VALEURS</th>
                         </tr>
                         <tr>
                             <th style="width:40%; text-align:center; background:#e0e0e0;">DESIGNATIONS</th>
@@ -1419,6 +1449,17 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <!-- Section PAP/TAP -->
                         <tr>
                             <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">PAP/TAP</th>
+                        </tr>
+                        <tr>
+                            <th style="width:40%; text-align:center; vertical-align:middle; background:#e0e0e0;">DESIGNATIONS</th>
+                            <th class="diagonal-header" style="width:140px;">
+                                <div class="diagonal-wrapper">
+                                    <div class="diag-label">Bon</div>
+                                    <div class="diag-label" style="margin-left: 15px;">A remp.<br>sous :</div>
+                                    <div class="diag-label" style="margin-left: 20px;">H.S.</div>
+                                </div>
+                            </th>
+                            <th style="width:30%; text-align:center; vertical-align:middle; background:#e0e0e0;">COMMENTAIRES</th>
                         </tr>
                         <?= renderAprfRow("Satisfaction de fonctionnement", "paptap_satisfaction", $donnees) ?>
                         <?= renderAprfRow("Aspect général", "paptap_aspect", $donnees) ?>
@@ -1521,24 +1562,15 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <table class="pdf-table controles" style="font-size:11px; color:black;">
                         <tr>
-                            <th rowspan="2" style="width:40%; text-align:center; background:#e0e0e0;">DESIGNATIONS</th>
-                            <th style="text-align:center; padding:0; background:#e0e0e0;">ETAT</th>
-                            <th rowspan="2" style="width:30%; text-align:center; background:#e0e0e0;">COMMENTAIRES</th>
-                        </tr>
-                        <tr>
-                            <th style="padding:0; background:#e0e0e0;">
-                                <table style="width:100%; border-collapse:collapse; text-align:center; font-size:10px;">
-                                    <tr>
-                                        <td
-                                            style="width:33%; border:none; border-right:1px solid #000; padding:2px; font-weight:bold;">
-                                            Bon</td>
-                                        <td
-                                            style="width:34%; border:none; border-right:1px solid #000; padding:2px; font-weight:bold;">
-                                            A remp.<br>sous :</td>
-                                        <td style="width:33%; border:none; padding:2px; font-weight:bold;">H.S.</td>
-                                    </tr>
-                                </table>
+                            <th style="width:40%; text-align:center; vertical-align:middle; background:#e0e0e0;">DESIGNATIONS</th>
+                            <th class="diagonal-header" style="width:140px;">
+                                <div class="diagonal-wrapper">
+                                    <div class="diag-label">Bon</div>
+                                    <div class="diag-label" style="margin-left: 15px;">A remp.<br>sous :</div>
+                                    <div class="diag-label" style="margin-left: 20px;">H.S.</div>
+                                </div>
                             </th>
+                            <th style="width:30%; text-align:center; vertical-align:middle; background:#e0e0e0;">COMMENTAIRES</th>
                         </tr>
 
                         <tr>
