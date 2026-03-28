@@ -190,7 +190,7 @@ $machines = $stmtMach->fetchAll();
                                 style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700;">
                                 Repère</th>
                             <th
-                                style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700;">
+                                style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700; text-align:center;">
                                 Année</th>
                             <th
                                 style="padding:0.7rem 0.8rem; font-size:0.7rem; text-transform:uppercase; color:var(--primary); font-weight:700; text-align:center;">
