@@ -1007,6 +1007,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     
     <!-- BLOC SCRIPT 2: Fonctions de Rapport (Plus complexes) -->
     <script>
+        const numArc = window.LM_RAPPORT ? window.LM_RAPPORT.arc : '';
+        
         document.addEventListener('DOMContentLoaded', function() {
             // --- BUG-018: Exclusivité des checkboxes "Le client souhaite" ---
             const chkUnique = document.querySelector('[name="souhait_rapport_unique"]');
@@ -2059,6 +2061,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         // ══════════════════════════════════════════════════════════════════
         // TÉLÉCHARGEMENT PDF BOUTON DIRECT
         // ══════════════════════════════════════════════════════════════════
+        // On expose explicitement la fonction au scope global pour le bouton onclick
+        window.telechargerPDF = telechargerPDF;
         async function telechargerPDF() {
             const btn = document.getElementById('btnDownloadPDF');
             const originalContent = btn ? btn.innerHTML : '';
@@ -2301,6 +2305,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         // ══════════════════════════════════════════════════════════════════
         // GÉNÉRATION IA PAR LOT (BATCH)
         // ══════════════════════════════════════════════════════════════════
+        // On expose explicitement la fonction au scope global pour le bouton onclick
+        window.generateAllIA = generateAllIA;
         async function generateAllIA() {
             if (!confirm("L'Expert IA va parcourir toutes les machines du rapport.\n\nIMPORTANT : Vos informations actuelles (contact, signatures, commentaires) seront SAUVEGARDÉES avant l'analyse.\n\nContinuer ?")) return;
 
