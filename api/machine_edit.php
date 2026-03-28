@@ -683,19 +683,11 @@ foreach ($recoFreq as $rfk => $rfv) {
             flex-shrink: 0;
             height: 100%;
             position: relative;
+            border-right: 1px solid #000;
+            box-sizing: border-box;
         }
         .section-header-col.col-3 {
             width: 60px;
-        }
-        /* Trait vertical traversant la zone bleue au centre */
-        .section-header-col::after {
-            content: "";
-            position: absolute;
-            left: 100%;
-            top: 0;
-            bottom: 0;
-            width: 1px;
-            background: #000;
         }
         .section-header-comment {
             flex: 1;
