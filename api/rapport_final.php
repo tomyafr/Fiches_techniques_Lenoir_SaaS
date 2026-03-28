@@ -981,65 +981,72 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             if (!canvasT || !canvasC || !window.SignaturePad) return;
 
             var ratio = Math.max(window.devicePixelRatio || 1, 1);
-
-            var setupPad = function(canvas, existingPad, storageKey) {
-                if (existingPad) return existingPad;
-                
-                var w = canvas.offsetWidth || canvas.clientWidth || 0;
-                if (w < 10) return null;
-
-                canvas.width = w * ratio;
-                canvas.height = 200 * ratio;
-                canvas.getContext('2d').scale(ratio, ratio);
-                canvas.style.touchAction = 'none';
-
-                var pad = new SignaturePad(canvas, {
-                    penColor: (storageKey === 'sigTech' ? 'black' : 'blue'),
-                    throttle: 16,
+            
+            // Init Tech
+            if (!padTech) {
+                var wT = canvasT.offsetWidth || 600;
+                canvasT.width = wT * ratio;
+                canvasT.height = 200 * ratio;
+                canvasT.getContext('2d').scale(ratio, ratio);
+                padTech = new SignaturePad(canvasT, {
+                    penColor: 'black',
                     minWidth: 1.5,
                     maxWidth: 4.5
                 });
-
-                var saved = (window.LM_RAPPORT && window.LM_RAPPORT[storageKey]) ? window.LM_RAPPORT[storageKey] : null;
-                if (saved && saved.length > 50) {
-                    pad.fromDataURL(saved, { ratio: ratio, width: w, height: 200 });
+                if (window.LM_RAPPORT && window.LM_RAPPORT.sigTech && window.LM_RAPPORT.sigTech.length > 50) {
+                    padTech.fromDataURL(window.LM_RAPPORT.sigTech, { ratio: ratio, width: wT, height: 200 });
                 }
-                return pad;
-            };
+                canvasWidthT = wT;
+            }
 
-            if (!padTech) padTech = setupPad(canvasT, padTech, 'sigTech');
-            if (!padClient) padClient = setupPad(canvasC, padClient, 'sigClient');
-
-            if (padTech) canvasWidthT = canvasT.offsetWidth;
-            if (padClient) canvasWidthC = canvasC.offsetWidth;
+            // Init Client
+            if (!padClient) {
+                var wC = canvasC.offsetWidth || 600;
+                canvasC.width = wC * ratio;
+                canvasC.height = 200 * ratio;
+                canvasC.getContext('2d').scale(ratio, ratio);
+                padClient = new SignaturePad(canvasC, {
+                    penColor: 'blue',
+                    minWidth: 1.5,
+                    maxWidth: 4.5
+                });
+                if (window.LM_RAPPORT && window.LM_RAPPORT.sigClient && window.LM_RAPPORT.sigClient.length > 50) {
+                    padClient.fromDataURL(window.LM_RAPPORT.sigClient, { ratio: ratio, width: wC, height: 200 });
+                }
+                canvasWidthC = wC;
+            }
         }
 
-        var sigRetryInterval = setInterval(function() {
-            if (typeof padTech !== 'undefined' && typeof padClient !== 'undefined' && padTech && padClient) {
-                clearInterval(sigRetryInterval);
-            } else {
-                initSignatures();
-            }
-        }, 150);
+        window.onload = function() {
+            initSignatures();
+            // Petite sécurité après 1s au cas où le layout a bougé
+            setTimeout(initSignatures, 1000);
+        };
 
         window.addEventListener('resize', function() {
             var ratio = Math.max(window.devicePixelRatio || 1, 1);
-            var items = [
-                { c: document.getElementById('canvasTech'), p: padTech, lw: canvasWidthT, type: 'T' },
-                { c: document.getElementById('canvasClient'), p: padClient, lw: canvasWidthC, type: 'C' }
-            ];
-            
-            for (var i = 0; i < items.length; i++) {
-                var item = items[i];
-                if (item.c && item.p && item.c.offsetWidth !== item.lw && item.c.offsetWidth > 10) {
-                    var data = item.p.toDataURL();
-                    var nw = item.c.offsetWidth;
-                    item.c.width = nw * ratio;
-                    item.c.height = 200 * ratio;
-                    item.c.getContext('2d').scale(ratio, ratio);
-                    item.p.clear();
-                    item.p.fromDataURL(data, { ratio: ratio, width: nw, height: 200 });
-                    if (item.type === 'T') canvasWidthT = nw; else canvasWidthC = nw;
+            if (padTech && document.getElementById('canvasTech')) {
+                var c = document.getElementById('canvasTech');
+                if (c.offsetWidth !== canvasWidthT && c.offsetWidth > 10) {
+                    var data = padTech.toDataURL();
+                    canvasWidthT = c.offsetWidth;
+                    c.width = canvasWidthT * ratio;
+                    c.height = 200 * ratio;
+                    c.getContext('2d').scale(ratio, ratio);
+                    padTech.clear();
+                    padTech.fromDataURL(data, { ratio: ratio, width: canvasWidthT, height: 200 });
+                }
+            }
+            if (padClient && document.getElementById('canvasClient')) {
+                var c = document.getElementById('canvasClient');
+                if (c.offsetWidth !== canvasWidthC && c.offsetWidth > 10) {
+                    var data = padClient.toDataURL();
+                    canvasWidthC = c.offsetWidth;
+                    c.width = canvasWidthC * ratio;
+                    c.height = 200 * ratio;
+                    c.getContext('2d').scale(ratio, ratio);
+                    padClient.clear();
+                    padClient.fromDataURL(data, { ratio: ratio, width: canvasWidthC, height: 200 });
                 }
             }
         });
