@@ -976,17 +976,16 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         let canvasWidthT = 0;
         let canvasWidthC = 0;
         function initSignatures() {
-            const canvasT = document.getElementById('canvasTech');
-            const canvasC = document.getElementById('canvasClient');
+            var canvasT = document.getElementById('canvasTech');
+            var canvasC = document.getElementById('canvasClient');
             if (!canvasT || !canvasC || !window.SignaturePad) return;
 
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            var ratio = Math.max(window.devicePixelRatio || 1, 1);
 
-            const setupPad = (canvas, existingPad, storageKey) => {
+            var setupPad = function(canvas, existingPad, storageKey) {
                 if (existingPad) return existingPad;
                 
-                // Attendre que le canvas ait une largeur réelle
-                const w = canvas.offsetWidth || canvas.clientWidth || 0;
+                var w = canvas.offsetWidth || canvas.clientWidth || 0;
                 if (w < 10) return null;
 
                 canvas.width = w * ratio;
@@ -994,15 +993,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 canvas.getContext('2d').scale(ratio, ratio);
                 canvas.style.touchAction = 'none';
 
-                const pad = new SignaturePad(canvas, {
+                var pad = new SignaturePad(canvas, {
                     penColor: (storageKey === 'sigTech' ? 'black' : 'blue'),
                     throttle: 16,
                     minWidth: 1.5,
                     maxWidth: 4.5
                 });
 
-                // Charger la signature existante
-                const saved = window.LM_RAPPORT?.[storageKey];
+                var saved = (window.LM_RAPPORT && window.LM_RAPPORT[storageKey]) ? window.LM_RAPPORT[storageKey] : null;
                 if (saved && saved.length > 50) {
                     pad.fromDataURL(saved, { ratio: ratio, width: w, height: 200 });
                 }
@@ -1016,32 +1014,34 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             if (padClient) canvasWidthC = canvasC.offsetWidth;
         }
 
-        // Relancer tant que ce n'est pas prêt (important si rendu différé)
-        let sigRetryInterval = setInterval(() => {
-            if (padTech && padClient) {
+        var sigRetryInterval = setInterval(function() {
+            if (typeof padTech !== 'undefined' && typeof padClient !== 'undefined' && padTech && padClient) {
                 clearInterval(sigRetryInterval);
             } else {
                 initSignatures();
             }
-        }, 100);
+        }, 150);
 
-        window.addEventListener('resize', () => {
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
-            [
-                { c: document.getElementById('canvasTech'), p: padTech, lw: canvasWidthT, setLW: (v) => canvasWidthT = v },
-                { c: document.getElementById('canvasClient'), p: padClient, lw: canvasWidthC, setLW: (v) => canvasWidthC = v }
-            ].forEach(item => {
+        window.addEventListener('resize', function() {
+            var ratio = Math.max(window.devicePixelRatio || 1, 1);
+            var items = [
+                { c: document.getElementById('canvasTech'), p: padTech, lw: canvasWidthT, type: 'T' },
+                { c: document.getElementById('canvasClient'), p: padClient, lw: canvasWidthC, type: 'C' }
+            ];
+            
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
                 if (item.c && item.p && item.c.offsetWidth !== item.lw && item.c.offsetWidth > 10) {
-                    const data = item.p.toDataURL();
-                    const nw = item.c.offsetWidth;
+                    var data = item.p.toDataURL();
+                    var nw = item.c.offsetWidth;
                     item.c.width = nw * ratio;
                     item.c.height = 200 * ratio;
                     item.c.getContext('2d').scale(ratio, ratio);
                     item.p.clear();
                     item.p.fromDataURL(data, { ratio: ratio, width: nw, height: 200 });
-                    item.setLW(nw);
+                    if (item.type === 'T') canvasWidthT = nw; else canvasWidthC = nw;
                 }
-            });
+            }
         });
 
         function clearSig(type) {
