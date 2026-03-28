@@ -257,41 +257,36 @@ foreach ($recoFreq as $rfk => $rfv) {
             display: none !important;
         }
 
-        /* Couleurs pastilles par défaut (non sélectionnées) */
         .pastille-group label {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             cursor: pointer;
             border: 1px solid #ccc;
-            background: #f8f8f8 !important;
-            transition: all 0.15s ease;
+            transition: all 0.1s ease;
             position: relative;
-            font-size: 0;
+            margin: 0 4px;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
         }
 
-        /* Couleurs quand sélectionné - Rendu "Gomette" vive */
-        .pastille-group label.p-na.selected { background: #bbb !important; border-color: #999 !important; }
-        .pastille-group label.p-ok.selected { background: #28a745 !important; border-color: #1e7e34 !important; }
-        .pastille-group label.p-aa.selected { background: #e67e22 !important; border-color: #d35400 !important; }
-        .pastille-group label.p-nc.selected { background: #dc3545 !important; border-color: #bd2130 !important; }
-        .pastille-group label.p-nr.selected { background: #8b0000 !important; border-color: #5a0000 !important; }
         .pastille-group label.selected {
             transform: scale(1.1);
-            box-shadow: 0 0 3px rgba(0,0,0,0.2);
+            border-color: #000 !important;
+            box-shadow: 0 0 3px rgba(0,0,0,0.3);
         }
 
         .pastille-group label.selected::after {
-            content: '\2713';
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+            content: '';
+            width: 10px;
+            height: 6px;
+            border-left: 2px solid white;
+            border-bottom: 2px solid white;
+            transform: rotate(-45deg);
+            margin-top: -3px;
         }
 
         @media screen and (max-width: 768px) {
@@ -774,7 +769,8 @@ foreach ($recoFreq as $rfk => $rfv) {
         </div>
 
         <div class="mobile-wrapper">
-            <div class="pdf-page">
+            <!-- Saut de page forcé en début de chaque machine pour éviter les coupures d'en-tête -->
+            <div class="pdf-page" style="page-break-before: always;">
                 <!-- Header exact LENOIR (Always show for consistency) -->
                 <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:15px; color:#000;">
                     <tr>
@@ -809,7 +805,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 </div>
 
                 <table
-                    style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000; page-break-after: avoid; break-after: avoid;">
+                    style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:5px; font-size:13px; color:#000; page-break-after: avoid; break-after: avoid;">
                     <tr>
                         <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N°
                             A.R.C.</td>
@@ -935,8 +931,25 @@ foreach ($recoFreq as $rfk => $rfv) {
                 }
                 function pastille($name, $value, $cssClass, $title, $currentVal)
                 {
-                    $sel = ($currentVal == $value) ? ' selected' : '';
-                    return '<label class="' . $cssClass . $sel . '" title="' . $title . '" style="margin:0;"><input type="radio" name="donnees[' . $name . ']" value="' . $value . '" ' . ($currentVal == $value ? 'checked' : '') . '></label>';
+                    $isSelected = ($currentVal == $value);
+                    $selClass = $isSelected ? ' selected' : '';
+                    
+                    // Couleurs "Gomettes" pour PDF - On utilise des couleurs inline pour forcer le rendu html2canvas
+                    $colors = [
+                        'p-na' => ['bg' => '#bbb', 'ghost' => '#f2f2f2'],
+                        'p-ok' => ['bg' => '#28a745', 'ghost' => '#e8f5e9'],
+                        'p-aa' => ['bg' => '#e67e22', 'ghost' => '#fff3e0'],
+                        'p-nc' => ['bg' => '#dc3545', 'ghost' => '#ffebee'],
+                        'p-nr' => ['bg' => '#8b0000', 'ghost' => '#fdeded']
+                    ];
+                    
+                    $c = $colors[$cssClass] ?? ['bg' => '#eee', 'ghost' => '#fff'];
+                    $bg = $isSelected ? $c['bg'] : $c['ghost'];
+                    $border = $isSelected ? '2px solid #000' : '1px solid #ccc';
+                    
+                    return '<label class="' . $cssClass . $selClass . '" title="' . $title . '" style="margin:0; background-color:' . $bg . ' !important; border:' . $border . ' !important; -webkit-print-color-adjust: exact;">
+                                <input type="radio" name="donnees[' . $name . ']" value="' . $value . '" ' . ($isSelected ? 'checked' : '') . '>
+                            </label>';
                 }
                 function renderEtatRadios($key, $donnees, $nbCols = 5)
                 {
