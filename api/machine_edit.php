@@ -248,7 +248,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             display: flex;
             align-items: center;
             justify-content: space-around;
-            width: 140px;
+            width: 160px;
             margin: 0 auto;
             flex-shrink: 0;
         }
@@ -592,16 +592,19 @@ foreach ($recoFreq as $rfk => $rfv) {
         }
         .diagonal-wrapper {
             display: flex;
-            width: 140px;
+            width: 160px;
             height: 100%;
             align-items: stretch;
             margin: 0 auto; /* Centrage pour aligner avec les pastilles */
         }
         .diag-col {
-            width: 28px;
+            width: 32px;
             height: 100%;
             position: relative;
             flex-shrink: 0;
+        }
+        .diag-col.col-3 {
+            width: 53.3px;
         }
         /* Ligne verticale basse (zone grise) */
         .diag-col::after {
@@ -667,15 +670,18 @@ foreach ($recoFreq as $rfk => $rfv) {
         }
         .section-header-cols {
             display: flex;
-            width: 140px;
+            width: 160px;
             height: 100%;
             margin: 0 auto; /* Centrage pour aligner avec les pastilles */
         }
         .section-header-col {
-            width: 28px;
+            width: 32px;
             flex-shrink: 0;
             height: 100%;
             position: relative;
+        }
+        .section-header-col.col-3 {
+            width: 53.3px;
         }
         /* Trait vertical traversant la zone bleue au centre */
         .section-header-col::after {
@@ -956,7 +962,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 function renderEtatRadios($key, $donnees, $nbCols = 5)
                 {
                     $val = $donnees[$key] ?? '';
-                    $w = ($nbCols == 3) ? '46.6px' : '28px';
+                    $w = ($nbCols == 3) ? '53.3px' : '32px';
                     
                     if ($nbCols == 5) {
                         $items = [
@@ -1105,7 +1111,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     
                     return '<tr>
                         <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">DESIGNATIONS</th>
-                        <th class="diagonal-header" style="width:140px;">
+                        <th class="diagonal-header" style="width:160px;">
                             <div class="diagonal-wrapper">' . $colsHtml . '</div>
                         </th>
                         <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">' . $commentTitle . '</th>
