@@ -606,47 +606,42 @@ foreach ($recoFreq as $rfk => $rfv) {
         .diag-col::after {
             content: "";
             position: absolute;
-            right: 0;
+            left: 0; /* Align with previous divider */
             bottom: 0;
             width: 1px;
-            height: 35px; /* Vertical part in gray area */
+            height: 35px;
             background: #000;
         }
         .diag-col::before {
             content: "";
             position: absolute;
-            right: 0;
+            left: 0;
             top: 0;
             bottom: 35px;
             width: 1px;
             background: #000;
-            transform: skewX(-35deg);
-            transform-origin: bottom right;
+            transform: skewX(35deg); /* Leans UP-RIGHT */
+            transform-origin: bottom left;
         }
-        .diag-col:last-child::after, .diag-col:last-child::before {
-            display: none;
+        .diag-col:first-child::after, .diag-col:first-child::before {
+            display: none; /* No divider before first column */
         }
         .diag-text {
             position: absolute;
-            bottom: 38px; /* Proche de la cassure du trait */
-            left: 50%;
-            width: 120px;
-            margin-left: -60px; /* Centrage parfait sur le point 50% */
+            bottom: 38px;
+            left: 14px; /* EXACT CENTER of the 28px gomette */
             transform: rotate(-55deg);
-            transform-origin: bottom center;
-            text-align: center;
-            white-space: normal; /* Permet le <br> */
+            transform-origin: bottom left;
+            text-align: left;
+            white-space: nowrap;
             font-size: 8px;
             font-weight: bold;
-            color: #111;
-            line-height: 0.95;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
+            color: #000;
+            width: 200px;
+            line-height: 1.1;
         }
         .diag-text.col-3 {
-            /* Hérite du centrage 50% de sa colonne parente */
+            left: 23px; /* Center of 46.6px */
         }
 
         /* --- SECTION BLUE BAR WITH LINES --- */
@@ -678,11 +673,11 @@ foreach ($recoFreq as $rfk => $rfv) {
         .section-header-col {
             width: 28px;
             flex-shrink: 0;
-            border-right: 1px solid #000;
+            border-left: 1px solid #000;
             height: 100%;
         }
-        .section-header-col:last-child {
-            border-right: none;
+        .section-header-col:first-child {
+            border-left: none;
         }
         .section-header-comment {
             flex: 1;

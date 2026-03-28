@@ -1405,25 +1405,51 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .diag-col:last-child::after, .diag-col:last-child::before {
                     display: none;
                 }
+                .diag-col {
+                    width: 28px;
+                    height: 100%;
+                    position: relative;
+                    flex-shrink: 0;
+                }
+                .diag-col::after {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    bottom: 0;
+                    width: 1px;
+                    height: 35px;
+                    background: #000;
+                }
+                .diag-col::before {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    bottom: 35px;
+                    width: 1px;
+                    background: #000;
+                    transform: skewX(35deg);
+                    transform-origin: bottom left;
+                }
+                .diag-col:first-child::after, .diag-col:first-child::before {
+                    display: none;
+                }
                 .diag-col.col-3 { width: 46.6px; }
                 .diag-text {
                     position: absolute;
                     bottom: 38px;
-                    left: 50%;
-                    width: 120px;
-                    margin-left: -60px;
+                    left: 14px;
                     transform: rotate(-55deg);
-                    transform-origin: bottom center;
-                    text-align: center;
-                    white-space: normal;
+                    transform-origin: bottom left;
+                    white-space: nowrap;
                     font-size: 8px;
                     font-weight: bold;
-                    color: #111;
-                    line-height: 0.95;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: flex-end;
+                    color: #000;
+                    width: 200px;
+                    line-height: 1.1;
+                }
+                .diag-text.col-3 {
+                    left: 23px;
                 }
 
                 .section-header-row {
@@ -1454,12 +1480,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .section-header-col {
                     width: 28px;
                     flex-shrink: 0;
-                    border-right: 1px solid #000;
+                    border-left: 1px solid #000;
                     height: 100%;
                 }
                 .section-header-col.col-3 { width: 46.6px; }
-                .section-header-col:last-child {
-                    border-right: none;
+                .section-header-col:first-child {
+                    border-left: none;
                 }
                 .section-header-comment {
                     flex: 1;
