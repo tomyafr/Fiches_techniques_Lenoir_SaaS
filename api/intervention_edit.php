@@ -214,8 +214,9 @@ $machines = $stmtMach->fetchAll();
                                 <td style="padding:0.6rem 0.8rem; font-weight:600; <?php 
                                     $mDesignation = $m['designation'];
                                     $isValidated = (strpos($mDesignation, 'OVAP') !== false || strpos($mDesignation, 'APRF') !== false 
-                                        || strpos($mDesignation, 'TAP/PAP') !== false || strpos($mDesignation, 'ED-X') !== false);
-                                    $isMissingDoc = (strpos($mDesignation, 'OV (Electromagnétique)') !== false || strpos($mDesignation, 'RD') !== false || strpos($mDesignation, 'LEVAGE') !== false);
+                                        || strpos($mDesignation, 'TAP/PAP') !== false || strpos($mDesignation, 'ED-X') !== false
+                                        || strpos($mDesignation, 'LEVAGE') !== false);
+                                    $isMissingDoc = (strpos($mDesignation, 'OV (Electromagnétique)') !== false || strpos($mDesignation, 'RD') !== false);
 
                                     if ($isValidated) {
                                         echo '';
