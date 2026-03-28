@@ -595,6 +595,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             width: 140px;
             height: 100%;
             align-items: stretch;
+            margin: 0 auto; /* Centrage pour aligner avec les pastilles */
         }
         .diag-col {
             width: 28px;
@@ -668,6 +669,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             display: flex;
             width: 140px;
             height: 100%;
+            margin: 0 auto; /* Centrage pour aligner avec les pastilles */
         }
         .section-header-col {
             width: 28px;
