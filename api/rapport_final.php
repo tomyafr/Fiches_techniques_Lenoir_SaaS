@@ -988,33 +988,42 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const dpr = Math.max(window.devicePixelRatio || 1, 1);
 
             // Tech Pad
-            resizeCanvas(canvasT);
-            canvasWidthT = canvasT.offsetWidth;
-            padTech = new SignaturePad(canvasT, { 
-                penColor: 'black',
-                throttle: 16,
-                minWidth: 1.5,
-                maxWidth: 4.5
-            });
-            if (window.LM_RAPPORT && window.LM_RAPPORT.sigTech) {
-                try {
-                    padTech.fromDataURL(window.LM_RAPPORT.sigTech, { ratio: dpr, width: canvasT.width / dpr, height: canvasT.height / dpr });
-                } catch(e) { console.error("Error loading tech sig:", e); }
+            if (!padTech) {
+                resizeCanvas(canvasT);
+                canvasWidthT = canvasT.offsetWidth;
+                padTech = new SignaturePad(canvasT, { 
+                    penColor: 'black',
+                    throttle: 16,
+                    minWidth: 1.5,
+                    maxWidth: 4.5
+                });
+                if (window.LM_RAPPORT && window.LM_RAPPORT.sigTech) {
+                    try {
+                        padTech.fromDataURL(window.LM_RAPPORT.sigTech, { ratio: dpr, width: canvasT.width / dpr, height: canvasT.height / dpr });
+                    } catch(e) { console.error("Error loading tech sig:", e); }
+                }
+            } else {
+                // If pad already exists, just ensure size is correct (resizeCanvas will handle restoration if width changed)
+                resizeCanvas(canvasT, padTech);
             }
 
             // Client Pad
-            resizeCanvas(canvasC);
-            canvasWidthC = canvasC.offsetWidth;
-            padClient = new SignaturePad(canvasC, { 
-                penColor: 'blue',
-                throttle: 16,
-                minWidth: 1.5,
-                maxWidth: 4.5
-            });
-            if (window.LM_RAPPORT && window.LM_RAPPORT.sigClient) {
-                try {
-                    padClient.fromDataURL(window.LM_RAPPORT.sigClient, { ratio: dpr, width: canvasC.width / dpr, height: canvasC.height / dpr });
-                } catch(e) { console.error("Error loading client sig:", e); }
+            if (!padClient) {
+                resizeCanvas(canvasC);
+                canvasWidthC = canvasC.offsetWidth;
+                padClient = new SignaturePad(canvasC, { 
+                    penColor: 'blue',
+                    throttle: 16,
+                    minWidth: 1.5,
+                    maxWidth: 4.5
+                });
+                if (window.LM_RAPPORT && window.LM_RAPPORT.sigClient) {
+                    try {
+                        padClient.fromDataURL(window.LM_RAPPORT.sigClient, { ratio: dpr, width: canvasC.width / dpr, height: canvasC.height / dpr });
+                    } catch(e) { console.error("Error loading client sig:", e); }
+                }
+            } else {
+                resizeCanvas(canvasC, padClient);
             }
         }
 
