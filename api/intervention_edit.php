@@ -224,7 +224,7 @@ $machines = $stmtMach->fetchAll();
                                         echo 'color: #ff9800;';
                                     }
                                 ?>">
-                                    <?= htmlspecialchars($m['designation']) ?>
+                                    <?= htmlspecialchars(str_replace('RDE', 'RD', $m['designation'])) ?>
                                     <?php if ($isMissingDoc): ?>
                                         <span style="color:red; font-weight:bold; margin-left:4px;" title="Pas de fiche officielle">*</span>
                                     <?php endif; ?>

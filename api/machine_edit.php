@@ -704,7 +704,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     <?php elseif ($isLevage): ?>
                                         Electroaimants de Levage
                                     <?php else: ?>
-                                        <?= htmlspecialchars($machine['designation']) ?>
+                                        <?= htmlspecialchars(str_replace('RDE', 'RD', $machine['designation'])) ?>
                                     <?php endif; ?>
                                 </span>
                             </td>
