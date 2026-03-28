@@ -1062,6 +1062,31 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <td style="padding:0; width:35%;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
                     </tr>';
                 }
+                function renderFreqRow($label, $key, $donnees)
+                {
+                    $v = $donnees[$key] ?? '';
+                    return '<tr>
+                        <td style="font-weight:bold; font-size:11px; width:35%;">' . htmlspecialchars($label) . '</td>
+                        <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="q" ' . ($v == 'q' ? 'checked' : '') . '></td>
+                        <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="h" ' . ($v == 'h' ? 'checked' : '') . '></td>
+                        <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="m" ' . ($v == 'm' ? 'checked' : '') . '></td>
+                        <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="a" ' . ($v == 'a' ? 'checked' : '') . '></td>
+                        <td style="width:35px;"></td>
+                        <td style="padding:0; width:35%;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
+                    </tr>';
+                }
+                function renderFreqRowEdx($label, $key, $donnees)
+                {
+                    $v = $donnees[$key] ?? '';
+                    return '<tr>
+                        <td style="font-weight:normal; font-size:10px; width:40%;">' . htmlspecialchars($label) . '</td>
+                        <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="q" ' . ($v == 'q' ? 'checked' : '') . '></td>
+                        <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="h" ' . ($v == 'h' ? 'checked' : '') . '></td>
+                        <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="m" ' . ($v == 'm' ? 'checked' : '') . '></td>
+                        <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="a" ' . ($v == 'a' ? 'checked' : '') . '></td>
+                        <td style="width:25%;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
+                    </tr>';
+                }
                 ?>
 
                 <!-- DYNAMIC CONTENT DEPENDING ON MACHINE TYPE -->
@@ -1281,20 +1306,6 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <th style="text-align:center;">Annuel</th>
                             <th style="width:25%;">Commentaires</th>
                         </tr>
-                        <?php
-                        function renderFreqRowEdx($label, $key, $donnees)
-                        {
-                            $v = $donnees[$key] ?? '';
-                            return '<tr>
-                                <td style="font-weight:normal; font-size:10px;">' . htmlspecialchars($label) . '</td>
-                                <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="q" ' . ($v == 'q' ? 'checked' : '') . '></td>
-                                <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="h" ' . ($v == 'h' ? 'checked' : '') . '></td>
-                                <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="m" ' . ($v == 'm' ? 'checked' : '') . '></td>
-                                <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="a" ' . ($v == 'a' ? 'checked' : '') . '></td>
-                                <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
-                            </tr>';
-                        }
-                        ?>
                         <?= renderFreqRowEdx("Contrôle visuel de la bande", "edx_freq_bande", $donnees) ?>
                         <?= renderFreqRowEdx("Contrôle visuel de la virole en fibre époxy", "edx_freq_virole", $donnees) ?>
                         <?= renderFreqRowEdx("Contrôle visuel du tambour moteur", "edx_freq_tamb", $donnees) ?>
@@ -1316,16 +1327,6 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 <?php elseif ($isOV): ?>
 
-                    <?php
-                    function renderOvRow($label, $key, $donnees)
-                    {
-                        return '<tr>
-                            <td style="font-weight:bold; font-size:11px; width:35%;">' . htmlspecialchars($label) . '</td>
-                            <td style="padding:2px 4px; vertical-align:middle; text-align:center; width:140px;">' . renderEtatRadios($key, $donnees, 5) . '</td>
-                            <td style="padding:0; width:35%;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
-                        </tr>';
-                    }
-                    ?>
 
                     <table class="pdf-table controles" style="font-size:11px;">
                         <?= renderDiagonalHeader(5) ?>
@@ -1381,20 +1382,6 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <th style="text-align:center; background:#fff;">Annuel</th>
                             <th style="text-align:center; width:25%; background:#fff;">Commentaires</th>
                         </tr>
-                        <?php
-                        function renderFreqRow($label, $key, $donnees)
-                        {
-                            $v = $donnees[$key] ?? '';
-                            return '<tr>
-                                <td style="font-weight:bold; font-size:11px;">' . htmlspecialchars($label) . '</td>
-                                <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="q" ' . ($v == 'q' ? 'checked' : '') . '></td>
-                                <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="h" ' . ($v == 'h' ? 'checked' : '') . '></td>
-                                <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="m" ' . ($v == 'm' ? 'checked' : '') . '></td>
-                                <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="a" ' . ($v == 'a' ? 'checked' : '') . '></td>
-                                <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
-                            </tr>';
-                        }
-                        ?>
                         <?= renderFreqRow("Contrôle visuel de la bande", "ov_freq_bande", $donnees) ?>
                         <?= renderFreqRow("Contrôle visuel des fixations", "ov_freq_fix", $donnees) ?>
                         <?= renderFreqRow("Contrôle visuel des tambours", "ov_freq_tamb", $donnees) ?>
