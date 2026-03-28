@@ -248,7 +248,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             display: flex;
             align-items: center;
             justify-content: space-around;
-            width: 160px;
+            width: 180px;
             margin: 0 auto;
             flex-shrink: 0;
         }
@@ -592,19 +592,19 @@ foreach ($recoFreq as $rfk => $rfv) {
         }
         .diagonal-wrapper {
             display: flex;
-            width: 160px;
+            width: 180px;
             height: 100%;
             align-items: stretch;
             margin: 0 auto; /* Centrage pour aligner avec les pastilles */
         }
         .diag-col {
-            width: 32px;
+            width: 36px;
             height: 100%;
             position: relative;
             flex-shrink: 0;
         }
         .diag-col.col-3 {
-            width: 53.3px;
+            width: 60px;
         }
         /* Ligne verticale basse (zone grise) */
         .diag-col::after {
@@ -670,18 +670,18 @@ foreach ($recoFreq as $rfk => $rfv) {
         }
         .section-header-cols {
             display: flex;
-            width: 160px;
+            width: 180px;
             height: 100%;
             margin: 0 auto; /* Centrage pour aligner avec les pastilles */
         }
         .section-header-col {
-            width: 32px;
+            width: 36px;
             flex-shrink: 0;
             height: 100%;
             position: relative;
         }
         .section-header-col.col-3 {
-            width: 53.3px;
+            width: 60px;
         }
         /* Trait vertical traversant la zone bleue au centre */
         .section-header-col::after {
@@ -962,7 +962,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 function renderEtatRadios($key, $donnees, $nbCols = 5)
                 {
                     $val = $donnees[$key] ?? '';
-                    $w = ($nbCols == 3) ? '53.3px' : '32px';
+                    $w = ($nbCols == 3) ? '60px' : '36px';
                     
                     if ($nbCols == 5) {
                         $items = [
@@ -982,7 +982,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     $html = '<div class="pastille-group">';
                     foreach ($items as $item) {
-                        $html .= '<div style="width:'.$w.'; display:flex; justify-content:center; align-items:center;">'
+                        $html .= '<div style="width:'.$w.'; display:flex; justify-content:flex-end; align-items:center;">'
                                . pastille($key, $item[0], $item[1], $item[2], $val)
                                . '</div>';
                     }
@@ -1111,7 +1111,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     
                     return '<tr>
                         <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">DESIGNATIONS</th>
-                        <th class="diagonal-header" style="width:160px;">
+                        <th class="diagonal-header" style="width:180px;">
                             <div class="diagonal-wrapper">' . $colsHtml . '</div>
                         </th>
                         <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">' . $commentTitle . '</th>
