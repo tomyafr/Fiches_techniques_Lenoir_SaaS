@@ -1539,7 +1539,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 <?php elseif ($isLevage): ?>
 
-
+                    <table class="pdf-table controles" style="font-size:11px;">
                         <?= renderDiagonalHeader(3) ?>
                         <?= renderSectionHeader("CONTROLES", 3) ?>
 
