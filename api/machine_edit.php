@@ -1035,13 +1035,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                     $w = ($nbCols == 3) ? '33.33%' : '28px';
                     $tds = '';
                     for ($i = 0; $i < $nbCols; $i++) {
-                        $tds .= '<td style="width:'.$w.'; border:none !important; border-right:1px solid #000 !important; padding:0; height:30px;"></td>';
+                        $tds .= '<td style="width:'.$w.'; border:none !important; border-right:1px solid #000 !important; padding:0; height:100%;"></td>';
                     }
                     return '<tr class="section-header-row" style="background:#5b9bd5 !important;">
                         <td style="width:35%; font-weight:bold; color:white; padding:4px 10px; font-size:11px;">' . htmlspecialchars($title) . '</td>
-                        <td style="width:140px; padding:0; vertical-align:middle;">
-                            <table style="width:140px; border-collapse:collapse; height:30px; margin: 0 auto; border:none;">
-                                <tr>' . $tds . '</tr>
+                        <td style="width:140px; padding:0; vertical-align:middle; height:1px;">
+                            <table style="width:140px; border-collapse:collapse; height:100%; margin: 0 auto; border:none;">
+                                <tr style="height:100%;">' . $tds . '</tr>
                             </table>
                         </td>
                         <td style="width:35%; background:#5b9bd5 !important;"></td>
