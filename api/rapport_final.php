@@ -1364,31 +1364,103 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .grid-4 .montage-item { height: 180px; }
 
                 .diagonal-header {
-                    height: 90px;
+                    height: 110px;
                     vertical-align: bottom;
-                    padding: 0;
+                    padding: 0 !important;
                     position: relative;
                     background: #e0e0e0 !important;
-                    overflow: hidden;
-                    border: 1px solid #000;
+                    overflow: visible;
                 }
                 .diagonal-wrapper {
                     display: flex;
-                    width: 100%;
+                    width: 140px;
                     height: 100%;
-                    align-items: flex-end;
-                    justify-content: space-around;
-                    padding-bottom: 5px;
                 }
-                .diag-label {
+                .diag-col {
+                    width: 28px;
+                    height: 100%;
+                    position: relative;
+                    flex-shrink: 0;
+                }
+                .diag-col::after {
+                    content: "";
+                    position: absolute;
+                    right: 0;
+                    bottom: 0;
+                    width: 1px;
+                    height: 35px;
+                    background: #000;
+                }
+                .diag-col::before {
+                    content: "";
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    bottom: 35px;
+                    width: 1px;
+                    background: #000;
+                    transform: skewX(-35deg);
+                    transform-origin: bottom right;
+                }
+                .diag-col:last-child::after, .diag-col:last-child::before {
+                    display: none;
+                }
+                .diag-col.col-3 { width: 46.6px; }
+                .diag-text {
+                    position: absolute;
+                    bottom: 45px;
+                    left: 20px;
                     transform: rotate(-55deg);
                     transform-origin: bottom left;
                     white-space: nowrap;
                     font-size: 8px;
                     font-weight: bold;
-                    width: 0;
-                    margin-left: 10px;
                     color: #000;
+                    width: 100px;
+                }
+
+                .section-header-row {
+                    height: 30px;
+                    background: #5b9bd5 !important;
+                    padding: 0 !important;
+                }
+                .section-header-wrapper {
+                    display: flex;
+                    height: 100%;
+                    width: 100%;
+                    color: white;
+                    align-items: stretch;
+                }
+                .section-header-title {
+                    width: 35%;
+                    padding: 4px 10px;
+                    display: flex;
+                    align-items: center;
+                    font-size: 11px;
+                    font-weight: bold;
+                }
+                .section-header-cols {
+                    display: flex;
+                    width: 140px;
+                    height: 100%;
+                }
+                .section-header-col {
+                    width: 28px;
+                    flex-shrink: 0;
+                    border-right: 1px solid #000;
+                    height: 100%;
+                }
+                .section-header-col.col-3 { width: 46.6px; }
+                .section-header-col:last-child {
+                    border-right: none;
+                }
+                .section-header-comment {
+                    flex: 1;
+                    padding: 4px 10px;
+                    display: flex;
+                    align-items: center;
+                    font-size: 11px;
+                    font-weight: bold;
                 }
             `;
             container.appendChild(styleNode);

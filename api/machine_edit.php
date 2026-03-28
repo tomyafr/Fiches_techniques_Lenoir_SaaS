@@ -584,37 +584,103 @@ foreach ($recoFreq as $rfk => $rfv) {
         }
 
         .diagonal-header {
-            height: 90px;
+            height: 110px;
             vertical-align: bottom;
-            padding: 0;
+            padding: 0 !important;
             position: relative;
             background: #e0e0e0 !important;
-            overflow: hidden;
+            overflow: visible;
         }
         .diagonal-wrapper {
             display: flex;
-            width: 100%;
+            width: 140px;
             height: 100%;
-            align-items: flex-end;
-            justify-content: space-around;
-            padding-bottom: 5px;
+            align-items: stretch;
         }
-        .diag-label {
+        .diag-col {
+            width: 28px;
+            height: 100%;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .diag-col::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 1px;
+            height: 35px; /* Vertical part in gray area */
+            background: #000;
+        }
+        .diag-col::before {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 35px;
+            width: 1px;
+            background: #000;
+            transform: skewX(-35deg);
+            transform-origin: bottom right;
+        }
+        .diag-col:last-child::after, .diag-col:last-child::before {
+            display: none;
+        }
+        .diag-text {
+            position: absolute;
+            bottom: 45px;
+            left: 20px;
             transform: rotate(-55deg);
             transform-origin: bottom left;
             white-space: nowrap;
             font-size: 8px;
             font-weight: bold;
-            width: 0;
-            margin-left: 10px;
             color: #000;
+            width: 100px;
         }
-        .diag-line {
-            position: absolute;
-            bottom: 0;
-            width: 1px;
-            height: 15px;
-            background: #999;
+
+        /* --- SECTION BLUE BAR WITH LINES --- */
+        .section-header-row {
+            height: 30px;
+            background: #5b9bd5 !important;
+            padding: 0 !important;
+        }
+        .section-header-wrapper {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            color: white;
+            align-items: stretch;
+        }
+        .section-header-title {
+            width: 35%;
+            padding: 4px 10px;
+            display: flex;
+            align-items: center;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .section-header-cols {
+            display: flex;
+            width: 140px;
+            height: 100%;
+        }
+        .section-header-col {
+            width: 28px;
+            flex-shrink: 0;
+            border-right: 1px solid #000;
+            height: 100%;
+        }
+        .section-header-col:last-child {
+            border-right: none;
+        }
+        .section-header-comment {
+            flex: 1;
+            padding: 4px 10px;
+            display: flex;
+            align-items: center;
+            font-size: 11px;
+            font-weight: bold;
         }
 
         @media print {
@@ -930,6 +996,43 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <td class="col-comment"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" placeholder="Détails..." oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
                     </tr>';
                 }
+                function renderSectionHeader($title, $nbCols = 5) {
+                    $colsHtml = '';
+                    $colClass = ($nbCols == 3) ? ' col-3' : '';
+                    for ($i = 0; $i < $nbCols; $i++) {
+                        $colsHtml .= '<div class="section-header-col' . $colClass . '"></div>';
+                    }
+                    return '<tr>
+                        <td colspan="3" class="section-header-row">
+                            <div class="section-header-wrapper">
+                                <div style="width:35%;" class="section-header-title">' . htmlspecialchars($title) . '</div>
+                                <div class="section-header-cols">' . $colsHtml . '</div>
+                                <div class="section-header-comment"></div>
+                            </div>
+                        </td>
+                    </tr>';
+                }
+                function renderDiagonalHeader($nbCols = 5) {
+                    $labels = ($nbCols == 5) 
+                        ? ['Pas concerné', 'Correct', 'A améliorer', 'Pas correct', 'Nécessite remplacement']
+                        : ['Bon', 'A remp. sous :', 'H.S.'];
+                    
+                    $colsHtml = '';
+                    $colClass = ($nbCols == 3) ? ' col-3' : '';
+                    foreach ($labels as $lbl) {
+                        $colsHtml .= '<div class="diag-col' . $colClass . '"><div class="diag-text">' . $lbl . '</div></div>';
+                    }
+                    
+                    $commentTitle = ($nbCols == 5) ? 'COMMENTAIRES / VALEURS' : 'COMMENTAIRES';
+                    
+                    return '<tr>
+                        <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">DESIGNATIONS</th>
+                        <th class="diagonal-header" style="width:140px;">
+                            <div class="diagonal-wrapper">' . $colsHtml . '</div>
+                        </th>
+                        <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">' . $commentTitle . '</th>
+                    </tr>';
+                }
                 function renderAprfEtatRadios($key, $donnees)
                 {
                     $val = $donnees[$key] ?? '';
@@ -961,30 +1064,16 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 </div>
                             </th>
                         </tr>
-                        <tr>
-                            <th style="width:40%; text-align:center; vertical-align:middle; background:#e0e0e0;">DESIGNATIONS</th>
-                            <th class="diagonal-header" style="width:140px;">
-                                <div class="diagonal-wrapper">
-                                    <div class="diag-label">Bon</div>
-                                    <div class="diag-label" style="margin-left: 15px;">A remp.<br>sous :</div>
-                                    <div class="diag-label" style="margin-left: 20px;">H.S.</div>
-                                </div>
-                            </th>
-                            <th style="width:30%; text-align:center; vertical-align:middle; background:#e0e0e0;">COMMENTAIRES</th>
-                        </tr>
+                        <?= renderDiagonalHeader(3) ?>
 
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">Aimants permanent fixe de triage type APRF</th>
-                        </tr>
+                        <?= renderSectionHeader("Aimants permanent fixe de triage type APRF", 3) ?>
                         <?= renderAprfRow("Satisfaction de fonctionnement", "aprf_satisfaction", $donnees) ?>
                         <?= renderAprfRow("État et type de la bande", "aprf_bande", $donnees) ?>
                         <?= renderAprfRow("État des réglettes", "aprf_reglettes", $donnees) ?>
                         <?= renderAprfRow("État des boutons étoile :", "aprf_boutons", $donnees) ?>
                         <?= renderAprfRow("Options (à préciser)", "aprf_options", $donnees) ?>
 
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">AIMANT PERMANENT</th>
-                        </tr>
+                        <?= renderSectionHeader("AIMANT PERMANENT", 3) ?>
                         <?= renderAprfRow("Caisson Inox", "aprf_inox", $donnees) ?>
                         
                         <?= renderAprfRow("Contrôle de l’attraction sur échantillon", "aprf_attraction_main", $donnees) ?>
@@ -1007,9 +1096,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                         <?php endforeach; ?>
 
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">APPLICATION CLIENT</th>
-                        </tr>
+                        <?= renderSectionHeader("APPLICATION CLIENT", 3) ?>
                         <tr>
                             <td style="padding:4px; font-weight:bold;">
                                 Type de produit : 
@@ -1099,30 +1186,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                     ?>
 
                     <table class="pdf-table controles" style="font-size:11px;">
-                        <tr>
-                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0;">
-                                DESIGNATIONS</th>
-                            <th class="diagonal-header" style="width:140px;">
-                                <div class="diagonal-wrapper">
-                                    <div class="diag-label">Pas concerné</div>
-                                    <div class="diag-label">Correct</div>
-                                    <div class="diag-label">A améliorer</div>
-                                    <div class="diag-label">Pas correct</div>
-                                    <div class="diag-label">Nécessite remplacement</div>
-                                </div>
-                            </th>
-                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0;">
-                                COMMENTAIRES</th>
-                        </tr>
+                        <?= renderDiagonalHeader(5) ?>
                         <tr>
                             <th colspan="3" style="background:#5b9bd5; color:white;">Environnement / Aspect général</th>
                         </tr>
                         <?= renderEdxRow("Accès au séparateur", "edx_acces", $donnees) ?>
                         <?= renderEdxRow("Etat général du séparateur", "edx_etat_gen", $donnees) ?>
 
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white;">Partie A - Convoyeur</th>
-                        </tr>
+                        <?= renderSectionHeader("Partie A - Convoyeur", 5) ?>
                         <?= renderEdxRow("Etat général des verrous", "edx_verrous", $donnees) ?>
                         <?= renderEdxRow("Etat général des grenouillères", "edx_grenouilles", $donnees) ?>
                         <?= renderEdxRow("Etat général des poignées de portes", "edx_poignees", $donnees) ?>
@@ -1164,22 +1235,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <?= newPdfPage() ?>
                     <table class="pdf-table controles" style="font-size:11px;">
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white;">Partie B - Caisson de séparation</th>
-                        </tr>
-                        <tr>
-                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">DESIGNATIONS</th>
-                            <th class="diagonal-header" style="width:140px;">
-                                <div class="diagonal-wrapper">
-                                    <div class="diag-label">Pas concerné</div>
-                                    <div class="diag-label">Correct</div>
-                                    <div class="diag-label">A améliorer</div>
-                                    <div class="diag-label">Pas correct</div>
-                                    <div class="diag-label">Nécessite remplacement</div>
-                                </div>
-                            </th>
-                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">COMMENTAIRES / VALEURS</th>
-                        </tr>
+                        <?= renderSectionHeader("Partie B - Caisson de séparation", 5) ?>
                         <?= renderEdxRow("Etat général des verrous", "edx_B_verrous", $donnees) ?>
                         <?= renderEdxRow("Etat général des grenouillères", "edx_B_grenouilles", $donnees) ?>
                         <?= renderEdxRow("Etat général des poignées de portes", "edx_B_poignees", $donnees) ?>
@@ -1196,22 +1252,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <?= newPdfPage() ?>
                     <table class="pdf-table controles" style="font-size:11px;">
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white;">Partie C - Armoire électrique</th>
-                        </tr>
-                        <tr>
-                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">DESIGNATIONS</th>
-                            <th class="diagonal-header" style="width:140px;">
-                                <div class="diagonal-wrapper">
-                                    <div class="diag-label">Pas concerné</div>
-                                    <div class="diag-label">Correct</div>
-                                    <div class="diag-label">A améliorer</div>
-                                    <div class="diag-label">Pas correct</div>
-                                    <div class="diag-label">Nécessite remplacement</div>
-                                </div>
-                            </th>
-                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">COMMENTAIRES / VALEURS</th>
-                        </tr>
+                        <?= renderSectionHeader("Partie C - Armoire électrique", 5) ?>
                         <tr>
                             <th colspan="3" style="background:#e0e0e0; font-weight:normal;">Hors Tension</th>
                         </tr>
@@ -1313,30 +1354,12 @@ foreach ($recoFreq as $rfk => $rfv) {
                     ?>
 
                     <table class="pdf-table controles" style="font-size:11px;">
-                        <tr>
-                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0;">
-                                DESIGNATIONS</th>
-                            <th class="diagonal-header" style="width:140px;">
-                                <div class="diagonal-wrapper">
-                                    <div class="diag-label">Pas concerné</div>
-                                    <div class="diag-label">Correct</div>
-                                    <div class="diag-label">A améliorer</div>
-                                    <div class="diag-label">Pas correct</div>
-                                    <div class="diag-label">Nécessite remplacement</div>
-                                </div>
-                            </th>
-                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0;">
-                                COMMENTAIRES</th>
-                        </tr>
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white;">Environnement / Aspect général</th>
-                        </tr>
+                        <?= renderDiagonalHeader(5) ?>
+                        <?= renderSectionHeader("Environnement / Aspect général", 5) ?>
                         <?= renderOvRow("Accès au séparateur", "ov_acces", $donnees) ?>
                         <?= renderOvRow("Etat général du séparateur", "ov_etat_gen", $donnees) ?>
 
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white;">Partie A - Le séparateur</th>
-                        </tr>
+                        <?= renderSectionHeader("Partie A - Le séparateur", 5) ?>
                         <?= renderOvRow("Etat de la bande", "ov_bande", $donnees) ?>
                         <?= renderOvRow("Présence des protections latérales", "ov_pres_prot", $donnees) ?>
                         <?= renderOvRow("Etat des protections latérales", "ov_etat_prot", $donnees) ?>
@@ -1362,27 +1385,8 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <?= newPdfPage() ?>
                     <table class="pdf-table controles" style="font-size:11px;">
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white;">Partie B - Les performances</th>
-                        </tr>
-                        <tr>
-                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">DESIGNATIONS</th>
-                            <th class="diagonal-header" style="width:140px;">
-                                <div class="diagonal-wrapper">
-                                    <div class="diag-label">Pas concerné</div>
-                                    <div class="diag-label">Correct</div>
-                                    <div class="diag-label">A améliorer</div>
-                                    <div class="diag-label">Pas correct</div>
-                                    <div class="diag-label">Nécessite remplacement</div>
-                                </div>
-                            </th>
-                            <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">COMMENTAIRES / VALEURS</th>
-                        </tr>
-                        <tr>
-                            <th style="width:40%; text-align:center; background:#e0e0e0;">DESIGNATIONS</th>
-                            <th style="text-align:center; background:#e0e0e0;">ETAT</th>
-                            <th style="width:30%; text-align:center; background:#e0e0e0;">COMMENTAIRES</th>
-                        </tr>
+                        <?= renderSectionHeader("Partie B - Les performances", 5) ?>
+                        <?= renderSectionHeader("Partie B - Les performances", 5) ?>
                         <?php
                         $ovPerfs = [
                             'ov_perf_bille'   => 'Bille diamètre 20',
@@ -1446,28 +1450,12 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <table class="pdf-table controles" style="font-size:11px;">
 
-                        <!-- Section PAP/TAP -->
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">PAP/TAP</th>
-                        </tr>
-                        <tr>
-                            <th style="width:40%; text-align:center; vertical-align:middle; background:#e0e0e0;">DESIGNATIONS</th>
-                            <th class="diagonal-header" style="width:140px;">
-                                <div class="diagonal-wrapper">
-                                    <div class="diag-label">Bon</div>
-                                    <div class="diag-label" style="margin-left: 15px;">A remp.<br>sous :</div>
-                                    <div class="diag-label" style="margin-left: 20px;">H.S.</div>
-                                </div>
-                            </th>
-                            <th style="width:30%; text-align:center; vertical-align:middle; background:#e0e0e0;">COMMENTAIRES</th>
-                        </tr>
+                        <?= renderDiagonalHeader(3) ?>
+                        <?= renderSectionHeader("PAP/TAP", 3) ?>
                         <?= renderAprfRow("Satisfaction de fonctionnement", "paptap_satisfaction", $donnees) ?>
                         <?= renderAprfRow("Aspect général", "paptap_aspect", $donnees) ?>
 
-                        <!-- Section PRODUIT -->
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">PRODUIT</th>
-                        </tr>
+                        <?= renderSectionHeader("PRODUIT", 3) ?>
                         <tr>
                             <td style="padding:4px;">
                                 Type de produit : 
@@ -1560,18 +1548,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <?php elseif ($isLevage): ?>
 
 
-                    <table class="pdf-table controles" style="font-size:11px; color:black;">
-                        <tr>
-                            <th style="width:40%; text-align:center; vertical-align:middle; background:#e0e0e0;">DESIGNATIONS</th>
-                            <th class="diagonal-header" style="width:140px;">
-                                <div class="diagonal-wrapper">
-                                    <div class="diag-label">Bon</div>
-                                    <div class="diag-label" style="margin-left: 15px;">A remp.<br>sous :</div>
-                                    <div class="diag-label" style="margin-left: 20px;">H.S.</div>
-                                </div>
-                            </th>
-                            <th style="width:30%; text-align:center; vertical-align:middle; background:#e0e0e0;">COMMENTAIRES</th>
-                        </tr>
+                        <?= renderDiagonalHeader(3) ?>
+                        <?= renderSectionHeader("CONTROLES", 3) ?>
 
                         <tr>
                             <th style="background:#4472c4; color:white; font-weight:bold; padding:4px;" colspan="3">Produit
@@ -1880,19 +1858,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </div>
 
                         <table class="pdf-table controles">
-                            <tr>
-                                <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">DESIGNATIONS</th>
-                                <th class="diagonal-header" style="width:140px;">
-                                    <div class="diagonal-wrapper">
-                                        <div class="diag-label">Pas concerné</div>
-                                        <div class="diag-label">Correct</div>
-                                        <div class="diag-label">A améliorer</div>
-                                        <div class="diag-label">Pas correct</div>
-                                        <div class="diag-label">Nécessite remplacement</div>
-                                    </div>
-                                </th>
-                                <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">COMMENTAIRES / VALEURS</th>
-                            </tr>
+                            <?= renderDiagonalHeader(5) ?>
+                            <?= renderSectionHeader("AUTRES CONTROLES", 5) ?>
                             <tr>
                                 <th colspan="3" style="background:#ddd;">Examen de l'appareil</th>
                             </tr>
