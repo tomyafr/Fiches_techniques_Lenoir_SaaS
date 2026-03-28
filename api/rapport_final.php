@@ -1596,6 +1596,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
             if (!moisProchainText) moisProchainText = "[MOIS PROCHAIN]";
 
+            synthPreambulePage.innerHTML = `
                 <div>
                     <div style="border: 2px solid #000; padding: 20px; color: #000; background: #fff; margin-bottom: 30px; page-break-inside: avoid;">
                         <h2 style="text-align: center; margin-top: 0; margin-bottom: 20px; text-decoration: none; font-size: 16px; text-transform: uppercase; color: #000; font-weight: 900;"><span style="border-bottom: 2px solid #000; padding-bottom: 2px;">SYNTHÈSE DE L'INTERVENTION</span></h2>
