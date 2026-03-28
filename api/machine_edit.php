@@ -1660,11 +1660,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                         <?= renderAprfRow("Serrage correcte des bornes", "levage_serrage_bornes", $donnees) ?>
 
-                        <!-- Section ELECTRIQUE SOUS TENSION -->
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">
-                                ELECTRIQUE SOUS TENSION</th>
-                        </tr>
+                        <?= renderSectionHeader("ELECTRIQUE SOUS TENSION", 3) ?>
                         <tr>
                             <td style="padding:4px; font-weight:bold;">
                                 Tension :
@@ -1730,11 +1726,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </td>
                         </tr>
 
-                        <!-- Section APPLICATION DU CLIENT -->
-                        <tr>
-                            <th colspan="3" style="background:#5b9bd5; color:white; text-align:left; padding:4px;">
-                                APPLICATION DU CLIENT</th>
-                        </tr>
+                        <?= renderSectionHeader("APPLICATION DU CLIENT", 3) ?>
                         <tr>
                             <td style="padding:4px; font-weight:bold;">
                                 Type de produit manipulé : Brame / Tôle / Paquets / Coils / Profilés
