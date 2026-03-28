@@ -864,7 +864,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 <div class="sig-zone">
                     <div class="sig-label">
                         <span>Signature Technicien</span>
-                        <span class="sig-clear" onclick="padTech.clear()">Effacer</span>
+                        <span class="sig-clear" onclick="clearSig('Tech')">Effacer</span>
                     </div>
                     <div class="form-group" style="margin-bottom: 0.5rem;">
                         <input type="text" class="input" value="<?= htmlspecialchars($techName) ?>" disabled
@@ -1034,6 +1034,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 resizeCanvas(cC, padClient);
             }
         });
+
+        function clearSig(type) {
+            if (type === 'Tech' && padTech) padTech.clear();
+            if (type === 'Client' && padClient) padClient.clear();
+        }
 
         function savePads() {
             if (padTech) document.getElementById('sigTechInput').value = padTech.toDataURL();
