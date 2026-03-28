@@ -246,7 +246,6 @@ foreach ($recoFreq as $rfk => $rfv) {
         /* === PASTILLE SYSTEM === */
         .pastille-group {
             display: flex;
-            gap: 2px;
             align-items: center;
             justify-content: space-around;
             width: 140px;
@@ -607,7 +606,7 @@ foreach ($recoFreq as $rfk => $rfv) {
         .diag-col::after {
             content: "";
             position: absolute;
-            left: 50%; /* CENTRE de la gommette */
+            left: 100%; /* BORD DROIT de la gommette */
             bottom: 0;
             width: 1px;
             height: 35px;
@@ -617,7 +616,7 @@ foreach ($recoFreq as $rfk => $rfv) {
         .diag-col::before {
             content: "";
             position: absolute;
-            left: 50%;
+            left: 100%;
             top: 0;
             bottom: 35px;
             width: 1px;
@@ -628,7 +627,7 @@ foreach ($recoFreq as $rfk => $rfv) {
         .diag-text {
             position: absolute;
             bottom: 38px;
-            left: 50%;
+            left: 100%;
             padding-left: 4px; /* Décalage pour être à droite du trait */
             transform: rotate(-55deg);
             transform-origin: bottom left;
@@ -641,7 +640,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             line-height: 1.1;
         }
         .diag-text.col-3 {
-            /* Suit le left: 50% de sa colonne parente */
+            /* Suit le left: 100% de sa colonne parente */
         }
 
         /* --- SECTION BLUE BAR WITH LINES --- */
@@ -680,7 +679,7 @@ foreach ($recoFreq as $rfk => $rfv) {
         .section-header-col::after {
             content: "";
             position: absolute;
-            left: 50%;
+            left: 100%;
             top: 0;
             bottom: 0;
             width: 1px;
