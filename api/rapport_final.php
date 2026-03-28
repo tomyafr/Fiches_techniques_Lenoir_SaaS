@@ -141,6 +141,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         } catch (Exception $e) {
             $error = "Erreur lors de la sauvegarde : " . $e->getMessage();
         }
+    } elseif ($_POST['action'] === 'save_draft') {
+        try {
+            // Sauvegarde "silencieuse" (Brouillon) pour éviter de perdre les données pendant l'IA
+            $contactPrenom = trim($_POST['contact_prenom'] ?? '');
+            $contactNom = trim($_POST['contact_nom'] ?? '');
+            $contactFonction = trim($_POST['contact_fonction'] ?? '');
+            $contactEmail = trim($_POST['contact_email'] ?? '');
+            $contactTel = trim($_POST['contact_telephone'] ?? '');
+            $nomSignataire = trim($_POST['nom_signataire'] ?? '');
+            $adresse = trim($_POST['adresse'] ?? '');
+            $cp = trim($_POST['code_postal'] ?? '');
+            $ville = trim($_POST['ville'] ?? '');
+            $pays = trim($_POST['pays'] ?? '');
+            $commentaireTech = trim($_POST['commentaire_technicien'] ?? '');
+            $commentaireClient = trim($_POST['commentaire_client'] ?? '');
+
+            $souhaitRapport = isset($_POST['souhait_rapport_unique']) ? 't' : 'f';
+            $souhaitPieces = isset($_POST['souhait_offre_pieces']) ? 't' : 'f';
+            $souhaitIntervention = isset($_POST['souhait_pieces_intervention']) ? 't' : 'f';
+            $souhaitAucune = isset($_POST['souhait_aucune_offre']) ? 't' : 'f';
+
+            $sigClient = $_POST['sigClient'] ?? null;
+            $sigTech = $_POST['sigTech'] ?? null;
+
+            // Update client info
+            $db->prepare('UPDATE clients SET adresse = ?, code_postal = ?, ville = ?, pays = ?,
+                contact_email = ?, contact_telephone = ?, contact_fonction = ? WHERE id = ?')
+                ->execute([$adresse, $cp, $ville, $pays, $contactEmail, $contactTel, $contactFonction, $intervention['client_id']]);
+
+            // Update intervention (Draft)
+            $db->prepare('UPDATE interventions SET
+                contact_prenom = ?, contact_nom = ?, commentaire_technicien = ?, commentaire_client = ?,
+                souhait_rapport_unique = ?, souhait_offre_pieces = ?,
+                souhait_pieces_intervention = ?, souhait_aucune_offre = ?,
+                signature_client = ?, signature_technicien = ?,
+                nom_signataire_client = ? WHERE id = ?')
+                ->execute([
+                    $contactPrenom,
+                    $contactNom,
+                    $commentaireTech,
+                    $commentaireClient,
+                    $souhaitRapport,
+                    $souhaitPieces,
+                    $souhaitIntervention,
+                    $souhaitAucune,
+                    $sigClient,
+                    $sigTech,
+                    $nomSignataire,
+                    $id
+                ]);
+
+            if (isset($_GET['ajax'])) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => true]);
+                exit;
+            }
+        } catch (Exception $e) {
+            if (isset($_GET['ajax'])) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+                exit;
+            }
+        }
     }
 }
 
@@ -972,6 +1035,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
         });
 
+        function savePads() {
+            if (padTech) document.getElementById('sigTechInput').value = padTech.toDataURL();
+            if (padClient) document.getElementById('sigClientInput').value = padClient.toDataURL();
+        }
+
         function validateAndSubmit() {
             if (!padClient || !padTech) {
                 alert('Erreur: les zones de signature ne sont pas prêtes. Veuillez rafraîchir la page.');
@@ -1040,8 +1108,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 return false;
             }
             
-            document.getElementById('sigTechInput').value = padTech.toDataURL();
-            document.getElementById('sigClientInput').value = padClient.toDataURL();
+            savePads();
             return true;
         }
 
@@ -2156,7 +2223,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         // GÉNÉRATION IA PAR LOT (BATCH)
         // ══════════════════════════════════════════════════════════════════
         async function generateAllIA() {
-            if (!confirm("L'Expert IA va parcourir toutes les machines du rapport.\n\nNOTE : Les conclusions et causes déjà saisies seront PRÉSERVÉES. Seules les fiches vides seront complétées.\n\nContinuer ?")) return;
+            if (!confirm("L'Expert IA va parcourir toutes les machines du rapport.\n\nIMPORTANT : Vos informations actuelles (contact, signatures, commentaires) seront SAUVEGARDÉES avant l'analyse.\n\nContinuer ?")) return;
 
             const btn = document.getElementById('btnGenerateAllAI');
             const progress = document.getElementById('iaBatchProgress');
@@ -2165,8 +2232,36 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const mIds = window.LM_RAPPORT.machinesIds;
 
             btn.disabled = true;
-            btn.innerHTML = '<img src="/assets/icons/loading.png" class="fa-spin premium-icon" style="height: 18px; width: 18px; vertical-align: middle; margin-right: 6px;"> Analyse par l\'Expert IA...';
+            btn.innerHTML = '<img src="/assets/icons/loading.png" class="fa-spin premium-icon" style="height: 18px; width: 18px; vertical-align: middle; margin-right: 6px;"> Préparation (Sauvegarde)...';
             progress.style.display = 'block';
+
+            // --- SAUVEGARDE PRÉALABLE DU FORMULAIRE ---
+            try {
+                // Convertir les signatures en base64
+                if (typeof savePads === 'function') {
+                    savePads(); // This fills hidden inputs
+                } else {
+                    // Manual capture if savePads not in scope
+                    if (padTech) document.getElementById('sigTechInput').value = padTech.toDataURL();
+                    if (padClient) document.getElementById('sigClientInput').value = padClient.toDataURL();
+                }
+
+                // Envoyer le formulaire en draft via AJAX
+                const form = document.getElementById('rapportForm');
+                const formData = new FormData(form);
+                formData.set('action', 'save_draft');
+
+                const saveResp = await fetch(`rapport_final.php?id=${window.LM_RAPPORT.interventionId}&ajax=1`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const saveResult = await saveResp.json();
+                if (!saveResult.success) {
+                    console.warn("Draft save failed:", saveResult.error);
+                }
+            } catch (err) {
+                console.error("Critical error during pre-AI save:", err);
+            }
             
             let current = 0;
             const total = mIds.length;
