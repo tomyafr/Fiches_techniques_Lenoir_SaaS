@@ -600,7 +600,6 @@ foreach ($recoFreq as $rfk => $rfv) {
             height: 100%;
             align-items: stretch;
             margin: 0 auto; /* Centrage pour aligner avec les pastilles */
-            border-right: 1px solid #000; /* Trait vertical de séparation Choice / Comment */
             box-sizing: border-box;
         }
         .diag-col {
