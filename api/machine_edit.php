@@ -1003,7 +1003,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 function renderCheckRow($label, $key, $donnees)
                 {
                     return '<tr>
-                        <td style="font-weight:bold; font-size:12px;">' . htmlspecialchars($label) . '</td>
+                        <td style="font-weight:bold; font-size:12px; width:35%;">' . htmlspecialchars($label) . '</td>
                         <td class="col-etat" style="text-align:center;">' . renderEtatRadios($key . "_radio", $donnees) . '</td>
                         <td class="col-comment"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" placeholder="Détails..." oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
                     </tr>';
@@ -1057,9 +1057,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                 function renderAprfRow($label, $key, $donnees)
                 {
                     return '<tr>
-                        <td style="font-weight:normal; font-size:11px;">' . htmlspecialchars($label) . '</td>
-                        <td style="padding:2px 4px; vertical-align:middle; text-align:center;">' . renderAprfEtatRadios($key, $donnees) . '</td>
-                        <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
+                        <td style="font-weight:normal; font-size:11px; width:35%;">' . htmlspecialchars($label) . '</td>
+                        <td style="padding:2px 4px; vertical-align:middle; text-align:center; width:140px;">' . renderAprfEtatRadios($key, $donnees) . '</td>
+                        <td style="padding:0; width:35%;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
                     </tr>';
                 }
                 ?>
@@ -1098,11 +1098,11 @@ foreach ($recoFreq as $rfk => $rfv) {
                         ];
                         foreach($attractions as $akey => $alabel): ?>
                         <tr>
-                            <td style="padding:4px; padding-left:25px; font-size:11px;"><?= $alabel ?></td>
-                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                            <td style="padding:4px; padding-left:25px; font-size:11px; width:35%;"><?= $alabel ?></td>
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                 <?= renderAprfEtatRadios("aprf_attr_$akey", $donnees) ?>
                             </td>
-                            <td style="padding:0;">
+                            <td style="padding:0; width:35%;">
                                 <textarea name="donnees[aprf_attr_<?= $akey ?>_comment]" class="pdf-textarea" style="height:25px; border:none; width:100%; box-sizing:border-box; padding:4px;" placeholder="Commentaires..."><?= htmlspecialchars($donnees["aprf_attr_$akey" . "_comment"] ?? '') ?></textarea>
                             </td>
                         </tr>
@@ -1110,14 +1110,14 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                         <?= renderSectionHeader("APPLICATION CLIENT", 3) ?>
                         <tr>
-                            <td style="padding:4px; font-weight:bold;">
+                            <td style="padding:4px; font-weight:bold; width:35%;">
                                 Type de produit : 
                                 <input type="text" name="mesures[aprf_produit]" value="<?= htmlspecialchars($mesures['aprf_produit'] ?? '') ?>" class="pdf-input" style="width:150px; border-bottom:1px solid #000;">
                             </td>
-                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                 <?= renderAprfEtatRadios("aprf_produit_stat", $donnees) ?>
                             </td>
-                            <td style="padding:0;"><textarea name="donnees[aprf_produit_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_produit_comment"] ?? '') ?></textarea></td>
+                            <td style="padding:0; width:35%;"><textarea name="donnees[aprf_produit_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_produit_comment"] ?? '') ?></textarea></td>
                         </tr>
                         <tr>
                             <td style="padding:4px; font-weight:bold;">
@@ -1190,9 +1190,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                     function renderEdxRow($label, $key, $donnees)
                     {
                         return '<tr>
-                            <td style="font-weight:normal; font-size:11px;">' . htmlspecialchars($label) . '</td>
-                            <td style="padding:2px 4px; vertical-align:middle; text-align:center;">' . renderEdxEtatRadios($key, $donnees) . '</td>
-                            <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
+                            <td style="font-weight:normal; font-size:11px; width:35%;">' . htmlspecialchars($label) . '</td>
+                            <td style="padding:2px 4px; vertical-align:middle; text-align:center; width:140px;">' . renderEdxEtatRadios($key, $donnees) . '</td>
+                            <td style="padding:0; width:35%;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
                         </tr>';
                     }
                     ?>
@@ -1358,9 +1358,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                     function renderOvRow($label, $key, $donnees)
                     {
                         return '<tr>
-                            <td style="font-weight:bold; font-size:11px;">' . htmlspecialchars($label) . '</td>
-                            <td style="padding:2px 4px; vertical-align:middle; text-align:center;">' . renderOvEtatRadios($key, $donnees) . '</td>
-                            <td style="padding:0;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
+                            <td style="font-weight:bold; font-size:11px; width:35%;">' . htmlspecialchars($label) . '</td>
+                            <td style="padding:2px 4px; vertical-align:middle; text-align:center; width:140px;">' . renderOvEtatRadios($key, $donnees) . '</td>
+                            <td style="padding:0; width:35%;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
                         </tr>';
                     }
                     ?>
@@ -1600,7 +1600,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 ELECTRIQUE HORS TENSION</th>
                         </tr>
                         <tr>
-                            <td style="padding:4px; font-weight:bold;">
+                            <td style="padding:4px; font-weight:bold; width:35%;">
                                 Isolement sous 1000 Vcc :
                                 <input type="text" name="mesures[levage_isolement]"
                                     value="<?= htmlspecialchars($mesures['levage_isolement'] ?? '') ?>" class="pdf-input"
@@ -1608,15 +1608,15 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 M.ohms
                             </td>
                             <td
-                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                 <?= renderAprfEtatRadios('levage_isolement_stat', $donnees) ?>
                             </td>
-                            <td style="padding:0;"><textarea name="donnees[levage_isolement_comment]" class="pdf-textarea"
+                            <td style="padding:0; width:35%;"><textarea name="donnees[levage_isolement_comment]" class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_isolement_comment"] ?? '') ?></textarea>
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding:4px; font-weight:bold;">
+                            <td style="padding:4px; font-weight:bold; width:35%;">
                                 Résistance à froid :
                                 <input type="text" name="mesures[levage_resistance]"
                                     value="<?= htmlspecialchars($mesures['levage_resistance'] ?? '') ?>" class="pdf-input"
@@ -1624,15 +1624,15 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 ohms
                             </td>
                             <td
-                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                 <?= renderAprfEtatRadios('levage_resistance_stat', $donnees) ?>
                             </td>
-                            <td style="padding:0;"><textarea name="donnees[levage_resistance_comment]" class="pdf-textarea"
+                            <td style="padding:0; width:35%;"><textarea name="donnees[levage_resistance_comment]" class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_resistance_comment"] ?? '') ?></textarea>
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding:4px; font-weight:bold;">
+                            <td style="padding:4px; font-weight:bold; width:35%;">
                                 Température de la carcasse :
                                 <input type="text" name="mesures[levage_temp_carcasse]"
                                     value="<?= htmlspecialchars($mesures['levage_temp_carcasse'] ?? '') ?>"
@@ -1641,10 +1641,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 °C
                             </td>
                             <td
-                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                 <?= renderAprfEtatRadios('levage_temp_carcasse_stat', $donnees) ?>
                             </td>
-                            <td style="padding:0;"><textarea name="donnees[levage_temp_carcasse_comment]"
+                            <td style="padding:0; width:35%;"><textarea name="donnees[levage_temp_carcasse_comment]"
                                     class="pdf-textarea"
                                     style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["levage_temp_carcasse_comment"] ?? '') ?></textarea>
                             </td>
