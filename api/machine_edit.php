@@ -1783,13 +1783,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:55px; border:none; background:transparent; text-align:center; font-size:9px;" autocomplete="off">
                             </div>
 
-                            <!-- Diamètre noyau (85.5% / 28.0%) - Raised -->
-                            <div style="position:absolute; left:85.5%; top:28.0%; transform:translate(-50%, -50%); font-size:9px;">
+                            <!-- Diamètre noyau (85.5% / 27.5%) - Raised slightly more to stop touching the line -->
+                            <div style="position:absolute; left:85.5%; top:27.5%; transform:translate(-50%, -50%); font-size:9px;">
                                 <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>" class="pdf-input" style="width:55px; border:none; background:transparent; text-align:center; font-size:9px;" autocomplete="off">
                             </div>
 
-                            <!-- Epaisseur pôle (85.6% / 40.0%) - Raised -->
-                            <div style="position:absolute; left:85.6%; top:40.0%; transform:translate(-50%, -50%); font-size:9px;">
+                            <!-- Epaisseur pôle (85.6% / 39.5%) - Raised slightly more -->
+                            <div style="position:absolute; left:85.6%; top:39.5%; transform:translate(-50%, -50%); font-size:9px;">
                                 <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:60px; border:none; background:transparent; text-align:center; font-size:9px;" autocomplete="off">
                             </div>
 
