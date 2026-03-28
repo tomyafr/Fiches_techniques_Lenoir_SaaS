@@ -1778,27 +1778,27 @@ foreach ($recoFreq as $rfk => $rfv) {
                                  style="width:100%; height:auto;" 
                                  alt="Circulaire">
                             
-                            <!-- Diamètre pôle (85.2% / 22.1%) - Fully transparent to use image trait -->
-                            <div style="position:absolute; left:85.2%; top:22.1%; transform:translate(-50%, -50%); font-size:9px;">
-                                <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:40px; border:none; background:transparent; text-align:center; font-size:9px;" autocomplete="off">
+                            <!-- Diamètre pôle (83.6% / 23.5%) - Lowered to sit ON the line -->
+                            <div style="position:absolute; left:83.6%; top:23.5%; transform:translate(-50%, -50%); font-size:9px;">
+                                <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:55px; border:none; background:transparent; text-align:center; font-size:9px;" autocomplete="off">
                             </div>
 
-                            <!-- Diamètre noyau (86.5% / 27.2%) - Fully transparent -->
-                            <div style="position:absolute; left:86.5%; top:27.2%; transform:translate(-50%, -50%); font-size:9px;">
-                                <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>" class="pdf-input" style="width:40px; border:none; background:transparent; text-align:center; font-size:9px;" autocomplete="off">
+                            <!-- Diamètre noyau (85.5% / 28.5%) - Lowered -->
+                            <div style="position:absolute; left:85.5%; top:28.5%; transform:translate(-50%, -50%); font-size:9px;">
+                                <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>" class="pdf-input" style="width:55px; border:none; background:transparent; text-align:center; font-size:9px;" autocomplete="off">
                             </div>
 
-                            <!-- Epaisseur pôle (86.8% / 39.2%) - Fully transparent -->
-                            <div style="position:absolute; left:86.8%; top:39.2%; transform:translate(-50%, -50%); font-size:9px;">
-                                <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:45px; border:none; background:transparent; text-align:center; font-size:9px;" autocomplete="off">
+                            <!-- Epaisseur pôle (85.6% / 40.5%) - Lowered -->
+                            <div style="position:absolute; left:85.6%; top:40.5%; transform:translate(-50%, -50%); font-size:9px;">
+                                <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:60px; border:none; background:transparent; text-align:center; font-size:9px;" autocomplete="off">
                             </div>
 
-                            <!-- Ø ext/int (5.3% / 45.4%) - Fully transparent -->
+                            <!-- Ø ext/int (5.3% / 45.4%) - Restored border-bottom for these HTML-only fields -->
                             <div style="position:absolute; left:5.3%; top:45.4%; transform:translate(0, -50%); font-size:9px; font-weight:bold; color:#000; line-height:1.2;">
-                                Ø ext 2 : <input type="text" name="mesures[levage_ext2]" value="<?= htmlspecialchars($mesures['levage_ext2'] ?? '') ?>" class="pdf-input" style="width:35px; border:none; background:transparent; font-size:9px;" autocomplete="off"><br>
-                                Ø ext 1 : <input type="text" name="mesures[levage_ext1]" value="<?= htmlspecialchars($mesures['levage_ext1'] ?? '') ?>" class="pdf-input" style="width:35px; border:none; background:transparent; font-size:9px;" autocomplete="off"><br>
-                                Ø int 2 : <input type="text" name="mesures[levage_int2]" value="<?= htmlspecialchars($mesures['levage_int2'] ?? '') ?>" class="pdf-input" style="width:35px; border:none; background:transparent; font-size:9px;" autocomplete="off"><br>
-                                Ø int 1 : <input type="text" name="mesures[levage_int1]" value="<?= htmlspecialchars($mesures['levage_int1'] ?? '') ?>" class="pdf-input" style="width:35px; border:none; background:transparent; font-size:9px;" autocomplete="off">
+                                Ø ext 2 : <input type="text" name="mesures[levage_ext2]" value="<?= htmlspecialchars($mesures['levage_ext2'] ?? '') ?>" class="pdf-input" style="width:40px; border:none; border-bottom:1px solid #000; background:transparent; font-size:9px;" autocomplete="off"><br>
+                                Ø ext 1 : <input type="text" name="mesures[levage_ext1]" value="<?= htmlspecialchars($mesures['levage_ext1'] ?? '') ?>" class="pdf-input" style="width:40px; border:none; border-bottom:1px solid #000; background:transparent; font-size:9px;" autocomplete="off"><br>
+                                Ø int 2 : <input type="text" name="mesures[levage_int2]" value="<?= htmlspecialchars($mesures['levage_int2'] ?? '') ?>" class="pdf-input" style="width:40px; border:none; border-bottom:1px solid #000; background:transparent; font-size:9px;" autocomplete="off"><br>
+                                Ø int 1 : <input type="text" name="mesures[levage_int1]" value="<?= htmlspecialchars($mesures['levage_int1'] ?? '') ?>" class="pdf-input" style="width:40px; border:none; border-bottom:1px solid #000; background:transparent; font-size:9px;" autocomplete="off">
                             </div>
                         </div>
                         <!-- Handled globally -->
