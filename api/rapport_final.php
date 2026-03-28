@@ -465,6 +465,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             background: #fff;
             border-radius: 8px;
             width: 100%;
+            min-height: 200px;
             cursor: crosshair;
             display: block;
             touch-action: none;
@@ -975,80 +976,72 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         let canvasWidthT = 0;
         let canvasWidthC = 0;
         function initSignatures() {
-            const canvasC = document.getElementById('canvasClient');
             const canvasT = document.getElementById('canvasTech');
-            
-            if (!window.SignaturePad) return;
-            if (!canvasC || !canvasT) return;
+            const canvasC = document.getElementById('canvasClient');
+            if (!canvasT || !canvasC || !window.SignaturePad) return;
 
             const ratio = Math.max(window.devicePixelRatio || 1, 1);
 
-            // Fonction interne simplifiée pour redimensionner
-            const doResize = (canvas, pad, dataUrl) => {
-                const containerWidth = canvas.offsetWidth || canvas.parentElement.offsetWidth || 500;
-                if (containerWidth < 10) return false;
+            const setupPad = (canvas, existingPad, storageKey) => {
+                if (existingPad) return existingPad;
                 
-                canvas.width = containerWidth * ratio;
+                // Attendre que le canvas ait une largeur réelle
+                const w = canvas.offsetWidth || canvas.clientWidth || 0;
+                if (w < 10) return null;
+
+                canvas.width = w * ratio;
                 canvas.height = 200 * ratio;
-                canvas.style.height = '200px';
                 canvas.getContext('2d').scale(ratio, ratio);
-                
-                if (pad) {
-                    pad.clear();
-                    if (dataUrl && dataUrl.length > 50) {
-                        pad.fromDataURL(dataUrl, { ratio: ratio, width: containerWidth, height: 200 });
-                    }
+                canvas.style.touchAction = 'none';
+
+                const pad = new SignaturePad(canvas, {
+                    penColor: (storageKey === 'sigTech' ? 'black' : 'blue'),
+                    throttle: 16,
+                    minWidth: 1.5,
+                    maxWidth: 4.5
+                });
+
+                // Charger la signature existante
+                const saved = window.LM_RAPPORT?.[storageKey];
+                if (saved && saved.length > 50) {
+                    pad.fromDataURL(saved, { ratio: ratio, width: w, height: 200 });
                 }
-                return true;
+                return pad;
             };
 
-            // Init Tech
-            if (!padTech) {
-                doResize(canvasT, null, null);
-                padTech = new SignaturePad(canvasT, { penColor: 'black', throttle: 16, minWidth: 1.5, maxWidth: 4.5 });
-                if (window.LM_RAPPORT && window.LM_RAPPORT.sigTech) {
-                    padTech.fromDataURL(window.LM_RAPPORT.sigTech, { ratio: ratio, width: canvasT.width / ratio, height: 200 });
-                }
-                canvasWidthT = canvasT.offsetWidth;
-            }
+            if (!padTech) padTech = setupPad(canvasT, padTech, 'sigTech');
+            if (!padClient) padClient = setupPad(canvasC, padClient, 'sigClient');
 
-            // Init Client
-            if (!padClient) {
-                doResize(canvasC, null, null);
-                padClient = new SignaturePad(canvasC, { penColor: 'blue', throttle: 16, minWidth: 1.5, maxWidth: 4.5 });
-                if (window.LM_RAPPORT && window.LM_RAPPORT.sigClient) {
-                    padClient.fromDataURL(window.LM_RAPPORT.sigClient, { ratio: ratio, width: canvasC.width / ratio, height: 200 });
-                }
-                canvasWidthC = canvasC.offsetWidth;
-            }
+            if (padTech) canvasWidthT = canvasT.offsetWidth;
+            if (padClient) canvasWidthC = canvasC.offsetWidth;
         }
 
-        // Événement Redimensionnement
-        window.addEventListener('resize', () => {
-            const canvasC = document.getElementById('canvasClient');
-            const canvasT = document.getElementById('canvasTech');
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        // Relancer tant que ce n'est pas prêt (important si rendu différé)
+        let sigRetryInterval = setInterval(() => {
+            if (padTech && padClient) {
+                clearInterval(sigRetryInterval);
+            } else {
+                initSignatures();
+            }
+        }, 100);
 
-            if (canvasT && padTech && canvasT.offsetWidth !== canvasWidthT) {
-                const data = padTech.toDataURL();
-                const curWidth = canvasT.offsetWidth;
-                canvasT.width = curWidth * ratio;
-                canvasT.height = 200 * ratio;
-                canvasT.getContext('2d').scale(ratio, ratio);
-                padTech.clear();
-                padTech.fromDataURL(data, { ratio: ratio, width: curWidth, height: 200 });
-                canvasWidthT = curWidth;
-            }
-            if (canvasC && padClient && canvasC.offsetWidth !== canvasWidthC) {
-                const data = padClient.toDataURL();
-                const curWidth = canvasC.offsetWidth;
-                canvasC.width = curWidth * ratio;
-                canvasC.height = 200 * ratio;
-                canvasC.getContext('2d').scale(ratio, ratio);
-                padClient.clear();
-                padClient.fromDataURL(data, { ratio: ratio, width: curWidth, height: 200 });
-                canvasWidthC = curWidth;
-            }
+        window.addEventListener('resize', () => {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            [
+                { c: document.getElementById('canvasTech'), p: padTech, lw: canvasWidthT, setLW: (v) => canvasWidthT = v },
+                { c: document.getElementById('canvasClient'), p: padClient, lw: canvasWidthC, setLW: (v) => canvasWidthC = v }
+            ].forEach(item => {
+                if (item.c && item.p && item.c.offsetWidth !== item.lw && item.c.offsetWidth > 10) {
+                    const data = item.p.toDataURL();
+                    const nw = item.c.offsetWidth;
+                    item.c.width = nw * ratio;
+                    item.c.height = 200 * ratio;
+                    item.c.getContext('2d').scale(ratio, ratio);
+                    item.p.clear();
+                    item.p.fromDataURL(data, { ratio: ratio, width: nw, height: 200 });
+                    item.setLW(nw);
+                }
+            });
         });
 
         function clearSig(type) {
