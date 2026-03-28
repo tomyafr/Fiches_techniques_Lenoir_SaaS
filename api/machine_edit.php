@@ -683,34 +683,32 @@ foreach ($recoFreq as $rfk => $rfv) {
 
         <div class="mobile-wrapper">
             <div class="pdf-page">
-                <?php if (!isset($_GET['pdf'])): ?>
-                    <!-- Header exact LENOIR (Edit Mode Only) -->
-                    <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:15px; color:#000;">
-                        <tr>
-                            <td style="width:40%; border-right:1px solid #000; padding:15px; vertical-align:middle; background:#fff; text-align:center;">
-                                <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC" 
-                                    style="max-width:220px; width:100%; height:auto; display:block; margin:0 auto;">
-                            </td>
-                            <td style="width:60%; text-align:center; vertical-align:middle;">
-                                <span style="font-size:26px; font-weight:bold; color:#000;">
-                                    <?php if ($isAPRF): ?>
-                                        <?php if (strpos($designation, 'RD') !== false): ?>
-                                            Electroaimant de triage fixe RD
-                                        <?php else: ?>
-                                            Aimant permanent rectangulaire fixe<br>APRF
-                                        <?php endif; ?>
-                                    <?php elseif ($isPAP): ?>
-                                        Tambour ou Poulie à Aimants Permanents<br>TAP/PAP
-                                    <?php elseif ($isLevage): ?>
-                                        Electroaimants de Levage
+                <!-- Header exact LENOIR (Always show for consistency) -->
+                <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:15px; color:#000;">
+                    <tr>
+                        <td style="width:40%; border-right:1px solid #000; padding:15px; vertical-align:middle; background:#fff; text-align:center;">
+                            <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC" 
+                                style="max-width:220px; width:100%; height:auto; display:block; margin:0 auto;">
+                        </td>
+                        <td style="width:60%; text-align:center; vertical-align:middle;">
+                            <span style="font-size:26px; font-weight:bold; color:#000;">
+                                <?php if ($isAPRF): ?>
+                                    <?php if (strpos($designation, 'RD') !== false): ?>
+                                        Electroaimant de triage fixe RD
                                     <?php else: ?>
-                                        <?= htmlspecialchars(str_replace('RDE', 'RD', $machine['designation'])) ?>
+                                        Aimant permanent rectangulaire fixe<br>APRF
                                     <?php endif; ?>
-                                </span>
-                            </td>
-                        </tr>
-                    </table>
-                <?php endif; ?>
+                                <?php elseif ($isPAP): ?>
+                                    Tambour ou Poulie à Aimants Permanents<br>TAP/PAP
+                                <?php elseif ($isLevage): ?>
+                                    Electroaimants de Levage
+                                <?php else: ?>
+                                    <?= htmlspecialchars(str_replace('RDE', 'RD', $machine['designation'])) ?>
+                                <?php endif; ?>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
 
                 <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">A) FICHE DE CONTRÔLE :</div>
                 

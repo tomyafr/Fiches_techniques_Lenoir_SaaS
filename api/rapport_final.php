@@ -1621,10 +1621,17 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         const p = document.createElement('div');
                         p.className = 'pdf-page';
                         p.innerHTML = `
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 3px solid #5B9BD5; padding-bottom: 5px;">
-                                <div style="font-size: 14px; font-weight: bold; color: #1B4F72;">FICHE ${mIdx + 1} / ${totalMachines}</div>
-                                <img src="/assets/lenoir_logo_doc.png" style="height: 45px;">
-                            </div>
+                            <div style="font-size: 11px; font-weight: bold; color: #1B4F72; margin-bottom:5px;">FICHE ${mIdx + 1} / ${totalMachines}</div>
+                            <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:15px; color:#000;">
+                                <tr>
+                                    <td style="width:40%; border-right:1px solid #000; padding:15px; vertical-align:middle; background:#fff; text-align:center;">
+                                        <img src="/assets/lenoir_logo_doc.png" style="max-width:220px; width:100%; height:auto; display:block; margin:0 auto;">
+                                    </td>
+                                    <td style="width:60%; text-align:center; vertical-align:middle;">
+                                        <span style="font-size:26px; font-weight:bold; color:#000;">${mDesignation}</span>
+                                    </td>
+                                </tr>
+                            </table>
                             
                             <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000;">
                                 <tr>
@@ -1689,13 +1696,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 hDiv.style.justifyContent = 'space-between';
                                 hDiv.style.alignItems = 'center';
                                 hDiv.style.marginBottom = '20px';
-                                hDiv.style.borderBottom = '3px solid #d35400';
-                                hDiv.style.paddingBottom = '5px';
+                                hDiv.style.paddingBottom = '0';
                                 hDiv.style.breakAfter = 'avoid';
                                 hDiv.style.pageBreakAfter = 'avoid';
                                 hDiv.innerHTML = `
-                                    <div style="font-size: 14px; font-weight: bold; color: #1B4F72;">FICHE ${mIdx + 1} / ${totalMachines}</div>
-                                    <img src="/assets/lenoir_logo_doc.png" style="height: 45px;">
+                                    <div style="font-size: 11px; font-weight: bold; color: #1B4F72; margin-bottom:5px;">FICHE ${mIdx + 1} / ${totalMachines}</div>
                                 `;
                                 p.insertBefore(hDiv, p.firstChild);
                             }
