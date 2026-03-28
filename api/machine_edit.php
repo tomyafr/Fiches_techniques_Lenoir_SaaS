@@ -600,6 +600,8 @@ foreach ($recoFreq as $rfk => $rfv) {
             height: 100%;
             align-items: stretch;
             margin: 0 auto; /* Centrage pour aligner avec les pastilles */
+            border-right: 1px solid #000; /* Trait vertical de séparation Choice / Comment */
+            box-sizing: border-box;
         }
         .diag-col {
             width: 28px;
@@ -1040,7 +1042,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     return '<tr class="section-header-row" style="background:#5b9bd5 !important;">
                         <td style="width:35%; font-weight:bold; color:white; padding:4px 10px; font-size:11px;">' . htmlspecialchars($title) . '</td>
                         <td style="width:140px; padding:0; vertical-align:middle; height:1px;">
-                            <table style="width:140px; border-collapse:collapse; height:100%; margin: 0 auto; border:none;">
+                            <table style="width:140px; border-collapse:collapse; height:100%; margin: 0 auto; border:none; border-right:1px solid #000 !important;">
                                 <tr style="height:100%;">' . $tds . '</tr>
                             </table>
                         </td>
