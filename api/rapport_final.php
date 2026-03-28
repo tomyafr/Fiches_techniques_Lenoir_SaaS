@@ -1991,7 +1991,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             });
             // 3) Les petits tableaux (< 25 lignes) ne peuvent pas être coupés du tout
             container.querySelectorAll('table').forEach(function(tbl) {
-                if (tbl.querySelectorAll('tr').length <= 25 && !tbl.classList.contains('controles')) {
+                if (tbl.querySelectorAll('tr').length <= 25) {
                     tbl.style.pageBreakInside = 'avoid';
                     tbl.classList.add('avoid-break');
                 }
