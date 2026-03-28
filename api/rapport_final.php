@@ -1228,6 +1228,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     margin-bottom: 15px;
                 }
                 .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; color: black; font-size: 11px; table-layout: fixed; }
+                thead { display: table-header-group; }
                 .pdf-table th, .pdf-table td { border: 1px solid #000; padding: 4px; vertical-align: middle; word-wrap: break-word; word-break: break-word; }
                 .pdf-table th { background-color: #f0f0f0; text-align: left; text-transform: uppercase; }
                 

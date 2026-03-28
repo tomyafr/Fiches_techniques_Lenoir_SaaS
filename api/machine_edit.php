@@ -1136,15 +1136,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <?php if ($isAPRF): ?>
 
                     <table class="pdf-table controles" style="font-size:11px;">
-                        <tr>
-                            <th colspan="3" style="background:#e0e0e0; padding:6px; font-size:12px; font-weight:bold; text-align:left;">
-                                <div style="display:flex; justify-content:space-between; width:100%;">
-                                    <span>TEMPS PRÉVISIONNEL : 25min/aimant + 25min/palonnier + 30min/armoire</span>
-                                    <span>TEMPS RÉALISÉ : <?= htmlspecialchars($tempsRealise ?: '—') ?> h</span>
-                                </div>
-                            </th>
-                        </tr>
-                        <?= renderDiagonalHeader(3) ?>
+                        <thead>
+                            <?= renderDiagonalHeader(3) ?>
+                        </thead>
+                        <tbody>
 
                         <?= renderSectionHeader("Aimants permanent fixe de triage type APRF", 3) ?>
                         <?= renderAprfRow("Satisfaction de fonctionnement", "aprf_satisfaction", $donnees) ?>
@@ -1230,6 +1225,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 Avec densité de <input type="text" name="mesures[aprf_densite]" value="<?= htmlspecialchars($mesures['aprf_densite'] ?? '') ?>" class="pdf-input" style="width:60px; border-bottom:1px solid #000; text-align:center;">
                             </td>
                         </tr>
+                        </tbody>
                     </table>
 
 
@@ -1244,7 +1240,10 @@ foreach ($recoFreq as $rfk => $rfv) {
 
 
                     <table class="pdf-table controles" style="font-size:11px;">
-                        <?= renderDiagonalHeader(5) ?>
+                        <thead>
+                            <?= renderDiagonalHeader(5) ?>
+                        </thead>
+                        <tbody>
                         <?= renderSectionHeader("Environnement / Aspect général", 5) ?>
                         <?= renderEdxRow("Accès au séparateur", "edx_acces", $donnees) ?>
                         <?= renderEdxRow("Etat général du séparateur", "edx_etat_gen", $donnees) ?>
@@ -1287,10 +1286,15 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderEdxRow("Etat général des câbles d'alimentation, boîtiers de raccordement, connexion", "edx_cables", $donnees) ?>
                         <?= renderEdxRow("Nettoyage complet de l'intérieur du séparateur", "edx_nettoyage", $donnees) ?>
                         <?= renderEdxRow("Remontage des carters de protection/portes", "edx_remontage", $donnees) ?>
+                        </tbody>
                     </table>
 
                     <?= newPdfPage() ?>
                     <table class="pdf-table controles" style="font-size:11px;">
+                        <thead>
+                            <?= renderDiagonalHeader(5) ?>
+                        </thead>
+                        <tbody>
                         <?= renderSectionHeader("Partie B - Caisson de séparation", 5) ?>
                         <?= renderEdxRow("Etat général des verrous", "edx_B_verrous", $donnees) ?>
                         <?= renderEdxRow("Etat général des grenouillères", "edx_B_grenouilles", $donnees) ?>
@@ -1304,10 +1308,15 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderEdxRow("Contrôles des réglages du volet (archivages des réglages)", "edx_B_reglages", $donnees) ?>
                         <?= renderEdxRow("Nettoyage complet de l'intérieur du caisson de séparation", "edx_B_net", $donnees) ?>
                         <?= renderEdxRow("Remontage des carters de protection/portes", "edx_B_rem", $donnees) ?>
+                        </tbody>
                     </table>
 
                     <?= newPdfPage() ?>
                     <table class="pdf-table controles" style="font-size:11px;">
+                        <thead>
+                            <?= renderDiagonalHeader(5) ?>
+                        </thead>
+                        <tbody>
                         <?= renderSectionHeader("Partie C - Armoire électrique", 5) ?>
                         <tr>
                             <th colspan="3" style="background:#e0e0e0; font-weight:normal;">Hors Tension</th>
@@ -1332,6 +1341,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderEdxRow("Temps de freinage constaté", "edx_C_temps", $donnees) ?>
                         <?= renderEdxRow("Vérification des serrages câbles de l'armoire", "edx_C_cables", $donnees) ?>
                         <?= renderEdxRow("Fermeture de l'armoire électrique", "edx_C_ferm", $donnees) ?>
+                        </tbody>
                     </table>
 
                     <?= newPdfPage() ?>
@@ -1375,7 +1385,10 @@ foreach ($recoFreq as $rfk => $rfv) {
 
 
                     <table class="pdf-table controles" style="font-size:11px;">
-                        <?= renderDiagonalHeader(5) ?>
+                        <thead>
+                            <?= renderDiagonalHeader(5) ?>
+                        </thead>
+                        <tbody>
                         <?= renderSectionHeader("Environnement / Aspect général", 5) ?>
                         <?= renderOvRow("Accès au séparateur", "ov_acces", $donnees) ?>
                         <?= renderOvRow("Etat général du séparateur", "ov_etat_gen", $donnees) ?>
@@ -1406,6 +1419,10 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <?= newPdfPage() ?>
                     <table class="pdf-table controles" style="font-size:11px;">
+                        <thead>
+                            <?= renderDiagonalHeader(3) ?>
+                        </thead>
+                        <tbody>
                         <?= renderSectionHeader("Partie B - Les performances", 3) ?>
                         <?php
                         $ovPerfs = [
@@ -1425,6 +1442,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </td>
                         </tr>
                         <?php endforeach; ?>
+                        </tbody>
                     </table>
 
                     <?= newPdfPage() ?>
@@ -1455,8 +1473,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <?php elseif ($isPAP): ?>
 
                     <table class="pdf-table controles" style="font-size:11px;">
-
-                        <?= renderDiagonalHeader(3) ?>
+                        <thead>
+                            <?= renderDiagonalHeader(3) ?>
+                        </thead>
+                        <tbody>
                         <?= renderSectionHeader("PAP/TAP", 3) ?>
                         <?= renderAprfRow("Satisfaction de fonctionnement", "paptap_satisfaction", $donnees) ?>
                         <?= renderAprfRow("Aspect général", "paptap_aspect", $donnees) ?>
@@ -1541,6 +1561,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                         <?= renderAprfRow("Aimants : Ferrite ou Néodyme", "paptap_aimants", $donnees) ?>
                         <?= renderAprfRow("Présence et position correcte d’un volet de séparation", "paptap_volet", $donnees) ?>
+                        </tbody>
                     </table>
 
                     <div style="text-align:center; margin-top:20px;">
@@ -1550,7 +1571,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <?php elseif ($isLevage): ?>
 
                     <table class="pdf-table controles" style="font-size:11px;">
-                        <?= renderDiagonalHeader(3) ?>
+                        <thead>
+                            <?= renderDiagonalHeader(3) ?>
+                        </thead>
+                        <tbody>
                         <?= renderSectionHeader("CONTROLES", 3) ?>
 
                         <tr>
@@ -1846,7 +1870,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </div>
 
                         <table class="pdf-table controles">
-                            <?= renderDiagonalHeader(5) ?>
+                            <thead>
+                                <?= renderDiagonalHeader(5) ?>
+                            </thead>
+                            <tbody>
                             <?= renderSectionHeader("AUTRES CONTROLES", 5) ?>
                             <tr>
                                 <th colspan="3" style="background:#ddd;">Examen de l'appareil</th>
@@ -1869,6 +1896,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?= renderCheckRow("Test déclenchement défauts", "gen_defauts", $donnees) ?>
                             <?= renderCheckRow("Tester bouton Arrêt d'Urgence", "gen_au", $donnees) ?>
                             <?= renderCheckRow("Mesure isolation & Induction", "gen_mesures", $donnees) ?>
+                            </tbody>
                         </table>
 
                         <?php
