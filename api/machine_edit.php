@@ -2315,9 +2315,40 @@ foreach ($recoFreq as $rfk => $rfv) {
                 btn.innerHTML = originalHTML;
             }
         }
+        // ========== GOMMETTES (PASTILLES) & APPUI LONG POUR EFFACER ==========
+        let pastillePressTimer;
+        function startPastillePress(e) {
+            const label = e.target.closest('.pastille-group label');
+            if (!label) return;
+            clearTimeout(pastillePressTimer);
+            pastillePressTimer = setTimeout(() => {
+                const group = label.closest('.pastille-group');
+                group.querySelectorAll('label').forEach(l => l.classList.remove('selected'));
+                group.querySelectorAll('input[type="radio"]').forEach(r => {
+                    r.checked = false;
+                    // Trigger change if needed for frequency alerts
+                    r.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+                // Feedback visuel
+                label.style.transition = 'transform 0.2s';
+                label.style.transform = 'scale(1.5) rotate(15deg)';
+                setTimeout(() => { label.style.transform = ''; }, 300);
+                if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
+                label.dataset.longPressed = 'true';
+                setTimeout(() => { delete label.dataset.longPressed; }, 500);
+            }, 2000); // 2 secondes
+        }
+        function cancelPastillePress() { clearTimeout(pastillePressTimer); }
+
+        document.addEventListener('mousedown', startPastillePress);
+        document.addEventListener('touchstart', startPastillePress, { passive: true });
+        document.addEventListener('mouseup', cancelPastillePress);
+        document.addEventListener('touchend', cancelPastillePress);
+        document.addEventListener('touchmove', cancelPastillePress);
+
         document.addEventListener('click', function (e) {
             var label = e.target.closest('.pastille-group label');
-            if (!label) return;
+            if (!label || label.dataset.longPressed === 'true') return;
             var group = label.closest('.pastille-group');
             group.querySelectorAll('label').forEach(function (l) { l.classList.remove('selected'); });
             label.classList.add('selected');
