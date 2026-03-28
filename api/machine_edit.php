@@ -212,11 +212,17 @@ foreach ($recoFreq as $rfk => $rfv) {
             margin-bottom: 20px;
         }
 
+        .pdf-table thead {
+            page-break-inside: avoid;
+            page-break-after: avoid;
+        }
+
         .pdf-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
             color: black;
+            page-break-inside: auto;
         }
 
         .pdf-table th,
@@ -1123,13 +1129,12 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <!-- DYNAMIC CONTENT DEPENDING ON MACHINE TYPE -->
                 <?php if ($isAPRF): ?>
 
-                    <table class="pdf-table controles" style="font-size:11px;">
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
+                            <?= renderSectionHeader("Aimants permanent fixe de triage type APRF", 3) ?>
                         </thead>
                         <tbody>
-
-                        <?= renderSectionHeader("Aimants permanent fixe de triage type APRF", 3) ?>
                         <?= renderAprfRow("Satisfaction de fonctionnement", "aprf_satisfaction", $donnees) ?>
                         <?= renderAprfRow("État et type de la bande", "aprf_bande", $donnees) ?>
                         <?= renderAprfRow("État des réglettes", "aprf_reglettes", $donnees) ?>
@@ -1227,13 +1232,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <?php elseif ($isEDX): ?>
 
 
-                    <table class="pdf-table controles" style="font-size:11px;">
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(5) ?>
+                            <?= renderSectionHeader("Environnement / Aspect général", 5) ?>
                         </thead>
                         <tbody>
-                        <?= renderSectionHeader("Environnement / Aspect général", 5) ?>
-                        <?= renderEdxRow("Accès au séparateur", "edx_acces", $donnees) ?>
+                         <?= renderEdxRow("Accès au séparateur", "edx_acces", $donnees) ?>
                         <?= renderEdxRow("Etat général du séparateur", "edx_etat_gen", $donnees) ?>
 
                         <?= renderSectionHeader("Partie A - Convoyeur", 5) ?>
@@ -1372,12 +1377,12 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <?php elseif ($isOV): ?>
 
 
-                    <table class="pdf-table controles" style="font-size:11px;">
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(5) ?>
+                            <?= renderSectionHeader("Environnement / Aspect général", 5) ?>
                         </thead>
                         <tbody>
-                        <?= renderSectionHeader("Environnement / Aspect général", 5) ?>
                         <?= renderOvRow("Accès au séparateur", "ov_acces", $donnees) ?>
                         <?= renderOvRow("Etat général du séparateur", "ov_etat_gen", $donnees) ?>
 
@@ -1405,13 +1410,12 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderOvRow("Option 2 :", "ov_opt2", $donnees) ?>
                     </table>
 
-                    <?= newPdfPage() ?>
-                    <table class="pdf-table controles" style="font-size:11px;">
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
+                            <?= renderSectionHeader("Partie B - Les performances", 3) ?>
                         </thead>
                         <tbody>
-                        <?= renderSectionHeader("Partie B - Les performances", 3) ?>
                         <?php
                         $ovPerfs = [
                             'ov_perf_bille'   => 'Bille diamètre 20',
@@ -1433,8 +1437,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
 
-                    <?= newPdfPage() ?>
-                    <table class="pdf-table controles" style="font-size:11px;">
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:10px;">
                         <tr>
                             <th colspan="6" style="background:#5b9bd5; color:white;">En présence du client / Rappel des
                                 fréquences de nettoyage et des différents points de contrôle</th>
@@ -1460,12 +1463,12 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 <?php elseif ($isPAP): ?>
 
-                    <table class="pdf-table controles" style="font-size:11px;">
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
+                            <?= renderSectionHeader("PAP/TAP", 3) ?>
                         </thead>
                         <tbody>
-                        <?= renderSectionHeader("PAP/TAP", 3) ?>
                         <?= renderAprfRow("Satisfaction de fonctionnement", "paptap_satisfaction", $donnees) ?>
                         <?= renderAprfRow("Aspect général", "paptap_aspect", $donnees) ?>
 
@@ -1558,12 +1561,12 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 <?php elseif ($isLevage): ?>
 
-                    <table class="pdf-table controles" style="font-size:11px;">
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
+                            <?= renderSectionHeader("CONTROLES", 3) ?>
                         </thead>
                         <tbody>
-                        <?= renderSectionHeader("CONTROLES", 3) ?>
 
                         <tr>
                             <th style="background:#4472c4; color:white; font-weight:bold; padding:4px;" colspan="3">Produit
