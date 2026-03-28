@@ -934,20 +934,21 @@ foreach ($recoFreq as $rfk => $rfv) {
                     $isSelected = ($currentVal == $value);
                     $selClass = $isSelected ? ' selected' : '';
                     
-                    // Couleurs "Gomettes" pour PDF - On utilise des couleurs inline pour forcer le rendu html2canvas
+                    // Couleurs vives d'origine pour l'aspect "gomettes"
                     $colors = [
-                        'p-na' => ['bg' => '#bbb', 'ghost' => '#f2f2f2'],
-                        'p-ok' => ['bg' => '#28a745', 'ghost' => '#e8f5e9'],
-                        'p-aa' => ['bg' => '#e67e22', 'ghost' => '#fff3e0'],
-                        'p-nc' => ['bg' => '#dc3545', 'ghost' => '#ffebee'],
-                        'p-nr' => ['bg' => '#8b0000', 'ghost' => '#fdeded']
+                        'p-na' => '#bbb',
+                        'p-ok' => '#28a745',
+                        'p-aa' => '#e67e22',
+                        'p-nc' => '#dc3545',
+                        'p-nr' => '#8b0000'
                     ];
                     
-                    $c = $colors[$cssClass] ?? ['bg' => '#eee', 'ghost' => '#fff'];
-                    $bg = $isSelected ? $c['bg'] : $c['ghost'];
+                    $bg = $colors[$cssClass] ?? '#eee';
                     $border = $isSelected ? '2px solid #000' : '1px solid #ccc';
+                    $opacity = $isSelected ? '1' : '0.4'; // Un peu moins d'opacité pour les non-sélectionnées pour aider la lecture ? non le user veut "comme avant"
+                    // On reste sur opacité 1 si c'est ce qu'il veut par "gomettes".
                     
-                    return '<label class="' . $cssClass . $selClass . '" title="' . $title . '" style="margin:0; background-color:' . $bg . ' !important; border:' . $border . ' !important; -webkit-print-color-adjust: exact;">
+                    return '<label class="' . $cssClass . $selClass . '" title="' . $title . '" style="margin:0; background-color:' . $bg . ' !important; border:' . $border . ' !important; position:relative; -webkit-print-color-adjust: exact;">
                                 <input type="radio" name="donnees[' . $name . ']" value="' . $value . '" ' . ($isSelected ? 'checked' : '') . '>
                             </label>';
                 }
