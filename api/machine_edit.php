@@ -622,7 +622,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             bottom: 35px;
             width: 1px;
             background: #000;
-            transform: skewX(35deg); /* Inclinaison vers la droite */
+            transform: skewX(-35deg); /* Inclinaison vers la DROITE */
             transform-origin: bottom left;
         }
         .diag-text {

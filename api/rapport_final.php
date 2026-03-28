@@ -1428,7 +1428,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     bottom: 35px;
                     width: 1px;
                     background: #000;
-                    transform: skewX(35deg);
+                    transform: skewX(-35deg);
                     transform-origin: bottom left;
                 }
                 .diag-col.col-3 { width: 46.6px; }
