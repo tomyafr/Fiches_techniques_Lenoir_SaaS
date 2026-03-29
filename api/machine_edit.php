@@ -225,6 +225,11 @@ foreach ($recoFreq as $rfk => $rfv) {
             page-break-inside: auto;
         }
 
+        .pdf-table tr {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
         .pdf-table th,
         .pdf-table td {
             border: 1px solid #000;
@@ -232,21 +237,25 @@ foreach ($recoFreq as $rfk => $rfv) {
             vertical-align: middle;
         }
 
-        .pdf-table th {
-            background-color: #f0f0f0;
-            text-align: left;
-            font-size: 12px;
-            text-transform: uppercase;
+        /* Wrappers pour sections B, C, D, E, F */
+        .section-wrapper-pdf {
+            page-break-inside: avoid;
+            break-inside: avoid;
+            margin-top: 25px;
+            margin-bottom: 25px;
+            display: block;
+            width: 100%;
         }
 
-        .pdf-table td.col-etat {
-            text-align: center;
-            width: 90px;
-            white-space: nowrap;
-        }
-
-        .pdf-table td.col-comment {
-            width: 45%;
+        .pdf-section-title {
+            font-weight: bold;
+            font-size: 16px;
+            color: #d35400;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #d35400;
+            padding-bottom: 5px;
+            page-break-after: avoid;
+            break-after: avoid;
         }
 
         /* === PASTILLE SYSTEM === */
@@ -793,7 +802,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
         <div class="mobile-wrapper">
             <!-- Saut de page forcé en début de chaque machine pour éviter les coupures d'en-tête -->
-            <div class="pdf-page" style="page-break-before: always;">
+            <div class="pdf-page" style="page-break-before: always; page-break-inside: avoid; break-inside: avoid;">
                 <!-- Header exact LENOIR (Always show for consistency) -->
                 <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:15px; color:#000;">
                     <tr>
@@ -895,7 +904,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <?php
                 // === HELPERS ===
                 function newPdfPage() {
-                    return '</div><div class="pdf-page bg-white p-4">'; 
+                    return '</div><div class="pdf-page">'; 
                 }
                 function renderSectionB($photosData)
                 {
@@ -1130,7 +1139,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <?php if ($isAPRF): ?>
 
                     <?= newPdfPage() ?>
-                    <table class="pdf-table controles" style="font-size:11px; margin-top:20px;">
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
                         </thead>
@@ -1235,7 +1244,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
 
                     <?= newPdfPage() ?>
-                    <table class="pdf-table controles" style="font-size:11px; margin-top:20px;">
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(5) ?>
                         </thead>
@@ -1286,7 +1295,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </table>
 
                     <?= newPdfPage() ?>
-                    <table class="pdf-table controles" style="font-size:11px;">
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(5) ?>
                         </thead>
@@ -1308,7 +1317,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </table>
 
                     <?= newPdfPage() ?>
-                    <table class="pdf-table controles" style="font-size:11px;">
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(5) ?>
                         </thead>
@@ -1381,7 +1390,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
 
                     <?= newPdfPage() ?>
-                    <table class="pdf-table controles" style="font-size:11px; margin-top:20px;">
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(5) ?>
                         </thead>
@@ -1415,7 +1424,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </table>
 
                     <?= newPdfPage() ?>
-                    <table class="pdf-table controles" style="font-size:11px; margin-top:20px;">
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
                         </thead>
@@ -1469,7 +1478,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <?php elseif ($isPAP): ?>
 
                     <?= newPdfPage() ?>
-                    <table class="pdf-table controles" style="font-size:11px; margin-top:20px;">
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
                         </thead>
@@ -1568,7 +1577,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <?php elseif ($isLevage): ?>
 
                     <?= newPdfPage() ?>
-                    <table class="pdf-table controles" style="font-size:11px; margin-top:20px;">
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
                         </thead>
@@ -1945,8 +1954,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                         endif;
                         ?>
 
-                        <div class="section-wrapper-pdf" style="margin-top:20px; border: 1px solid #000; padding:10px; background: #fff;">
-                            <div style="font-weight:bold; font-size:14px; margin-bottom:5px; color:#d35400;">E) CAUSE DE DYSFONCTIONNEMENT :</div>
+                        <div class="section-wrapper-pdf" style="border: 1px solid #000; padding:10px; background: #fff;">
+                            <div class="pdf-section-title">E) CAUSE DE DYSFONCTIONNEMENT :</div>
                             <?php if (!isset($_GET['pdf'])): ?>
                                 <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette zone est pré-remplie avec les points "Non conformes" ou "À améliorer" détectés. Vous pouvez éditer le texte ci-dessous.</p>
                                 <textarea name="dysfonctionnements" id="dysfonctionnementsText" class="pdf-textarea" style="min-height:100px; font-size:13px; border: 1px solid #ccc; background:#fff; padding:5px;"><?= htmlspecialchars($machine['dysfonctionnements'] ?? '') ?></textarea>
@@ -1969,25 +1978,23 @@ foreach ($recoFreq as $rfk => $rfv) {
                                         $baseKey = str_replace('_radio', '', $k);
                                         if (!empty($photosData[$baseKey])) {
                                             foreach ($photosData[$baseKey] as $p) {
-                                                $criticalPhotos[] = $p;
+                                                $criticalPhotos[] = $p['data'];
                                             }
                                         }
                                     }
                                 }
                                 if (!empty($criticalPhotos)): ?>
                                     <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;">
-                                        <?php foreach ($criticalPhotos as $p): ?>
-                                            <div style="border:1px solid #000; padding:2px; text-align:center;">
-                                                <img src="<?= htmlspecialchars($p['data']) ?>" style="max-height:150px; width:auto;">
-                                            </div>
+                                        <?php foreach (array_unique($criticalPhotos) as $photo): ?>
+                                            <img src="<?= htmlspecialchars($photo) ?>" style="width:140px; height:100px; object-fit:cover; border:1px solid #ccc; border-radius:4px;">
                                         <?php endforeach; ?>
                                     </div>
                                 <?php endif; ?>
                             <?php endif; ?>
                         </div>
 
-                        <div class="section-wrapper-pdf" style="margin-top:20px; border: 1px solid #000; padding:10px; background: #fff;">
-                            <div style="font-weight:bold; font-size:14px; margin-bottom:5px; color:#d35400;">F) CONCLUSION :</div>
+                        <div class="section-wrapper-pdf" style="border: 1px solid #000; padding:10px; background: #fff;">
+                            <div class="pdf-section-title">F) CONCLUSION :</div>
                             <?php if (!isset($_GET['pdf'])): ?>
                                 <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette conclusion peut être générée par l'IA en fonction des résultats du contrôle.</p>
                                 <textarea name="conclusion" id="conclusionText" class="pdf-textarea" style="min-height:80px; font-size:13px; border: 1px solid #ccc; background:#fff; padding:5px;"><?= htmlspecialchars($machine['conclusion'] ?? '') ?></textarea>
