@@ -214,7 +214,6 @@ foreach ($recoFreq as $rfk => $rfv) {
 
         .pdf-table thead {
             page-break-inside: avoid;
-            page-break-after: avoid;
         }
 
         .pdf-table {
@@ -254,8 +253,6 @@ foreach ($recoFreq as $rfk => $rfv) {
             margin-bottom: 10px;
             border-bottom: 2px solid #d35400;
             padding-bottom: 5px;
-            page-break-after: avoid;
-            break-after: avoid;
         }
 
         /* === PASTILLE SYSTEM === */
@@ -558,7 +555,6 @@ foreach ($recoFreq as $rfk => $rfv) {
             color: black;
             text-transform: uppercase;
             page-break-inside: avoid;
-            page-break-after: avoid;
         }
 
         .section-wrapper-pdf {
@@ -590,8 +586,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             background: #e0e0e0 !important;
             overflow: visible;
             border-right: none !important;
-            page-break-after: avoid;
-            break-after: avoid;
+            page-break-inside: avoid;
         }
         .diagonal-header + th {
             border-left: none !important;
@@ -830,14 +825,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </tr>
                 </table>
 
-                <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:5px; border-bottom: 2px solid #d35400; padding-bottom:5px; page-break-after: avoid;">A) FICHE DE CONTRÔLE :</div>
+                <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:5px; border-bottom: 2px solid #d35400; padding-bottom:5px;">A) FICHE DE CONTRÔLE :</div>
                 
-                <div style="font-weight:bold; color:#1B4F72; margin-bottom:5px; font-size:14px; page-break-after: avoid;">
+                <div style="font-weight:bold; color:#1B4F72; margin-bottom:5px; font-size:14px;">
                     Poste : <input type="text" name="mesures[poste]" value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>" style="border:none; border-bottom:1px dashed #000; font-weight:bold; width:30px; background:transparent;" autocomplete="off">
                 </div>
 
                 <table
-                    style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000; page-break-after: avoid; break-after: avoid;">
+                    style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000;">
                     <tr>
                         <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N°
                             A.R.C.</td>
@@ -904,7 +899,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <?php
                 // === HELPERS ===
                 function newPdfPage() {
-                    return '</div><div class="pdf-page">'; 
+                    return '</div><div class="pdf-page" style="page-break-before: always; margin-top: 0; padding-top: 8mm;">'; 
                 }
                 function renderSectionB($photosData)
                 {
@@ -1121,9 +1116,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                     
                     $commentTitle = ($nbCols == 5) ? 'COMMENTAIRES / VALEURS' : 'COMMENTAIRES';
                     
-                    return '<tr style="page-break-after: avoid; break-after: avoid;">
-                        <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px; page-break-after: avoid; break-after: avoid;">DESIGNATIONS</th>
-                        <th class="diagonal-header" style="width:140px; page-break-after: avoid; break-after: avoid;">
+                    return '<tr>
+                        <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">DESIGNATIONS</th>
+                        <th class="diagonal-header" style="width:140px;">
                             <div class="diagonal-wrapper">' . $colsHtml . '</div>
                         </th>
                         <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">' . $commentTitle . '</th>
