@@ -259,11 +259,14 @@ foreach ($recoFreq as $rfk => $rfv) {
         .pastille-group {
             display: flex;
             align-items: center;
-            justify-content: center; /* centrées sous le header */
+            justify-content: space-around;
             width: 140px;
             margin: 0 auto;
             flex-shrink: 0;
-            gap: 2px;
+        }
+
+        .pastille-group input[type="radio"] {
+            display: none !important;
         }
 
         .pastille-group input[type="radio"] {
@@ -274,14 +277,14 @@ foreach ($recoFreq as $rfk => $rfv) {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 20px;
-            height: 20px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             cursor: pointer;
-            border: 2px solid #aaa;
+            border: 2px solid #ccc;
             transition: all 0.15s ease;
             position: relative;
-            background: transparent;
+            background: #fdfdfd;
             box-sizing: border-box;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
@@ -582,15 +585,18 @@ foreach ($recoFreq as $rfk => $rfv) {
             position: relative;
             background: #e0e0e0 !important;
             overflow: visible;
-            border-left: none !important;
+            border-right: none !important;
             page-break-inside: avoid;
+        }
+        .diagonal-header + th {
+            border-left: none !important;
         }
         .diagonal-wrapper {
             display: flex;
             width: 140px;
             height: 100%;
             align-items: stretch;
-            margin: 0 auto;
+            margin: 0 auto; /* Centrage pour aligner avec les pastilles */
             box-sizing: border-box;
         }
         .diag-col {
@@ -600,13 +606,13 @@ foreach ($recoFreq as $rfk => $rfv) {
             flex-shrink: 0;
         }
         .diag-col.col-3 {
-            flex: 1;
+            flex: 1; /* Aligne parfaitement sur 1/3 de 140px */
         }
         /* Ligne verticale basse (zone grise) */
         .diag-col::after {
             content: "";
             position: absolute;
-            left: 0;
+            left: 100%; /* BORD DROIT de la gommette */
             bottom: 0;
             width: 1px;
             height: 35px;
@@ -616,18 +622,19 @@ foreach ($recoFreq as $rfk => $rfv) {
         .diag-col::before {
             content: "";
             position: absolute;
-            left: 0;
+            left: 100%;
             top: 0;
             bottom: 35px;
             width: 1px;
             background: #000;
-            transform: skewX(-35deg);
+            transform: skewX(-35deg); /* Inclinaison vers la DROITE */
             transform-origin: bottom left;
         }
         .diag-text {
             position: absolute;
             bottom: 38px;
-            left: 4px; /* Un peu décale du bord gauche de sa propre colonne */
+            left: 100%;
+            padding-left: 4px; /* Décalage pour être à droite du trait */
             transform: rotate(-55deg);
             transform-origin: bottom left;
             text-align: left;
@@ -979,7 +986,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     $html = '<div class="pastille-group">';
                     foreach ($items as $item) {
-                        $style = ($nbCols == 3) ? 'flex: 1; display:flex; justify-content:center; align-items:center;' : 'width:28px; display:flex; justify-content:center; align-items:center;';
+                        $style = ($nbCols == 3) ? 'flex: 1; display:flex; justify-content:flex-end; align-items:center;' : 'width:28px; display:flex; justify-content:flex-end; align-items:center;';
                         $html .= '<div style="'.$style.'">'
                                . pastille($key, $item[0], $item[1], $item[2], $val)
                                . '</div>';
@@ -1036,16 +1043,16 @@ foreach ($recoFreq as $rfk => $rfv) {
                     $w = ($nbCols == 3) ? '33.33%' : '28px';
                     $tds = '';
                     for ($i = 0; $i < $nbCols; $i++) {
-                        $tds .= '<td style="width:'.$w.'; border:none !important; border-left:1px solid #000 !important; padding:0; height:100%;"></td>';
+                        $tds .= '<td style="width:'.$w.'; border:none !important; border-right:1px solid #000 !important; padding:0; height:100%;"></td>';
                     }
                     return '<tr class="section-header-row" style="background:#5b9bd5 !important; page-break-before: avoid; break-before: avoid;">
-                        <td style="width:35%; font-weight:bold; color:white; padding:4px 10px; font-size:11px; page-break-before: avoid; break-before: avoid; border-right:none !important;">' . htmlspecialchars($title) . '</td>
-                        <td style="width:140px; padding:0; vertical-align:middle; height:1px; border-left:none !important;">
-                            <table style="width:140px; border-collapse:collapse; height:100%; margin: 0 auto; border:none;">
+                        <td style="width:35%; font-weight:bold; color:white; padding:4px 10px; font-size:11px; page-break-before: avoid; break-before: avoid;">' . htmlspecialchars($title) . '</td>
+                        <td style="width:140px; padding:0; vertical-align:middle; height:1px;">
+                            <table style="width:140px; border-collapse:collapse; height:100%; margin: 0 auto; border:none; border-right:1px solid #000 !important;">
                                 <tr style="height:100%;">' . $tds . '</tr>
                             </table>
                         </td>
-                        <td style="width:35%; background:#5b9bd5 !important; border-left:1px solid #000 !important;"></td>
+                        <td style="width:35%; background:#5b9bd5 !important;"></td>
                     </tr>';
                 }
                 function renderEdxRow($label, $key, $donnees)
@@ -1110,8 +1117,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                     $commentTitle = ($nbCols == 5) ? 'COMMENTAIRES / VALEURS' : 'COMMENTAIRES';
                     
                     return '<tr>
-                        <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px; border-right:none !important;">DESIGNATIONS</th>
-                        <th class="diagonal-header" style="width:140px; border-left:none !important;">
+                        <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">DESIGNATIONS</th>
+                        <th class="diagonal-header" style="width:140px;">
                             <div class="diagonal-wrapper">' . $colsHtml . '</div>
                         </th>
                         <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">' . $commentTitle . '</th>
