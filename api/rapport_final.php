@@ -1163,11 +1163,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     text-overflow: ellipsis;
                 }
                 
-                .pastille-group { display: flex; gap: 6px; align-items: center; justify-content: center; width: 100%; }
+                .pastille-group { display: flex; gap: 2px; align-items: center; justify-content: center; width: 140px; margin: 0 auto; flex-shrink: 0; }
                 .pastille-group label {
                     display: flex; align-items: center; justify-content: center;
-                    width: 18px; height: 18px; border-radius: 50%;
-                    border: 1px solid #ccc !important; background: transparent !important; font-size: 0; position: relative;
+                    width: 20px; height: 20px; border-radius: 50%;
+                    border: 2px solid #aaa !important; background: transparent !important; font-size: 0; position: relative;
+                    -webkit-print-color-adjust: exact; print-color-adjust: exact; box-sizing: border-box;
                 }
                 /* Only the selected label gets a background color */
                 .pastille-group label.selected.p-na { background: #bbb !important; border-color: #999 !important; opacity: 1; }
@@ -1175,21 +1176,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .pastille-group label.selected.p-aa { background: #e67e22 !important; border-color: #d35400 !important; opacity: 1; }
                 .pastille-group label.selected.p-nc { background: #dc3545 !important; border-color: #bd2130 !important; opacity: 1; }
                 .pastille-group label.selected.p-nr { background: #8b0000 !important; border-color: #5a0000 !important; opacity: 1; }
-                /* Non selected labels are subtle empty circles */
-                .pastille-group label:not(.selected) { opacity: 0.8; border: 1px solid #777 !important; background: transparent !important;}
-
-                .pastille-group label.selected::after {
-                    content: '';
-                    display: block;
-                    width: 8px;
-                    height: 8px;
-                    background: #000;
-                    border-radius: 50%;
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                }
+                /* Non selected labels are empty circles */
+                .pastille-group label:not(.selected) { background: transparent !important; opacity: 1; border: 2px solid #aaa !important; }
 
                 /* Styling raw radio buttons for html2canvas compatibility (Frequency table) */
                 input[type="radio"] {
@@ -1296,6 +1284,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     position: relative;
                     background: #e0e0e0 !important;
                     overflow: visible;
+                    border-left: none !important;
                 }
                 .diagonal-wrapper {
                     display: flex;
@@ -1308,10 +1297,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     position: relative;
                     flex-shrink: 0;
                 }
+                .diag-col.col-3 { width: 46.6px; flex: 1; }
                 .diag-col::after {
                     content: "";
                     position: absolute;
-                    right: 0;
+                    left: 0; /* BORD GAUCHE */
                     bottom: 0;
                     width: 1px;
                     height: 35px;
@@ -1320,49 +1310,18 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .diag-col::before {
                     content: "";
                     position: absolute;
-                    right: 0;
+                    left: 0; /* BORD GAUCHE */
                     top: 0;
                     bottom: 35px;
                     width: 1px;
                     background: #000;
-                    transform: skewX(-35deg);
-                    transform-origin: bottom right;
-                }
-                .diag-col:last-child::after, .diag-col:last-child::before {
-                    display: none;
-                }
-                .diag-col {
-                    width: 28px;
-                    height: 100%;
-                    position: relative;
-                    flex-shrink: 0;
-                }
-                .diag-col::after {
-                    content: "";
-                    position: absolute;
-                    left: 50%;
-                    bottom: 0;
-                    width: 1px;
-                    height: 35px;
-                    background: #000;
-                }
-                .diag-col::before {
-                    content: "";
-                    position: absolute;
-                    left: 50%;
-                    top: 0;
-                    bottom: 35px;
-                    width: 1px;
-                    background: #000;
-                    transform: skewX(-35deg);
+                    transform: skewX(-35deg); /* Inclinaison vers la DROITE */
                     transform-origin: bottom left;
                 }
-                .diag-col.col-3 { width: 46.6px; }
                 .diag-text {
                     position: absolute;
-                    bottom: 38px;
-                    left: 50%;
-                    padding-left: 4px;
+                    bottom: 40px;
+                    left: 4px; /* Un peu décale du bord gauche de sa propre colonne */
                     transform: rotate(-55deg);
                     transform-origin: bottom left;
                     white-space: nowrap;
