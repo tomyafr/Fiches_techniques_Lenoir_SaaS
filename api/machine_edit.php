@@ -1371,11 +1371,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderFreqRowEdx("Nettoyage de l'intérieur du séparateur - partie caisson de séparation", "edx_freq_net_cais", $donnees) ?>
                     </table>
 
-                    <div class="pdf-section" style="margin-top:20px;">
+                    <div class="pdf-section" style="margin-top:20px; page-break-inside: avoid;">
                         <img src="/assets/machines/edx_diagram.png"
                             style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma ED-X"
                             onerror="this.style.display='none'">
+                    </div>
 
+                    <div class="pdf-section" style="margin-top:10px; page-break-inside: avoid;">
                         <img src="/assets/machines/edx_diagram_2.png"
                             style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma ED-X (Suite)"
                             onerror="this.style.display='none'">
@@ -1465,8 +1467,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderFreqRow("Graissage des paliers", "ov_freq_graiss", $donnees) ?>
                     </table>
 
+                        <div style="page-break-inside: avoid;">
                         <img src="/assets/machines/ovap_diagram.png"
                             style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma Overband">
+                        </div>
 
                     <!-- Photo section removed here, handled globally at bottom -->
 
@@ -1565,7 +1569,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
 
-                    <div style="text-align:center; margin-top:20px;">
+                    <div style="text-align:center; margin-top:20px; page-break-inside: avoid;">
                         <img src="/assets/machines/Image_TAP-PAP_Lenoir.png" style="max-width:100%; height:auto;" alt="Schémas PAP/TAP">
                     </div>
 
@@ -1832,7 +1836,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                     </table>
 
-                        <div style="position:relative; width:100%; max-width:650px; margin:20px auto 10px auto;">
+                        <div style="position:relative; width:100%; max-width:650px; margin:20px auto 10px auto; page-break-inside: avoid;">
                             <!-- Diagram includes Rep section and boxes -->
                             <img src="/assets/machines/levage_diagram.png" 
                                  style="width:100%; height:auto;" 
@@ -2006,7 +2010,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </div>
 
                         <?php if (isset($_GET['pdf'])): ?>
-                            <div style="margin-top:40px; border-top: 1px solid #ddd; padding-top:15px; page-break-inside: avoid;">
+                            <div class="section-wrapper-pdf" style="margin-top:40px; border-top: 1px solid #ddd; padding-top:15px; page-break-inside: avoid;">
                                 <div style="font-weight:bold; font-size:14px; color:#d35400; margin-bottom:15px;">RAPPEL : Le nettoyage de votre <?= $isEDX ? 'EDX' : ($isOV ? 'OV' : 'équipement') ?> doit être régulier et complet (intérieur et extérieur)</div>
                                 <table style="width:100%; border-collapse:collapse;">
                                     <tr>
