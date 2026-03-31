@@ -1138,7 +1138,6 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <!-- DYNAMIC CONTENT DEPENDING ON MACHINE TYPE -->
                 <?php if ($isAPRF): ?>
 
-                    <!-- Tableau de contrôle directement dans la continuité de l'en-tête -->
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
@@ -1242,7 +1241,6 @@ foreach ($recoFreq as $rfk => $rfv) {
                     <!-- EDX SCHEMA -->
                 <?php elseif ($isEDX): ?>
 
-                    <!-- Tableau de contrôle directement dans la continuité de l'en-tête -->
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(5) ?>
@@ -1293,7 +1291,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
 
-                    <!-- Partie B suit naturellement -->
+                    <?= newPdfPage() ?>
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(5) ?>
@@ -1315,7 +1313,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
 
-                    <!-- Partie C suit naturellement -->
+                    <?= newPdfPage() ?>
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(5) ?>
@@ -1348,7 +1346,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
 
-                    <!-- Commentaire et fréquences suivent naturellement -->
+                    <?= newPdfPage() ?>
                     <div style="margin-top:20px; font-weight:bold; font-size:11px;">Commentaire général :</div>
                     <textarea name="commentaires" class="pdf-textarea"
                         style="height:100px; padding:5px; margin-top:5px; border:1px solid #000; width:100%; box-sizing:border-box;"><?= htmlspecialchars($machine['commentaires']) ?></textarea>
@@ -1387,7 +1385,6 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 <?php elseif ($isOV): ?>
 
-                    <!-- Tableau de contrôle directement dans la continuité de l'en-tête -->
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(5) ?>
@@ -1421,7 +1418,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderOvRow("Option 2 :", "ov_opt2", $donnees) ?>
                     </table>
 
-                    <!-- Partie B Performances suit naturellement -->
+                    <?= newPdfPage() ?>
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
@@ -1475,7 +1472,6 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 <?php elseif ($isPAP): ?>
 
-                    <!-- Tableau de contrôle directement dans la continuité de l'en-tête -->
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
@@ -1574,7 +1570,6 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 <?php elseif ($isLevage): ?>
 
-                    <!-- Tableau de contrôle directement dans la continuité de l'en-tête -->
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
