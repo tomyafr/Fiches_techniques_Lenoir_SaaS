@@ -214,6 +214,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
         .pdf-table thead {
             page-break-inside: avoid;
+            page-break-after: avoid;
         }
 
         .pdf-table {
@@ -253,6 +254,8 @@ foreach ($recoFreq as $rfk => $rfv) {
             margin-bottom: 10px;
             border-bottom: 2px solid #d35400;
             padding-bottom: 5px;
+            page-break-after: avoid;
+            break-after: avoid;
         }
 
         /* === PASTILLE SYSTEM === */
@@ -555,6 +558,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             color: black;
             text-transform: uppercase;
             page-break-inside: avoid;
+            page-break-after: avoid;
         }
 
         .section-wrapper-pdf {
@@ -586,7 +590,8 @@ foreach ($recoFreq as $rfk => $rfv) {
             background: #e0e0e0 !important;
             overflow: visible;
             border-right: none !important;
-            page-break-inside: avoid;
+            page-break-after: avoid;
+            break-after: avoid;
         }
         .diagonal-header + th {
             border-left: none !important;
@@ -797,7 +802,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
         <div class="mobile-wrapper">
             <!-- Saut de page forcé en début de chaque machine pour éviter les coupures d'en-tête -->
-            <div class="pdf-page" style="page-break-before: always; page-break-inside: avoid; break-inside: avoid;">
+            <div class="pdf-page" style="page-break-before: always;">
                 <!-- Header exact LENOIR (Always show for consistency) -->
                 <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:15px; color:#000;">
                     <tr>
@@ -825,14 +830,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </tr>
                 </table>
 
-                <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:5px; border-bottom: 2px solid #d35400; padding-bottom:5px;">A) FICHE DE CONTRÔLE :</div>
+                <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:5px; border-bottom: 2px solid #d35400; padding-bottom:5px; page-break-after: avoid;">A) FICHE DE CONTRÔLE :</div>
                 
-                <div style="font-weight:bold; color:#1B4F72; margin-bottom:5px; font-size:14px;">
+                <div style="font-weight:bold; color:#1B4F72; margin-bottom:5px; font-size:14px; page-break-after: avoid;">
                     Poste : <input type="text" name="mesures[poste]" value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>" style="border:none; border-bottom:1px dashed #000; font-weight:bold; width:30px; background:transparent;" autocomplete="off">
                 </div>
 
                 <table
-                    style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000;">
+                    style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000; page-break-after: avoid; break-after: avoid;">
                     <tr>
                         <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N°
                             A.R.C.</td>
@@ -899,7 +904,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <?php
                 // === HELPERS ===
                 function newPdfPage() {
-                    return '</div><div class="pdf-page" style="page-break-before: always; margin-top: 0; padding-top: 8mm;">'; 
+                    return '</div><div class="pdf-page">'; 
                 }
                 function renderSectionB($photosData)
                 {
@@ -1116,9 +1121,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                     
                     $commentTitle = ($nbCols == 5) ? 'COMMENTAIRES / VALEURS' : 'COMMENTAIRES';
                     
-                    return '<tr>
-                        <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">DESIGNATIONS</th>
-                        <th class="diagonal-header" style="width:140px;">
+                    return '<tr style="page-break-after: avoid; break-after: avoid;">
+                        <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px; page-break-after: avoid; break-after: avoid;">DESIGNATIONS</th>
+                        <th class="diagonal-header" style="width:140px; page-break-after: avoid; break-after: avoid;">
                             <div class="diagonal-wrapper">' . $colsHtml . '</div>
                         </th>
                         <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">' . $commentTitle . '</th>
@@ -1133,7 +1138,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <!-- DYNAMIC CONTENT DEPENDING ON MACHINE TYPE -->
                 <?php if ($isAPRF): ?>
 
-                    <?= newPdfPage() ?>
+                    <!-- Tableau de contrôle directement dans la continuité de l'en-tête -->
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
@@ -1237,8 +1242,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     <!-- EDX SCHEMA -->
                 <?php elseif ($isEDX): ?>
 
-
-                    <?= newPdfPage() ?>
+                    <!-- Tableau de contrôle directement dans la continuité de l'en-tête -->
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(5) ?>
@@ -1289,7 +1293,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
 
-                    <?= newPdfPage() ?>
+                    <!-- Partie B suit naturellement -->
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(5) ?>
@@ -1311,7 +1315,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
 
-                    <?= newPdfPage() ?>
+                    <!-- Partie C suit naturellement -->
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(5) ?>
@@ -1344,7 +1348,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
 
-                    <?= newPdfPage() ?>
+                    <!-- Commentaire et fréquences suivent naturellement -->
                     <div style="margin-top:20px; font-weight:bold; font-size:11px;">Commentaire général :</div>
                     <textarea name="commentaires" class="pdf-textarea"
                         style="height:100px; padding:5px; margin-top:5px; border:1px solid #000; width:100%; box-sizing:border-box;"><?= htmlspecialchars($machine['commentaires']) ?></textarea>
@@ -1371,13 +1375,11 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderFreqRowEdx("Nettoyage de l'intérieur du séparateur - partie caisson de séparation", "edx_freq_net_cais", $donnees) ?>
                     </table>
 
-                    <div class="pdf-section" style="margin-top:20px; page-break-inside: avoid;">
+                    <div class="pdf-section" style="margin-top:20px;">
                         <img src="/assets/machines/edx_diagram.png"
                             style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma ED-X"
                             onerror="this.style.display='none'">
-                    </div>
 
-                    <div class="pdf-section" style="margin-top:10px; page-break-inside: avoid;">
                         <img src="/assets/machines/edx_diagram_2.png"
                             style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma ED-X (Suite)"
                             onerror="this.style.display='none'">
@@ -1385,8 +1387,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 <?php elseif ($isOV): ?>
 
-
-                    <?= newPdfPage() ?>
+                    <!-- Tableau de contrôle directement dans la continuité de l'en-tête -->
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(5) ?>
@@ -1420,7 +1421,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderOvRow("Option 2 :", "ov_opt2", $donnees) ?>
                     </table>
 
-                    <?= newPdfPage() ?>
+                    <!-- Partie B Performances suit naturellement -->
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
@@ -1467,16 +1468,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderFreqRow("Graissage des paliers", "ov_freq_graiss", $donnees) ?>
                     </table>
 
-                        <div style="page-break-inside: avoid;">
                         <img src="/assets/machines/ovap_diagram.png"
                             style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma Overband">
-                        </div>
 
                     <!-- Photo section removed here, handled globally at bottom -->
 
                 <?php elseif ($isPAP): ?>
 
-                    <?= newPdfPage() ?>
+                    <!-- Tableau de contrôle directement dans la continuité de l'en-tête -->
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
@@ -1569,13 +1568,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
 
-                    <div style="text-align:center; margin-top:20px; page-break-inside: avoid;">
+                    <div style="text-align:center; margin-top:20px;">
                         <img src="/assets/machines/Image_TAP-PAP_Lenoir.png" style="max-width:100%; height:auto;" alt="Schémas PAP/TAP">
                     </div>
 
                 <?php elseif ($isLevage): ?>
 
-                    <?= newPdfPage() ?>
+                    <!-- Tableau de contrôle directement dans la continuité de l'en-tête -->
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
@@ -1836,7 +1835,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                     </table>
 
-                        <div style="position:relative; width:100%; max-width:650px; margin:20px auto 10px auto; page-break-inside: avoid;">
+                        <div style="position:relative; width:100%; max-width:650px; margin:20px auto 10px auto;">
                             <!-- Diagram includes Rep section and boxes -->
                             <img src="/assets/machines/levage_diagram.png" 
                                  style="width:100%; height:auto;" 
@@ -2010,7 +2009,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </div>
 
                         <?php if (isset($_GET['pdf'])): ?>
-                            <div class="section-wrapper-pdf" style="margin-top:40px; border-top: 1px solid #ddd; padding-top:15px; page-break-inside: avoid;">
+                            <div style="margin-top:15px; border-top: 1px solid #ddd; padding-top:10px; page-break-inside: avoid;">
                                 <div style="font-weight:bold; font-size:14px; color:#d35400; margin-bottom:15px;">RAPPEL : Le nettoyage de votre <?= $isEDX ? 'EDX' : ($isOV ? 'OV' : 'équipement') ?> doit être régulier et complet (intérieur et extérieur)</div>
                                 <table style="width:100%; border-collapse:collapse;">
                                     <tr>
