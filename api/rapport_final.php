@@ -1991,6 +1991,41 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 el.style.pageBreakAfter = 'avoid';
             });
 
+            // ANTI-ORPHELIN THEAD : empêcher un header diagonal de se retrouver seul en bas de page
+            // On force un saut de page AVANT le thead s'il est trop près du bas
+            container.querySelectorAll('table.pdf-table, table.controles').forEach(function(tbl) {
+                var thead = tbl.querySelector('thead');
+                if (!thead) return;
+                // Mesurer la position du thead dans le conteneur
+                // On utilise une approche CSS : on wrap thead dans un élément avec margin-top négatif
+                // qui force html2pdf à garder le thead avec les premières lignes
+                thead.style.pageBreakInside = 'avoid';
+                thead.style.breakInside = 'avoid';
+                // Forcer que le thead ne soit jamais le dernier élément visible sur une page
+                var firstRows = tbl.querySelectorAll('tbody tr');
+                if (firstRows.length >= 2) {
+                    // Marquer les 2 premières lignes du tbody comme inséparables du thead
+                    firstRows[0].style.pageBreakBefore = 'avoid';
+                    firstRows[0].style.breakBefore = 'avoid';
+                    if (firstRows[1]) {
+                        firstRows[1].style.pageBreakBefore = 'avoid';
+                        firstRows[1].style.breakBefore = 'avoid';
+                    }
+                }
+            });
+
+            // ANTI-COUPURE SECTION HEADERS BLEUS : les lignes section-header-row ne doivent pas être seules
+            container.querySelectorAll('.section-header-row').forEach(function(row) {
+                row.style.pageBreakAfter = 'avoid';
+                row.style.breakAfter = 'avoid';
+                // La ligne qui suit un section header doit rester collée
+                var next = row.nextElementSibling;
+                if (next && next.tagName === 'TR') {
+                    next.style.pageBreakBefore = 'avoid';
+                    next.style.breakBefore = 'avoid';
+                }
+            });
+
             // NETTOYAGE PAGES VIDES — supprime les .pdf-page sans contenu réel
             container.querySelectorAll('.pdf-page').forEach(function(page) {
                 var hasVisual = page.querySelectorAll('img, canvas, svg, table').length > 0;
@@ -2018,7 +2053,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.section-wrapper-pdf', '.pdf-page-title'] }
+                pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'thead', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.section-wrapper-pdf', '.pdf-page-title', '.section-header-row'] }
             };
 
             return new Promise(function(resolve, reject) {
@@ -2082,7 +2117,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true, logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.section-wrapper-pdf', '.pdf-page-title'] }
+                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'thead', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.section-wrapper-pdf', '.pdf-page-title', '.section-header-row'] }
                 };
 
                 const worker = html2pdf().set(opt).from(container);
