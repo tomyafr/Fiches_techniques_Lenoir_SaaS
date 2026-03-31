@@ -1834,8 +1834,43 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 ta.remove();
                             });
                             
-                            // L'ancienne logique `tbody` complexe a été retirée car elle cassait les bordures 
-                            // et gelait la génération de html2canvas sur iOS/Safari.
+                            // BUGFIX PDF: Séparateur de table (tbody) — restauré depuis V18 mars
+                            // html2pdf coupe en deux les <tr> sauvagement. 
+                            // La seule vraie solution est de wrapper chaque ligne logique dans son propre <tbody> !
+                            p.querySelectorAll('table.pdf-table').forEach(function(table) {
+                                var rows = Array.from(table.querySelectorAll('tr'));
+                                if (!rows.length) return;
+                                
+                                var currentTbody = document.createElement('tbody');
+                                currentTbody.style.pageBreakInside = 'avoid';
+                                table.appendChild(currentTbody);
+                                
+                                var pendingSpans = 0;
+                                rows.forEach(function(row) {
+                                    var maxSpan = 1;
+                                    row.querySelectorAll('th, td').forEach(function(c) {
+                                        if (c.rowSpan > maxSpan) maxSpan = c.rowSpan;
+                                    });
+                                    if (maxSpan - 1 > pendingSpans) pendingSpans = maxSpan - 1;
+                                    
+                                    currentTbody.appendChild(row);
+                                    
+                                    if (pendingSpans > 0) {
+                                        pendingSpans--;
+                                    } else {
+                                        currentTbody = document.createElement('tbody');
+                                        currentTbody.style.pageBreakInside = 'avoid';
+                                        table.appendChild(currentTbody);
+                                    }
+                                });
+                                
+                                // Supprimer les tbody/thead originaux devenus vides
+                                Array.from(table.children).forEach(function(child) {
+                                    if ((child.tagName === 'TBODY' || child.tagName === 'THEAD') && child.children.length === 0) {
+                                        child.remove();
+                                    }
+                                });
+                            });
                             
                             p.style.minHeight = 'auto';
                             container.appendChild(document.importNode(p, true));
@@ -1972,60 +2007,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             `;
             container.appendChild(endPage);
 
-            // CHANGEMENT MAJEUR : border-collapse aide html2pdf à mieux calculer les hauteurs
-            // On garde collapse (comme l'ancienne version qui marchait)
-            
-            // === MÉCANISME CLÉ DE PAGINATION (restauré depuis version 18 mars) ===
-            // html2pdf coupe les <tr> sauvagement. La solution qui MARCHE :
-            // wrapper chaque ligne dans son propre <tbody> avec page-break-inside: avoid
-            // puis mettre 'tbody' dans pagebreak.avoid de html2pdf
-            container.querySelectorAll('table.pdf-table, table.controles').forEach(function(table) {
-                var rows = Array.from(table.querySelectorAll('tr'));
-                if (!rows.length) return;
-                
-                var currentTbody = document.createElement('tbody');
-                currentTbody.style.pageBreakInside = 'avoid';
-                table.appendChild(currentTbody);
-                
-                var pendingSpans = 0;
-                rows.forEach(function(row) {
-                    var maxSpan = 1;
-                    row.querySelectorAll('th, td').forEach(function(c) {
-                        if (c.rowSpan > maxSpan) maxSpan = c.rowSpan;
-                    });
-                    if (maxSpan - 1 > pendingSpans) pendingSpans = maxSpan - 1;
-                    
-                    currentTbody.appendChild(row);
-                    
-                    if (pendingSpans > 0) {
-                        pendingSpans--;
-                    } else {
-                        currentTbody = document.createElement('tbody');
-                        currentTbody.style.pageBreakInside = 'avoid';
-                        table.appendChild(currentTbody);
-                    }
-                });
-                
-                // Supprimer les tbody/thead originaux devenus vides
-                Array.from(table.children).forEach(function(child) {
-                    if ((child.tagName === 'TBODY' || child.tagName === 'THEAD') && child.children.length === 0) {
-                        child.remove();
-                    }
-                });
-            });
-
-            // Titres de section : éviter qu'ils soient orphelins en bas de page
+            // Titres de section : on évite qu'ils soient seuls en bas de page
             container.querySelectorAll('.pdf-section-title, h2').forEach(function(el) {
                 el.style.pageBreakAfter = 'avoid';
-            });
-
-            // NETTOYAGE PAGES VIDES
-            container.querySelectorAll('.pdf-page').forEach(function(page) {
-                var hasVisual = page.querySelectorAll('img, canvas, svg, table').length > 0;
-                var textContent = page.textContent.replace(/\s+/g, '').trim();
-                if (!hasVisual && textContent.length < 30) {
-                    page.remove();
-                }
+                el.style.breakAfter = 'avoid';
             });
 
             await waitForImages(container);
@@ -2046,7 +2031,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.section-wrapper-pdf', '.pdf-page-title'] }
+                pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.pdf-page-title'] }
             };
 
             return new Promise(function(resolve, reject) {
@@ -2110,7 +2095,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true, logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.section-wrapper-pdf', '.pdf-page-title'] }
+                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block'] }
                 };
 
                 const worker = html2pdf().set(opt).from(container);
