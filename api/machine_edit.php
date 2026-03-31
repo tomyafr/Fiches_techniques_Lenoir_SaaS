@@ -214,6 +214,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
         .pdf-table thead {
             page-break-inside: avoid;
+            page-break-after: avoid;
         }
 
         .pdf-table {
@@ -557,6 +558,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             color: black;
             text-transform: uppercase;
             page-break-inside: avoid;
+            page-break-after: avoid;
         }
 
         .section-wrapper-pdf {
@@ -828,14 +830,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </tr>
                 </table>
 
-                <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:5px; border-bottom: 2px solid #d35400; padding-bottom:5px;">A) FICHE DE CONTRÔLE :</div>
+                <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:5px; border-bottom: 2px solid #d35400; padding-bottom:5px; page-break-after: avoid;">A) FICHE DE CONTRÔLE :</div>
                 
-                <div style="font-weight:bold; color:#1B4F72; margin-bottom:5px; font-size:14px;">
+                <div style="font-weight:bold; color:#1B4F72; margin-bottom:5px; font-size:14px; page-break-after: avoid;">
                     Poste : <input type="text" name="mesures[poste]" value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>" style="border:none; border-bottom:1px dashed #000; font-weight:bold; width:30px; background:transparent;" autocomplete="off">
                 </div>
 
                 <table
-                    style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000;">
+                    style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000; page-break-after: avoid; break-after: avoid;">
                     <tr>
                         <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N°
                             A.R.C.</td>
@@ -902,7 +904,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <?php
                 // === HELPERS ===
                 function newPdfPage() {
-                    return '</div><div class="pdf-page">'; 
+                    // MF-007 Fix: on ne casse plus les pages artificiellement entre sections
+                    // html2pdf gère les sauts via le système de tbody splitting
+                    return ''; 
                 }
                 function renderSectionB($photosData)
                 {
@@ -1136,6 +1140,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 <!-- DYNAMIC CONTENT DEPENDING ON MACHINE TYPE -->
                 <?php if ($isAPRF): ?>
 
+                    <?= newPdfPage() ?>
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
@@ -1239,6 +1244,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                     <!-- EDX SCHEMA -->
                 <?php elseif ($isEDX): ?>
 
+
+                    <?= newPdfPage() ?>
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(5) ?>
@@ -1383,6 +1390,8 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 <?php elseif ($isOV): ?>
 
+
+                    <?= newPdfPage() ?>
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(5) ?>
@@ -1470,6 +1479,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 <?php elseif ($isPAP): ?>
 
+                    <?= newPdfPage() ?>
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>
@@ -1568,6 +1578,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 <?php elseif ($isLevage): ?>
 
+                    <?= newPdfPage() ?>
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>
                             <?= renderDiagonalHeader(3) ?>

@@ -1136,9 +1136,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     page-break-inside: avoid !important; 
                     page-break-after: auto !important;
                 }
-                .section-wrapper-pdf {
-                    page-break-inside: avoid !important;
-                }
                 .pdf-section {
                     margin-bottom: 15px;
                 }
@@ -1766,7 +1763,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 hDiv.style.display = 'flex';
                                 hDiv.style.justifyContent = 'space-between';
                                 hDiv.style.alignItems = 'center';
-                                hDiv.style.marginBottom = '5px';
+                                hDiv.style.marginBottom = '20px';
                                 hDiv.style.paddingBottom = '0';
                                 hDiv.style.breakAfter = 'avoid';
                                 hDiv.style.pageBreakAfter = 'avoid';
@@ -1975,58 +1972,54 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             `;
             container.appendChild(endPage);
 
-            // CHANGEMENT MAJEUR : border-separate aide html2pdf à calculer les hauteurs de TR
-            container.querySelectorAll('table.pdf-table, table.controles').forEach(function(tbl) {
-                tbl.style.borderCollapse = 'separate';
-                tbl.style.borderSpacing = '0';
+            // CHANGEMENT MAJEUR : border-collapse aide html2pdf à mieux calculer les hauteurs
+            // On garde collapse (comme l'ancienne version qui marchait)
+            
+            // === MÉCANISME CLÉ DE PAGINATION (restauré depuis version 18 mars) ===
+            // html2pdf coupe les <tr> sauvagement. La solution qui MARCHE :
+            // wrapper chaque ligne dans son propre <tbody> avec page-break-inside: avoid
+            // puis mettre 'tbody' dans pagebreak.avoid de html2pdf
+            container.querySelectorAll('table.pdf-table, table.controles').forEach(function(table) {
+                var rows = Array.from(table.querySelectorAll('tr'));
+                if (!rows.length) return;
+                
+                var currentTbody = document.createElement('tbody');
+                currentTbody.style.pageBreakInside = 'avoid';
+                table.appendChild(currentTbody);
+                
+                var pendingSpans = 0;
+                rows.forEach(function(row) {
+                    var maxSpan = 1;
+                    row.querySelectorAll('th, td').forEach(function(c) {
+                        if (c.rowSpan > maxSpan) maxSpan = c.rowSpan;
+                    });
+                    if (maxSpan - 1 > pendingSpans) pendingSpans = maxSpan - 1;
+                    
+                    currentTbody.appendChild(row);
+                    
+                    if (pendingSpans > 0) {
+                        pendingSpans--;
+                    } else {
+                        currentTbody = document.createElement('tbody');
+                        currentTbody.style.pageBreakInside = 'avoid';
+                        table.appendChild(currentTbody);
+                    }
+                });
+                
+                // Supprimer les tbody/thead originaux devenus vides
+                Array.from(table.children).forEach(function(child) {
+                    if ((child.tagName === 'TBODY' || child.tagName === 'THEAD') && child.children.length === 0) {
+                        child.remove();
+                    }
+                });
             });
 
-            // === POST-PROCESSING PAGINATION (nettoyé V6) ===
-            // Règle unique : chaque <tr> ne peut pas être coupée
-            container.querySelectorAll('tr').forEach(function(tr) {
-                tr.style.pageBreakInside = 'avoid';
-            });
             // Titres de section : éviter qu'ils soient orphelins en bas de page
             container.querySelectorAll('.pdf-section-title, h2').forEach(function(el) {
                 el.style.pageBreakAfter = 'avoid';
             });
 
-            // ANTI-ORPHELIN THEAD : empêcher un header diagonal de se retrouver seul en bas de page
-            // On force un saut de page AVANT le thead s'il est trop près du bas
-            container.querySelectorAll('table.pdf-table, table.controles').forEach(function(tbl) {
-                var thead = tbl.querySelector('thead');
-                if (!thead) return;
-                // Mesurer la position du thead dans le conteneur
-                // On utilise une approche CSS : on wrap thead dans un élément avec margin-top négatif
-                // qui force html2pdf à garder le thead avec les premières lignes
-                thead.style.pageBreakInside = 'avoid';
-                thead.style.breakInside = 'avoid';
-                // Forcer que le thead ne soit jamais le dernier élément visible sur une page
-                var firstRows = tbl.querySelectorAll('tbody tr');
-                if (firstRows.length >= 2) {
-                    // Marquer les 2 premières lignes du tbody comme inséparables du thead
-                    firstRows[0].style.pageBreakBefore = 'avoid';
-                    firstRows[0].style.breakBefore = 'avoid';
-                    if (firstRows[1]) {
-                        firstRows[1].style.pageBreakBefore = 'avoid';
-                        firstRows[1].style.breakBefore = 'avoid';
-                    }
-                }
-            });
-
-            // ANTI-COUPURE SECTION HEADERS BLEUS : les lignes section-header-row ne doivent pas être seules
-            container.querySelectorAll('.section-header-row').forEach(function(row) {
-                row.style.pageBreakAfter = 'avoid';
-                row.style.breakAfter = 'avoid';
-                // La ligne qui suit un section header doit rester collée
-                var next = row.nextElementSibling;
-                if (next && next.tagName === 'TR') {
-                    next.style.pageBreakBefore = 'avoid';
-                    next.style.breakBefore = 'avoid';
-                }
-            });
-
-            // NETTOYAGE PAGES VIDES — supprime les .pdf-page sans contenu réel
+            // NETTOYAGE PAGES VIDES
             container.querySelectorAll('.pdf-page').forEach(function(page) {
                 var hasVisual = page.querySelectorAll('img, canvas, svg, table').length > 0;
                 var textContent = page.textContent.replace(/\s+/g, '').trim();
@@ -2053,7 +2046,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'thead', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.section-wrapper-pdf', '.pdf-page-title', '.section-header-row'] }
+                pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.section-wrapper-pdf', '.pdf-page-title'] }
             };
 
             return new Promise(function(resolve, reject) {
@@ -2117,7 +2110,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true, logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'thead', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.section-wrapper-pdf', '.pdf-page-title', '.section-header-row'] }
+                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.section-wrapper-pdf', '.pdf-page-title'] }
                 };
 
                 const worker = html2pdf().set(opt).from(container);
