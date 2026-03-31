@@ -214,7 +214,6 @@ foreach ($recoFreq as $rfk => $rfv) {
 
         .pdf-table thead {
             page-break-inside: avoid;
-            page-break-after: avoid;
         }
 
         .pdf-table {
@@ -558,7 +557,6 @@ foreach ($recoFreq as $rfk => $rfv) {
             color: black;
             text-transform: uppercase;
             page-break-inside: avoid;
-            page-break-after: avoid;
         }
 
         .section-wrapper-pdf {
@@ -830,14 +828,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </tr>
                 </table>
 
-                <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:5px; border-bottom: 2px solid #d35400; padding-bottom:5px; page-break-after: avoid;">A) FICHE DE CONTRÔLE :</div>
+                <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:5px; border-bottom: 2px solid #d35400; padding-bottom:5px;">A) FICHE DE CONTRÔLE :</div>
                 
-                <div style="font-weight:bold; color:#1B4F72; margin-bottom:5px; font-size:14px; page-break-after: avoid;">
+                <div style="font-weight:bold; color:#1B4F72; margin-bottom:5px; font-size:14px;">
                     Poste : <input type="text" name="mesures[poste]" value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>" style="border:none; border-bottom:1px dashed #000; font-weight:bold; width:30px; background:transparent;" autocomplete="off">
                 </div>
 
                 <table
-                    style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000; page-break-after: avoid; break-after: avoid;">
+                    style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000;">
                     <tr>
                         <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N°
                             A.R.C.</td>

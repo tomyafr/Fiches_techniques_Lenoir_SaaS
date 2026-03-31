@@ -1136,6 +1136,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     page-break-inside: avoid !important; 
                     page-break-after: auto !important;
                 }
+                .section-wrapper-pdf {
+                    page-break-inside: avoid !important;
+                }
                 .pdf-section {
                     margin-bottom: 15px;
                 }
@@ -1972,46 +1975,27 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             `;
             container.appendChild(endPage);
 
-            // CHANGEMENT MAJEUR CONTRE LA COUPURE DE CANVAS : border-collapse empêche html2pdf de calculer la hauteur des TR
-            // On le force en "separate" pour donner à html2pdf des hauteurs de TR nettes et mesurables sans overlap.
+            // CHANGEMENT MAJEUR : border-separate aide html2pdf à calculer les hauteurs de TR
             container.querySelectorAll('table.pdf-table, table.controles').forEach(function(tbl) {
                 tbl.style.borderCollapse = 'separate';
                 tbl.style.borderSpacing = '0';
             });
 
-            // Blindage ultime anti-coupure de tableaux
-            // 1) Chaque ligne <tr> ne peut pas être coupée
+            // === POST-PROCESSING PAGINATION (nettoyé V6) ===
+            // Règle unique : chaque <tr> ne peut pas être coupée
             container.querySelectorAll('tr').forEach(function(tr) {
                 tr.style.pageBreakInside = 'avoid';
-                tr.classList.add('avoid-break');
             });
-            // 2) Les sections pdf-section ne sont pas coupées
-            container.querySelectorAll('.pdf-section').forEach(function(sec) {
-                sec.style.pageBreakInside = 'avoid';
-            });
-            // 3) Les petits tableaux (< 12 lignes) ne peuvent pas être coupés du tout
-            container.querySelectorAll('table').forEach(function(tbl) {
-                if (tbl.querySelectorAll('tr').length <= 12) {
-                    tbl.style.pageBreakInside = 'avoid';
-                    tbl.classList.add('avoid-break');
-                }
-            });
-            // 4) Titres de section : on évite qu'ils soient seuls en bas de page
-            container.querySelectorAll('.pdf-section-title, .pdf-section, h2').forEach(function(el) {
+            // Titres de section : éviter qu'ils soient orphelins en bas de page
+            container.querySelectorAll('.pdf-section-title, h2').forEach(function(el) {
                 el.style.pageBreakAfter = 'avoid';
-                el.style.breakAfter = 'avoid';
             });
 
-            // 5) NETTOYAGE DES PAGES VIDES — supprime les .pdf-page sans contenu visible
+            // NETTOYAGE PAGES VIDES — supprime les .pdf-page sans contenu réel
             container.querySelectorAll('.pdf-page').forEach(function(page) {
-                // Vérifier s'il y a du contenu réel : texte, images, canvas, tableaux
-                var hasImages = page.querySelectorAll('img, canvas, svg').length > 0;
-                var hasTables = page.querySelectorAll('table').length > 0;
+                var hasVisual = page.querySelectorAll('img, canvas, svg, table').length > 0;
                 var textContent = page.textContent.replace(/\s+/g, '').trim();
-                
-                // Une page est considérée vide si elle n'a pas d'images, pas de tableaux,
-                // et moins de 20 caractères de texte (pour couvrir les espaces/sauts de ligne résiduels)
-                if (!hasImages && !hasTables && textContent.length < 20) {
+                if (!hasVisual && textContent.length < 30) {
                     page.remove();
                 }
             });
@@ -2034,7 +2018,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.avoid-break', '.pdf-page-title'] }
+                pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.section-wrapper-pdf', '.pdf-page-title'] }
             };
 
             return new Promise(function(resolve, reject) {
@@ -2098,7 +2082,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true, logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.avoid-break', '.pdf-page-title'] }
+                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.qr-block', '.section-wrapper-pdf', '.pdf-page-title'] }
                 };
 
                 const worker = html2pdf().set(opt).from(container);
