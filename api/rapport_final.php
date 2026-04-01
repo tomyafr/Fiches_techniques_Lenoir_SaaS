@@ -7,6 +7,12 @@ $db = getDB();
 $userId = $_SESSION['user_id'];
 $id = $_GET['id'] ?? null;
 
+try {
+    $db->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS signature_base64 TEXT");
+    $db->exec("ALTER TABLE interventions ADD COLUMN IF NOT EXISTS contact_prenom VARCHAR(100)");
+    $db->exec("ALTER TABLE interventions ADD COLUMN IF NOT EXISTS contact_nom VARCHAR(100)");
+} catch (Exception $e) { }
+
 if (!$id) {
     header('Location: technicien.php');
     exit;
@@ -43,17 +49,18 @@ $stmtM = $db->prepare('SELECT * FROM machines WHERE intervention_id = ? ORDER BY
 $stmtM->execute([$id]);
 $allMachines = $stmtM->fetchAll();
 
-$machines = array_filter($allMachines, function($m) {
+$machines = array_filter($allMachines, function ($m) {
     $mes = json_decode($m['mesures'] ?? '{}', true);
     return !($mes['excluded'] ?? false);
 });
 $machines = array_values($machines); // Re-index
 
-// Fetch technicien name
-$stmtT = $db->prepare('SELECT prenom, nom FROM users WHERE id = ?');
+// Fetch technicien name and signature
+$stmtT = $db->prepare('SELECT prenom, nom, signature_base64 FROM users WHERE id = ?');
 $stmtT->execute([$intervention['technicien_id']]);
 $tech = $stmtT->fetch();
 $techName = ($tech['prenom'] ?? '') . ' ' . ($tech['nom'] ?? '');
+$techSignatureBase64 = $tech['signature_base64'] ?? '';
 
 // Handle form POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -61,13 +68,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     if ($_POST['action'] === 'save_rapport') {
         try {
+            $contactPrenom = trim($_POST['contact_prenom'] ?? '');
             $contactNom = trim($_POST['contact_nom'] ?? '');
             $contactFonction = trim($_POST['contact_fonction'] ?? '');
             $contactEmail = trim($_POST['contact_email'] ?? '');
             $contactTel = trim($_POST['contact_telephone'] ?? '');
             $nomSignataire = trim($_POST['nom_signataire'] ?? '');
 
-            if (empty($contactNom)) { $error = "Le nom du contact est obligatoire."; }
+            if (empty($contactPrenom)) { $error = "Le prénom du contact est obligatoire."; }
+            elseif (empty($contactNom)) { $error = "Le nom du contact est obligatoire."; }
+            elseif (strlen($contactPrenom) > 50) { $error = "Le prénom du contact ne doit pas dépasser 50 caractères."; }
             elseif (strlen($contactNom) > 50) { $error = "Le nom du contact ne doit pas dépasser 50 caractères."; }
             elseif (empty($nomSignataire)) { $error = "Le nom du signataire est obligatoire."; }
 
@@ -88,6 +98,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $sigClient = $_POST['sigClient'] ?? null;
             $sigTech = $_POST['sigTech'] ?? null;
 
+            // Save new technician signature permanently if present
+            if (!empty($sigTech)) {
+                try {
+                    $db->prepare('UPDATE users SET signature_base64 = ? WHERE id = ?')
+                       ->execute([$sigTech, $userId]);
+                } catch (Exception $e) {}
+            }
+
             // Update client info
             $db->prepare('UPDATE clients SET adresse = ?, code_postal = ?, ville = ?, pays = ?,
                 contact_email = ?, contact_telephone = ?, contact_fonction = ? WHERE id = ?')
@@ -95,13 +113,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
             // Update intervention
             $db->prepare('UPDATE interventions SET
-                contact_nom = ?, commentaire_technicien = ?, commentaire_client = ?,
+                contact_prenom = ?, contact_nom = ?, commentaire_technicien = ?, commentaire_client = ?,
                 souhait_rapport_unique = ?, souhait_offre_pieces = ?,
                 souhait_pieces_intervention = ?, souhait_aucune_offre = ?,
                 signature_client = ?, signature_technicien = ?,
                 nom_signataire_client = ?, date_signature = NOW(),
                 statut = ? WHERE id = ?')
                 ->execute([
+                    $contactPrenom,
                     $contactNom,
                     $commentaireTech,
                     $commentaireClient,
@@ -142,13 +161,13 @@ $emptyMachinesIds = [];
 foreach ($machines as &$m) {
     $donnees = json_decode($m['donnees_controle'] ?? '{}', true);
     $mesures = json_decode($m['mesures'] ?? '{}', true);
-    
+
     // Durée réalisée par machine
     $t = $mesures['temps_realise'] ?? '';
     if (preg_match('/(\d+)\s*h\s*(\d*)/i', $t, $mt)) {
-        $totalMinutes += (int)$mt[1] * 60 + (int)($mt[2] ?: 0);
+        $totalMinutes += (int) $mt[1] * 60 + (int) ($mt[2] ?: 0);
     } elseif (is_numeric($t)) {
-        $totalMinutes += (int)($t * 60);
+        $totalMinutes += (int) ($t * 60);
     } else {
         // Fallback to hours diff
         $h_deb = $mesures['heure_debut'] ?? '';
@@ -161,19 +180,25 @@ foreach ($machines as &$m) {
             }
         }
     }
-    
+
     // États de contrôle
     $pointsCount = 0;
     foreach ($donnees as $k => $v) {
-        if (strpos($k, '_radio') !== false || strpos($k, '_stat') !== false || 
-            preg_match('/^(aprf|edx|ov|levage|pap)_(?!.*comment).*/', $k)) {
-            
+        if (
+            strpos($k, '_radio') !== false || strpos($k, '_stat') !== false ||
+            preg_match('/^(aprf|edx|ov|levage|pap)_(?!.*comment).*/', $k)
+        ) {
+
             if (!empty($v) && $v !== 'pc') {
                 $pointsCount++;
-                if ($v === 'c' || $v === 'bon' || $v === 'OK') $totalOk++;
-                elseif ($v === 'aa' || $v === 'r' || $v === 'A améliorer') $totalAmeliorer++;
-                elseif ($v === 'nc' || $v === 'hs' || $v === 'Non conforme') $totalNonConforme++;
-                elseif ($v === 'nr' || $v === 'A remplacer') $totalRemplacer++;
+                if ($v === 'c' || $v === 'bon' || $v === 'OK')
+                    $totalOk++;
+                elseif ($v === 'aa' || $v === 'r' || $v === 'A améliorer')
+                    $totalAmeliorer++;
+                elseif ($v === 'nc' || $v === 'hs' || $v === 'Non conforme')
+                    $totalNonConforme++;
+                elseif ($v === 'nr' || $v === 'A remplacer')
+                    $totalRemplacer++;
             }
         }
     }
@@ -387,7 +412,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             cursor: crosshair;
             display: block;
             touch-action: none;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .btn-final {
@@ -400,7 +425,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-top: 1.5rem;
@@ -434,68 +459,106 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             color: var(--primary);
         }
 
+        /* Premium Downloader Overlay */
+        #pdfDownloadOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #020617;
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .loader-lenoir {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .loader-lenoir::before, .loader-lenoir::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            border-top-color: var(--primary);
+            width: 100%;
+            height: 100%;
+            animation: spin 1.5s linear infinite;
+        }
+
+        .loader-lenoir::after {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            border-top-color: var(--accent-cyan);
+            animation-duration: 1s;
+            animation-direction: reverse;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .download-status-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
         @media print {
-
-            .mobile-header,
-            .btn-final,
-            .sig-clear {
-                display: none !important;
-            }
-
-            .rapport-logo {
-                filter: none !important;
-                /* Keep original color in PDF/Print */
-            }
+            .mobile-header, .btn-final, .sig-clear { display: none !important; }
+            .rapport-logo { filter: none !important; }
         }
 
         @media screen {
-            .rapport-logo {
-                /* Keep original colors even on screen */
-                filter: none;
-                opacity: 1;
-            }
+            .rapport-logo { filter: none; opacity: 1; }
         }
     </style>
 </head>
 
 <body>
+    <div id="pdfDownloadOverlay">
+        <div class="loader-lenoir"></div>
+        <div class="download-status-text">Génération de votre rapport premium</div>
+        <div style="color: var(--text-dim); font-size: 0.9rem;">Veuillez patienter quelques instants...</div>
+    </div>
+
     <header class="mobile-header">
         <a href="intervention_edit.php?id=<?= $id ?>" class="btn btn-ghost"
-            style="padding: 0.5rem; color: var(--accent-cyan); text-decoration: none;">
-            ← Retour
+            style="padding: 0.5rem; color: var(--accent-cyan); text-decoration: none; display:flex; align-items:center; gap:6px;">
+            <img src="/assets/icon_back_blue.svg" style="height: 18px; width: 18px;"> Retour
         </a>
         <span class="mobile-header-title">Rapport Final</span>
         <span class="mobile-header-user"></span>
     </header>
 
     <div class="rapport-page">
-        <form method="POST" id="rapportForm">
+        <form method="POST" id="rapportForm" autocomplete="off">
             <?= csrfField() ?>
             <input type="hidden" name="action" value="save_rapport">
 
             <?php if (isset($_GET['msg']) && $_GET['msg'] === 'ok'): ?>
                 <div id="successBanner"
                     style="background: rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.4); color:#10b981; padding:1.5rem; border-radius:12px; margin-bottom:1.5rem; text-align:center;">
-                    <div style="font-size:2.5rem; margin-bottom:0.5rem;">✅</div>
+                    <div style="margin-bottom:1rem; text-align:center;">
+                        <img src="/assets/check_success.svg" style="height: 80px; width: 80px;">
+                    </div>
                     <h3 style="margin:0 0 0.5rem 0; color:#10b981;">Rapport finalisé avec succès !</h3>
                     <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1rem;">L'intervention ARC
                         <?= htmlspecialchars($intervention['numero_arc']) ?> a été clôturée.
                     </p>
-
-                    <?php if ($nbMachinesEmpty > 0): ?>
-                    <div style="background: rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: left;">
-                        <div style="font-weight: 700; color: #f59e0b; margin-bottom: 0.5rem;">⚠️ <?= $nbMachinesEmpty ?> fiche(s) non remplie(s) détectée(s)</div>
-                        <p style="font-size: 0.85rem; margin-bottom: 0.8rem; color: var(--text-dim);">Veuillez choisir comment inclure ces machines vides dans le rapport final :</p>
-                        <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; cursor: pointer; color: var(--text);">
-                            <input type="radio" name="empty_fiches_option" value="exclude" checked onclick="window.LM_RAPPORT.emptyFichesOption='exclude'">
-                            Exclure totalement les fiches vides du PDF
-                        </label>
-                        <label style="display: block; font-size: 0.85rem; cursor: pointer; color: var(--text);">
-                            <input type="radio" name="empty_fiches_option" value="condensed" onclick="window.LM_RAPPORT.emptyFichesOption='condensed'">
-                            Les inclure en version condensée (1 page "Non contrôlé")
-                        </label>
-                    </div>
-                    <?php endif; ?>
 
                     <!-- Toast email (injecté par JS) -->
                     <div id="emailToast"
@@ -506,84 +569,115 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <!-- Bouton Envoyer PDF par email -->
                         <button type="button" id="btnSendEmail" onclick="lancerEnvoiEmail()"
                             style="padding:0.7rem 1.5rem; background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem;">
-                            <span id="btnSendEmailIcon">📧</span>
+                            <span id="btnSendEmailIcon"><img src="/assets/icon_email_send.svg" style="height: 18px; width: 18px; vertical-align: middle;"></span>
                             <span id="btnSendEmailLabel">Envoyer PDF par email</span>
                         </button>
                         <!-- Bouton Télécharger PDF -->
                         <button type="button" id="btnDownloadPDF" onclick="telechargerPDF()"
-                            style="padding:0.7rem 1.5rem; background:var(--primary); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem;">
-                            ⬇️ Télécharger le PDF
+                            style="padding:0.7rem 1.5rem; background:var(--primary); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem;">
+                            <span><img src="/assets/icon_download.svg" style="height: 18px; width: 18px; vertical-align: middle;"></span> <span id="btnDownloadPDFLabel">Télécharger le PDF</span>
                         </button>
                         <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>"
-                            style="padding:0.7rem 1.5rem; background:rgba(255,255,255,0.1); color:var(--text); border:1px solid var(--glass-border); border-radius:8px; font-weight:600; text-decoration:none; font-size:0.9rem;">
-                            ← Retour au tableau de bord
+                            style="padding:0.7rem 1.5rem; background:rgba(255,255,255,0.1); color:var(--text); border:1px solid var(--glass-border); border-radius:8px; font-weight:600; text-decoration:none; font-size:0.9rem; display:flex; align-items:center; gap:8px;">
+                            <span><img src="/assets/icon_back_green.svg" style="height: 18px; width: 18px; vertical-align: middle;"></span>
+                            <span style="color:#27AE60;">Retour au tableau de bord</span>
                         </a>
                     </div>
                 </div>
             <?php endif; ?>
 
-                <!-- Données PHP exposées pour le JS -->
-                <script>
-                    window.LM_RAPPORT = {
-                        interventionId: <?= (int) $id ?>,
-                        clientEmail: <?= json_encode($intervention['contact_email'] ?? $intervention['c_email'] ?? '') ?>,
-                        nomSociete: <?= json_encode($intervention['nom_societe'] ?? '') ?>,
-                        legal: {
-                            address: <?= json_encode(COMPANY_LEGAL_ADDRESS) ?>,
-                            contact: <?= json_encode(COMPANY_LEGAL_CONTACT) ?>,
-                            siret: <?= json_encode(COMPANY_LEGAL_SIRET) ?>
-                        },
-                        dateInt: <?= json_encode(date('d/m/Y', strtotime($intervention['date_intervention'] ?? 'now'))) ?>,
-                        csrfToken: <?= json_encode(getCsrfToken()) ?>,
-                        techName: <?= json_encode($techName) ?>,
-                        arc: <?= json_encode($intervention['numero_arc'] ?? '') ?>,
-                        synth: {
-                            tech: <?= json_encode($techName) ?>,
-                            date: <?= json_encode(date('d/m/Y', strtotime($intervention['date_intervention'] ?? 'now'))) ?>,
-                            duree: <?= json_encode($dureeSynth) ?>,
-                            nbMachines: <?= count($machines) ?>,
-                            ok: <?= $totalOk ?>,
-                            aa: <?= $totalAmeliorer ?>,
-                            nc: <?= $totalNonConforme ?>,
-                            nr: <?= $totalRemplacer ?>,
-                            na: <?= $totalNA ?>,
-                            score: <?= $scoreConformite ?>,
-                            nbMachinesFilled: <?= $nbMachinesFilled ?>,
-                            nbMachinesEmpty: <?= $nbMachinesEmpty ?>
-                        },
-                        sigTech: <?= json_encode($intervention['signature_technicien'] ?? '') ?>,
-                        sigClient: <?= json_encode($intervention['signature_client'] ?? '') ?>,
-                        pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>, 
-                        emptyFichesOption: 'exclude',
-                        emptyMachinesIds: <?= json_encode($emptyMachinesIds) ?>,
-                        machinesIds: [<?= implode(',', array_column($machines, 'id')) ?>],
-                        machinesData: <?= json_encode(array_values(array_map(function($m) use ($intervention) {
-                            return [
-                                'id' => $m['id'],
-                                'arc' => $intervention['numero_arc'],
-                                'of' => $m['numero_of'] ?? '',
-                                'designation' => $m['designation'] ?? '',
-                                'annee' => $m['annee_fabrication'] ?? '',
-                                'points_count' => $m['points_count'] ?? 0
-                            ];
-                        }, $machines))) ?>
-                    };
-                </script>
+            <!-- Données PHP exposées pour le JS -->
+            <script>
+                window.LM_RAPPORT = {
+                    interventionId: <?= (int) $id ?>,
+                    clientEmail: <?= json_encode($intervention['contact_email'] ?? $intervention['c_email'] ?? '') ?>,
+                    nomSociete: <?= json_encode($intervention['nom_societe'] ?? '') ?>,
+                    legal: {
+                        address: <?= json_encode(COMPANY_LEGAL_ADDRESS) ?>,
+                        contact: <?= json_encode(COMPANY_LEGAL_CONTACT) ?>,
+                        siret: <?= json_encode(COMPANY_LEGAL_SIRET) ?>
+                    },
+                    dateInt: <?= json_encode(date('d/m/Y', strtotime($intervention['date_intervention'] ?? 'now'))) ?>,
+                    csrfToken: <?= json_encode(getCsrfToken()) ?>,
+                    techName: <?= json_encode($techName) ?>,
+                    arc: <?= json_encode($intervention['numero_arc'] ?? '') ?>,
+                    synth: {
+                        tech: <?= json_encode($techName) ?>,
+                        date: <?= json_encode(date('d/m/Y', strtotime($intervention['date_intervention'] ?? 'now'))) ?>,
+                        duree: <?= json_encode($dureeSynth) ?>,
+                        nbMachines: <?= count($machines) ?>,
+                        ok: <?= $totalOk ?>,
+                        aa: <?= $totalAmeliorer ?>,
+                        nc: <?= $totalNonConforme ?>,
+                        nr: <?= $totalRemplacer ?>,
+                        na: <?= $totalNA ?>,
+                        score: <?= $scoreConformite ?>,
+                        nbMachinesFilled: <?= $nbMachinesFilled ?>,
+                        nbMachinesEmpty: <?= $nbMachinesEmpty ?>
+                    },
+                    sigTech: <?= json_encode($intervention['signature_technicien'] ?: $techSignatureBase64) ?>,
+                    sigClient: <?= json_encode($intervention['signature_client'] ?? '') ?>,
+                    pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>,
+                    emptyFichesOption: 'include',
+                    emptyMachinesIds: <?= json_encode($emptyMachinesIds) ?>,
+                    machinesIds: [<?= implode(',', array_column($machines, 'id')) ?>],
+                    machinesData: <?= json_encode(array_values(array_map(function ($m) use ($intervention) {
+                        $mes = json_decode($m['mesures'] ?? '{}', true);
+                        return [
+                            'id' => $m['id'],
+                            'arc' => $intervention['numero_arc'],
+                            'of' => $m['numero_of'] ?? '',
+                            'designation' => $m['designation'] ?? '',
+                            'repere' => $mes['repere'] ?? '—',
+                            'annee' => $m['annee_fabrication'] ?? '',
+                            'points_count' => $m['points_count'] ?? 0,
+                            'dysfonctionnements' => $m['dysfonctionnements'] ?? '',
+                            'conclusion' => $m['conclusion'] ?? ''
+                        ];
+                    }, $machines))) ?>
+                };
+            </script>
 
             <?php if (!empty($error)): ?>
                 <div
-                    style="background: rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.4); color:#f43f5e; padding:1rem; border-radius:8px; margin-bottom:1.5rem; font-size:0.85rem;">
-                    ⚠️ <?= htmlspecialchars($error) ?>
+                    style="background: rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.4); color:#f43f5e; padding:1rem; border-radius:8px; margin-bottom:1.5rem; font-size:0.85rem; display:flex; align-items:center; gap:10px;">
+                    <img src="/assets/icons/warning.png" style="height: 18px; width: 18px;"> <?= htmlspecialchars($error) ?>
                 </div>
             <?php endif; ?>
 
-            <!-- EN-TÊTE -->
-            <div class="rapport-header card glass">
-                <img src="/assets/lenoir_logo_doc.png" alt="LENOIR-MEC" class="rapport-logo"
-                    style="height: 60px; width: auto; object-fit: contain; margin: 0 auto 1rem auto; display: block; max-width: 100%;">
-                <h1>Rapport d'expertise sur site</h1>
-                <div class="arc-badge">ARC
-                    <?= htmlspecialchars($intervention['numero_arc']) ?>
+            <!-- ANALYSE IA GÉNÉRALE (Rectangle Orange) -->
+            <div id="ai-synthesis-block" class="card" style="background: rgba(255, 179, 0, 0.1); border: 2px solid var(--primary); padding: 1.5rem; margin-bottom: 2rem; border-radius: 12px; position: relative;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <img src="/assets/robot_ai_blue.png" style="height: 40px; width: 40px; object-fit: contain;">
+                        <h2 style="color: var(--primary); margin: 0; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;">Analyse Intelligente Globale</h2>
+                    </div>
+                    <button type="button" onclick="generateAllIA()" id="btnGenerateAllIa" class="btn btn-primary" style="background: var(--primary); color: #000; font-weight: 700; font-size: 0.8rem; padding: 0.5rem 1rem; border-radius: 8px; display: flex; align-items: center; gap: 8px;">
+                        <span>🚀</span> Lancer l'IA sur toutes les fiches
+                    </button>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">
+                    Cette fonction analyse automatiquement chaque fiche pour générer les sections "Dysfonctionnements" et "Conclusions" en se basant sur vos relevés. 
+                    <strong>Les fiches déjà modifiées manuellement ne seront pas écrasées sans confirmation.</strong>
+                </p>
+                <div id="ai-global-progress" style="display: none; margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 5px; color: var(--accent-cyan);">
+                        <span id="ai-progress-text">Traitement en cours...</span>
+                        <span id="ai-progress-percent">0%</span>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                        <div id="ai-progress-bar" style="width: 0%; height: 100%; background: var(--accent-cyan); transition: width 0.3s ease;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EN-TÊTE PREMIUM -->
+            <div class="rapport-header card glass" style="background:#020617; padding: 2.5rem; border-color: rgba(255,255,255,0.1); text-align: center;">
+                <img src="/assets/lenoir_logo_trans.svg" alt="LENOIR-MEC" 
+                    style="height: 60px; width: auto; object-fit: contain; display: block; margin: 0 auto 1.5rem auto;">
+                <h1 style="color: #fff; margin-bottom: 0.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Rapport d'expertise sur site</h1>
+                <div class="arc-badge" style="background: rgba(255,179,0,0.15); color: #ffb300; border: 1px solid rgba(255,179,0,0.3); font-weight: bold;">
+                    ARC <?= htmlspecialchars($intervention['numero_arc']) ?>
                 </div>
             </div>
 
@@ -593,12 +687,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             </div>
             <div class="machines-recap">
                 <?php foreach ($machines as $m): ?>
-                    <?php 
-                        $pct = ($m['points_count'] > 0) ? 'filled' : 'empty';
-                        $statusColor = ($m['points_count'] > 5) ? 'var(--accent-cyan)' : 'var(--error)';
+                    <?php
+                    $pct = ($m['points_count'] > 0) ? 'filled' : 'empty';
+                    $statusColor = ($m['points_count'] > 5) ? 'var(--accent-cyan)' : 'var(--error)';
                     ?>
                     <span class="machine-tag" style="border-left: 4px solid <?= $statusColor ?>;">
-                        ⚙️
+                        <img src="/assets/icons/machine.png" style="height: 14px; width: 14px; vertical-align: middle; margin-right: 4px;">
                         <?= htmlspecialchars($m['designation']) ?>
                         <?php $mm = json_decode($m['mesures'] ?? '{}', true); ?>
                         <?php if (!empty($mm['repere'])): ?>
@@ -620,38 +714,42 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                 <div class="field-row">
                     <div class="form-group">
-                        <label class="label">Nom et Prénom du contact <span style="color:var(--error);">*</span></label>
-                        <input type="text" name="contact_nom" id="contact_nom" class="input" placeholder="Nom et prénom..."
-                            value="<?= htmlspecialchars($intervention['contact_nom'] ?? '') ?>" required maxlength="50">
-                        <small id="contact_nom_warning" style="color: var(--error); display: none; font-size: 0.75rem; margin-top: 0.25rem;">
-                            ⚠️ Attention: Caractères répétés détectés.
-                        </small>
+                        <label class="label">Prénom du contact <span style="color:var(--error);">*</span></label>
+                        <input type="text" name="contact_prenom" id="contact_prenom" class="input" placeholder="Prénom..."
+                            value="<?= htmlspecialchars($intervention['contact_prenom'] ?? '') ?>" required maxlength="50">
                     </div>
+                    <div class="form-group">
+                        <label class="label">Nom du contact <span style="color:var(--error);">*</span></label>
+                        <input type="text" name="contact_nom" id="contact_nom" class="input" placeholder="Nom..."
+                            value="<?= htmlspecialchars($intervention['contact_nom'] ?? '') ?>" required maxlength="50">
+                    </div>
+                </div>
+
+                <div class="field-row">
                     <div class="form-group">
                         <label class="label">Fonction / Rôle</label>
                         <input type="text" name="contact_fonction" class="input" placeholder="Resp. maintenance..."
                             value="<?= htmlspecialchars($intervention['contact_fonction'] ?? $intervention['c_fonction'] ?? '') ?>">
                     </div>
-                </div>
-
-                <div class="field-row">
                     <div class="form-group">
                         <label class="label">Email <span style="color:var(--error);">*</span></label>
                         <input type="email" name="contact_email" class="input" placeholder="client@societe.com"
                             value="<?= htmlspecialchars($intervention['contact_email'] ?? $intervention['c_email'] ?? '') ?>"
                             required>
                     </div>
+                </div>
+
+                <div class="field-row">
                     <div class="form-group">
                         <label class="label">Téléphone</label>
                         <input type="tel" name="contact_telephone" class="input" placeholder="06 12 34 56 78"
                             value="<?= htmlspecialchars($intervention['contact_telephone'] ?? $intervention['c_tel'] ?? '') ?>">
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="label">Adresse</label>
-                    <input type="text" name="adresse" class="input" placeholder="Rue, numéro..."
-                        value="<?= htmlspecialchars($intervention['adresse'] ?? '') ?>">
+                    <div class="form-group">
+                        <label class="label">Adresse</label>
+                        <input type="text" name="adresse" class="input" placeholder="Rue, numéro..."
+                            value="<?= htmlspecialchars($intervention['adresse'] ?? '') ?>">
+                    </div>
                 </div>
 
                 <div class="field-row">
@@ -702,11 +800,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <span>Aucune offre</span>
                 </label>
             </div>
-            
+
             <script>
                 // MF-010: Mutual exclusivity for "Le client souhaite" options (radio-group behavior)
                 document.querySelectorAll('.chk-souhait').forEach(chk => {
-                    chk.addEventListener('change', function() {
+                    chk.addEventListener('change', function () {
                         if (this.checked) {
                             document.querySelectorAll('.chk-souhait').forEach(other => {
                                 if (other !== this) other.checked = false;
@@ -724,7 +822,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <!-- DATE & HEURE -->
             <div class="section-title">Date et heure</div>
             <div class="datetime-display">
-                📅
+                <img src="/assets/icon_calendar_blue.svg" style="height: 24px; width: 24px; vertical-align: middle; margin-right: 8px;">
                 <?= $now ?>
             </div>
 
@@ -782,14 +880,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         function resizeCanvas(canvas, pad = null) {
             const ratio = Math.max(window.devicePixelRatio || 1, 1);
             const containerWidth = canvas.offsetWidth || canvas.parentElement.offsetWidth || 600;
-            
+
             canvas.width = containerWidth * ratio;
             canvas.height = 200 * ratio;
             canvas.style.height = '200px';
-            
+
             const context = canvas.getContext('2d');
             context.scale(ratio, ratio);
-            
+
             if (pad) {
                 pad.clear(); // Réinitialise pour éviter les distorsions si on redimensionne
             }
@@ -801,7 +899,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         function initSignatures() {
             const canvasC = document.getElementById('canvasClient');
             const canvasT = document.getElementById('canvasTech');
-            
+
             if (!window.SignaturePad) {
                 console.error("SignaturePad library not loaded");
                 return;
@@ -813,7 +911,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             // Tech Pad
             resizeCanvas(canvasT);
             canvasWidthT = canvasT.offsetWidth;
-            padTech = new SignaturePad(canvasT, { 
+            padTech = new SignaturePad(canvasT, {
                 penColor: 'black',
                 throttle: 16,
                 minWidth: 1.5,
@@ -822,13 +920,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             if (window.LM_RAPPORT && window.LM_RAPPORT.sigTech) {
                 try {
                     padTech.fromDataURL(window.LM_RAPPORT.sigTech, { ratio: dpr, width: canvasT.width / dpr, height: canvasT.height / dpr });
-                } catch(e) { console.error("Error loading tech sig:", e); }
+                } catch (e) { console.error("Error loading tech sig:", e); }
             }
 
             // Client Pad
             resizeCanvas(canvasC);
             canvasWidthC = canvasC.offsetWidth;
-            padClient = new SignaturePad(canvasC, { 
+            padClient = new SignaturePad(canvasC, {
                 penColor: 'blue',
                 throttle: 16,
                 minWidth: 1.5,
@@ -837,7 +935,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             if (window.LM_RAPPORT && window.LM_RAPPORT.sigClient) {
                 try {
                     padClient.fromDataURL(window.LM_RAPPORT.sigClient, { ratio: dpr, width: canvasC.width / dpr, height: canvasC.height / dpr });
-                } catch(e) { console.error("Error loading client sig:", e); }
+                } catch (e) { console.error("Error loading client sig:", e); }
             }
         }
 
@@ -846,7 +944,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         window.addEventListener('resize', () => {
             const cT = document.getElementById('canvasTech');
             const cC = document.getElementById('canvasClient');
-            
+
             // Only resize and clear if the actual container width changed (to avoid scroll-resize issues on mobile)
             if (cT && padTech && cT.offsetWidth && cT.offsetWidth !== canvasWidthT) {
                 canvasWidthT = cT.offsetWidth;
@@ -876,7 +974,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             for (let f of fieldsToCheck) {
                 const val = document.querySelector('[name="' + f.name + '"]')?.value || '';
                 if (val.length < 2 && val.length > 0) continue; // Skip very shorts handled elsewhere
-                
+
                 let foundMatch = false;
                 for (let p of testPatterns) {
                     if (p.test(val)) {
@@ -884,7 +982,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         break;
                     }
                 }
-                
+
                 if (!foundMatch && forbiddenWords.includes(val.toLowerCase().trim())) {
                     foundMatch = true;
                 }
@@ -925,25 +1023,25 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 alert('Veuillez faire signer le client.');
                 return false;
             }
-            
+
             document.getElementById('sigTechInput').value = padTech.toDataURL();
             document.getElementById('sigClientInput').value = padClient.toDataURL();
             return true;
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // --- BUG-018: Exclusivité des checkboxes "Le client souhaite" ---
             const chkUnique = document.querySelector('[name="souhait_rapport_unique"]');
             const otherChks = document.querySelectorAll('[name="souhait_offre_pieces"], [name="souhait_pieces_intervention"], [name="souhait_aucune_offre"]');
-            
+
             if (chkUnique) {
-                chkUnique.addEventListener('change', function() {
+                chkUnique.addEventListener('change', function () {
                     if (this.checked) {
                         otherChks.forEach(c => c.checked = false);
                     }
                 });
                 otherChks.forEach(c => {
-                    c.addEventListener('change', function() {
+                    c.addEventListener('change', function () {
                         if (this.checked) {
                             chkUnique.checked = false;
                         }
@@ -953,9 +1051,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             const contactNomInput = document.getElementById('contact_nom');
             const warningEl = document.getElementById('contact_nom_warning');
-            
+
             if (contactNomInput) {
-                contactNomInput.addEventListener('input', function() {
+                contactNomInput.addEventListener('input', function () {
                     const val = this.value;
                     // Detect more than 3 consecutive identical characters
                     if (/(.)\1{3,}/.test(val)) {
@@ -1156,16 +1254,17 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const cp = document.querySelector('[name="code_postal"]')?.value || '';
             const ville = document.querySelector('[name="ville"]')?.value || '';
             const pays = document.querySelector('[name="pays"]')?.value || '';
-            
+
+            const contactPrenom = document.querySelector('[name="contact_prenom"]')?.value || '';
             const contactNom = document.querySelector('[name="contact_nom"]')?.value || '';
             const contactFonction = document.querySelector('[name="contact_fonction"]')?.value || '';
             const contactTel = document.querySelector('[name="contact_telephone"]')?.value || '';
             const contactEmail = document.querySelector('[name="contact_email"]')?.value || '';
-            
+
             const nomSignataire = document.querySelector('[name="nom_signataire"]')?.value || '_____';
-            
+
             const commentaire = document.querySelector('[name="commentaire_technicien"]')?.value || '';
-            
+
             const techName = "<?= htmlspecialchars($techName) ?>";
             const dateExp = window.LM_RAPPORT.dateInt;
             const sigTechData = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
@@ -1227,7 +1326,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Adresse</td>
                             <td style="padding: 6px; border: 1px solid #000;">${adresse || '_____'}</td>
                             <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Prénom</td>
-                            <td style="padding: 6px; border: 1px solid #000;">_____</td> <!-- Backend n'a pas séparé Nom/Prénom historiquement, on met un placeholder ou on laisse vide -->
+                            <td style="padding: 6px; border: 1px solid #000;">${contactPrenom || '_____'}</td>
                         </tr>
                         <tr>
                             <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">CP</td>
@@ -1252,20 +1351,24 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <!-- TABLEAU PARC MACHINE -->
                     <table style="width:100%; border-collapse:collapse; border: 2px solid #d35400; font-size:12px; font-family: Arial, sans-serif;">
                         <tr>
-                            <td colspan="3" style="background-color: #5b9bd5; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 6px; border: 1px solid #000;">
+                            <td colspan="5" style="background-color: #5b9bd5; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 6px; border: 1px solid #000;">
                                 PARC MACHINE
                             </td>
                         </tr>
                         <tr>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 10%;">Poste</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 30%;">N° A.R.C (N° de série)</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 60%;">Désignation du Produit</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 8%;">Poste</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 25%;">N° A.R.C (N° de série)</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 45%;">Désignation du Produit</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 12%;">Repère</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 10%;">Année</td>
                         </tr>
                         ${window.LM_RAPPORT.machinesData.map((m, idx) => `
                             <tr>
                                 <td style="text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000;">${m.poste || (idx + 1)}</td>
                                 <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.arc || '—'} ${m.of ? ' - ' + m.of : ''}</td>
                                 <td style="padding: 6px; border: 1px solid #000;">${m.designation || '—'}</td>
+                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.repere || '—'}</td>
+                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.annee || '—'}</td>
                             </tr>
                         `).join('')}
                     </table>
@@ -1295,7 +1398,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             synthPreambulePage.style.pageBreakBefore = 'always';
             synthPreambulePage.style.paddingTop = '15mm';
             const s = window.LM_RAPPORT.synth;
-            
+
             // Calcul mois prochain pour le préambule
             let moisProchainText = "";
             let villePreambule = ville || "[VILLE DU CLIENT]";
@@ -1372,6 +1475,56 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             synthPreambulePage.appendChild(createPdfFooter());
             container.appendChild(synthPreambulePage);
 
+            // --- 1.3 PAGE ANALYSE IA GLOBALE (LE RECTANGLE ORANGE) ---
+            const iaAnalysisPage = document.createElement('div');
+            iaAnalysisPage.className = 'pdf-page';
+            iaAnalysisPage.style.pageBreakBefore = 'always';
+            iaAnalysisPage.style.paddingTop = '15mm';
+
+            const machinesWithConclusions = window.LM_RAPPORT.machinesData.filter(m => (m.dysfonctionnements && m.dysfonctionnements.trim()) || (m.conclusion && m.conclusion.trim()));
+
+            let iaHTML = `
+                <div style="border: 4px solid #d35400; background: rgba(255, 179, 0, 0.05); padding: 25px; position: relative; min-height: 200px;">
+                    <div style="position: absolute; top: 15px; right: 20px;">
+                        <img src="/assets/ai_expert.jpg" style="height: 50px; width: 50px; border-radius: 50%; border: 2px solid #d35400; box-shadow: 0 4px 10px rgba(211, 84, 0, 0.3);">
+                    </div>
+                    <h2 style="color: #d35400; margin-top: 0; margin-bottom: 25px; font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 24px;">🤖</span> ANALYSE IA EXPERT : SYNTHÈSE GLOBALE
+                    </h2>
+                    
+                    <div style="color: #000; font-size: 13px; line-height: 1.5;">
+            `;
+
+            if (machinesWithConclusions.length === 0) {
+                iaHTML += `<p style="font-style: italic; color: #666; text-align: center; margin-top: 50px;">Aucune analyse détaillée n'a été générée pour les équipements de cette intervention.</p>`;
+            } else {
+                machinesWithConclusions.forEach((m, idx) => {
+                    const cleanDesignation = m.designation.replace(/\(.*\)/, '').trim();
+                    iaHTML += `
+                        <div style="margin-bottom: 20px; padding-bottom: 15px; ${idx < machinesWithConclusions.length - 1 ? 'border-bottom: 1px solid rgba(211, 84, 0, 0.2);' : ''}">
+                            <div style="font-weight: 800; color: #1B4F72; margin-bottom: 8px; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                                <span style="background: #1B4F72; color: #fff; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;">${idx + 1}</span>
+                                ${cleanDesignation} ${m.repere !== '—' ? ' (Repère: ' + m.repere + ')' : ''}
+                            </div>
+                            ${m.dysfonctionnements ? `<div style="margin-bottom: 6px;"><strong>Points critiques :</strong> <span style="color: #d35400;">${m.dysfonctionnements}</span></div>` : ''}
+                            ${m.conclusion ? `<div><strong>Synthèse Expert :</strong> ${m.conclusion}</div>` : ''}
+                        </div>
+                    `;
+                });
+            }
+
+            iaHTML += `
+                    </div>
+                    <div style="margin-top: 30px; font-size: 11px; color: #7f8c8d; font-style: italic; border-top: 1px solid #bdc3c7; padding-top: 10px; text-align: center;">
+                        Cette synthèse a été générée par l'IA Expert LENOIR-MEC sur la base des relevés techniques effectués sur site.
+                    </div>
+                </div>
+            `;
+
+            iaAnalysisPage.innerHTML = iaHTML;
+            iaAnalysisPage.appendChild(createPdfFooter());
+            container.appendChild(iaAnalysisPage);
+
             // --- 2. FETCH & APPEND MACHINES ---
             if (window.LM_RAPPORT && window.LM_RAPPORT.machinesIds) {
                 let reportMachineIds = [...window.LM_RAPPORT.machinesIds];
@@ -1386,13 +1539,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 const totalMachines = reportMachineIds.length;
                 for (let mIdx = 0; mIdx < totalMachines; mIdx++) {
                     const mId = reportMachineIds[mIdx];
-                    
+
                     // Si on a gardé la machine mais qu'elle est vide et qu'on voulait 'condensed'
                     if (emptyOption === 'condensed' && (emptyIds.includes(parseInt(mId, 10)) || emptyIds.includes(String(mId)))) {
                         const mData = window.LM_RAPPORT.machinesData.find(m => parseInt(m.id, 10) === parseInt(mId, 10)) || {};
                         const mDesignation = mData.designation || 'Équipement';
                         const mArc = mData.arc || numArc;
-                        
+
                         const p = document.createElement('div');
                         p.className = 'pdf-page';
                         p.innerHTML = `
@@ -1419,7 +1572,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 </div>
                             </div>
                         `;
-                        
+
                         p.style.pageBreakBefore = 'always';
                         container.appendChild(p);
 
@@ -1444,7 +1597,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                             // --- NETTOYAGE RADICAL DES ÉLÉMENTS D'INTERFACE ---
                             p.querySelectorAll('.photo-btn, .btn-ia-refresh, .top-bar, .photo-thumbs, #btnChrono, .no-print-pdf, .photo-del-overlay').forEach(el => el.remove());
-                            
+
                             // If it's a diagram/photo page and it's empty after cleanup, skip it
                             const contentText = p.textContent.trim();
                             if ((pIdx > 0) && contentText.length < 50 && !hasPhotos && !p.querySelector('img')) {
@@ -1483,7 +1636,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 } else if (!val) {
                                     val = '_____';
                                 }
-                                
+
                                 inp.outerHTML = `<span style="border-bottom:1px dashed black; display:inline-block; min-width:30px; padding:0 3px; font-weight:bold;">${val}</span>`;
                             });
 
@@ -1497,7 +1650,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                             p.querySelectorAll('textarea').forEach(ta => {
                                 let val = ta.value || ta.innerHTML;
-                                
+
                                 // NEW FIX FOR PERFORMANCE / NON REALISE Bug:
                                 const specialKeys = ['aprf_attraction_comment', 'ov_perf_bille', 'ov_perf_ecrou', 'ov_perf_rond50', 'ov_perf_rond100', 'levage_charge_maxi_comment', 'levage_temp_maxi_comment'];
                                 if (specialKeys.some(k => ta.name && ta.name.includes(k))) {
@@ -1513,18 +1666,18 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 }
                                 ta.remove();
                             });
-                            
+
                             // BUGFIX PDF: Séparateur de table (tbody)
                             // html2pdf coupe en deux les <tr> sauvagement. 
                             // La seule vraie solution est de wrapper chaque ligne logique dans son propre <tbody> !
                             p.querySelectorAll('table.pdf-table').forEach(table => {
                                 const rows = Array.from(table.querySelectorAll('tr'));
                                 if (!rows.length) return;
-                                
+
                                 let currentTbody = document.createElement('tbody');
                                 currentTbody.style.pageBreakInside = 'avoid';
                                 table.appendChild(currentTbody);
-                                
+
                                 let pendingSpans = 0;
                                 rows.forEach(row => {
                                     let maxSpan = 1;
@@ -1532,9 +1685,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                         if (c.rowSpan > maxSpan) maxSpan = c.rowSpan;
                                     });
                                     if (maxSpan - 1 > pendingSpans) pendingSpans = maxSpan - 1;
-                                    
+
                                     currentTbody.appendChild(row); // Déplace le tr dans le nouveau tbody
-                                    
+
                                     if (pendingSpans > 0) {
                                         pendingSpans--;
                                     } else {
@@ -1543,7 +1696,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                         table.appendChild(currentTbody);
                                     }
                                 });
-                                
+
                                 // Supprimer les tbody/thead originaux devenus vides
                                 Array.from(table.children).forEach(child => {
                                     if ((child.tagName === 'TBODY' || child.tagName === 'THEAD') && child.children.length === 0) {
@@ -1551,7 +1704,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                     }
                                 });
                             });
-                            
+
                             p.style.position = 'relative';
                             p.style.paddingBottom = '30mm';
                             p.style.minHeight = 'auto'; // Help chaining
@@ -1688,7 +1841,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             };
 
             const worker = html2pdf().set(opt).from(container);
-            
+
             await worker.toPdf().get('pdf').then(function (pdf) {
                 const totalPages = pdf.internal.getNumberOfPages();
                 for (let i = 1; i <= totalPages; i++) {
@@ -1729,7 +1882,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 };
 
                 const worker = html2pdf().set(opt).from(container);
-                
+
                 await worker.toPdf().get('pdf').then(function (pdf) {
                     const totalPages = pdf.internal.getNumberOfPages();
                     for (let i = 1; i <= totalPages; i++) {
@@ -1936,6 +2089,78 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 if (icon) icon.textContent = '🔄';
                 if (label) label.textContent = 'Réessayer l\'envoi';
             }
+        }
+
+        // ══════════════════════════════════════════════════════════════════
+        // GÉNÉRATION MASSIVE IA (Toutes les fiches)
+        // ══════════════════════════════════════════════════════════════════
+        async function generateAllIA() {
+            const btn = document.getElementById('btnGenerateAllIa');
+            const progressZone = document.getElementById('ai-global-progress');
+            const progressBar = document.getElementById('ai-progress-bar');
+            const progressText = document.getElementById('ai-progress-text');
+            const progressPercent = document.getElementById('ai-progress-percent');
+            
+            if (!containerSuccessBanner()) {
+                if (!confirm("Cette opération va analyser toutes les machines de l'intervention. Les fiches déjà modifiées manuellement seront ignorées. Continuer ?")) return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span>⚙️</span> Analyse en cours...';
+            progressZone.style.display = 'block';
+
+            const machines = window.LM_RAPPORT.machinesData;
+            const total = machines.length;
+            let successCount = 0;
+            let skipCount = 0;
+
+            for (let i = 0; i < total; i++) {
+                const m = machines[i];
+                const pct = Math.round((i / total) * 100);
+                progressBar.style.width = pct + '%';
+                progressPercent.textContent = pct + '%';
+                progressText.textContent = `Analyse de : ${m.designation}...`;
+
+                try {
+                    // Check if already filled
+                    if (m.dysfonctionnements || m.conclusion) {
+                        skipCount++;
+                        continue;
+                    }
+
+                    const resIa = await fetch(`generate_ia.php?machine_id=${m.id}&intervention_id=${window.LM_RAPPORT.interventionId}`);
+                    const dataIa = await resIa.json();
+
+                    if (dataIa.success) {
+                        const saveResp = await fetch('save_ia.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: `machine_id=${m.id}&intervention_id=${window.LM_RAPPORT.interventionId}&dysfonctionnements=${encodeURIComponent(dataIa.dysfonctionnements)}&conclusion=${encodeURIComponent(dataIa.conclusion)}&csrf_token=${window.LM_RAPPORT.csrfToken}`
+                        });
+                        const saveResult = await saveResp.json();
+                        if (saveResult.success) {
+                            successCount++;
+                            m.dysfonctionnements = dataIa.dysfonctionnements;
+                            m.conclusion = dataIa.conclusion;
+                        }
+                    }
+                } catch (e) {
+                    console.error("IA Error for machine " + m.id, e);
+                }
+            }
+
+            progressBar.style.width = '100%';
+            progressPercent.textContent = '100%';
+            progressText.textContent = 'Analyse terminée !';
+            
+            setTimeout(() => {
+                alert(`Analyse terminée !\n- ${successCount} fiches générées\n- ${skipCount} fiches ignorées (déjà remplies)\n\nLe rapport va être actualisé.`);
+                location.reload();
+            }, 500);
+        }
+
+        function containerSuccessBanner() {
+            return document.getElementById('successBanner') !== null;
         }
     </script>
 </body>
