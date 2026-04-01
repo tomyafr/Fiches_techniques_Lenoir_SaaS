@@ -1161,7 +1161,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     text-overflow: ellipsis;
                 }
                 
-                .pastille-group { display: flex; gap: 4px; align-items: center; justify-content: center; width: 100%; height: 100%; }
+                .pastille-group { display: flex; gap: 4px; align-items: center; justify-content: center; width: 100%; height: 100%; padding-right: 8px; box-sizing: border-box; }
                 .pastille-group input[type="radio"] { display: none !important; }
                 .pastille-group label {
                     display: inline-block;
@@ -1204,6 +1204,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     background: #e0e0e0 !important;
                     overflow: visible;
                     border: 1px solid #000 !important;
+                    border-right: none !important; /* On coupe la barre ici */
                 }
                 .diagonal-wrapper {
                     display: flex;
@@ -1212,6 +1213,18 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     align-items: stretch;
                     margin: 0 auto;
                     border: none !important;
+                    position: relative;
+                }
+                /* La barre verticale courte à droite de la zone grise */
+                .diagonal-wrapper::after {
+                    content: "";
+                    position: absolute;
+                    right: 0;
+                    bottom: 0;
+                    width: 1px;
+                    height: 30px;
+                    background: #000;
+                    z-index: 5;
                 }
                 .diag-col {
                     width: 28px;
@@ -1234,7 +1247,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     content: "";
                     position: absolute;
                     left: 100%;
-                    top: 5px;
+                    top: 0;
                     bottom: 30px;
                     width: 1px;
                     background: #000;
