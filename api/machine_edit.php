@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: text/html; charset=utf-8');
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/ia_helper.php';
 requireAuth(['technicien', 'admin']);

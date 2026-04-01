@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: text/html; charset=utf-8');
 require_once __DIR__ . '/../includes/config.php';
 requireAuth(['technicien', 'admin']);
 
@@ -1022,7 +1023,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     min-height: 100px; 
                     background: white;
                     color: black;
-                    padding: 0 15mm; /* Margins are now handled by html2pdf natively! */
+                    padding: 0 15mm; 
                     box-sizing: border-box;
                     margin: 0;
                     font-family: Arial, sans-serif;
@@ -1067,20 +1068,78 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     width: 18px; height: 18px; border-radius: 50%;
                     border: 1px solid #ccc !important; background: transparent !important; font-size: 0; position: relative;
                 }
-                /* Only the selected label gets a background color */
                 .pastille-group label.selected.p-na { background: #bbb !important; border-color: #999 !important; opacity: 1; }
                 .pastille-group label.selected.p-ok { background: #28a745 !important; border-color: #1e7e34 !important; opacity: 1; }
                 .pastille-group label.selected.p-aa { background: #e67e22 !important; border-color: #d35400 !important; opacity: 1; }
                 .pastille-group label.selected.p-nc { background: #dc3545 !important; border-color: #bd2130 !important; opacity: 1; }
                 .pastille-group label.selected.p-nr { background: #8b0000 !important; border-color: #5a0000 !important; opacity: 1; }
-                /* Non selected labels are subtle empty circles */
                 .pastille-group label:not(.selected) { opacity: 0.3; border: 1px solid #ccc !important; }
+
+                /* === DIAGONAL HEADERS CSS === */
+                .diagonal-header {
+                    height: 110px;
+                    vertical-align: bottom;
+                    padding: 0 !important;
+                    position: relative;
+                    background: #e0e0e0 !important;
+                    overflow: visible;
+                    border-right: none !important;
+                }
+                .diagonal-wrapper {
+                    display: flex;
+                    width: 140px;
+                    height: 100%;
+                    align-items: stretch;
+                    margin: 0 auto;
+                }
+                .diag-col {
+                    width: 28px;
+                    height: 100%;
+                    position: relative;
+                    flex-shrink: 0;
+                }
+                .diag-col.col-3 { flex: 1; }
+                .diag-col::after {
+                    content: "";
+                    position: absolute;
+                    left: 100%;
+                    bottom: 0;
+                    width: 1px;
+                    height: 35px;
+                    background: #000;
+                }
+                .diag-col::before {
+                    content: "";
+                    position: absolute;
+                    left: 100%;
+                    top: 0;
+                    bottom: 35px;
+                    width: 1px;
+                    background: #000;
+                    transform: skewX(-35deg);
+                    transform-origin: bottom left;
+                }
+                .diag-text {
+                    position: absolute;
+                    bottom: 38px;
+                    left: 100%;
+                    padding-left: 4px;
+                    transform: rotate(-55deg);
+                    transform-origin: bottom left;
+                    text-align: left;
+                    white-space: nowrap;
+                    font-size: 8px;
+                    font-weight: bold;
+                    color: #000;
+                    width: 200px;
+                    line-height: 1.1;
+                }
 
                 .pdf-input { border: none; border-bottom: 1px dashed #000; background: transparent; font-size: 13px; font-family: Arial; padding: 2px; width: 100%; color: black; outline:none; }
                 .pdf-textarea-rendered { 
                     width: 100%; font-family: Arial; font-size: 9pt; color: black; white-space: pre-wrap; word-wrap: break-word; padding:4px; box-sizing: border-box;
                 }
-                .no-print-pdf { display: none !important; }
+                .no-print-pdf, .btn-ia-refresh, .top-bar, .photo-btn, .photo-thumbs, #btnChrono { display: none !important; }
                 
                 .photo-annexe-item { text-align: center; max-width: 200px; margin-bottom: 10px; }
                 .photo-annexe-item img { width: 180px; height: 135px; object-fit: cover; border: 1px solid #000; }
@@ -1233,6 +1292,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             // --- 1.2 PAGE SYNTHÈSE + PRÉAMBULE (FUSIONNÉS POUR ÉCONOMISER DES PAGES) ---
             const synthPreambulePage = document.createElement('div');
             synthPreambulePage.className = 'pdf-page';
+            synthPreambulePage.style.pageBreakBefore = 'always';
+            synthPreambulePage.style.paddingTop = '15mm';
             const s = window.LM_RAPPORT.synth;
             
             // Calcul mois prochain pour le préambule
@@ -1381,8 +1442,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 }
                             });
 
-                            // Bug 1 & 2 & 3: Clean up machine fiche
-                            p.querySelectorAll('.photo-btn, .photo-thumbs, #btnChrono, .no-print-pdf').forEach(el => el.remove());
+                            // --- NETTOYAGE RADICAL DES ÉLÉMENTS D'INTERFACE ---
+                            p.querySelectorAll('.photo-btn, .btn-ia-refresh, .top-bar, .photo-thumbs, #btnChrono, .no-print-pdf, .photo-del-overlay').forEach(el => el.remove());
                             
                             // If it's a diagram/photo page and it's empty after cleanup, skip it
                             const contentText = p.textContent.trim();
@@ -1394,7 +1455,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             if (pIdx === 0) {
                                 p.style.pageBreakBefore = 'always';
                                 p.style.marginTop = '0';
-                                p.style.paddingTop = '0';
+                                p.style.paddingTop = '10mm'; // Petit ajout pour que le header ne soit pas tout en haut
                                 const hDiv = document.createElement('div');
                                 hDiv.style.display = 'flex';
                                 hDiv.style.justifyContent = 'space-between';
