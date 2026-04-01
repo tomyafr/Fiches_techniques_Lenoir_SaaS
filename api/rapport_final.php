@@ -1873,7 +1873,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             });
                             
                             p.style.minHeight = 'auto';
-                            container.appendChild(document.importNode(p, true));
+                            container.appendChild(p);
                         });
                     } catch (err) {
                         console.error('Erreur fetch machine ' + mId, err);
