@@ -1475,56 +1475,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             synthPreambulePage.appendChild(createPdfFooter());
             container.appendChild(synthPreambulePage);
 
-            // --- 1.3 PAGE ANALYSE IA GLOBALE (LE RECTANGLE ORANGE) ---
-            const iaAnalysisPage = document.createElement('div');
-            iaAnalysisPage.className = 'pdf-page';
-            iaAnalysisPage.style.pageBreakBefore = 'always';
-            iaAnalysisPage.style.paddingTop = '15mm';
-
-            const machinesWithConclusions = window.LM_RAPPORT.machinesData.filter(m => (m.dysfonctionnements && m.dysfonctionnements.trim()) || (m.conclusion && m.conclusion.trim()));
-
-            let iaHTML = `
-                <div style="border: 4px solid #d35400; background: rgba(255, 179, 0, 0.05); padding: 25px; position: relative; min-height: 200px;">
-                    <div style="position: absolute; top: 15px; right: 20px;">
-                        <img src="/assets/ai_expert.jpg" style="height: 50px; width: 50px; border-radius: 50%; border: 2px solid #d35400; box-shadow: 0 4px 10px rgba(211, 84, 0, 0.3);">
-                    </div>
-                    <h2 style="color: #d35400; margin-top: 0; margin-bottom: 25px; font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 12px;">
-                        <span style="font-size: 24px;">🤖</span> ANALYSE IA EXPERT : SYNTHÈSE GLOBALE
-                    </h2>
-                    
-                    <div style="color: #000; font-size: 13px; line-height: 1.5;">
-            `;
-
-            if (machinesWithConclusions.length === 0) {
-                iaHTML += `<p style="font-style: italic; color: #666; text-align: center; margin-top: 50px;">Aucune analyse détaillée n'a été générée pour les équipements de cette intervention.</p>`;
-            } else {
-                machinesWithConclusions.forEach((m, idx) => {
-                    const cleanDesignation = m.designation.replace(/\(.*\)/, '').trim();
-                    iaHTML += `
-                        <div style="margin-bottom: 20px; padding-bottom: 15px; ${idx < machinesWithConclusions.length - 1 ? 'border-bottom: 1px solid rgba(211, 84, 0, 0.2);' : ''}">
-                            <div style="font-weight: 800; color: #1B4F72; margin-bottom: 8px; font-size: 14px; display: flex; align-items: center; gap: 8px;">
-                                <span style="background: #1B4F72; color: #fff; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px;">${idx + 1}</span>
-                                ${cleanDesignation} ${m.repere !== '—' ? ' (Repère: ' + m.repere + ')' : ''}
-                            </div>
-                            ${m.dysfonctionnements ? `<div style="margin-bottom: 6px;"><strong>Points critiques :</strong> <span style="color: #d35400;">${m.dysfonctionnements}</span></div>` : ''}
-                            ${m.conclusion ? `<div><strong>Synthèse Expert :</strong> ${m.conclusion}</div>` : ''}
-                        </div>
-                    `;
-                });
-            }
-
-            iaHTML += `
-                    </div>
-                    <div style="margin-top: 30px; font-size: 11px; color: #7f8c8d; font-style: italic; border-top: 1px solid #bdc3c7; padding-top: 10px; text-align: center;">
-                        Cette synthèse a été générée par l'IA Expert LENOIR-MEC sur la base des relevés techniques effectués sur site.
-                    </div>
-                </div>
-            `;
-
-            iaAnalysisPage.innerHTML = iaHTML;
-            iaAnalysisPage.appendChild(createPdfFooter());
-            container.appendChild(iaAnalysisPage);
-
             // --- 2. FETCH & APPEND MACHINES ---
             if (window.LM_RAPPORT && window.LM_RAPPORT.machinesIds) {
                 let reportMachineIds = [...window.LM_RAPPORT.machinesIds];
@@ -1580,7 +1530,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     }
 
                     try {
-                        const res = await fetch('machine_edit.php?id=' + mId);
+                        const res = await fetch('machine_edit.php?id=' + mId + '&pdf=1');
                         const html = await res.text();
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(html, 'text/html');
@@ -1608,18 +1558,16 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             if (pIdx === 0) {
                                 p.style.pageBreakBefore = 'always';
                                 p.style.marginTop = '0';
-                                p.style.paddingTop = '10mm'; // Petit ajout pour que le header ne soit pas tout en haut
+                                p.style.paddingTop = '10mm'; 
+                                
+                                // On ajoute discretement le numéro de fiche AU DESSUS du header officiel LENOIR
                                 const hDiv = document.createElement('div');
-                                hDiv.style.display = 'flex';
-                                hDiv.style.justifyContent = 'space-between';
-                                hDiv.style.alignItems = 'center';
-                                hDiv.style.marginBottom = '20px';
-                                hDiv.style.borderBottom = '3px solid #5B9BD5';
-                                hDiv.style.paddingBottom = '5px';
-                                hDiv.innerHTML = `
-                                    <div style="font-size: 14px; font-weight: bold; color: #1B4F72;">FICHE ${mIdx + 1} / ${totalMachines}</div>
-                                    <img src="/assets/lenoir_logo_doc.png" style="height: 45px;">
-                                `;
+                                hDiv.style.textAlign = 'right';
+                                hDiv.style.fontSize = '12px';
+                                hDiv.style.fontWeight = 'bold';
+                                hDiv.style.color = '#1B4F72';
+                                hDiv.style.marginBottom = '5px';
+                                hDiv.innerHTML = `FICHE ${mIdx + 1} / ${totalMachines}`;
                                 p.insertBefore(hDiv, p.firstChild);
                             }
 
@@ -2122,8 +2070,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 progressText.textContent = `Analyse de : ${m.designation}...`;
 
                 try {
-                    // Check if already filled
-                    if (m.dysfonctionnements || m.conclusion) {
+                    // On considère qu'une fiche est déjà remplie si Dysfonctionnements OU Conclusion
+                    // contiennent du texte autre que les valeurs par défaut.
+                    const dys = (m.dysfonctionnements || "").trim();
+                    const conc = (m.conclusion || "").trim();
+                    const isManual = (dys.length > 5 && !dys.includes("Aucun dysfonctionnement majeur")) 
+                                  || (conc.length > 5 && !conc.includes("conforme à nos standards"));
+
+                    if (isManual) {
                         skipCount++;
                         continue;
                     }
