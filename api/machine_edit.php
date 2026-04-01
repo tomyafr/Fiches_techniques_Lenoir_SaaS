@@ -994,7 +994,8 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     $html = '<div class="pastille-group">';
                     foreach ($items as $item) {
-                        $style = ($nbCols == 3) ? 'flex: 1; display:flex; justify-content:flex-end; align-items:center;' : 'width:28px; display:flex; justify-content:flex-end; align-items:center;';
+                        $p_w = ($nbCols == 3) ? '46.6px' : '28px';
+                        $style = 'width:'.$p_w.'; display:flex; justify-content:center; align-items:center;';
                         $html .= '<div style="'.$style.'">'
                                . pastille($key, $item[0], $item[1], $item[2], $val)
                                . '</div>';

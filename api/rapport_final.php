@@ -1161,7 +1161,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     text-overflow: ellipsis;
                 }
                 
-                .pastille-group { display: flex; gap: 4px; align-items: center; justify-content: center; width: 100%; height: 100%; padding-right: 8px; box-sizing: border-box; }
+                .pastille-group { display: flex; gap: 4px; align-items: center; justify-content: center; width: 100%; height: 100%; box-sizing: border-box; }
                 .pastille-group input[type="radio"] { display: none !important; }
                 .pastille-group label {
                     display: inline-block;
@@ -1232,7 +1232,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     position: relative;
                     flex-shrink: 0;
                 }
-                .diag-col.col-3 { flex: 1; }
+                .diag-col.col-3 { width: 46.6px; }
                 .diag-col::after {
                     content: "";
                     position: absolute;
