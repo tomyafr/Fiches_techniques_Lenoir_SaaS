@@ -1152,6 +1152,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 }
                 .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; color: black; font-size: 11px; table-layout: fixed; }
                 .pdf-table th, .pdf-table td { border: 1px solid #000; padding: 4px; vertical-align: middle; word-wrap: break-word; word-break: break-word; }
+                .pdf-table thead th { border-top: 1px solid #000 !important; }
                 .pdf-table th { background-color: #f0f0f0; text-align: left; text-transform: uppercase; }
                 
                 .pdf-table .col-comment, .pdf-table td:last-child {
@@ -1201,8 +1202,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     padding: 0 !important;
                     position: relative;
                     background: #e0e0e0 !important;
-                    overflow: hidden;
-                    border: none !important;
+                    overflow: visible;
+                    border: 1px solid #000 !important;
                 }
                 .diagonal-wrapper {
                     display: flex;
@@ -1210,7 +1211,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     height: 100%;
                     align-items: stretch;
                     margin: 0 auto;
-                    border-left: 1px solid #000;
+                    border: none !important;
                 }
                 .diag-col {
                     width: 28px;
