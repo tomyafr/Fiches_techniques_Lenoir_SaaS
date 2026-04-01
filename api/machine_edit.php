@@ -1048,19 +1048,17 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </tr>';
                 }
                 function renderSectionHeader($title, $nbCols = 5) {
-                    $w = ($nbCols == 3) ? '33.33%' : '28px';
+                    $w = ($nbCols == 3) ? '46.6px' : '28px';
                     $tds = '';
                     for ($i = 0; $i < $nbCols; $i++) {
-                        $tds .= '<td style="width:'.$w.'; border:none !important; border-right:1px solid #000 !important; padding:0; height:100%;"></td>';
+                        $tds .= '<div style="width:'.$w.'; border-right:1px solid #000; height:100%; box-sizing:border-box;"></div>';
                     }
                     return '<tr class="section-header-row" style="background:#5b9bd5 !important; page-break-before: avoid; break-before: avoid;">
                         <td style="width:35%; font-weight:bold; color:white; padding:4px 10px; font-size:11px; page-break-before: avoid; break-before: avoid;">' . htmlspecialchars($title) . '</td>
-                        <td style="width:140px; padding:0; vertical-align:middle; height:1px;">
-                            <table style="width:140px; border-collapse:collapse; height:100%; margin: 0 auto; border:none; border-right:1px solid #000 !important;">
-                                <tr style="height:100%;">' . $tds . '</tr>
-                            </table>
+                        <td style="width:140px; padding:0; vertical-align:middle; height:30px;">
+                            <div style="display:flex; width:140px; height:100%; margin: 0 auto; border:none;">' . $tds . '</div>
                         </td>
-                        <td style="width:35%; background:#5b9bd5 !important;"></td>
+                        <td style="width:35%; background:#5b9bd5 !important; border-left:none !important;"></td>
                     </tr>';
                 }
                 function renderEdxRow($label, $key, $donnees)
@@ -1125,11 +1123,11 @@ foreach ($recoFreq as $rfk => $rfv) {
                     $commentTitle = ($nbCols == 5) ? 'COMMENTAIRES / VALEURS' : 'COMMENTAIRES';
                     
                     return '<tr style="page-break-after: avoid; break-after: avoid;">
-                        <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px; page-break-after: avoid; break-after: avoid;">DESIGNATIONS</th>
-                        <th class="diagonal-header" style="width:140px; page-break-after: avoid; break-after: avoid;">
+                        <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px; page-break-after: avoid; break-after: avoid; border-right: 1px solid #000;">DESIGNATIONS</th>
+                        <th class="diagonal-header" style="width:140px; page-break-after: avoid; break-after: avoid; border-left:none !important; border-right:none !important;">
                             <div class="diagonal-wrapper">' . $colsHtml . '</div>
                         </th>
-                        <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px;">' . $commentTitle . '</th>
+                        <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px; border-left: 1px solid #000;">' . $commentTitle . '</th>
                     </tr>';
                 }
                 function renderAprfEtatRadios($key, $donnees)

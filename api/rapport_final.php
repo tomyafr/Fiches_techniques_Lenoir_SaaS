@@ -1160,28 +1160,49 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     text-overflow: ellipsis;
                 }
                 
-                .pastille-group { display: flex; gap: 6px; align-items: center; justify-content: center; width: 100%; }
+                .pastille-group { display: flex; gap: 4px; align-items: center; justify-content: center; width: 100%; height: 100%; }
+                .pastille-group input[type="radio"] { display: none !important; }
                 .pastille-group label {
-                    display: flex; align-items: center; justify-content: center;
+                    display: inline-block;
                     width: 18px; height: 18px; border-radius: 50%;
-                    border: 1px solid #ccc !important; background: transparent !important; font-size: 0; position: relative;
+                    border: 1px solid #777 !important; background: #eee !important;
+                    position: relative; cursor: default;
+                    box-sizing: border-box;
                 }
-                .pastille-group label.selected.p-na { background: #bbb !important; border-color: #999 !important; opacity: 1; }
-                .pastille-group label.selected.p-ok { background: #28a745 !important; border-color: #1e7e34 !important; opacity: 1; }
-                .pastille-group label.selected.p-aa { background: #e67e22 !important; border-color: #d35400 !important; opacity: 1; }
-                .pastille-group label.selected.p-nc { background: #dc3545 !important; border-color: #bd2130 !important; opacity: 1; }
-                .pastille-group label.selected.p-nr { background: #8b0000 !important; border-color: #5a0000 !important; opacity: 1; }
-                .pastille-group label:not(.selected) { opacity: 0.3; border: 1px solid #ccc !important; }
+                /* Gommettes couleurs pleines */
+                .pastille-group label.p-ok { background-color: #d1d1d1 !important; }
+                .pastille-group label.p-aa { background-color: #d1d1d1 !important; }
+                .pastille-group label.p-nc { background-color: #d1d1d1 !important; }
+                .pastille-group label.p-nr { background-color: #d1d1d1 !important; }
+                .pastille-group label.p-na { background-color: #d1d1d1 !important; }
+
+                /* État sélectionné : On retrouve les vraies couleurs du SaaS */
+                .pastille-group label.selected.p-ok { background-color: #28a745 !important; border-color: #1e7e34 !important; }
+                .pastille-group label.selected.p-aa { background-color: #f39c12 !important; border-color: #d35400 !important; }
+                .pastille-group label.selected.p-nc { background-color: #dc3545 !important; border-color: #bd2130 !important; }
+                .pastille-group label.selected.p-nr { background-color: #8b0000 !important; border-color: #5a0000 !important; }
+                .pastille-group label.selected.p-na { background-color: #95a5a6 !important; border-color: #7f8c8d !important; }
+
+                /* Le point blanc central pour simuler le bouton radio premium */
+                .pastille-group label.selected::after {
+                    content: "";
+                    position: absolute;
+                    top: 50%; left: 50%;
+                    width: 6px; height: 6px;
+                    background: white;
+                    border-radius: 50%;
+                    transform: translate(-50%, -50%);
+                }
 
                 /* === DIAGONAL HEADERS CSS === */
                 .diagonal-header {
-                    height: 110px;
+                    height: 120px;
                     vertical-align: bottom;
                     padding: 0 !important;
                     position: relative;
                     background: #e0e0e0 !important;
-                    overflow: visible;
-                    border-right: none !important;
+                    overflow: hidden;
+                    border: none !important;
                 }
                 .diagonal-wrapper {
                     display: flex;
@@ -1189,6 +1210,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     height: 100%;
                     align-items: stretch;
                     margin: 0 auto;
+                    border-left: 1px solid #000;
                 }
                 .diag-col {
                     width: 28px;
@@ -1203,15 +1225,16 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     left: 100%;
                     bottom: 0;
                     width: 1px;
-                    height: 35px;
+                    height: 30px;
                     background: #000;
+                    z-index: 2;
                 }
                 .diag-col::before {
                     content: "";
                     position: absolute;
                     left: 100%;
-                    top: 0;
-                    bottom: 35px;
+                    top: 5px;
+                    bottom: 30px;
                     width: 1px;
                     background: #000;
                     transform: skewX(-35deg);
@@ -1219,9 +1242,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 }
                 .diag-text {
                     position: absolute;
-                    bottom: 38px;
+                    bottom: 35px;
                     left: 100%;
-                    padding-left: 4px;
+                    padding-left: 5px;
                     transform: rotate(-55deg);
                     transform-origin: bottom left;
                     text-align: left;
