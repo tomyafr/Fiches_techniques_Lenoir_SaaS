@@ -109,11 +109,14 @@ function callGroqIA($systemPrompt, $userPrompt) {
     ];
 
 
+    // Debug intern (sera visible dans les logs php)
+    error_log("Groq API Call - Key start: " . substr(GROQ_API_KEY, 0, 7) . "... End: " . substr(GROQ_API_KEY, -4));
+    
     $ch = curl_init('https://api.groq.com/openai/v1/chat/completions');
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Authorization: Bearer ' . GROQ_API_KEY,
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Authorization: Bearer ' . trim(GROQ_API_KEY),
         'Content-Type: application/json'
-    ]);
+    ));
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

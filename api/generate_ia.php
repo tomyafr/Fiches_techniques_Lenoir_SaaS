@@ -4,11 +4,12 @@ require_once __DIR__ . '/../includes/ia_helper.php';
 requireAuth(['technicien', 'admin']);
 
 $db = getDB();
-$machineId = $_GET['id'] ?? null;
-$type = $_GET['type'] ?? 'E'; // E = Dysfonctionnements, F = Conclusion
+// Support for both 'id' and 'machine_id'
+$machineId = $_GET['id'] ?? $_GET['machineId'] ?? $_GET['machine_id'] ?? null;
+$type = $_GET['type'] ?? 'ALL'; // E = Dysfonctionnements, F = Conclusion, ALL = Both
 
 if (!$machineId) {
-    echo json_encode(['error' => 'Machine ID manquant']);
+    echo json_encode(['success' => false, 'error' => 'Machine ID manquant']);
     exit;
 }
 
@@ -17,7 +18,7 @@ $stmt->execute([$machineId]);
 $machine = $stmt->fetch();
 
 if (!$machine) {
-    echo json_encode(['error' => 'Machine introuvable']);
+    echo json_encode(['success' => false, 'error' => 'Machine introuvable']);
     exit;
 }
 
@@ -30,29 +31,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['donnees'])) {
 }
 $issues = extractIssuesFromDonnees($donnees);
 
-$typeMachine = $machine['designation'];
-$poste = json_decode($machine['mesures'] ?? '{}', true)['poste'] ?? 'N/A';
+$response = ['success' => true];
 
-if ($type === 'E') {
-    // Génération Section E
-    // On récupère toutes les anomalies dans l'ordre où elles ont été extraites (ordre de labelsMap)
+if ($type === 'E' || $type === 'ALL') {
+    // Génération Section E (Dysfonctionnements)
     $allIssues = [];
     foreach (['nr', 'nc', 'aa'] as $cat) {
         foreach ($issues[$cat] as $i) {
             $allIssues[] = "• " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : "");
         }
     }
-    
-    // Note: extractIssuesFromDonnees remplit maintenant les catégories dans l'ordre de labelsMap, 
-    // mais le groupage final par catégorie (NR puis NC puis AA) pourrait encore un peu bouger l'ordre global.
-    // Cependant, comme extractIssuesFromDonnees itère sur labelsMap, les points d'une même catégorie sont dans l'ordre.
-    // Pour un ordre 100% chronologique TOUTES catégories confondues, il faudrait revoir extractIssuesFromDonnees.
-    
-    // Attends, si je veux l'ordre de la fiche ABSOLU, je dois modifier extractIssuesFromDonnees pour qu'elle renvoie une liste plate.
-    // Mais le prompt IA aime bien avoir les catégories. 
-    // Restons sur ce compromis qui respecte l'ordre à l'intérieur de chaque catégorie de gravité.
 
-    $systemPrompt = "Tu es l'Expert Senior LENOIR-MEC. Rédige l'analyse technique globale.
+    $systemPromptE = "Tu es l'Expert Senior LENOIR-MEC. Rédige l'analyse technique globale.
 RÈGLES CRITIQUES :
 - NE REPRENDS PAS LE TITRE 'E) CAUSE DE DYSFONCTIONNEMENT' ou 'E)'.
 - LISTE TOUTES LES ANOMALIES (Points Orange/À améliorer OU Points Rouges/Non conformes).
@@ -60,62 +50,74 @@ RÈGLES CRITIQUES :
 - Sois très concis (maximum 3-5 mots par point).
 - Si et seulement si TOUTE la liste fournie est 'Néant', réponds UNIQUEMENT: 'Aucune anomalie détectée lors de l'inspection.'
 - NE LISTE PAS les points qui sont en bon état.";
+    $userPromptE = "LISTE DES DÉFAUTS À TRAITER :\n" . (empty($allIssues) ? "Néant" : implode("\n", $allIssues));
 
-    $userPrompt = "LISTE DES DÉFAUTS À TRAITER :\n" . (empty($allIssues) ? "Néant" : implode("\n", $allIssues));
-
-    $result = callGroqIA($systemPrompt, $userPrompt);
+    $resultE = callGroqIA($systemPromptE, $userPromptE);
     
-    // Détection d'une erreur (si le résultat commence par "Erreur IA")
-    if ($result && strpos($result, 'Erreur IA') === 0) {
-        echo json_encode(['error' => $result]);
+    // Check if it's an actual IA error string
+    if ($resultE && strpos($resultE, 'Erreur IA') === 0) {
+        echo json_encode(['success' => false, 'error' => $resultE]);
         exit;
     }
 
-    // Fallback si IA échoue complètement ou pas de clé
-    if (!$result) {
-        $result = !empty($allIssues) ? implode("\n", $allIssues) : "Aucun dysfonctionnement majeur signalé.";
+    // Fallback if IA fails (null or empty)
+    if (!$resultE) {
+        $resultE = !empty($allIssues) ? implode("\n", $allIssues) : "Aucun dysfonctionnement majeur signalé.";
     }
+    
+    if ($type === 'E') {
+        $response['content'] = $resultE;
+    } else {
+        $response['dysfonctionnements'] = $resultE;
+    }
+}
 
-    echo json_encode(['content' => $result]);
-} else {
+if ($type === 'F' || $type === 'ALL') {
     // Génération Section F (Conclusion)
     $allIssuesString = "";
     foreach(['nr','nc','aa'] as $cat) {
         foreach($issues[$cat] as $i) $allIssuesString .= "• " . $i['designation'] . "\n";
     }
 
-    $systemPrompt = "Tu es l'Expert LENOIR-MEC. Rédige l'analyse de conclusion.
+    $systemPromptF = "Tu es l'Expert LENOIR-MEC. Rédige l'analyse de conclusion.
 Instructions :
 - NE REPRENDS PAS LE TITRE 'F) CONCLUSION' ou 'F)'.
 - Synthétise le bilan technique en 2 phrases très courtes.
 - Mentionne le niveau de priorité global (Urgent, Moyen, Faible).
 - Style : Industriel, factuel, sans fioritures.";
-
-    $userPrompt = "BILAN DÉTAILLÉ DES ANOMALIES :\n" . ($allIssuesString ?: "Aucun défaut majeur.") . "\n\n" .
+    $userPromptF = "BILAN DÉTAILLÉ DES ANOMALIES :\n" . ($allIssuesString ?: "Aucun défaut majeur.") . "\n\n" .
                   "Rédige la conclusion finale.";
 
-    $result = callGroqIA($systemPrompt, $userPrompt);
+    $resultF = callGroqIA($systemPromptF, $userPromptF);
     
-    if ($result && strpos($result, 'Erreur IA') === 0) {
-        echo json_encode(['error' => $result]);
+    // Check if it's an actual IA error string
+    if ($resultF && strpos($resultF, 'Erreur IA') === 0) {
+        echo json_encode(['success' => false, 'error' => $resultF]);
         exit;
     }
 
-    if (!$result) {
+    // Fallback if IA fails (null or empty)
+    if (!$resultF) {
         $countNR = count($issues['nr']);
         $countNC = count($issues['nc']);
         $countAA = count($issues['aa']);
         
         if ($countNR + $countNC + $countAA === 0) {
-            $result = "Votre équipement est conforme à nos standards officiels. L'équipement est pleinement opérationnel.";
+            $resultF = "Votre équipement est conforme à nos standards officiels. L'équipement est pleinement opérationnel.";
         } else {
             $reco = "une révision technique";
             if ($countNR > 0) $reco = "le remplacement immédiat des pièces critiques (voir Section E)";
             else if ($countNC > 0) $reco = "une remise en conformité rapide";
             
-            $result = "L'expertise a révélé des anomalies" . ($countNR > 0 ? " majeures" : "") . ". Nous préconisons $reco pour garantir la sécurité et l'efficacité de votre séparation magnétique.";
+            $resultF = "L'expertise a révélé des anomalies" . ($countNR > 0 ? " majeures" : "") . ". Nous préconisons $reco pour garantir la sécurité et l'efficacité de votre séparation magnétique.";
         }
     }
 
-    echo json_encode(['content' => $result]);
+    if ($type === 'F') {
+        $response['content'] = $resultF;
+    } else {
+        $response['conclusion'] = $resultF;
+    }
 }
+
+echo json_encode($response);
