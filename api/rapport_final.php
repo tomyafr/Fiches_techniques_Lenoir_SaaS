@@ -1739,9 +1739,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             });
 
                             p.style.position = 'relative';
-                            p.style.paddingBottom = '30mm';
-                            p.style.minHeight = 'auto'; // Help chaining
-                            p.appendChild(createPdfFooter());
                             container.appendChild(p);
                         });
                     } catch (err) {
@@ -1866,7 +1863,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             await ensureImagesBase64(container);
 
             const opt = {
-                margin: [10, 0, 15, 0], // Top, Left, Bottom, Right
+                margin: [10, 0, 28, 0], // Top, Left, Bottom (28mm for fixed footer), Right
                 filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, logging: false },
@@ -1878,12 +1875,25 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             await worker.toPdf().get('pdf').then(function (pdf) {
                 const totalPages = pdf.internal.getNumberOfPages();
+                const leg = window.LM_RAPPORT.legal;
                 for (let i = 1; i <= totalPages; i++) {
                     pdf.setPage(i);
+                    // Ligne horizontale de séparation
+                    pdf.setDrawColor(0, 0, 0);
+                    pdf.setLineWidth(0.5);
+                    pdf.line(15, 272, 195, 272);
+                    // Mentions légales
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setFontSize(6.5);
+                    pdf.setTextColor(0, 0, 0);
+                    pdf.text(leg.address, 105, 276, { align: 'center' });
+                    pdf.text(leg.contact, 105, 279.5, { align: 'center' });
+                    pdf.text(leg.siret, 105, 283, { align: 'center' });
+                    // Numéro de page
                     pdf.setFont('helvetica', 'normal');
                     pdf.setFontSize(9);
                     pdf.setTextColor(50, 50, 50);
-                    pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
+                    pdf.text('Page ' + i + ' / ' + totalPages, 105, 289, { align: 'center' });
                 }
             });
 
@@ -1908,7 +1918,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 await ensureImagesBase64(container);
 
                 const opt = {
-                    margin: [10, 0, 15, 0], // Top, Left, Bottom, Right
+                    margin: [10, 0, 28, 0], // Top, Left, Bottom (28mm for fixed footer), Right
                     filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true, logging: false },
@@ -1920,12 +1930,25 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                 await worker.toPdf().get('pdf').then(function (pdf) {
                     const totalPages = pdf.internal.getNumberOfPages();
+                    const leg = window.LM_RAPPORT.legal;
                     for (let i = 1; i <= totalPages; i++) {
                         pdf.setPage(i);
+                        // Ligne horizontale de séparation
+                        pdf.setDrawColor(0, 0, 0);
+                        pdf.setLineWidth(0.5);
+                        pdf.line(15, 272, 195, 272);
+                        // Mentions légales
+                        pdf.setFont('helvetica', 'bold');
+                        pdf.setFontSize(6.5);
+                        pdf.setTextColor(0, 0, 0);
+                        pdf.text(leg.address, 105, 276, { align: 'center' });
+                        pdf.text(leg.contact, 105, 279.5, { align: 'center' });
+                        pdf.text(leg.siret, 105, 283, { align: 'center' });
+                        // Numéro de page
                         pdf.setFont('helvetica', 'normal');
                         pdf.setFontSize(9);
                         pdf.setTextColor(50, 50, 50);
-                        pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
+                        pdf.text('Page ' + i + ' / ' + totalPages, 105, 289, { align: 'center' });
                     }
                 });
 
