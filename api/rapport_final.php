@@ -2233,4 +2233,5 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 </body>
 
 </html>   
+    
  
