@@ -1128,7 +1128,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <th class="diagonal-header" style="width:140px; page-break-after: avoid; break-after: avoid;">
                             <div class="diagonal-wrapper" style="border-left:1px solid #000;">' . $colsHtml . '</div>
                         </th>
-                        <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px; border-top: 1px solid #000; border-left: 1px solid #000;">' . $commentTitle . '</th>
+                        <th style="width:35%; text-align:center; vertical-align:middle; background:#e0e0e0; font-size:11px; border-top: 1px solid #000;">' . $commentTitle . '</th>
                     </tr>';
                 }
                 function renderAprfEtatRadios($key, $donnees)
@@ -1839,7 +1839,6 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                     </table>
 
-                        <div class="html2pdf__page-break" style="height:0; overflow:hidden;"></div>
                         <div class="levage-diagram-container" style="position:relative; width:100%; max-width:650px; min-height:450px; margin:20px auto 10px auto; page-break-inside:avoid;">
                             <!-- Diagram includes Rep section and boxes -->
                             <img src="/assets/machines/levage_diagram.png" 

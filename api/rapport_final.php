@@ -1237,7 +1237,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     background: #e0e0e0 !important;
                     overflow: visible;
                     border: 1px solid #000 !important;
-                    border-right: none !important; /* On coupe la barre ici */
+                    border-right: none !important;
+                }
+                .diagonal-header + th {
+                    border-left: none !important;
                 }
                 .diagonal-wrapper {
                     display: flex;
