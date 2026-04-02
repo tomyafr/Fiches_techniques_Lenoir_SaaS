@@ -575,7 +575,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <!-- Bouton Télécharger PDF -->
                         <button type="button" id="btnDownloadPDF" onclick="telechargerPDF()"
                             style="padding:0.7rem 1.5rem; background:var(--primary); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem;">
-                            <span><img src="/assets/icon_download.svg" style="height: 18px; width: 18px; vertical-align: middle;"></span> <span id="btnDownloadPDFLabel">Télécharger le PDF</span>
+                            <span id="btnDownloadPDFIcon"><img src="/assets/icon_download.svg" style="height: 18px; width: 18px; vertical-align: middle;"></span> 
+                            <span id="btnDownloadPDFLabel">Télécharger le PDF</span>
                         </button>
                         <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>"
                             style="padding:0.7rem 1.5rem; background:rgba(255,255,255,0.1); color:var(--text); border:1px solid var(--glass-border); border-radius:8px; font-weight:600; text-decoration:none; font-size:0.9rem; display:flex; align-items:center; gap:8px;">
@@ -1161,6 +1162,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     font-size: 13px;
                     position: relative; 
                 }
+                .pdf-section-title {
+                    text-align: center;
+                    color: #000;
+                    font-size: 18px;
+                    margin-bottom: 20px;
+                    text-transform: uppercase;
+                    font-weight: bold;
+                }
                 .html2pdf__page-break {
                     height: 1px;
                     width: 100%;
@@ -1261,6 +1270,16 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     height: 30px;
                     background: #000;
                     z-index: 5;
+                }
+                .machine-icon {
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: transparent;
+                    border-radius: 8px;
+                    flex-shrink: 0;
                 }
                 .diag-col {
                     width: 28px;
@@ -1902,7 +1921,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         // ══════════════════════════════════════════════════════════════════
         async function telechargerPDF() {
             const btn = document.getElementById('btnDownloadPDF');
-            if (btn) { btn.disabled = true; btn.textContent = '⏳ Génération du rapport complet...'; }
+            const icon = document.getElementById('btnDownloadPDFIcon');
+            const label = document.getElementById('btnDownloadPDFLabel');
+
+            if (btn) { 
+                btn.disabled = true; 
+                if (label) label.textContent = 'Génération...';
+                if (icon) icon.textContent = '⏳';
+            }
             try {
                 const container = await buildFullPdfContainer();
                 await ensureImagesBase64(container);
