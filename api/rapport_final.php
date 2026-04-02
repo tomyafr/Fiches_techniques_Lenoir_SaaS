@@ -683,23 +683,27 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             </div>
 
             <!-- RÉCAP MACHINES -->
-            <div class="section-title">Équipements contrôlés (
-                <?= count($machines) ?>)
-            </div>
+            <div class="section-title">Équipements contrôlés (<?= count($machines) ?>)</div>
             <div class="machines-recap">
-                <?php foreach ($machines as $m): ?>
-                    <?php
-                    $pct = ($m['points_count'] > 0) ? 'filled' : 'empty';
-                    $statusColor = ($m['points_count'] > 5) ? 'var(--accent-cyan)' : 'var(--error)';
-                    ?>
-                    <span class="machine-tag" style="border-left: 4px solid <?= $statusColor ?>;">
-                        <img src="/assets/icons/machine.png" style="height: 14px; width: 14px; vertical-align: middle; margin-right: 4px;">
-                        <?= htmlspecialchars($m['designation']) ?>
-                        <?php $mm = json_decode($m['mesures'] ?? '{}', true); ?>
+                <?php foreach ($machines as $m): 
+                    $mStatus = $m['conclusion'] ?? '';
+                    $statusColor = '#94a3b8'; // défaut
+                    if (stripos($mStatus, 'conforme') !== false && stripos($mStatus, 'non') === false) $statusColor = '#10b981';
+                    if (stripos($mStatus, 'amélioration') !== false) $statusColor = '#f59e0b';
+                    if (stripos($mStatus, 'non conforme') !== false) $statusColor = '#f43f5e';
+                    if (stripos($mStatus, 'remplacer') !== false) $statusColor = '#8b0000';
+                    
+                    $mm = json_decode($m['mesures'] ?? '{}', true);
+                ?>
+                    <span class="machine-tag" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 0.4rem 0.8rem; border-radius: 8px; display: inline-flex; align-items:center; gap:8px;">
+                        <div style="width:20px; height:20px; background:rgba(59,130,246,0.1); border-radius:5px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <img src="/assets/icon_machine_blue.svg" style="height:14px; width:14px; filter: brightness(1.2);">
+                        </div>
+                        <strong style="color:#fff; font-size:0.85rem;"><?= htmlspecialchars($m['designation']) ?></strong>
                         <?php if (!empty($mm['repere'])): ?>
-                            <small style="opacity:0.7">– <?= htmlspecialchars($mm['repere']) ?></small>
+                            <small style="opacity:0.6; color:#94a3b8;">– <?= htmlspecialchars($mm['repere']) ?></small>
                         <?php endif; ?>
-                        <small style="margin-left: 8px; color: <?= $statusColor ?>;">(<?= $m['points_count'] ?> pts)</small>
+                        <small style="margin-left: 4px; color: <?= $statusColor ?>; font-weight:bold;">(<?= (int)$m['points_count'] ?> pts)</small>
                     </span>
                 <?php endforeach; ?>
             </div>
@@ -1511,7 +1515,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             synthPreambulePage.innerHTML = `
                 <div style="padding-top: 10px;">
                     <div style="border: 2px solid #000; padding: 20px; color: #000; background: #fff; margin-bottom: 30px; page-break-inside: avoid;">
-                        <h2 style="text-align: center; margin-top: 0; margin-bottom: 20px; text-decoration: underline; font-size: 16px; text-transform: uppercase;">SYNTHÈSE DE L'INTERVENTION</h2>
+                        <h2 style="text-align: center; margin-top: 0; margin-bottom: 25px; text-decoration: underline; font-size: 18px; text-transform: uppercase; color: #000 !important; font-weight: 900; opacity: 1 !important; display: block;">SYNTHÈSE DE L'INTERVENTION</h2>
                         
                         <div style="margin-bottom: 15px; font-size: 13px; line-height: 1.6;">
                             <div><strong>Technicien :</strong> ${s.tech}</div>
