@@ -2206,4 +2206,5 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     </script>
 </body>
 
-</html>
+</html>   
+ 
