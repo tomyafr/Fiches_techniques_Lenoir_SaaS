@@ -1739,9 +1739,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             });
 
                             p.style.position = 'relative';
-                            p.style.paddingBottom = '30mm';
-                            p.style.minHeight = 'auto'; // Help chaining
-                            p.appendChild(createPdfFooter());
                             container.appendChild(p);
                         });
                     } catch (err) {
