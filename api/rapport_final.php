@@ -1637,6 +1637,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 sel.outerHTML = `<span style="border-bottom:1px dashed black; display:inline-block; min-width:30px; padding:0 3px; font-weight:bold; color:black;">${valText}</span>`;
                             });
 
+                            p.querySelectorAll('img').forEach(img => {
+                                let src = img.getAttribute('src') || '';
+                                if (src.startsWith('/') && !src.startsWith('//')) {
+                                    img.src = window.location.origin + src;
+                                }
+                            });
+
                             p.querySelectorAll('textarea').forEach(ta => {
                                 let val = ta.value || ta.innerHTML;
 

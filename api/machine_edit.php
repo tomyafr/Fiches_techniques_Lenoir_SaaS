@@ -1839,7 +1839,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                     </table>
 
-                        <div style="position:relative; width:100%; max-width:650px; margin:20px auto 10px auto;">
+                        <div style="position:relative; width:100%; max-width:650px; min-height:450px; margin:20px auto 10px auto;">
                             <!-- Diagram includes Rep section and boxes -->
                             <img src="/assets/machines/levage_diagram.png" 
                                  style="width:100%; height:auto;" 
