@@ -38,19 +38,18 @@ if ($type === 'E' || $type === 'ALL') {
     $allIssues = [];
     foreach (['nr', 'nc', 'aa'] as $cat) {
         foreach ($issues[$cat] as $i) {
-            $allIssues[] = "• " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : "");
+            $allIssues[] = "• " . $i['designation'] . ($i['commentaire'] ? " : " . $i['commentaire'] : "");
         }
     }
 
-    $systemPromptE = "Tu es l'Expert Senior LENOIR-MEC. Rédige l'analyse technique globale.
-RÈGLES CRITIQUES :
-- NE REPRENDS PAS LE TITRE 'E) CAUSE DE DYSFONCTIONNEMENT' ou 'E)'.
-- LISTE TOUTES LES ANOMALIES (Points Orange/À améliorer OU Points Rouges/Non conformes).
-- RESPECTE L'ORDRE de la liste fournie.
-- Sois très concis (maximum 3-5 mots par point).
-- Si et seulement si TOUTE la liste fournie est 'Néant', réponds UNIQUEMENT: 'Aucune anomalie détectée lors de l'inspection.'
-- NE LISTE PAS les points qui sont en bon état.";
-    $userPromptE = "LISTE DES DÉFAUTS À TRAITER :\n" . (empty($allIssues) ? "Néant" : implode("\n", $allIssues));
+    $systemPromptE = "Tu es l'Expert LENOIR-MEC spécialisé en maintenance industrielle.
+RÈGLES D'ANALYSE :
+- Liste TOUTES les anomalies fournies (Points Rouges/Orange).
+- Pour chaque point, sois précis et factuel (max 10 mots).
+- Si un commentaire est présent, utilise-le pour enrichir le constat.
+- NE REPRENDS PAS LE TITRE SECTION E.
+- SI et SEULEMENT SI la liste est vide ou dit 'Néant', réponds : 'Aucune anomalie détectée lors de l'inspection.'";
+    $userPromptE = "LISTE BRUTE DES POINTS À TRAITER :\n" . (empty($allIssues) ? "Néant" : implode("\n", $allIssues));
 
     $resultE = callGroqIA($systemPromptE, $userPromptE);
     

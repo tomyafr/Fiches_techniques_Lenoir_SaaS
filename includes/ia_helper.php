@@ -58,15 +58,26 @@ function extractIssuesFromDonnees($donnees) {
         'gen_mesures' => 'Mesure isolation & Induction',
         // LEVAGE
         'levage_tension' => 'Tension levage', 'levage_intensite' => 'Intensité levage', 'levage_champ_centre' => 'Champ magnétique au centre',
-        'levage_champ_pole' => 'Champ magnétique au pôle'
+        'levage_champ_pole' => 'Champ magnétique au pôle',
+        // NOUVELLES CLES ISSUES DU FORMULAIRE PAP/TAP
+        'paptap_satisfaction' => 'Satisfaction fonctionnement PAP/TAP',
+        'paptap_aspect' => 'Aspect général PAP/TAP',
+        'paptap_virole' => 'État d’usure de la virole inox',
+        'paptap_revetement' => 'Revêtement caoutchouc',
+        'paptap_tasseaux' => 'Nombre et taille des tasseaux',
+        'paptap_arbre' => 'État de l’arbre d’entrainement',
+        'paptap_paliers' => 'État des paliers et graissage',
+        'paptap_rotation' => 'Rotation sans difficulté',
+        'paptap_pos_circuit' => 'Position correcte du circuit',
+        'paptap_palier_fixe' => 'Bon maintien du palier fixe'
     ];
 
     $issues = ['aa' => [], 'nc' => [], 'nr' => []];
-    $negativeValues = ['nc', 'nr', 'aa', 'r', 'hs', 'a ameliorer', 'non conforme', 'a remplacer'];
+    $negativeValues = ['nc', 'nr', 'aa', 'r', 'hs', '+', 'a ameliorer', 'non conforme', 'a remplacer', 'endommagé', 'rouillé', 'sale', 'défectueux', 'usé', 'usées', 'faible'];
 
-    // Itérer sur labelsMap pour garantir l'ordre de la fiche de contrôle
+    // On scanne la map officielle pour l'ordre et les libellés précis
+    $seenKeys = [];
     foreach ($labelsMap as $cleanKey => $label) {
-        // On cherche la valeur dans $donnees avec trois variantes de clés possibles
         $val = null;
         $actualKey = null;
 
@@ -74,6 +85,7 @@ function extractIssuesFromDonnees($donnees) {
             if (isset($donnees[$kVariant])) {
                 $val = trim(strtolower((string)$donnees[$kVariant]));
                 $actualKey = $kVariant;
+                $seenKeys[] = $actualKey;
                 break;
             }
         }
@@ -83,10 +95,31 @@ function extractIssuesFromDonnees($donnees) {
             $issue = ['designation' => $label, 'commentaire' => $comment];
             
             if ($val === 'nc' || $val === 'hs' || $val === 'non conforme') $issues['nc'][] = $issue;
-            elseif ($val === 'nr' || $val === 'r' || $val === 'a remplacer') $issues['nr'][] = $issue;
+            elseif ($val === 'nr' || $val === 'r' || $val === 'a remplacer' || $val === '+') $issues['nr'][] = $issue;
             else $issues['aa'][] = $issue;
         }
     }
+
+    // NOUVEAUTÉ : On scanne TOUT le reste de $donnees pour ne rien rater (clés dynamiques ou nouvelles)
+    foreach ($donnees as $key => $val) {
+        if (in_array($key, $seenKeys)) continue;
+        if (strpos($key, '_comment') !== false) continue;
+        
+        $valStr = trim(strtolower((string)$val));
+        if ($valStr && in_array($valStr, $negativeValues)) {
+            // "Humanisation" de la clé si inconnue
+            $label = str_replace(['_', 'edx', 'ov', 'aprf', 'levage', 'radio', 'stat'], [' ', '', '', '', '', '', ''], $key);
+            $label = trim(ucfirst($label));
+            
+            $comment = $donnees[$key . '_comment'] ?? null;
+            $issue = ['designation' => $label, 'commentaire' => $comment];
+
+            if ($valStr === 'nc' || $valStr === 'hs' || $valStr === 'non conforme') $issues['nc'][] = $issue;
+            elseif ($valStr === 'nr' || $valStr === 'r' || $valStr === 'a remplacer' || $valStr === '+') $issues['nr'][] = $issue;
+            else $issues['aa'][] = $issue;
+        }
+    }
+
     return $issues;
 }
 
