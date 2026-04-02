@@ -1839,7 +1839,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                     </table>
 
-                        <div style="position:relative; width:100%; max-width:650px; min-height:450px; margin:20px auto 10px auto;">
+                        <div class="html2pdf__page-break" style="height:0; overflow:hidden;"></div>
+                        <div class="levage-diagram-container" style="position:relative; width:100%; max-width:650px; min-height:450px; margin:20px auto 10px auto; page-break-inside:avoid;">
                             <!-- Diagram includes Rep section and boxes -->
                             <img src="/assets/machines/levage_diagram.png" 
                                  style="width:100%; height:auto;" 
