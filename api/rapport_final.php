@@ -1247,7 +1247,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     content: "";
                     position: absolute;
                     left: 100%;
-                    top: 15px;
+                    top: 0;
                     bottom: 30px;
                     width: 1px;
                     background: #000;
@@ -1622,7 +1622,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                     val = '_____';
                                 }
 
-                                inp.outerHTML = `<span style="border-bottom:1px dashed black; display:inline-block; min-width:30px; padding:0 3px; font-weight:bold;">${val}</span>`;
+                                let style = inp.getAttribute('style') || '';
+                                // On s'assure que le style original est gardé (position, etc.) mais on ajoute nos bordures PDF
+                                // On ne veut pas de border-none si on met border-bottom
+                                let newStyle = style + "; border-bottom:1px dashed black; display:inline-block; min-width:30px; padding:0 3px; font-weight:bold;";
+                                inp.outerHTML = `<span style="${newStyle}">${val}</span>`;
                             });
 
                             p.querySelectorAll('select').forEach(sel => {
