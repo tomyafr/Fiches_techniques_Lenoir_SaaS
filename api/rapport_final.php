@@ -1247,7 +1247,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     content: "";
                     position: absolute;
                     left: 100%;
-                    top: 0;
+                    top: 15px;
                     bottom: 30px;
                     width: 1px;
                     background: #000;

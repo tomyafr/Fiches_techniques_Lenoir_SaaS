@@ -629,7 +629,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             content: "";
             position: absolute;
             left: 100%;
-            top: 0;
+            top: 15px;
             bottom: 35px;
             width: 1px;
             background: #000;
