@@ -1106,6 +1106,39 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             return f;
         }
 
+        async function ensureImagesBase64(container) {
+            const imgs = Array.from(container.querySelectorAll('img'));
+            const promises = imgs.map(async img => {
+                const src = img.src || img.getAttribute('src');
+                if (!src || src.startsWith('data:')) return;
+                
+                try {
+                    // Prepend origin if relative
+                    let absoluteUrl = src;
+                    if (src.startsWith('/') && !src.startsWith('//')) {
+                        absoluteUrl = window.location.origin + src;
+                    }
+                    
+                    const resp = await fetch(absoluteUrl);
+                    if (!resp.ok) throw new Error('Fetch failed');
+                    const blob = await resp.blob();
+                    
+                    return new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            img.src = reader.result;
+                            resolve();
+                        };
+                        reader.onerror = resolve;
+                        reader.readAsDataURL(blob);
+                    });
+                } catch (e) {
+                    console.error('Failed to b64 image: ' + src, e);
+                }
+            });
+            await Promise.all(promises);
+        }
+
         async function buildFullPdfContainer() {
             const container = document.createElement('div');
             container.id = 'pdf-full-wrapper';
@@ -1826,6 +1859,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
 
             const container = await buildFullPdfContainer();
+            await ensureImagesBase64(container);
 
             const opt = {
                 margin: [10, 0, 15, 0], // Top, Left, Bottom, Right
@@ -1867,6 +1901,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             if (btn) { btn.disabled = true; btn.textContent = '⏳ Génération du rapport complet...'; }
             try {
                 const container = await buildFullPdfContainer();
+                await ensureImagesBase64(container);
 
                 const opt = {
                     margin: [10, 0, 15, 0], // Top, Left, Bottom, Right
