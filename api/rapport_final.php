@@ -697,7 +697,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 ?>
                     <span class="machine-tag" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 0.4rem 0.8rem; border-radius: 8px; display: inline-flex; align-items:center; gap:8px;">
                         <div style="width:20px; height:20px; background:transparent; border-radius:5px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                            <img src="/assets/icons/machine.png" style="height:14px; width:14px; opacity:0.9;">
+                            <img src="/assets/icon_gear_custom.svg" style="height:16px; width:16px; opacity:0.85;">
                         </div>
                         <strong style="color:#fff; font-size:0.85rem;"><?= htmlspecialchars($m['designation']) ?></strong>
                         <?php if (!empty($mm['repere'])): ?>
