@@ -575,7 +575,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <!-- Bouton Télécharger PDF -->
                         <button type="button" id="btnDownloadPDF" onclick="telechargerPDF()"
                             style="padding:0.7rem 1.5rem; background:var(--primary); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem;">
-                            <span id="btnDownloadPDFIcon"><img src="/assets/icon_download.svg" style="height: 18px; width: 18px; vertical-align: middle;"></span> 
+                            <span id="btnDownloadPDFIcon"><img src="/assets/icon_download.svg" style="height: 18px; width: 18px; vertical-align: middle; filter: brightness(0);"></span> 
                             <span id="btnDownloadPDFLabel">Télécharger le PDF</span>
                         </button>
                         <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>"
@@ -696,8 +696,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     $mm = json_decode($m['mesures'] ?? '{}', true);
                 ?>
                     <span class="machine-tag" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 0.4rem 0.8rem; border-radius: 8px; display: inline-flex; align-items:center; gap:8px;">
-                        <div style="width:20px; height:20px; background:rgba(59,130,246,0.1); border-radius:5px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                            <img src="/assets/icon_machine_blue.svg" style="height:14px; width:14px; filter: brightness(1.2);">
+                        <div style="width:20px; height:20px; background:rgba(59,130,246,0.2); border-radius:5px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <img src="/assets/icon_machine_white.svg" style="height:14px; width:14px; opacity:0.8;">
                         </div>
                         <strong style="color:#fff; font-size:0.85rem;"><?= htmlspecialchars($m['designation']) ?></strong>
                         <?php if (!empty($mm['repere'])): ?>
@@ -1515,7 +1515,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             synthPreambulePage.innerHTML = `
                 <div style="padding-top: 10px;">
                     <div style="border: 2px solid #000; padding: 20px; color: #000; background: #fff; margin-bottom: 30px; page-break-inside: avoid;">
-                        <h2 style="text-align: center; margin-top: 0; margin-bottom: 25px; text-decoration: underline; font-size: 18px; text-transform: uppercase; color: #000 !important; font-weight: 900; opacity: 1 !important; display: block;">SYNTHÈSE DE L'INTERVENTION</h2>
+                        <h2 style="text-align: center; margin-top: 0; margin-bottom: 25px; padding-bottom: 5px; border-bottom: 1px solid #000; font-size: 18px; text-transform: uppercase; color: #000 !important; font-weight: 900; opacity: 1 !important; display: inline-block; width: 100%;">SYNTHÈSE DE L'INTERVENTION</h2>
                         
                         <div style="margin-bottom: 15px; font-size: 13px; line-height: 1.6;">
                             <div><strong>Technicien :</strong> ${s.tech}</div>
@@ -1963,7 +1963,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             } catch (e) {
                 alert('Erreur génération PDF : ' + e.message);
             } finally {
-                if (btn) { btn.disabled = false; btn.textContent = '⬇️ Télécharger le PDF'; }
+                if (btn) { 
+                    btn.disabled = false; 
+                    if (label) label.textContent = 'Télécharger le PDF';
+                    if (icon) icon.innerHTML = '<img src="/assets/icon_download.svg" style="height: 18px; width: 18px; vertical-align: middle; filter: brightness(0);">';
+                }
             }
         }
 
