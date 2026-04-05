@@ -1492,6 +1492,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             // --- 1.2 PAGE SYNTHÈSE + PRÉAMBULE (FUSIONNÉS POUR ÉCONOMISER DES PAGES) ---
             const synthPreambulePage = document.createElement('div');
             synthPreambulePage.className = 'pdf-page';
+            synthPreambulePage.style.margin = '0';
+            synthPreambulePage.style.boxShadow = 'none';
             synthPreambulePage.style.pageBreakBefore = 'always';
             synthPreambulePage.style.paddingTop = '15mm';
             const s = window.LM_RAPPORT.synth;
@@ -1644,6 +1646,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                             // --- NETTOYAGE RADICAL DES ÉLÉMENTS D'INTERFACE ---
                             p.querySelectorAll('.photo-btn, .btn-ia-refresh, .top-bar, .photo-thumbs, #btnChrono, .no-print-pdf, .photo-del-overlay').forEach(el => el.remove());
+
+                            // FIX: Blank pages. Strip default screen margins and shadows so they don't push into invisible overflowing pages
+                            p.style.margin = '0';
+                            p.style.boxShadow = 'none';
 
                             // If it's a diagram/photo page and it's empty after cleanup, skip it
                             const contentText = p.textContent.trim();
