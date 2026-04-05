@@ -1956,7 +1956,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         endif;
                         ?>
 
-                        <div class="section-wrapper-pdf" style="border: 1px solid #000; padding:10px; background: #fff; page-break-inside: avoid; break-inside: avoid;">
+                        <div class="section-wrapper-pdf" style="padding:0; background: transparent; page-break-inside: avoid; break-inside: avoid;">
                             <div class="pdf-section-title">E) CAUSE DE DYSFONCTIONNEMENT :</div>
                             <?php if (!isset($_GET['pdf'])): ?>
                                 <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette zone est pré-remplie avec les points "Non conformes" ou "À améliorer" détectés. Vous pouvez éditer le texte ci-dessous.</p>
@@ -1995,7 +1995,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?php endif; ?>
                         </div>
 
-                        <div class="section-wrapper-pdf" style="border: 1px solid #000; padding:10px; background: #fff; page-break-inside: avoid; break-inside: avoid;">
+                        <div class="section-wrapper-pdf" style="padding:0; background: transparent; page-break-inside: avoid; break-inside: avoid;">
                             <div class="pdf-section-title">F) CONCLUSION :</div>
                             <?php if (!isset($_GET['pdf'])): ?>
                                 <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette conclusion peut être générée par l'IA en fonction des résultats du contrôle.</p>
