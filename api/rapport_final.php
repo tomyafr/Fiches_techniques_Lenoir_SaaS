@@ -1768,7 +1768,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             });
 
                             p.style.position = 'relative';
-                            p.style.paddingBottom = '30mm';
+                            p.style.paddingBottom = '5mm'; 
+                            p.querySelectorAll('.section-wrapper-pdf').forEach(w => w.style.marginBottom = '0');
                             p.style.minHeight = 'auto'; // Help chaining
                             p.appendChild(createPdfFooter());
                             container.appendChild(p);
@@ -2246,6 +2247,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     </script>
 </body>
 
-</html>   
-    
+</html>  
+ 
+   
+ 
  
