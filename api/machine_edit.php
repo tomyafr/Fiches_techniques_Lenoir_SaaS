@@ -2014,8 +2014,10 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                         <?php if (isset($_GET['pdf'])): ?>
                             <div class="section-wrapper-pdf" style="margin-top:15px; border-top: 1px solid #ddd; padding-top:10px;">
-                                <div style="font-weight:bold; font-size:14px; color:#d35400; margin-bottom:15px;">RAPPEL : Le nettoyage de votre <?= $isEDX ? 'EDX' : ($isOV ? 'OV' : 'équipement') ?> doit être régulier et complet (intérieur et extérieur)</div>
                                 <table style="width:100%; border-collapse:collapse;">
+                                    <tr>
+                                        <td colspan="2" style="font-weight:bold; font-size:14px; color:#d35400; padding-bottom:15px;">RAPPEL : Le nettoyage de votre <?= $isEDX ? 'EDX' : ($isOV ? 'OV' : 'équipement') ?> doit être régulier et complet (intérieur et extérieur)</td>
+                                    </tr>
                                     <tr>
                                         <td style="width:60px; vertical-align:middle; padding-bottom:15px;">
                                             <img src="/assets/hazard/magnet.png" style="height:45px;">
