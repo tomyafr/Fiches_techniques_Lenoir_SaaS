@@ -1792,6 +1792,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             endPage.className = 'pdf-page';
             endPage.style.padding = '0 15mm';
             endPage.style.position = 'relative';
+            endPage.style.pageBreakBefore = 'always';
 
             const originalRapport = document.getElementById('rapportForm');
             const souhaitRapport = originalRapport.querySelector('[name="souhait_rapport_unique"]').checked;
