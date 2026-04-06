@@ -1156,23 +1156,34 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             styleNode.textContent = `
                 .pdf-page {
                     width: 21cm;
-                    min-height: 100px; 
+                    min-height: 100px;
                     background: white;
                     color: black;
-                    padding: 0 15mm; 
+                    padding: 0 15mm;
                     box-sizing: border-box;
                     margin: 0;
                     font-family: Arial, sans-serif;
                     font-size: 13px;
-                    position: relative; 
+                    position: relative;
                 }
                 .pdf-section-title {
-                    text-align: center;
-                    color: #000;
-                    font-size: 18px;
-                    margin-bottom: 20px;
-                    text-transform: uppercase;
-                    font-weight: bold;
+                    text-align: left !important;
+                    color: #d35400 !important;
+                    font-size: 16px !important;
+                    margin-bottom: 20px !important;
+                    border-bottom: 2px solid #d35400 !important;
+                    padding-bottom: 5px !important;
+                    text-transform: uppercase !important;
+                    font-weight: bold !important;
+                    page-break-after: avoid !important;
+                }
+                .section-wrapper-pdf {
+                    page-break-inside: avoid !important;
+                    break-inside: avoid !important;
+                    margin-top: 25px !important;
+                    margin-bottom: 25px !important;
+                    display: block !important;
+                    width: 100% !important;
                 }
                 .html2pdf__page-break {
                     height: 1px;
