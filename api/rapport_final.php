@@ -1692,25 +1692,20 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                             p.querySelectorAll('input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"]):not([type="file"])').forEach(inp => {
                                 let val = (inp.value || '').trim();
-                                // Bug 4: Handle "Poste"
                                 if (inp.name === 'mesures[poste]') {
                                     val = val ? val : (mIdx + 1);
                                 } else if (!val) {
-                                    val = '_____';
+                                    val = '';
                                 }
 
                                 let style = inp.getAttribute('style') || '';
-                                // On s'assure que le style original est gardé (position, etc.) mais on ajoute nos bordures PDF
-                                // On ne veut pas de border-none si on met border-bottom
                                 let newStyle = style + "; border-bottom:1px dashed black; display:inline-block; min-width:30px; padding:0 3px; font-weight:bold;";
                                 inp.outerHTML = `<span style="${newStyle}">${val}</span>`;
                             });
 
                             p.querySelectorAll('select').forEach(sel => {
                                 let valText = sel.options[sel.selectedIndex]?.text || '';
-                                if (!sel.value) {
-                                    valText = '_____';
-                                }
+                                if (!sel.value) valText = '';
                                 sel.outerHTML = `<span style="border-bottom:1px dashed black; display:inline-block; min-width:30px; padding:0 3px; font-weight:bold; color:black;">${valText}</span>`;
                             });
 
