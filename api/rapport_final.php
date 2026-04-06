@@ -1555,7 +1555,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
 
                     <div style="font-size: 13px; line-height: 1.5; color: black; font-family: Arial, sans-serif; page-break-inside: avoid;">
-                        <h2 style="color: #f97316; text-decoration: underline; font-size: 16px; text-transform: uppercase; margin-bottom: 15px;">PRÉAMBULE :</h2>
+                        <h2 style="color: #d35400; font-size: 16px; text-transform: uppercase; margin-bottom: 10px; border-bottom: 2px solid #d35400; padding-bottom: 5px;">PRÉAMBULE :</h2>
                         
                         <p style="margin-bottom: 12px;">
                             Ce rapport est établi suite à une expertise effectuée le ${dateExp} sur votre site de ${villePreambule}.

@@ -257,6 +257,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             padding-bottom: 5px;
             page-break-after: avoid;
             break-after: avoid;
+            text-transform: uppercase;
         }
 
         /* === PASTILLE SYSTEM === */
@@ -549,23 +550,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             border: 1px dashed #999;
         }
 
-        .pdf-section-title {
-            font-weight: bold;
-            font-size: 14px;
-            background: #e0e0e0;
-            padding: 5px;
-            border: 1px solid #000;
-            margin-bottom: -1px;
-            color: black;
-            text-transform: uppercase;
-            page-break-inside: avoid;
-            page-break-after: avoid;
-        }
 
-        .section-wrapper-pdf {
-            page-break-inside: avoid; /* Règle CRITIQUE pour éviter que B, C, D, E, F soient coupés */
-            margin-bottom: 20px;
-        }
 
         /* Top Save bar */
         .top-bar {
@@ -831,7 +816,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </tr>
                 </table>
 
-                <div style="font-weight:bold; font-size:16px; color:#d35400; margin-bottom:5px; border-bottom: 2px solid #d35400; padding-bottom:5px; page-break-after: avoid;">A) FICHE DE CONTRÔLE :</div>
+                <div class="section-wrapper-pdf">
+                    <div class="pdf-section-title">A) FICHE DE CONTRÔLE :</div>
                 
                 <div style="font-weight:bold; color:#1B4F72; margin-bottom:5px; font-size:14px; page-break-after: avoid;">
                     Poste : <input type="text" name="mesures[poste]" value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>" style="border:none; border-bottom:1px dashed #000; font-weight:bold; width:30px; background:transparent;" autocomplete="off">
@@ -901,6 +887,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </td>
                     </tr>
                 </table>
+                </div>
 
                 <?php
                 // === HELPERS ===
@@ -918,8 +905,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                     $isPdf = isset($_GET['pdf']);
                     
                     $html = '
-                    <div style="margin-top:20px; page-break-inside: avoid;">
-                        <div style="font-weight:bold; font-size:14px; color:#d35400; margin-bottom:10px; border-bottom: 2px solid #d35400; padding-bottom:5px;">B) DESCRIPTION DU MATERIEL :</div>
+                    <div class="section-wrapper-pdf">
+                        <div class="pdf-section-title">B) DESCRIPTION DU MATERIEL :</div>
                         <div id="description_materiel_montage">';
                     
                     // Si aucune photo et mode édition, on affiche le placeholder avec bouton
@@ -1017,8 +1004,8 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 function renderSectionC($isEDX, $isOV) {
                     ?>
-                    <div style="margin-top:20px; page-break-inside: avoid;">
-                        <div style="font-weight:bold; font-size:14px; color:#d35400; margin-bottom:10px;">C) RAPPEL DES FRÉQUENCES DE NETTOYAGE ET DES DIFFÉRENTS POINTS DE CONTRÔLE :</div>
+                    <div class="section-wrapper-pdf">
+                        <div class="pdf-section-title">C) RAPPEL DES FRÉQUENCES DE NETTOYAGE ET DES DIFFÉRENTS POINTS DE CONTRÔLE :</div>
                         <img src="/assets/machines/frequences_tableau.png" style="width:100%; height:auto; border:2px solid #ed7d31;">
                     </div>
                     <?php
@@ -1029,8 +1016,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                     $mini = $mesures['edx_releve_mini'] ?? '....';
                     $maxi = $mesures['edx_releve_maxi'] ?? '....';
                     ?>
-                    <div style="margin-top:20px; page-break-inside: avoid;">
-                        <div style="font-weight:bold; font-size:14px; color:#d35400; margin-bottom:5px;">D) RELEVES D’INDUCTION MAGNETIQUE :</div>
+                    <div class="section-wrapper-pdf">
+                        <div class="pdf-section-title">D) RELEVES D’INDUCTION MAGNETIQUE :</div>
                         <div style="border:1px solid #ed7d31; padding:10px; font-size:13px; background:#fff;">
                             <p style="margin:5px 0;"><strong>Roue polaire :</strong></p>
                             <p style="margin:5px 0 5px 20px;">• Relevé mini : <strong><?= htmlspecialchars($mini) ?></strong> Gauss</p>
@@ -2041,9 +2028,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?php endif; ?>
 
                     <div class="section-wrapper-pdf photos-annexes-wrapper" style="margin-top:20px;">
-                        <div
-                            style="background:#d35400; color:white; font-weight:bold; font-size:12px; padding:5px; border:1px solid #000;">
-                            PHOTOS ANNEXES</div>
+                        <div class="pdf-section-title">PHOTOS ANNEXES</div>
                         <div id="photosAnnexesGrid"
                             style="border:1px solid #000; border-top:none; padding:10px; min-height:60px; display:flex; flex-wrap:wrap; gap:10px;">
                             <?php if (empty($photosData)): ?>
