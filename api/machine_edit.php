@@ -1168,7 +1168,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <tr>
                             <td style="padding:4px; font-weight:bold; width:35%;">
                                 Type de produit : 
-                                <input type="text" name="mesures[aprf_produit]" value="<?= htmlspecialchars($mesures['aprf_produit'] ?? '') ?>" class="pdf-input" style="width:150px; border-bottom:1px solid #000;">
+                                <input type="text" name="mesures[aprf_produit]" value="<?= htmlspecialchars($mesures['aprf_produit'] ?? '') ?>" class="pdf-input" style="width:150px;">
                             </td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                 <?= renderEtatRadios("aprf_produit_stat", $donnees, 3) ?>
@@ -1178,7 +1178,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <tr>
                             <td style="padding:4px; font-weight:bold;">
                                 Granulométrie : 
-                                <input type="text" name="mesures[aprf_granu]" value="<?= htmlspecialchars($mesures['aprf_granu'] ?? '') ?>" class="pdf-input" style="width:60px; border-bottom:1px solid #000; text-align:center;"> mm
+                                <input type="text" name="mesures[aprf_granu]" value="<?= htmlspecialchars($mesures['aprf_granu'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;"> mm
                             </td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
                                 <?= renderAprfEtatRadios("aprf_granu_stat", $donnees) ?>
@@ -1188,8 +1188,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <tr>
                             <td style="padding:4px; font-weight:bold;">
                                 Distance aimants / bande : 
-                                <input type="text" name="mesures[aprf_dist_min]" value="<?= htmlspecialchars($mesures['aprf_dist_min'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000; text-align:center;"> à 
-                                <input type="text" name="mesures[aprf_dist_max]" value="<?= htmlspecialchars($mesures['aprf_dist_max'] ?? '') ?>" class="pdf-input" style="width:40px; border-bottom:1px solid #000; text-align:center;"> mm
+                                <input type="text" name="mesures[aprf_dist_min]" value="<?= htmlspecialchars($mesures['aprf_dist_min'] ?? '') ?>" class="pdf-input" style="width:40px; text-align:center;"> à 
+                                <input type="text" name="mesures[aprf_dist_max]" value="<?= htmlspecialchars($mesures['aprf_dist_max'] ?? '') ?>" class="pdf-input" style="width:40px; text-align:center;"> mm
                             </td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
                                 <?= renderAprfEtatRadios("aprf_dist_stat", $donnees) ?>
@@ -1199,7 +1199,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <tr>
                             <td style="padding:4px; font-weight:bold;">
                                 Hauteur de la couche : 
-                                <input type="text" name="mesures[aprf_H_couche]" value="<?= htmlspecialchars($mesures['aprf_H_couche'] ?? '') ?>" class="pdf-input" style="width:80px; border-bottom:1px solid #000; text-align:center;"> mm
+                                <input type="text" name="mesures[aprf_H_couche]" value="<?= htmlspecialchars($mesures['aprf_H_couche'] ?? '') ?>" class="pdf-input" style="width:80px; text-align:center;"> mm
                             </td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
                                 <?= renderAprfEtatRadios("aprf_H_stat", $donnees) ?>
@@ -1209,13 +1209,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <tr>
                             <td style="padding:4px; font-weight:bold;">
                                 Débit : 
-                                <input type="text" name="mesures[aprf_debit]" value="<?= htmlspecialchars($mesures['aprf_debit'] ?? '') ?>" class="pdf-input" style="width:60px; border-bottom:1px solid #000; text-align:center;"> t/h
+                                <input type="text" name="mesures[aprf_debit]" value="<?= htmlspecialchars($mesures['aprf_debit'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;"> t/h
                             </td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
                                 <?= renderAprfEtatRadios("aprf_debit_stat", $donnees) ?>
                             </td>
                             <td style="padding:4px;">
-                                Avec densité de <input type="text" name="mesures[aprf_densite]" value="<?= htmlspecialchars($mesures['aprf_densite'] ?? '') ?>" class="pdf-input" style="width:60px; border-bottom:1px solid #000; text-align:center;">
+                                Avec densité de <input type="text" name="mesures[aprf_densite]" value="<?= htmlspecialchars($mesures['aprf_densite'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;">
                             </td>
                         </tr>
                         </tbody>
@@ -1480,21 +1480,21 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <tr>
                             <td style="padding:4px;">
                                 Type de produit : 
-                                <input type="text" name="mesures[paptap_produit]" value="<?= htmlspecialchars($mesures['paptap_produit'] ?? '') ?>" class="pdf-input" style="width:100px; border-bottom:1px solid #000;">
+                                <input type="text" name="mesures[paptap_produit]" value="<?= htmlspecialchars($mesures['paptap_produit'] ?? '') ?>" class="pdf-input" style="width:100px;">
                             </td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
                                 <?= renderAprfEtatRadios("paptap_produit_stat", $donnees) ?>
                             </td>
                             <td style="padding:4px;">
-                                Aciers de <input type="text" name="mesures[paptap_acier_min]" value="<?= htmlspecialchars($mesures['paptap_acier_min'] ?? '') ?>" style="width:30px; border:none; border-bottom:1px solid #000; text-align:center;">
-                                à <input type="text" name="mesures[paptap_acier_max]" value="<?= htmlspecialchars($mesures['paptap_acier_max'] ?? '') ?>" style="width:30px; border:none; border-bottom:1px solid #000; text-align:center;"> mm
+                                Aciers de <input type="text" name="mesures[paptap_acier_min]" value="<?= htmlspecialchars($mesures['paptap_acier_min'] ?? '') ?>" class="pdf-input" style="width:30px; text-align:center;">
+                                à <input type="text" name="mesures[paptap_acier_max]" value="<?= htmlspecialchars($mesures['paptap_acier_max'] ?? '') ?>" class="pdf-input" style="width:30px; text-align:center;"> mm
                             </td>
                         </tr>
                         <tr>
                             <td style="padding:4px;">
                                 Granulométrie : 
-                                <input type="text" name="mesures[paptap_granu_min]" value="<?= htmlspecialchars($mesures['paptap_granu_min'] ?? '') ?>" style="width:40px; border:none; border-bottom:1px solid #000; text-align:center;"> à 
-                                <input type="text" name="mesures[paptap_granu_max]" value="<?= htmlspecialchars($mesures['paptap_granu_max'] ?? '') ?>" style="width:40px; border:none; border-bottom:1px solid #000; text-align:center;"> mm
+                                <input type="text" name="mesures[paptap_granu_min]" value="<?= htmlspecialchars($mesures['paptap_granu_min'] ?? '') ?>" class="pdf-input" style="width:40px; text-align:center;"> à 
+                                <input type="text" name="mesures[paptap_granu_max]" value="<?= htmlspecialchars($mesures['paptap_granu_max'] ?? '') ?>" class="pdf-input" style="width:40px; text-align:center;"> mm
                             </td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
                                 <?= renderAprfEtatRadios("paptap_granu_stat", $donnees) ?>
@@ -1504,13 +1504,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <tr>
                             <td style="padding:4px;">
                                 Débit : 
-                                <input type="text" name="mesures[paptap_debit]" value="<?= htmlspecialchars($mesures['paptap_debit'] ?? '') ?>" style="width:60px; border:none; border-bottom:1px solid #000; text-align:center;"> t/h
+                                <input type="text" name="mesures[paptap_debit]" value="<?= htmlspecialchars($mesures['paptap_debit'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;"> t/h
                             </td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
                                 <?= renderAprfEtatRadios("paptap_debit_stat", $donnees) ?>
                             </td>
                             <td style="padding:4px;">
-                                Avec densité de <input type="text" name="mesures[paptap_densite]" value="<?= htmlspecialchars($mesures['paptap_densite'] ?? '') ?>" style="width:50px; border:none; border-bottom:1px solid #000; text-align:center;">
+                                Avec densité de <input type="text" name="mesures[paptap_densite]" value="<?= htmlspecialchars($mesures['paptap_densite'] ?? '') ?>" class="pdf-input" style="width:50px; text-align:center;">
                             </td>
                         </tr>
                         <tr>
@@ -1540,14 +1540,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <?= renderAprfEtatRadios("paptap_pos_circuit_stat", $donnees) ?>
                             </td>
                             <td style="padding:4px;">
-                                Réglage : <input type="text" name="mesures[paptap_reglage]" value="<?= htmlspecialchars($mesures['paptap_reglage'] ?? '') ?>" style="width:80px; border:none; border-bottom:1px solid #000; text-align:center;"> °
+                                Réglage : <input type="text" name="mesures[paptap_reglage]" value="<?= htmlspecialchars($mesures['paptap_reglage'] ?? '') ?>" class="pdf-input" style="width:80px; text-align:center;"> °
                             </td>
                         </tr>
                         <?= renderAprfRow("Type de circuit : Agitateur / Linéaire / Croisé", "paptap_type_circuit", $donnees) ?>
                         <?= renderAprfRow("Bon maintien du palier fixe", "paptap_palier_fixe", $donnees) ?>
                         <tr>
                             <td style="padding:4px;">
-                                Induction sur la virole : <input type="text" name="mesures[paptap_induction]" value="<?= htmlspecialchars($mesures['paptap_induction'] ?? '') ?>" style="width:60px; border:none; border-bottom:1px solid #000; text-align:center;"> Gauss
+                                Induction sur la virole : <input type="text" name="mesures[paptap_induction]" value="<?= htmlspecialchars($mesures['paptap_induction'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;"> Gauss
                             </td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
                                 <?= renderAprfEtatRadios("paptap_induction_stat", $donnees) ?>
@@ -1609,7 +1609,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 Isolement sous 1000 Vcc :
                                 <input type="text" name="mesures[levage_isolement]"
                                     value="<?= htmlspecialchars($mesures['levage_isolement'] ?? '') ?>" class="pdf-input"
-                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                    style="width:80px; text-align:center; margin-left:5px;">
                                 M.ohms
                             </td>
                             <td
@@ -1625,7 +1625,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 Résistance à froid :
                                 <input type="text" name="mesures[levage_resistance]"
                                     value="<?= htmlspecialchars($mesures['levage_resistance'] ?? '') ?>" class="pdf-input"
-                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                    style="width:80px; text-align:center; margin-left:5px;">
                                 ohms
                             </td>
                             <td
@@ -1642,7 +1642,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <input type="text" name="mesures[levage_temp_carcasse]"
                                     value="<?= htmlspecialchars($mesures['levage_temp_carcasse'] ?? '') ?>"
                                     class="pdf-input"
-                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                    style="width:80px; text-align:center; margin-left:5px;">
                                 °C
                             </td>
                             <td
@@ -1660,7 +1660,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <input type="text" name="mesures[levage_temp_ambiante]"
                                     value="<?= htmlspecialchars($mesures['levage_temp_ambiante'] ?? '') ?>"
                                     class="pdf-input"
-                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                    style="width:80px; text-align:center; margin-left:5px;">
                                 °C
                             </td>
                             <td
@@ -1678,7 +1678,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <input type="text" name="mesures[levage_arrete_depuis]"
                                     value="<?= htmlspecialchars($mesures['levage_arrete_depuis'] ?? '') ?>"
                                     class="pdf-input"
-                                    style="width:60px; border-bottom:1px solid #000; text-align:center; margin-left:5px;"> h
+                                    style="width:60px; text-align:center; margin-left:5px;"> h
                             </td>
                             <td
                                 style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
@@ -1697,7 +1697,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 Tension :
                                 <input type="text" name="mesures[levage_tension]"
                                     value="<?= htmlspecialchars($mesures['levage_tension'] ?? '') ?>" class="pdf-input"
-                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                    style="width:80px; text-align:center; margin-left:5px;">
                                 Vcc
                             </td>
                             <td
@@ -1713,7 +1713,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 Intensité :
                                 <input type="text" name="mesures[levage_intensite]"
                                     value="<?= htmlspecialchars($mesures['levage_intensite'] ?? '') ?>" class="pdf-input"
-                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;"> A
+                                    style="width:80px; text-align:center; margin-left:5px;"> A
                             </td>
                             <td
                                 style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
@@ -1728,7 +1728,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 Champ magnétique au centre du noyau :
                                 <input type="text" name="mesures[levage_champ_centre]"
                                     value="<?= htmlspecialchars($mesures['levage_champ_centre'] ?? '') ?>" class="pdf-input"
-                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                    style="width:80px; text-align:center; margin-left:5px;">
                                 Gauss
                             </td>
                             <td
@@ -1745,7 +1745,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 Champ magnétique au milieu du pôle :
                                 <input type="text" name="mesures[levage_champ_pole]"
                                     value="<?= htmlspecialchars($mesures['levage_champ_pole'] ?? '') ?>" class="pdf-input"
-                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                    style="width:80px; text-align:center; margin-left:5px;">
                                 Gauss
                             </td>
                             <td
@@ -1767,7 +1767,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 Dimensions :
                                 <input type="text" name="mesures[levage_dimensions]"
                                     value="<?= htmlspecialchars($mesures['levage_dimensions'] ?? '') ?>" class="pdf-input"
-                                    style="width:120px; border-bottom:1px solid #000; margin-left:5px;">
+                                    style="width:120px; margin-left:5px;">
                             </td>
                         </tr>
                         <tr>
@@ -1775,7 +1775,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 Charge Maxi par aimant :
                                 <input type="text" name="mesures[levage_charge_maxi]"
                                     value="<?= htmlspecialchars($mesures['levage_charge_maxi'] ?? '') ?>" class="pdf-input"
-                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                    style="width:80px; text-align:center; margin-left:5px;">
                                 kg
                             </td>
                             <td style="border:1px solid #000; text-align:center;"></td>
@@ -1788,7 +1788,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 Température Maxi des produits :
                                 <input type="text" name="mesures[levage_temp_maxi]"
                                     value="<?= htmlspecialchars($mesures['levage_temp_maxi'] ?? '') ?>" class="pdf-input"
-                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                    style="width:80px; text-align:center; margin-left:5px;">
                                 °C
                             </td>
                             <td style="border:1px solid #000; text-align:center;"></td>
@@ -1802,7 +1802,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <input type="text" name="mesures[levage_facteur_marche]"
                                     value="<?= htmlspecialchars($mesures['levage_facteur_marche'] ?? '') ?>"
                                     class="pdf-input"
-                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;"> %
+                                    style="width:80px; text-align:center; margin-left:5px;"> %
                             </td>
                             <td style="border:1px solid #000; text-align:center;"></td>
                             <td style="padding:0;"><textarea name="donnees[levage_facteur_marche_comment]"
@@ -1816,7 +1816,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <input type="text" name="mesures[levage_facteur_service]"
                                     value="<?= htmlspecialchars($mesures['levage_facteur_service'] ?? '') ?>"
                                     class="pdf-input"
-                                    style="width:80px; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                    style="width:80px; text-align:center; margin-left:5px;">
                                 h/jour
                             </td>
                             <td style="border:1px solid #000; text-align:center;"></td>
@@ -1849,10 +1849,10 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                             <!-- Ø ext/int (5.3% / 45.4%) -->
                             <div style="position:absolute; left:5.3%; top:44%; font-size:9px; font-weight:bold; color:#000; line-height:1.2;">
-                                Ø ext 2 : <input type="text" name="mesures[levage_ext2]" value="<?= htmlspecialchars($mesures['levage_ext2'] ?? '') ?>" class="pdf-input" style="width:40px; border:none; border-bottom:1px solid #000; background:transparent; font-size:9px;" autocomplete="off"><br>
-                                Ø ext 1 : <input type="text" name="mesures[levage_ext1]" value="<?= htmlspecialchars($mesures['levage_ext1'] ?? '') ?>" class="pdf-input" style="width:40px; border:none; border-bottom:1px solid #000; background:transparent; font-size:9px;" autocomplete="off"><br>
-                                Ø int 2 : <input type="text" name="mesures[levage_int2]" value="<?= htmlspecialchars($mesures['levage_int2'] ?? '') ?>" class="pdf-input" style="width:40px; border:none; border-bottom:1px solid #000; background:transparent; font-size:9px;" autocomplete="off"><br>
-                                Ø int 1 : <input type="text" name="mesures[levage_int1]" value="<?= htmlspecialchars($mesures['levage_int1'] ?? '') ?>" class="pdf-input" style="width:40px; border:none; border-bottom:1px solid #000; background:transparent; font-size:9px;" autocomplete="off">
+                                Ø ext 2 : <input type="text" name="mesures[levage_ext2]" value="<?= htmlspecialchars($mesures['levage_ext2'] ?? '') ?>" class="pdf-input" style="width:40px; background:transparent; font-size:9px;" autocomplete="off"><br>
+                                Ø ext 1 : <input type="text" name="mesures[levage_ext1]" value="<?= htmlspecialchars($mesures['levage_ext1'] ?? '') ?>" class="pdf-input" style="width:40px; background:transparent; font-size:9px;" autocomplete="off"><br>
+                                Ø int 2 : <input type="text" name="mesures[levage_int2]" value="<?= htmlspecialchars($mesures['levage_int2'] ?? '') ?>" class="pdf-input" style="width:40px; background:transparent; font-size:9px;" autocomplete="off"><br>
+                                Ø int 1 : <input type="text" name="mesures[levage_int1]" value="<?= htmlspecialchars($mesures['levage_int1'] ?? '') ?>" class="pdf-input" style="width:40px; background:transparent; font-size:9px;" autocomplete="off">
                             </div>
                         </div>
                         <!-- Handled globally -->
