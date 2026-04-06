@@ -1516,8 +1516,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             synthPreambulePage.innerHTML = `
                 <div style="padding-top: 10px;">
-                    <div style="border: 2px solid #000; padding: 20px; color: #000; background: #fff; margin-bottom: 30px; page-break-inside: avoid;">
-                        <h2 style="text-align: center; margin-top: 0; margin-bottom: 25px; padding-bottom: 5px; border-bottom: 1px solid #000; font-size: 18px; text-transform: uppercase; color: #000 !important; font-weight: 900; opacity: 1 !important; display: inline-block; width: 100%;">SYNTHÈSE DE L'INTERVENTION</h2>
+                    <div style="padding: 20px; color: #000; background: #fff; margin-bottom: 30px; page-break-inside: avoid;">
+                        <h2 style="font-weight: bold; font-size: 18px; color: #d35400; margin: 0 0 25px 0; padding-bottom: 5px; border-bottom: 2px solid #d35400; text-transform: uppercase; width: 100%;">SYNTHÈSE DE L'INTERVENTION</h2>
                         
                         <div style="margin-bottom: 15px; font-size: 13px; line-height: 1.6;">
                             <div><strong>Technicien :</strong> ${s.tech}</div>
@@ -1813,15 +1813,15 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 <div style="font-family: Arial, sans-serif; font-size: 11px; color: #000;">
                     
                     <!-- OBSERVATIONS GÉNÉRALES -->
-                    <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">OBSERVATIONS DU TECHNICIEN</div>
-                    <div style="border: 2px solid #000; padding: 8px; min-height: 60px; font-size: 11px; white-space: pre-wrap; margin-bottom: 10px;">${commentaryTech}</div>
+                    <div style="font-weight: bold; font-size: 14px; color: #d35400; margin-bottom: 10px; border-bottom: 2px solid #d35400; padding-bottom: 5px; text-transform: uppercase;">OBSERVATIONS DU TECHNICIEN</div>
+                    <div style="padding: 8px 0; min-height: 40px; font-size: 12px; white-space: pre-wrap; margin-bottom: 20px;">${commentaryTech}</div>
 
-                    <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">COMMENTAIRE DU CLIENT</div>
-                    <div style="border: 2px solid #000; padding: 8px; font-size: 11px; white-space: pre-wrap; margin-bottom: 10px;">${commentaryClient}</div>
+                    <div style="font-weight: bold; font-size: 14px; color: #d35400; margin-bottom: 10px; border-bottom: 2px solid #d35400; padding-bottom: 5px; text-transform: uppercase;">COMMENTAIRE DU CLIENT</div>
+                    <div style="padding: 8px 0; font-size: 12px; white-space: pre-wrap; margin-bottom: 20px;">${commentaryClient}</div>
 
                     <!-- LE CLIENT SOUHAITE -->
-                    <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
-                    <div style="border: 2px solid #000; padding: 8px; margin-bottom: 10px;">
+                    <div style="font-weight: bold; font-size: 14px; color: #d35400; margin-bottom: 10px; border-bottom: 2px solid #d35400; padding-bottom: 5px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
+                    <div style="padding: 8px 0; margin-bottom: 20px;">
                         <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? '☑' : '☐'} Ce Rapport d\'expertise uniquement</div>
                         <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? '☑' : '☐'} Une offre de Pièces de Rechange</div>
                         <div style="margin-bottom: 3px; font-size: 11px;">${souhaitIntervention ? '☑' : '☐'} Une offre de PR + intervention mise en place</div>
@@ -1829,14 +1829,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
 
                     <!-- DATE ET HEURE -->
-                    <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">DATE ET HEURE</div>
-                    <div style="border: 2px solid #000; padding: 8px; margin-bottom: 10px; font-size: 13px; font-weight: bold; text-align: center;">
+                    <div style="font-weight: bold; font-size: 14px; color: #d35400; margin-bottom: 10px; border-bottom: 2px solid #d35400; padding-bottom: 5px; text-transform: uppercase;">DATE ET LIEU</div>
+                    <div style="padding: 8px 0; margin-bottom: 20px; font-size: 13px; font-weight: bold;">
                         Fait le ${dateStr}
                     </div>
 
                     <!-- SIGNATURES -->
-                    <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">SIGNATURES</div>
-                    <table style="width: 100%; border-collapse: collapse; table-layout: fixed; border: 2px solid #000; margin-bottom: 15px;">
+                    <div style="font-weight: bold; font-size: 14px; color: #d35400; margin-bottom: 10px; border-bottom: 2px solid #d35400; padding-bottom: 5px; text-transform: uppercase;">SIGNATURES</div>
+                    <table style="width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 15px;">
                         <tr style="height: 120px;">
                             <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
                                 <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Contrôleur (NOM Prénom) :</div>
