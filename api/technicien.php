@@ -32,9 +32,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $db->beginTransaction();
 
                 // Create or find client
-                $stmtClient = $db->prepare('INSERT INTO clients (nom_societe) VALUES (?) ON CONFLICT (nom_societe) DO UPDATE SET nom_societe = EXCLUDED.nom_societe RETURNING id');
-                $stmtClient->execute([$clientNom]);
-                $clientId = $stmtClient->fetchColumn();
+                $stmtCheck = $db->prepare('SELECT id FROM clients WHERE nom_societe = ?');
+                $stmtCheck->execute([$clientNom]);
+                $clientId = $stmtCheck->fetchColumn();
+
+                if (!$clientId) {
+                    $stmtClient = $db->prepare('INSERT INTO clients (nom_societe) VALUES (?) RETURNING id');
+                    $stmtClient->execute([$clientNom]);
+                    $clientId = $stmtClient->fetchColumn();
+                }
 
                 // Create intervention
                 $stmtInt = $db->prepare('INSERT INTO interventions (numero_arc, client_id, technicien_id, contact_prenom, contact_nom, date_intervention) VALUES (?, ?, ?, ?, ?, NOW()) RETURNING id');
