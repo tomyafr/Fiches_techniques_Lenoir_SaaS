@@ -78,6 +78,8 @@ $interventions = $stmt->fetchAll();
 $today = date('Y-m-d');
 $encours = array_filter($interventions, fn($i) => $i['statut'] === 'Brouillon');
 $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Terminee', 'Envoyee']));
+
+$showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -125,11 +127,11 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
             </div>
 
             <nav style="display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 2rem;">
-                <button class="btn btn-primary sidebar-link" onclick="switchTab('dashboard')" id="nav-dashboard"
+                <button class="btn <?= $showNewTab ? 'btn-ghost' : 'btn-primary' ?> sidebar-link" onclick="switchTab('dashboard')" id="nav-dashboard"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
                     <img src="/assets/icon_dashboard_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Tableau de bord
                 </button>
-                <button class="btn btn-ghost sidebar-link" onclick="switchTab('nouvelle')" id="nav-nouvelle"
+                <button class="btn <?= $showNewTab ? 'btn-primary' : 'btn-ghost' ?> sidebar-link" onclick="switchTab('nouvelle')" id="nav-nouvelle"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
                     <img src="/assets/icon_add_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Nouvelle Fiche
                 </button>
@@ -184,7 +186,7 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
             </div>
 
             <!-- Tab Dashboard -->
-            <div id="tab-dashboard" class="animate-in">
+            <div id="tab-dashboard" class="animate-in" <?= $showNewTab ? 'style="display: none;"' : '' ?>>
                 <h3
                     style="margin-bottom: 1.25rem; color: var(--text-dim); font-size: 0.8rem; text-transform: uppercase;">
                     Fiches Techniques en cours
@@ -252,7 +254,7 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
             </div>
 
             <!-- Tab Nouvelle Fiche -->
-            <div id="tab-nouvelle" style="display: none;" class="animate-in">
+            <div id="tab-nouvelle" style="<?= $showNewTab ? 'display: block;' : 'display: none;' ?>" class="animate-in">
                 <form method="POST" class="card glass" style="margin-bottom: 1.5rem;" autocomplete="off">
                     <input type="hidden" name="action" value="nouvelle_intervention">
                     <?= csrfField() ?>
@@ -308,12 +310,12 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
     <!-- Mobile Bottom Nav -->
     <nav class="mobile-bottom-nav">
         <div class="mobile-bottom-nav-inner">
-            <button class="mobile-nav-item active" onclick="switchTab('dashboard'); setActiveNav(this)"
+            <button class="mobile-nav-item <?= $showNewTab ? '' : 'active' ?>" onclick="switchTab('dashboard'); setActiveNav(this)"
                 id="nav-mob-dashboard">
                                 <img src="/assets/icon_dashboard_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Dashboard</span>
             </button>
-            <button class="mobile-nav-item" onclick="switchTab('nouvelle'); setActiveNav(this)" id="nav-mob-nouvelle">
+            <button class="mobile-nav-item <?= $showNewTab ? 'active' : '' ?>" onclick="switchTab('nouvelle'); setActiveNav(this)" id="nav-mob-nouvelle">
                                 <img src="/assets/icon_add_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">+ Fiche</span>
             </button>
@@ -359,11 +361,6 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
             document.getElementById('sidebar').classList.remove('open');
             document.getElementById('sidebarOverlay').classList.remove('open');
         }
-        document.addEventListener("DOMContentLoaded", function () {
-            if (window.location.search.includes('new=1')) {
-                switchTab('nouvelle');
-            }
-        });
         // Smooth navigation
         document.querySelectorAll('.sidebar-link').forEach(link => {
             link.addEventListener('click', function(e) {
