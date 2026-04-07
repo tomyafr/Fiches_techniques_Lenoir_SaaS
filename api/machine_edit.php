@@ -2164,8 +2164,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                 handleResult(file);
             } else {
                 new Compressor(file, {
-                    quality: 0.7,
-                    maxWidth: 1280,
+                    quality: 0.6,
+                    maxWidth: 800,
+                    mimeType: 'image/jpeg', // Force JPEG (PNGs are too heavy for base64)
                     checkOrientation: true,
                     success(result) {
                         handleResult(result);
