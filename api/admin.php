@@ -247,10 +247,11 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
 
         <main class="main-content">
             <?php if ($message): ?>
-                <div class="alert alert-<?= $messageType ?> animate-in">
-                    <span><?= $messageType === 'success' ? '✓' : 'ℹ' ?></span>
-                    <span><?= htmlspecialchars($message) ?></span>
-                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        showToast(<?= json_encode($message) ?>, <?= json_encode($messageType) ?>);
+                    });
+                </script>
             <?php endif; ?>
 
             <div style="display:flex; justify-content:space-between; margin-bottom: 2rem; align-items: center;">
@@ -629,6 +630,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
             });
         });
     </script>
+    <script src="/assets/toast.js"></script>
 </body>
 
 </html>

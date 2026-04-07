@@ -119,12 +119,11 @@ $machines = $stmtMach->fetchAll();
 
     <main class="main-content" style="padding-top: 5rem; padding-bottom: 6rem;">
         <?php if ($message): ?>
-            <div class="alert alert-success animate-in" style="display:flex; align-items:center; gap:10px;">
-                <img src="/assets/icon_check_white.svg" class="premium-icon" style="height: 20px; width: 20px;">
-                <span>
-                    <?= htmlspecialchars($message) ?>
-                </span>
-            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    showToast(<?= json_encode($message) ?>, 'success');
+                });
+            </script>
         <?php endif; ?>
 
         <!-- INTRO CLIENT -->
@@ -466,6 +465,7 @@ $machines = $stmtMach->fetchAll();
             });
         }
     </script>
+    <script src="/assets/toast.js"></script>
 </body>
 
 </html>

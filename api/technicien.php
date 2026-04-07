@@ -168,10 +168,11 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
 
         <main class="main-content">
             <?php if ($message): ?>
-                <div class="alert alert-<?= $messageType ?> animate-in" style="display:flex; align-items:center; gap:10px;">
-                    <img src="/assets/icons/<?= $messageType === 'success' ? 'success' : 'warning' ?>.png" class="premium-icon" style="height: 20px; width: 20px;">
-                    <span><?= htmlspecialchars($message) ?></span>
-                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        showToast(<?= json_encode($message) ?>, <?= json_encode($messageType) ?>);
+                    });
+                </script>
             <?php endif; ?>
 
             <div class="stats-grid animate-in">
@@ -370,6 +371,7 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
             });
         });
     </script>
+    <script src="/assets/toast.js"></script>
 </body>
 
 </html>

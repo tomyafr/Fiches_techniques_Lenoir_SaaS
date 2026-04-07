@@ -310,10 +310,11 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
             <?php endif; ?>
 
             <?php if ($message): ?>
-                <div class="alert alert-<?= $messageType ?> animate-in">
-                    <span><?= $messageType === 'success' ? '✓' : '⚠' ?></span>
-                    <span><?= $message /* Contient potentiellement des <br> de la politique */ ?></span>
-                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        showToast(<?= json_encode($message) ?>, <?= json_encode($messageType) ?>);
+                    });
+                </script>
             <?php endif; ?>
 
             <div class="card glass animate-in">
@@ -645,6 +646,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                 </a>
             </div>
         </nav>
+    <script src="/assets/toast.js"></script>
 </body>
 
 </html>

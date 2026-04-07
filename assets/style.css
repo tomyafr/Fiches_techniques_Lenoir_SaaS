@@ -59,6 +59,22 @@ html {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* ═══════════ CUSTOM SCROLLBARS ═══════════ */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.4); 
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.2); 
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.4); 
+}
+
 body {
     font-family: var(--font-main);
     background-color: var(--bg-main);
@@ -252,6 +268,8 @@ body::after {
 
 .card:hover {
     border-color: var(--glass-border-hover);
+    transform: translateY(-4px);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 179, 0, 0.05);
 }
 
 /* ═══════════ TYPOGRAPHY ═══════════ */
@@ -390,6 +408,50 @@ h4 {
     pointer-events: none;
     filter: grayscale(0.5);
 }
+
+/* ═══════════ TOAST NOTIFICATIONS (NEW) ═══════════ */
+.toast-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    pointer-events: none;
+}
+.toast {
+    background: rgba(2, 6, 23, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-left: 4px solid var(--primary);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.5rem;
+    color: var(--text-main);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transform: translateX(120%);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    pointer-events: auto;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+.toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+.toast-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+.toast.success { border-left-color: var(--success); }
+.toast.error { border-left-color: var(--error); }
+.toast.info { border-left-color: var(--accent-cyan); }
 
 /* ═══════════ LOGIN PAGE ═══════════ */
 .login-page {
