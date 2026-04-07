@@ -13,12 +13,17 @@ if (!$machineId) {
     exit;
 }
 
-$stmt = $db->prepare('SELECT * FROM machines WHERE id = ?');
+// Protection IDOR: Vérification de l'appartenance de la machine à l'intervention du technicien
+$stmt = $db->prepare('SELECT m.*, i.technicien_id FROM machines m JOIN interventions i ON m.intervention_id = i.id WHERE m.id = ?');
 $stmt->execute([$machineId]);
 $machine = $stmt->fetch();
 
 if (!$machine) {
     echo json_encode(['success' => false, 'error' => 'Machine introuvable']);
+    exit;
+}
+if ($_SESSION['role'] !== 'admin' && $machine['technicien_id'] !== $_SESSION['user_id']) {
+    echo json_encode(['success' => false, 'error' => 'Accès non autorisé à cette machine']);
     exit;
 }
 

@@ -461,7 +461,7 @@ $nbClients = count($clientsSet);
                                                 style="padding: 0.35rem 0.6rem; font-size: 1rem;"
                                                 title="Modifier l'intervention"><img src="/assets/icon_edit_orange.svg" style="height: 18px; width: 18px;"></a>
                                             <a href="#"
-                                                onclick="if(confirm('Supprimer cette fiche définitivement ?')) window.location.href='delete_intervention.php?id=<?= $i['id'] ?>';"
+                                                onclick="if(confirm('Supprimer cette fiche définitivement ?')) window.location.href='delete_intervention.php?id=<?= $i['id'] ?>&csrf_token=<?= getCsrfToken() ?>';"
                                                 class="btn btn-ghost"
                                                 style="padding: 0.35rem 0.6rem; font-size: 1rem; color: var(--error);"
                                                 title="Supprimer"><img src="/assets/icon_delete_red.svg" style="height: 18px; width: 18px;"></a>

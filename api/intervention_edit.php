@@ -443,7 +443,9 @@ $machines = $stmtMach->fetchAll();
         function deleteMachine(machineId, btn) {
             if (!confirm('Supprimer cet équipement ?')) return;
 
-            fetch('delete_machine.php?id=' + machineId, {
+            // CSRF protection included in URL
+            const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+            fetch('delete_machine.php?id=' + machineId + '&csrf_token=' + encodeURIComponent(csrfToken), {
                 method: 'GET',
                 credentials: 'same-origin'
             }).then(function () {

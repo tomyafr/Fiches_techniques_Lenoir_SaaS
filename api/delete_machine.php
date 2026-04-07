@@ -8,6 +8,12 @@ if (!$id) {
     exit;
 }
 
+$submittedToken = $_GET['csrf_token'] ?? '';
+$storedToken = $_COOKIE['csrf_token'] ?? '';
+if (empty($storedToken) || empty($submittedToken) || !hash_equals($storedToken, $submittedToken)) {
+    die('Securite: Jeton CSRF invalide.');
+}
+
 $db = getDB();
 
 // Fetch the machine to know its intervention_id
