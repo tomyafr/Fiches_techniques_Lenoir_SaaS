@@ -16,7 +16,20 @@ function showToast(message, type = 'info') {
     toast.className = `toast ${type}`;
 
     let iconPath = '/assets/icons/notification.png'; // default info icon
-    if (type === 'success') iconPath = '/assets/icons/success.png';
+    if (type === 'success') {
+        iconPath = '/assets/icons/success.png';
+        // Auto-purge des brouillons si une action réussit
+        try {
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k && k.startsWith('autosave_')) {
+                    keysToRemove.push(k);
+                }
+            }
+            keysToRemove.forEach(k => localStorage.removeItem(k));
+        } catch(e) {}
+    }
     if (type === 'error') iconPath = '/assets/icons/warning.png';
 
     toast.innerHTML = `
