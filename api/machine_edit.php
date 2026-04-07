@@ -2290,11 +2290,24 @@ foreach ($recoFreq as $rfk => $rfv) {
             el.style.height = 'auto';
             el.style.height = el.scrollHeight + 'px';
         }
-        // ========== SECTION E & F GENERATION IA ==========
+        // ========== SECTION E & F GENERATION IA =============================================
+        async function typeWriterEffect(element, text, speed = 8) {
+            element.value = '';
+            for (let i = 0; i < text.length; i++) {
+                element.value += text.charAt(i);
+                // Optimisation: autoGrow moins souvent pour ne pas saturer le main thread
+                if (i % 10 === 0) autoGrow(element);
+                await new Promise(r => setTimeout(r, speed));
+            }
+            autoGrow(element);
+            // Déclenche l'événement input pour forcer la sauvegarde (autosave.js)
+            element.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+
         async function generateConclusion(btn) {
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '⏳ Analyse expert...';
-            btn.disabled = true;
+            btn = btn || (window.event ? window.event.currentTarget : null);
+            const originalText = btn ? btn.innerHTML : '';
+            if (btn) { btn.innerHTML = '⏳ Analyse expert...'; btn.disabled = true; }
 
             try {
                 const form = document.getElementById('machineForm');
@@ -2306,27 +2319,25 @@ foreach ($recoFreq as $rfk => $rfv) {
                 const data = await res.json();
                 if (data.content) {
                     const textNode = document.getElementById('conclusionText');
-                    textNode.value = data.content;
-                    autoGrow(textNode);
+                    await typeWriterEffect(textNode, data.content, 12);
                 } else {
                     alert('Erreur IA : ' + (data.error || 'Indisponible'));
                 }
             } catch (e) {
                 alert('Erreur de connexion à l\'API IA.');
             } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+                if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
             }
         }
 
         async function generateDysfunctions(btn) {
-            const originalText = btn.innerHTML;
+            btn = btn || (window.event ? window.event.currentTarget : null);
             const textarea = document.getElementById('dysfonctionnementsText');
             
             if (textarea.value && textarea.value !== "Aucun dysfonctionnement majeur signalé." && !confirm("Voulez-vous écraser le contenu actuel par l'analyse IA ?")) return;
             
-            btn.innerHTML = '⏳ Analyse expert...';
-            btn.disabled = true;
+            const originalText = btn ? btn.innerHTML : '';
+            if (btn) { btn.innerHTML = '⏳ Analyse expert...'; btn.disabled = true; }
 
             try {
                 const form = document.getElementById('machineForm');
@@ -2337,36 +2348,23 @@ foreach ($recoFreq as $rfk => $rfv) {
                 });
                 const data = await res.json();
                 if (data.content) {
-                    textarea.value = data.content;
-                    autoGrow(textarea);
+                    await typeWriterEffect(textarea, data.content, 8);
                 } else {
                     alert('Erreur IA : ' + (data.error || 'Indisponible'));
                 }
             } catch (e) {
                 alert('Erreur de connexion à l\'API IA.');
             } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+                if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
             }
         }
 
         async function refreshIA(type) {
             const btn = event.currentTarget;
-            const originalHTML = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = '⏳...';
-
-            try {
-                if (type === 'E') {
-                    await generateDysfunctions();
-                } else if (type === 'F') {
-                    await generateConclusion();
-                }
-            } catch (e) {
-                console.error("Erreur refreshIA:", e);
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalHTML;
+            if (type === 'E') {
+                await generateDysfunctions(btn);
+            } else if (type === 'F') {
+                await generateConclusion(btn);
             }
         }
         // ========== GOMMETTES (PASTILLES) & APPUI LONG POUR EFFACER ==========
