@@ -359,6 +359,11 @@ $terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Ter
             document.getElementById('sidebar').classList.remove('open');
             document.getElementById('sidebarOverlay').classList.remove('open');
         }
+        document.addEventListener("DOMContentLoaded", function () {
+            if (window.location.search.includes('new=1')) {
+                switchTab('nouvelle');
+            }
+        });
         // Smooth navigation
         document.querySelectorAll('.sidebar-link').forEach(link => {
             link.addEventListener('click', function(e) {
