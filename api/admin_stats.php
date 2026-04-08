@@ -54,8 +54,8 @@ try {
         WITH machine_points AS (
             SELECT 
                 m.id,
-                (SELECT COUNT(*) FROM jsonb_each_text(m.donnees_controle) WHERE value IN ('c', 'bon', 'OK')) as points_ok,
-                (SELECT COUNT(*) FROM jsonb_each_text(m.donnees_controle) WHERE value NOT LIKE '%comment%') as points_total
+                (SELECT COUNT(*) FROM jsonb_each_text(m.donnees_controle) WHERE lower(value) IN ('c', 'bon', 'ok')) as points_ok,
+                (SELECT COUNT(*) FROM jsonb_each_text(m.donnees_controle) WHERE lower(value) IN ('c', 'bon', 'ok', 'nc', 'nr', 'aa', 'r', 'hs')) as points_total
             FROM machines m
             WHERE m.donnees_controle IS NOT NULL AND m.donnees_controle <> '{}'
         )
