@@ -944,7 +944,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </td>
                         <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">T. prévu</td>
                         <td style="border:1px solid #000; padding:6px;">
-                            <span style="font-weight:bold; color:#1B4F72; font-size:14px;"><?= htmlspecialchars($tempsPrev) ?> h</span>
+                            <span style="font-weight:bold; color:#1B4F72; font-size:14px;"><?= htmlspecialchars($tempsPrev) ?></span>
                         </td>
                     </tr>
                     <tr>
