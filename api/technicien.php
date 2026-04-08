@@ -21,12 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         if (empty($arc) || empty($clientNom)) {
             $message = 'Le numéro ARC et le client sont obligatoires.';
             $messageType = 'error';
-        } elseif (strlen($arc) > 15) {
-            $message = 'Le numéro ARC ne doit pas dépasser 15 caractères.';
-            $messageType = 'error';
-        } elseif (!preg_match('/^ARC-[A-Z0-9\-_]+$/i', $arc)) {
-            $message = 'Le format du numéro ARC est invalide (doit commencer par ARC-).';
-            $messageType = 'error';
         } else {
             try {
                 $db->beginTransaction();
@@ -268,9 +262,9 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
                                 style="color: var(--error);">*</span></label>
                         <p style="font-size: 0.7rem; color: var(--text-dim); margin: 0 0 0.5rem 0;">Référence centrale
                             de l'intervention – reportée sur toutes les fiches</p>
-                        <input type="text" name="numero_arc" class="input" placeholder="ex: ARC-2600182" 
+                        <input type="text" name="numero_arc" class="input" placeholder="ex: 2600182" 
                             style="text-transform: uppercase; font-size: 1.1rem; font-weight: bold; border: 2px solid var(--primary); padding: 1rem;"
-                            required autofocus maxlength="25">
+                            required autofocus maxlength="50">
                     </div>
 
                     <div class="form-group">
