@@ -28,20 +28,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const input = inputs[0];
                 
-                // Ne pas écraser une valeur si elle a déjà été chargée par le serveur PHP
-                // (sauf pour les radios où il faut vérifier dynamiquement)
+                // Restaurer les radios et checkboxes (toujours prioritaire sur le serveur car c'est un brouillon local)
                 if (input.type === 'radio' || input.type === 'checkbox') {
                     inputs.forEach(r => {
                         if (r.value === value) {
                             r.checked = true;
+                            // Déclencher les événements pour que les autres scripts (pastilles, etc.) se mettent à jour visuellement
+                            r.dispatchEvent(new Event('change', { bubbles: true }));
+                            r.dispatchEvent(new Event('input', { bubbles: true }));
                             restoredCount++;
                         }
                     });
                 } else if (input.tagName === 'SELECT' || input.tagName === 'TEXTAREA' || input.type === 'text' || input.type === 'number') {
-                    // On restaure uniquement si le champ PHP est vide au chargement, 
-                    // ce qui signifie que c'est bien une donnée non sauvegardée côté serveur
-                    if (!input.defaultValue && !input.getAttribute('data-server-loaded')) {
+                    // Pour les textes, on ne restaure que si le champ est vide (brouillon non encore envoyé au serveur)
+                    if (!input.defaultValue && !input.getAttribute('data-server-loaded') && !input.value) {
                         input.value = value;
+                        input.dispatchEvent(new Event('input', { bubbles: true }));
                         restoredCount++;
                     }
                 }

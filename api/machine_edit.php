@@ -2628,7 +2628,24 @@ foreach ($recoFreq as $rfk => $rfv) {
             group.querySelectorAll('label').forEach(function (l) { l.classList.remove('selected'); });
             label.classList.add('selected');
             var radio = label.querySelector('input[type="radio"]');
-            if (radio) radio.checked = true;
+            if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change', { bubbles: true }));
+                radio.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        });
+        
+        // Listener global pour mettre à jour les classes visuelles (utilisé par autosave.js et les clics manuels)
+        document.addEventListener('change', function(e) {
+            if (e.target.matches('.pastille-group input[type="radio"]')) {
+                const radio = e.target;
+                const label = radio.closest('label');
+                const group = radio.closest('.pastille-group');
+                if (label && group) {
+                    group.querySelectorAll('label').forEach(l => l.classList.remove('selected'));
+                    if (radio.checked) label.classList.add('selected');
+                }
+            }
         });
 
         // ========== CHRONOMÈTRE & TEMPS ==========

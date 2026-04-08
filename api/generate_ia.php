@@ -27,11 +27,12 @@ if ($_SESSION['role'] !== 'admin' && $machine['technicien_id'] !== $_SESSION['us
     exit;
 }
 
-// Données : Priorité au POST (formulaire en cours) sinon lecture DB
+// Données : Priorité au POST (formulaire en cours)
 $donnees = [];
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['donnees'])) {
-    $donnees = $_POST['donnees'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $donnees = $_POST['donnees'] ?? [];
 } else {
+    // Lecture DB uniquement si pas de POST
     $donnees = json_decode($machine['donnees_controle'] ?? '{}', true);
 }
 $issues = extractIssuesFromDonnees($donnees);
