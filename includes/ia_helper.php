@@ -69,7 +69,22 @@ function extractIssuesFromDonnees($donnees) {
         'paptap_paliers' => 'État des paliers et graissage',
         'paptap_rotation' => 'Rotation sans difficulté',
         'paptap_pos_circuit' => 'Position correcte du circuit',
-        'paptap_palier_fixe' => 'Bon maintien du palier fixe'
+        'paptap_palier_fixe' => 'Bon maintien du palier fixe',
+        // PLAQUES MAGNETIQUES PM
+        'pm_satisfaction' => 'Satisfaction de fonctionnement',
+        'pm_aspect' => 'Aspect général',
+        'pm_induction_p1_stat' => 'Contrôle induction P1 (contre)',
+        'pm_induction_p2_stat' => 'Contrôle induction P2 (bord largeur)',
+        'pm_induction_p3_stat' => 'Contrôle induction P3 (bord longueur)',
+        'pm_dist_ecrou_stat' => 'Distance attraction Ecrou M4',
+        'pm_dist_rond50_stat' => 'Distance attraction Rond Ø6 Lg50',
+        'pm_dist_rond100_stat' => 'Distance attraction Rond Ø6 Lg100',
+        'pm_dist_bille_stat' => 'Distance attraction Bille Ø20',
+        'pm_aimants' => 'Type d\'aimants (Ferrite/Néodyme)',
+        'pm_temperature' => 'Température d\'utilisation',
+        'pm_volet' => 'État du volet',
+        'pm_chassis' => 'État des châssis',
+        'pm_ressauts' => 'État des ressauts'
     ];
 
     $issues = ['aa' => [], 'nc' => [], 'nr' => []];

@@ -119,6 +119,7 @@ TYPES D'ÉQUIPEMENTS LENOIR-MEC :
 - ED-X : Séparateur à courants de Foucault
 - TAP / PAP : Tambour ou Poulie à Aimants Permanents
 - Levage : Électroaimants de levage industriel
+- PM / PML / PMN / PMNL : Plaques Magnétiques (séparation manuelle)
 
 RÈGLE DE PRIORITÉ :
 - Si N.R > 0 → Priorité : URGENT (remplacement de pièce nécessaire)

@@ -69,6 +69,7 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
 $isOVAP = $isOV && strpos($designation, 'OVAP') !== false;
 $isLevage = (strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AIMANT') !== false) && !$isAPRF && !$isPAP;
 $isPAP = strpos($designation, 'À AIMANTS PERMANENTS') !== false || strpos($designation, 'TAP/PAP') !== false || strpos($designation, 'PAP') !== false || strpos($designation, 'TAP') !== false;
+$isPM = strpos($designation, 'PM') !== false && strpos($designation, 'PLAQUE') !== false;
 
 // Temps prévisionnel par type
 if ($isEDX)
@@ -81,6 +82,8 @@ elseif ($isPAP)
     $tempsPrev = '1h00';
 elseif ($isLevage)
     $tempsPrev = '1h30';
+elseif ($isPM)
+    $tempsPrev = '0h20';
 else
     $tempsPrev = '1h00';
 
@@ -1311,6 +1314,144 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </div>
 
                     <!-- EDX SCHEMA -->
+                <?php elseif ($isPM): ?>
+
+                    <?= newPdfPage() ?>
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
+                        <thead>
+                            <?= renderDiagonalHeader(3) ?>
+                        </thead>
+                        <tbody>
+                            <?= renderSectionHeader("Plaques Magnétiques type PM/PML/PMN/PMNL", 3) ?>
+                            <?= renderAprfRow("Satisfaction de fonctionnement", "pm_satisfaction", $donnees) ?>
+                            <?= renderAprfRow("Aspect général", "pm_aspect", $donnees) ?>
+
+                            <tr>
+                                <th colspan="3" style="background:#e0e0e0; font-weight:bold; font-size:11px; border-top: 1px solid #000; border-bottom: 1px solid #000; padding:4px;">Contrôle d’induction :</th>
+                            </tr>
+                            <?php 
+                            $inductions = [
+                                'p1' => ['label' => 'P1 =', 'suffix' => 'Gauss (contre)'],
+                                'p2' => ['label' => 'P2 =', 'suffix' => 'Gauss (bord largeur)'],
+                                'p3' => ['label' => 'P3 =', 'suffix' => 'Gauss (bord longueur)']
+                            ];
+                            foreach($inductions as $ikey => $idata): ?>
+                            <tr>
+                                <td style="padding:4px; padding-left:25px; font-size:11px; width:35%;">
+                                    <span style="font-weight:bold; margin-right:5px;">➤</span> <?= $idata['label'] ?> 
+                                    <input type="text" name="mesures[pm_induction_<?= $ikey ?>]" value="<?= htmlspecialchars($mesures['pm_induction_' . $ikey] ?? '') ?>" style="width:50px; border:none; border-bottom:1px dashed #000; text-align:center; font-weight:bold; font-size:11px;" autocomplete="off"> 
+                                    <?= $idata['suffix'] ?>
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("pm_induction_" . $ikey . "_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0; width:35%;"><textarea name="donnees[pm_induction_<?= $ikey ?>_stat_comment]" class="pdf-textarea" style="height:25px; border:none; width:100%; box-sizing:border-box; padding:4px;" placeholder="Commentaires..."><?= htmlspecialchars($donnees["pm_induction_" . $ikey . "_stat_comment"] ?? '') ?></textarea></td>
+                            </tr>
+                            <?php endforeach; ?>
+
+                            <tr>
+                                <th colspan="3" style="background:#e0e0e0; font-weight:bold; font-size:11px; border-top: 1px solid #000; border-bottom: 1px solid #000; padding:4px;">Distance d'attraction :</th>
+                            </tr>
+                            <?php 
+                            $distances = [
+                                'ecrou'   => 'Ecrou M4 =',
+                                'rond50'  => 'Rond Ø6 Lg50 =',
+                                'rond100' => 'Rond Ø6 Lg100 =',
+                                'bille'   => 'Bille Ø20 ='
+                            ];
+                            foreach($distances as $dkey => $dlabel): ?>
+                            <tr>
+                                <td style="padding:4px; padding-left:25px; font-size:11px; width:35%;">
+                                    <span style="font-weight:bold; margin-right:5px;">➤</span> <?= $dlabel ?> 
+                                    <input type="text" name="mesures[pm_dist_<?= $dkey ?>]" value="<?= htmlspecialchars($mesures['pm_dist_' . $dkey] ?? '') ?>" style="width:40px; border:none; border-bottom:1px dashed #000; text-align:center; font-weight:bold; font-size:11px;" autocomplete="off"> mm
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("pm_dist_" . $dkey . "_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0; width:35%;"><textarea name="donnees[pm_dist_<?= $dkey ?>_stat_comment]" class="pdf-textarea" style="height:25px; border:none; width:100%; box-sizing:border-box; padding:4px;" placeholder="Commentaires..."><?= htmlspecialchars($donnees["pm_dist_" . $dkey . "_stat_comment"] ?? '') ?></textarea></td>
+                            </tr>
+                            <?php endforeach; ?>
+
+                            <tr>
+                                <td style="padding:4px; font-weight:bold; font-size:11px; width:35%;">Type d’aimants : Ferrite / Néodyme</td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("pm_aimants", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0; width:35%;"><textarea name="donnees[pm_aimants_comment]" class="pdf-textarea" style="height:25px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["pm_aimants_comment"] ?? '') ?></textarea></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px; font-weight:bold; font-size:11px; width:35%;">
+                                    Température d’utilisation : Ambiante / Haute : 
+                                    <input type="text" name="mesures[pm_temp_valeur]" value="<?= htmlspecialchars($mesures['pm_temp_valeur'] ?? '') ?>" style="width:35px; border:none; border-bottom:1px dashed #000; text-align:center; font-weight:bold; font-size:11px;" autocomplete="off"> °C
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("pm_temperature", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0; width:35%;"><textarea name="donnees[pm_temperature_comment]" class="pdf-textarea" style="height:25px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["pm_temperature_comment"] ?? '') ?></textarea></td>
+                            </tr>
+
+                            <?= renderAprfRow("Etat du volet (option)", "pm_volet", $donnees) ?>
+                            <?= renderAprfRow("Etat des châssis (option)", "pm_chassis", $donnees) ?>
+                            <?= renderAprfRow("Etat des ressauts (option)", "pm_ressauts", $donnees) ?>
+
+                            <?= renderSectionHeader("APPLICATION CLIENT", 3) ?>
+                            <tr>
+                                <td style="padding:4px; font-weight:bold; width:35%;">
+                                    Type de produit : 
+                                    <input type="text" name="mesures[pm_produit]" value="<?= htmlspecialchars($mesures['pm_produit'] ?? '') ?>" class="pdf-input" style="width:150px;" autocomplete="off">
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("pm_produit_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:4px; font-size:11px; color:#555;">
+                                    Aciers de <input type="text" name="mesures[pm_prod_min]" value="<?= htmlspecialchars($mesures['pm_prod_min'] ?? '') ?>" style="width:25px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off"> à <input type="text" name="mesures[pm_prod_max]" value="<?= htmlspecialchars($mesures['pm_prod_max'] ?? '') ?>" style="width:25px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off"> mm
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px; font-weight:bold;">
+                                    Granulométrie : 
+                                    <input type="text" name="mesures[pm_granulo]" value="<?= htmlspecialchars($mesures['pm_granulo'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;" autocomplete="off"> mm
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                    <?= renderEtatRadios("pm_granulo_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[pm_granulo_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($donnees["pm_granulo_comment"] ?? '') ?></textarea></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px; font-weight:bold;">
+                                    Débit : 
+                                    <input type="text" name="mesures[pm_debit]" value="<?= htmlspecialchars($mesures['pm_debit'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;" autocomplete="off"> t/h
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                    <?= renderEtatRadios("pm_debit_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:4px; font-size:11px; color:#555;">
+                                    Avec densité de <input type="text" name="mesures[pm_densite]" value="<?= htmlspecialchars($mesures['pm_densite'] ?? '') ?>" style="width:50px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px; font-weight:bold;">
+                                    Environnement Atex ?
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                    <div style="display:flex; justify-content:center; gap:10px; font-size:10px;">
+                                        <label><input type="radio" name="mesures[pm_atex]" value="non" <?= ($mesures['pm_atex'] ?? '') === 'non' ? 'checked' : '' ?>> Non</label>
+                                        <label><input type="radio" name="mesures[pm_atex]" value="oui" <?= ($mesures['pm_atex'] ?? '') === 'oui' ? 'checked' : '' ?>> Oui</label>
+                                    </div>
+                                </td>
+                                <td style="padding:4px;"><input type="text" name="mesures[pm_atex_precision]" value="<?= htmlspecialchars($mesures['pm_atex_precision'] ?? '') ?>" placeholder="Préciser..." style="width:100%; border:none; border-bottom:1px dashed #000; font-size:11px;" autocomplete="off"></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                    <div style="text-align:center; margin-top:20px;">
+                        <img src="/assets/machines/pm_diagram.png" 
+                             style="max-width:100%; height:auto; display:block; margin:0 auto;" 
+                             alt="Schémas Plaques Magnétiques PM"
+                             onerror="this.style.display='none'">
+                    </div>
+
                 <?php elseif ($isEDX): ?>
 
 

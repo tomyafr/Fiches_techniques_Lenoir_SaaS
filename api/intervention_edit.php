@@ -219,7 +219,7 @@ $machines = $stmtMach->fetchAll();
                                     $mDesignation = $m['designation'];
                                     $isValidated = (strpos($mDesignation, 'OVAP') !== false || strpos($mDesignation, 'APRF') !== false 
                                         || strpos($mDesignation, 'TAP/PAP') !== false || strpos($mDesignation, 'ED-X') !== false
-                                        || strpos($mDesignation, 'LEVAGE') !== false);
+                                        || strpos($mDesignation, 'LEVAGE') !== false || strpos($mDesignation, 'PM') !== false);
                                     $isMissingDoc = (strpos($mDesignation, 'OV (Electromagnétique)') !== false || strpos($mDesignation, 'RD') !== false);
 
                                     if ($isValidated) {
@@ -309,6 +309,7 @@ $machines = $stmtMach->fetchAll();
                         <option value="ELECTROAIMANT FIXE RD" style="color:red;">ELECTROAIMANT FIXE RD *</option>
                         <option value="Tambour ou Poulie à Aimants Permanents TAP/PAP">Tambour ou Poulie à Aimants Permanents TAP/PAP</option>
                         <option value="ELECTROAIMANTS DE LEVAGE" style="color:red;">ELECTROAIMANTS DE LEVAGE *</option>
+                        <option value="Plaques Magnétiques PM">Plaques Magnétiques PM</option>
                     </select>
                 </div>
 
