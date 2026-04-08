@@ -213,6 +213,10 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
 </head>
 
 <body>
+    <style>
+        .mobile-header { display: flex !important; }
+        .main-content { padding-top: calc(var(--mobile-header-height) + 1.5rem) !important; }
+    </style>
     <!-- ═══ HEADER MOBILE ═══ -->
     <header class="mobile-header">
         <button class="mobile-logo-btn"

@@ -771,8 +771,13 @@ foreach ($recoFreq as $rfk => $rfv) {
         <div class="top-bar">
             <button type="button" class="btn btn-ghost"
                 onclick="window.location.href='intervention_edit.php?id=<?= $machine['intervention_id'] ?>'"
-                style="color:white; border-color:white; display:flex; align-items:center; gap:6px;">
-                <img src="/assets/icon_back_white.svg" style="height: 18px; width: 18px;"> REVENIR</button>
+                style="padding: 0.4rem 0.8rem; color: var(--error); display:flex; align-items:center; gap:6px; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.5px; border-radius: var(--radius-sm); border: 1px solid rgba(244, 63, 94, 0.2); background: rgba(244, 63, 94, 0.05);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                RETOUR
+            </button>
+            <span class="mobile-header-title" style="color: var(--primary); font-size: 0.9rem; font-weight: 700; position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap;">
+                <?= htmlspecialchars($machine['designation']) ?>
+            </span>
             <div style="display:flex; gap:10px; align-items:center;">
                 <label style="color:white; font-size:0.8rem; display:flex; align-items:center; gap:5px; cursor:pointer; background:rgba(255,255,255,0.1); padding:5px 10px; border-radius:5px;">
                     <input type="checkbox" name="mesures[excluded]" value="1" <?= ($mesures['excluded'] ?? false) ? 'checked' : '' ?>>
