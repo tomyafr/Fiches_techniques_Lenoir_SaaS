@@ -252,37 +252,43 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         .rapport-header {
             text-align: center;
             margin-bottom: 2rem;
-            padding: 1.5rem;
-            border-bottom: 3px solid var(--primary);
+            padding: 2.5rem 1.5rem;
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
         }
 
         .rapport-header h1 {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             color: var(--primary);
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin: 0 0 0.5rem 0;
+            margin: 0 0 1rem 0;
         }
 
         .rapport-header .arc-badge {
             display: inline-block;
             background: rgba(255, 179, 0, 0.15);
             color: var(--primary);
-            padding: 0.4rem 1.2rem;
-            border-radius: 20px;
-            font-weight: 700;
+            padding: 0.5rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 800;
             font-family: monospace;
-            font-size: 1rem;
+            font-size: 1.2rem;
+            border: 1px solid rgba(255, 179, 0, 0.3);
         }
 
         .section-title {
-            font-size: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 800;
             text-transform: uppercase;
-            color: var(--text-dim);
+            color: var(--primary);
             letter-spacing: 1px;
-            margin: 2rem 0 1rem 0;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--glass-border);
+            margin: 3rem 0 1.5rem 0;
+            padding: 0.75rem 1.25rem;
+            background: rgba(255, 179, 0, 0.05);
+            border-left: 4px solid var(--primary);
+            border-radius: 4px;
         }
 
         .field-row {
@@ -676,12 +682,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
             </div>
 
-            <!-- EN-TÊTE PREMIUM -->
-            <div class="rapport-header card glass" style="background:#020617; padding: 2.5rem; border-color: rgba(255,255,255,0.1); text-align: center;">
+            <!-- EN-TÊTE -->
+            <div class="rapport-header">
                 <img src="/assets/lenoir_logo_trans.svg" alt="LENOIR-MEC" 
                     style="height: 60px; width: auto; object-fit: contain; display: block; margin: 0 auto 1.5rem auto;">
-                <h1 style="color: #fff; margin-bottom: 0.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Rapport d'expertise sur site</h1>
-                <div class="arc-badge" style="background: rgba(255,179,0,0.15); color: #ffb300; border: 1px solid rgba(255,179,0,0.3); font-weight: bold;">
+                <h1>Rapport d'expertise sur site</h1>
+                <div class="arc-badge">
                     ARC <?= htmlspecialchars($intervention['numero_arc']) ?>
                 </div>
             </div>
