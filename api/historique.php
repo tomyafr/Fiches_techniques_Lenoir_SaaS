@@ -451,20 +451,28 @@ $nbClients = count($clientsSet);
                                                 <?= $i['statut'] === 'Terminee' ? 'Signée' : 'En Saisie' ?>
                                             </span>
                                         </td>
-                                        <td style="text-align:center; white-space:nowrap;">
-                                            <?php if ($i['statut'] === 'Terminee'): ?>
-                                                <a href="rapport_final.php?id=<?= $i['id'] ?>&msg=ok" class="btn btn-ghost"
-                                                    style="padding: 0.35rem 0.6rem; font-size: 1.25rem; color: var(--success);"
-                                                    title="Voir le rapport"><img src="/assets/icon_document_blue.svg" style="height: 20px; width: 20px;"></a>
-                                            <?php endif; ?>
-                                            <a href="intervention_edit.php?id=<?= $i['id'] ?>" class="btn btn-ghost"
-                                                style="padding: 0.35rem 0.6rem; font-size: 1rem;"
-                                                title="Modifier l'intervention"><img src="/assets/icon_edit_orange.svg" style="height: 18px; width: 18px;"></a>
-                                            <a href="#"
-                                                onclick="if(confirm('Supprimer cette fiche définitivement ?')) window.location.href='delete_intervention.php?id=<?= $i['id'] ?>&csrf_token=<?= getCsrfToken() ?>';"
-                                                class="btn btn-ghost"
-                                                style="padding: 0.35rem 0.6rem; font-size: 1rem; color: var(--error);"
-                                                title="Supprimer"><img src="/assets/icon_delete_red.svg" style="height: 18px; width: 18px;"></a>
+                                        <td style="white-space:nowrap;">
+                                            <div style="display: grid; grid-template-columns: 36px 36px 36px; gap: 8px; justify-content: center; margin: 0 auto; width: max-content;">
+                                                <div>
+                                                    <?php if ($i['statut'] === 'Terminee'): ?>
+                                                        <a href="rapport_final.php?id=<?= $i['id'] ?>&msg=ok" class="btn btn-ghost"
+                                                            style="width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; color: var(--success);"
+                                                            title="Voir le rapport"><img src="/assets/icon_document_blue.svg" style="height: 18px; width: 18px;"></a>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <div>
+                                                    <a href="intervention_edit.php?id=<?= $i['id'] ?>" class="btn btn-ghost"
+                                                        style="width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center;"
+                                                        title="Modifier l'intervention"><img src="/assets/icon_edit_orange.svg" style="height: 18px; width: 18px;"></a>
+                                                </div>
+                                                <div>
+                                                    <a href="#"
+                                                        onclick="if(confirm('Supprimer cette fiche définitivement ?')) window.location.href='delete_intervention.php?id=<?= $i['id'] ?>&csrf_token=<?= getCsrfToken() ?>';"
+                                                        class="btn btn-ghost"
+                                                        style="width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; color: var(--error);"
+                                                        title="Supprimer"><img src="/assets/icon_delete_red.svg" style="height: 18px; width: 18px;"></a>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

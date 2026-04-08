@@ -534,28 +534,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         <div class="download-status-text">Génération de votre rapport premium</div>
         <div style="color: var(--text-dim); font-size: 0.9rem;">Veuillez patienter quelques instants...</div>
     </div>
-
+    <style>
+        .mobile-header { display: flex !important; }
+        .rapport-page { margin-top: calc(var(--mobile-header-height) + 1rem); }
+    </style>
     <header class="mobile-header">
         <a href="intervention_edit.php?id=<?= $id ?>" class="btn btn-ghost"
-            style="padding: 0.5rem; color: var(--accent-cyan); text-decoration: none; display:flex; align-items:center; gap:6px;">
-            <img src="/assets/icon_back_blue.svg" style="height: 18px; width: 18px;"> Retour
+            style="padding: 0.4rem 0.8rem; color: var(--error); text-decoration: none; display:flex; align-items:center; gap:6px; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.5px; border-radius: var(--radius-sm); border: 1px solid rgba(244, 63, 94, 0.2); background: rgba(244, 63, 94, 0.05);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            RETOUR
         </a>
         <span class="mobile-header-title">Rapport Final</span>
         <span class="mobile-header-user"></span>
     </header>
-
-    <!-- BOUTON RETOUR DESKTOP -->
-    <div class="desktop-back-btn" style="margin-bottom: 2rem; max-width: 1000px; margin-left: auto; margin-right: auto; padding: 0 1rem;">
-        <a href="intervention_edit.php?id=<?= $id ?>" class="btn btn-ghost" 
-            style="color: var(--text-bright); text-decoration: none; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); display:inline-flex; align-items:center; gap:8px; padding: 0.5rem 1rem; border-radius: var(--radius-sm); transition: 0.3s; cursor: pointer;">
-            <img src="/assets/icon_back_blue.svg" style="height: 18px; width: 18px; filter: grayscale(1) brightness(2);"> 
-            Retour à l'écran précédent
-        </a>
-    </div>
-    <style>
-        @media (max-width: 1023px) { .desktop-back-btn { display: none; } }
-        .desktop-back-btn a:hover { background: rgba(255,255,255,0.1); }
-    </style>
 
     <div class="rapport-page">
         <form method="POST" id="rapportForm" autocomplete="off">

@@ -108,16 +108,21 @@ $machines = $stmtMach->fetchAll();
 </head>
 
 <body>
+    <style>
+        .mobile-header { display: flex !important; }
+        .main-content { padding-top: calc(var(--mobile-header-height) + 1.5rem) !important; }
+    </style>
     <header class="mobile-header">
         <button class="btn btn-ghost" onclick="document.getElementById('modalQuit').style.display='flex'"
-            style="padding: 0.5rem; color: var(--error); display:flex; align-items:center; gap:6px;">
-            <img src="/assets/icon_back_blue.svg" style="height: 18px; width: 18px;"> Quitter
+            style="padding: 0.4rem 0.8rem; color: var(--error); display:flex; align-items:center; gap:6px; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.5px; border-radius: var(--radius-sm); border: 1px solid rgba(244, 63, 94, 0.2); background: rgba(244, 63, 94, 0.05);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            RETOUR
         </button>
         <span class="mobile-header-title">Fiche ARC</span>
         <span class="mobile-header-user"></span>
     </header>
 
-    <main class="main-content" style="padding-top: 5rem; padding-bottom: 6rem;">
+    <main class="main-content" style="padding-bottom: 6rem;">
         <?php if ($message): ?>
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
@@ -125,19 +130,6 @@ $machines = $stmtMach->fetchAll();
                 });
             </script>
         <?php endif; ?>
-
-        <!-- BOUTON RETOUR DESKTOP -->
-        <div class="desktop-back-btn" style="margin-bottom: 1.5rem;">
-            <button type="button" class="btn btn-ghost" onclick="document.getElementById('modalQuit').style.display='flex'" 
-                style="color: var(--text-bright); background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); display:flex; align-items:center; gap:8px; padding: 0.5rem 1rem; border-radius: var(--radius-sm); transition: 0.3s; cursor: pointer;">
-                <img src="/assets/icon_back_blue.svg" style="height: 18px; width: 18px; filter: grayscale(1) brightness(2);"> 
-                Retour à l'écran précédent
-            </button>
-        </div>
-        <style>
-            @media (max-width: 1023px) { .desktop-back-btn { display: none; } }
-            .desktop-back-btn button:hover { background: rgba(255,255,255,0.1); }
-        </style>
 
         <!-- INTRO CLIENT -->
         <div class="card glass animate-in" style="margin-bottom: 2rem;">
@@ -244,17 +236,25 @@ $machines = $stmtMach->fetchAll();
                                 <td style="padding:0.6rem 0.8rem;"><?= htmlspecialchars($mMesures['repere'] ?? '—') ?></td>
                                 <td style="padding:0.6rem 0.8rem; text-align:center;">
                                     <?= htmlspecialchars($m['annee_fabrication'] ?: '—') ?></td>
-                                <td style="padding:0.6rem 0.8rem; text-align:center; white-space:nowrap;"
-                                    onclick="event.stopPropagation();">
-                                    <a href="machine_edit.php?id=<?= $m['id'] ?>"
-                                        style="text-decoration:none; font-size:1rem; margin-right:8px;" title="Éditer">
-                                        <img src="/assets/icon_edit_orange.svg" style="height: 18px; width: 18px; vertical-align: middle;">
-                                    </a>
-                                    <button onclick="deleteMachine(<?= $m['id'] ?>, this);"
-                                        style="background:none; border:none; font-size:1rem; cursor:pointer;"
-                                        title="Supprimer">
-                                        <img src="/assets/icon_delete_red.svg" style="height: 18px; width: 18px; vertical-align: middle;">
-                                    </button>
+                                <td style="padding:0.6rem 0.8rem; white-space:nowrap;" onclick="event.stopPropagation();">
+                                    <div style="display: grid; grid-template-columns: 36px 36px 36px; gap: 8px; justify-content: center; margin: 0 auto; width: max-content;">
+                                        <div>
+                                            <!-- Réservé pour le "Voir" potentiel du Dashboard pour garder l'alignement parfait -->
+                                        </div>
+                                        <div>
+                                            <a href="machine_edit.php?id=<?= $m['id'] ?>" class="btn btn-ghost"
+                                                style="width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center;" title="Éditer">
+                                                <img src="/assets/icon_edit_orange.svg" style="height: 18px; width: 18px;">
+                                            </a>
+                                        </div>
+                                        <div>
+                                            <button onclick="deleteMachine(<?= $m['id'] ?>, this);" class="btn btn-ghost"
+                                                style="width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; color: var(--error);"
+                                                title="Supprimer">
+                                                <img src="/assets/icon_delete_red.svg" style="height: 18px; width: 18px;">
+                                            </button>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
