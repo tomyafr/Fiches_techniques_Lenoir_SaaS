@@ -1404,13 +1404,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             // Layout exact as requested
             rapportCloneWrapper.innerHTML = `
                 <!-- HEADER (Logo, Slogan) -->
-                <table style="width:100%; border:none; margin-bottom:15px; border-bottom: 2px solid #e67e22;">
+                <table style="width:100%; border:none; margin-bottom:15px; border-bottom: 2px solid #1e4e6d;">
                     <tr>
                         <td style="width: 40%; vertical-align: bottom; padding-bottom: 10px;">
                             <img src="/assets/lenoir_logo_doc.png" style="height:60px;">
                         </td>
                         <td style="width: 60%; vertical-align: bottom; text-align: right; padding-bottom: 5px;">
-                            <div style="font-size: 11px; font-weight: normal; color: #e67e22; font-style: italic;">
+                            <div style="font-size: 11px; font-weight: normal; color: #1e4e6d; font-style: italic;">
                                 Le spécialiste des applications magnétiques pour la séparation et le levage industriel
                             </div>
                         </td>
@@ -1418,13 +1418,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </table>
                 <div style="text-align: right; color: #555; font-weight: bold; font-size: 11px; margin-top: 5px; margin-bottom: 15px;">RAPPORT D'EXPERTISE</div>
 
-                <!-- GRAND CADRE ORANGE -->
-                <div style="border: 3px solid #d35400; padding: 15px; margin-bottom: 30px;">
-                    <h1 style="text-align: center; color: #d35400; font-size: 26px; font-weight: bold; margin: 10px 0 20px 0;">RAPPORT DE L'EXPERTISE</h1>
+                <!-- GRAND CADRE BLEU -->
+                <div style="border: 3px solid #1e4e6d; padding: 15px; margin-bottom: 30px;">
+                    <h1 style="text-align: center; color: #1e4e6d; font-size: 26px; font-weight: bold; margin: 10px 0 20px 0;">RAPPORT DE L'EXPERTISE</h1>
                     <div style="text-align: right; font-weight: bold; font-size: 14px; color: black; margin-bottom: 15px;">N°ARC : ${numArc}</div>
 
                     <!-- TABLEAU CLIENT -->
-                    <table style="width:100%; border-collapse:collapse; border: 2px solid #d35400; margin-bottom:20px; font-size:12px; font-family: Arial, sans-serif;">
+                    <table style="width:100%; border-collapse:collapse; border: 2px solid #1e4e6d; margin-bottom:20px; font-size:12px; font-family: Arial, sans-serif;">
                         <tr>
                             <td colspan="4" style="background-color: #5b9bd5; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 6px; border: 1px solid #000;">
                                 COORDONNEES DU CLIENT
@@ -1467,7 +1467,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </table>
 
                     <!-- TABLEAU PARC MACHINE -->
-                    <table style="width:100%; border-collapse:collapse; border: 2px solid #d35400; font-size:12px; font-family: Arial, sans-serif;">
+                    <table style="width:100%; border-collapse:collapse; border: 2px solid #1e4e6d; font-size:12px; font-family: Arial, sans-serif;">
                         <tr>
                             <td colspan="5" style="background-color: #5b9bd5; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 6px; border: 1px solid #000;">
                                 PARC MACHINE
@@ -1493,17 +1493,17 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
 
                 <!-- SIGNATURES (Hors du cadre orange) -->
-                <table style="width:100%; border-collapse:collapse; border: 2px solid #d35400; font-size:13px; font-family: Arial, sans-serif;">
+                <table style="width:100%; border-collapse:collapse; border: 2px solid #1e4e6d; font-size:13px; font-family: Arial, sans-serif;">
                     <tr>
-                        <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #cc4e00; width: 25%;">Technicien sur Site :</td>
-                        <td style="padding: 15px 10px; border: 1px solid #cc4e00; width: 30%;">${techName}</td>
-                        <td rowspan="2" style="padding: 5px; border: 1px solid #cc4e00; width: 45%; text-align: center; vertical-align: middle;">
+                        <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #1e4e6d; width: 25%;">Technicien sur Site :</td>
+                        <td style="padding: 15px 10px; border: 1px solid #1e4e6d; width: 30%;">${techName}</td>
+                        <td rowspan="2" style="padding: 5px; border: 1px solid #1e4e6d; width: 45%; text-align: center; vertical-align: middle;">
                             <img src="${sigTechData}" style="max-height:80px; max-width:100%;">
                         </td>
                     </tr>
                     <tr>
-                        <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #cc4e00;">Date d'expertise :</td>
-                        <td style="padding: 15px 10px; border: 1px solid #cc4e00;">${dateExp}</td>
+                        <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #1e4e6d;">Date d'expertise :</td>
+                        <td style="padding: 15px 10px; border: 1px solid #1e4e6d;">${dateExp}</td>
                     </tr>
                 </table>
             `;
@@ -1538,7 +1538,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             synthPreambulePage.innerHTML = `
                 <div style="padding-top: 10px;">
                     <div style="padding: 20px; color: #000; background: #fff; margin-bottom: 30px; page-break-inside: avoid;">
-                        <h2 style="font-weight: bold; font-size: 18px; color: #d35400; margin: 0 0 25px 0; padding-bottom: 5px; border-bottom: 2px solid #d35400; text-transform: uppercase; width: 100%;">SYNTHÈSE DE L'INTERVENTION</h2>
+                        <h2 style="font-weight: bold; font-size: 18px; color: #1e4e6d; margin: 0 0 25px 0; padding-bottom: 5px; border-bottom: 2px solid #1e4e6d; text-transform: uppercase; width: 100%;">SYNTHÈSE DE L'INTERVENTION</h2>
                         
                         <div style="margin-bottom: 15px; font-size: 13px; line-height: 1.6;">
                             <div><strong>Technicien :</strong> ${s.tech}</div>
@@ -1553,7 +1553,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 <strong>${s.ok} points conformes</strong>
                             </div>
                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                                <span style="display: inline-block; width: 12px; height: 12px; background: #e67e22; margin-right: 10px;"></span>
+                                <span style="display: inline-block; width: 12px; height: 12px; background: #1e4e6d; margin-right: 10px;"></span>
                                 <strong>${s.aa} points à améliorer</strong>
                             </div>
                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
@@ -1576,7 +1576,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
 
                     <div style="font-size: 13px; line-height: 1.5; color: black; font-family: Arial, sans-serif; page-break-inside: avoid;">
-                        <h2 style="color: #d35400; font-size: 16px; text-transform: uppercase; margin-bottom: 10px; border-bottom: 2px solid #d35400; padding-bottom: 5px;">PRÉAMBULE :</h2>
+                        <h2 style="color: #1e4e6d; font-size: 16px; text-transform: uppercase; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px;">PRÉAMBULE :</h2>
                         
                         <p style="margin-bottom: 12px;">
                             Ce rapport est établi suite à une expertise effectuée le ${dateExp} sur votre site de ${villePreambule}.
@@ -1829,14 +1829,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 <div style="font-family: Arial, sans-serif; font-size: 11px; color: #000;">
                     
                     <!-- OBSERVATIONS GÉNÉRALES -->
-                    <div style="font-weight: bold; font-size: 14px; color: #d35400; margin-bottom: 10px; border-bottom: 2px solid #d35400; padding-bottom: 5px; text-transform: uppercase;">OBSERVATIONS DU TECHNICIEN</div>
+                    <div style="font-weight: bold; font-size: 14px; color: #1e4e6d; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px; text-transform: uppercase;">OBSERVATIONS DU TECHNICIEN</div>
                     <div style="padding: 8px 0; min-height: 40px; font-size: 12px; white-space: pre-wrap; margin-bottom: 20px;">${commentaryTech}</div>
 
-                    <div style="font-weight: bold; font-size: 14px; color: #d35400; margin-bottom: 10px; border-bottom: 2px solid #d35400; padding-bottom: 5px; text-transform: uppercase;">COMMENTAIRE DU CLIENT</div>
+                    <div style="font-weight: bold; font-size: 14px; color: #1e4e6d; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px; text-transform: uppercase;">COMMENTAIRE DU CLIENT</div>
                     <div style="padding: 8px 0; font-size: 12px; white-space: pre-wrap; margin-bottom: 20px;">${commentaryClient}</div>
 
                     <!-- LE CLIENT SOUHAITE -->
-                    <div style="font-weight: bold; font-size: 14px; color: #d35400; margin-bottom: 10px; border-bottom: 2px solid #d35400; padding-bottom: 5px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
+                    <div style="font-weight: bold; font-size: 14px; color: #1e4e6d; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
                     <div style="padding: 8px 0; margin-bottom: 20px;">
                         <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? '☑' : '☐'} Ce Rapport d\'expertise uniquement</div>
                         <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? '☑' : '☐'} Une offre de Pièces de Rechange</div>
@@ -1845,13 +1845,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
 
                     <!-- DATE ET HEURE -->
-                    <div style="font-weight: bold; font-size: 14px; color: #d35400; margin-bottom: 10px; border-bottom: 2px solid #d35400; padding-bottom: 5px; text-transform: uppercase;">DATE ET LIEU</div>
+                    <div style="font-weight: bold; font-size: 14px; color: #1e4e6d; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px; text-transform: uppercase;">DATE ET LIEU</div>
                     <div style="padding: 8px 0; margin-bottom: 20px; font-size: 13px; font-weight: bold;">
                         Fait le ${dateStr}
                     </div>
 
                     <!-- SIGNATURES -->
-                    <div style="font-weight: bold; font-size: 14px; color: #d35400; margin-bottom: 10px; border-bottom: 2px solid #d35400; padding-bottom: 5px; text-transform: uppercase;">SIGNATURES</div>
+                    <div style="font-weight: bold; font-size: 14px; color: #1e4e6d; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px; text-transform: uppercase;">SIGNATURES</div>
                     <table style="width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 15px;">
                         <tr style="height: 120px;">
                             <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
