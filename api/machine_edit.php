@@ -99,20 +99,100 @@ function generateDysfunctionsAI($machine, $type = 'E') {
     $poste = json_decode($machine['mesures'] ?? '{}', true)['poste'] ?? 'N/A';
 
     if ($type === 'E') {
-        $formattedAA = array_map(fn($i) => "• " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['aa']);
-        $formattedNC = array_map(fn($i) => "• " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['nc']);
-        $formattedNR = array_map(fn($i) => "• " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['nr']);
+        $listeNR = implode("\n", array_map(fn($i) => "- " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['nr']));
+        $listeNC = implode("\n", array_map(fn($i) => "- " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['nc']));
+        $listeAA = implode("\n", array_map(fn($i) => "- " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['aa']));
 
-        $systemPrompt = "Tu es un expert technique Lenoir-Mec spécialiste des séparateurs magnétiques industriels. Rédige la section E) CAUSE DE DYSFONCTIONNEMENT en français. Format : une liste à puces courte (1 ligne par problème). Style : professionnel, technique, concis. - NE REPRENDS PAS LE TITRE SECTION E. - Si la liste est vide, réponds par un message vide.";
-        $allIssues = array_merge($formattedNR, $formattedNC, $formattedAA);
-        $userPromptE = "LISTE DES POINTS :\n" . (empty($allIssues) ? "" : implode("\n", $allIssues));
+        $systemPrompt = "Tu es le rédacteur technique officiel des rapports d'expertise Lenoir-Mec (séparation magnétique et levage industriel, groupe Delachaux).
 
-        $result = callGroqIA($systemPrompt, $userPromptE);
-        return $result ?: "";
+CONTEXTE : Tu rédiges la section \"E) CAUSE DE DYSFONCTIONNEMENT\" d'une fiche d'inspection terrain. Cette section apparaît dans un rapport PDF envoyé au client final. Le technicien a inspecté un équipement et relevé des anomalies.
+
+ÉTATS D'ÉVALUATION :
+- N/A = Non applicable (le point ne concerne pas cette machine)
+- OK = Conforme
+- A.A = À améliorer (point orange — dégradation constatée, pas critique)
+- N.C = Non conforme (point rouge — défaut avéré nécessitant intervention)
+- N.R = Nécessite remplacement (point rouge foncé — pièce HS ou dangereuse)
+
+RÈGLES DE RÉDACTION STRICTES :
+1. NE JAMAIS écrire le titre \"E) CAUSE DE DYSFONCTIONNEMENT\" — il est déjà imprimé sur le rapport.
+2. NE JAMAIS ajouter de phrase d'introduction, de salutation, ou de conclusion.
+3. NE JAMAIS inventer de constats non fournis dans les données.
+4. Chaque anomalie = 1 tiret, 1 ligne, maximum 15 mots.
+5. Commencer chaque tiret par le composant concerné, suivi du constat.
+6. Si un commentaire technicien est fourni entre parenthèses, l'intégrer au constat.
+7. Classer par gravité : d'abord N.R (remplacement), puis N.C (non conforme), puis A.A (à améliorer).
+8. Si AUCUNE anomalie n'est fournie → répondre EXACTEMENT : \"Aucune anomalie détectée lors de l'inspection.\"
+9. Style : industriel, factuel, impersonnel. Pas de \"nous\", pas de \"il faudrait\".";
+
+        $userPrompt = "MACHINE : $typeMachine — Poste $poste\n\n";
+        $userPrompt .= "POINTS À REMPLACER (N.R) :\n" . ($listeNR ?: "Néant") . "\n\n";
+        $userPrompt .= "POINTS NON CONFORMES (N.C) :\n" . ($listeNC ?: "Néant") . "\n\n";
+        $userPrompt .= "POINTS À AMÉLIORER (A.A) :\n" . ($listeAA ?: "Néant") . "\n\n";
+        $userPrompt .= "Rédige les constats de dysfonctionnement.";
+
+        return callGroqIA($systemPrompt, $userPrompt, [
+            'temperature' => 0.15,
+            'max_tokens' => 300,
+            'top_p' => 0.9,
+            'frequency_penalty' => 0.1,
+            'presence_penalty' => 0.0
+        ]) ?: "";
     } else {
-        $systemPrompt = "En te basant sur les dysfonctionnements listés, rédige la section F) CONCLUSION. Format : 1-2 phrases max. Style rapport d'expertise Lenoir-Mec. Si aucun dysfonctionnement, réponds par un message vide.";
-        $userPrompt = "Machine: $typeMachine\nDysfonctionnements: " . json_encode($issues);
-        return callGroqIA($systemPrompt, $userPrompt) ?: "";
+        $systemPrompt = "Tu es le rédacteur technique officiel des rapports d'expertise Lenoir-Mec (séparation magnétique et levage industriel, groupe Delachaux).
+
+CONTEXTE : Tu rédiges la section \"F) CONCLUSION\" d'une fiche d'inspection terrain. Cette conclusion apparaît dans un rapport PDF envoyé au client final. Elle synthétise le bilan technique de l'équipement inspecté.
+
+TYPES D'ÉQUIPEMENTS LENOIR-MEC :
+- OVAP / OV : Overband (séparateur magnétique à bande)
+- APRF / APRM / RD : Aimant permanent rectangulaire fixe
+- ED-X : Séparateur à courants de Foucault
+- TAP / PAP : Tambour ou Poulie à Aimants Permanents
+- Levage : Électroaimants de levage industriel
+
+RÈGLE DE PRIORITÉ :
+- Si N.R > 0 → Priorité : URGENT (remplacement de pièce nécessaire)
+- Si N.C > 0 et N.R = 0 → Priorité : MOYEN (défauts à corriger mais pas de danger immédiat)
+- Si seulement A.A → Priorité : FAIBLE (dégradations mineures à surveiller)
+- Si aucun défaut → Priorité : FAIBLE (fonctionnement nominal)
+
+RÈGLES DE RÉDACTION STRICTES :
+1. NE JAMAIS écrire le titre \"F) CONCLUSION\" — il est déjà imprimé sur le rapport.
+2. NE JAMAIS ajouter de salutation, de remerciement, ou de formule de politesse.
+3. Exactement 2 phrases. Pas 1, pas 3. Deux.
+4. Phrase 1 : Bilan technique général (ex: \"Le bilan technique révèle...\" ou \"Le bilan technique est globalement satisfaisant...\").
+5. Phrase 2 : Niveau de priorité (ex: \"Le niveau de priorité global est évalué comme [urgent/moyen/faible].\").
+6. Si aucun dysfonctionnement → \"Le bilan technique est globalement satisfaisant avec aucun défaut majeur détecté. Le niveau de priorité global est évalué comme faible.\"
+7. Style : impersonnel, factuel, professionnel. Pas de recommandations. Pas de \"nous conseillons\".";
+
+        $count_nr = count($issues['nr']);
+        $count_nc = count($issues['nc']);
+        $count_aa = count($issues['aa']);
+        $count_ok = 0;
+
+        $allIssuesList = array_merge(
+            array_map(fn($i) => "- NR: " . $i['designation'], $issues['nr']),
+            array_map(fn($i) => "- NC: " . $i['designation'], $issues['nc']),
+            array_map(fn($i) => "- AA: " . $i['designation'], $issues['aa'])
+        );
+        $allIssuesString = implode("\n", $allIssuesList);
+
+        $userPrompt = "MACHINE : $typeMachine — Poste $poste\n\n";
+        $userPrompt .= "RÉSUMÉ DES ANOMALIES :\n";
+        $userPrompt .= "- Points à remplacer (N.R) : $count_nr\n";
+        $userPrompt .= "- Points non conformes (N.C) : $count_nc\n";
+        $userPrompt .= "- Points à améliorer (A.A) : $count_aa\n";
+        $userPrompt .= "- Points conformes (OK) : $count_ok\n\n";
+        $userPrompt .= "DÉTAIL DES ANOMALIES :\n" . ($allIssuesString ?: "Aucun défaut majeur.") . "\n\n";
+        $userPrompt .= "Rédige la conclusion technique.";
+
+        return callGroqIA($systemPrompt, $userPrompt, [
+            'temperature' => 0.15,
+            'max_tokens' => 300,
+            'top_p' => 0.9,
+            'frequency_penalty' => 0.1,
+            'presence_penalty' => 0.0
+        ]) ?: "";
     }
 }
 

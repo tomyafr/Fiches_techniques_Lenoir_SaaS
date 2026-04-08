@@ -126,10 +126,16 @@ function extractIssuesFromDonnees($donnees) {
 /**
  * Appelle l'API Groq Cloud
  */
-function callGroqIA($systemPrompt, $userPrompt) {
+function callGroqIA($systemPrompt, $userPrompt, $options = []) {
     if (!defined('GROQ_API_KEY') || empty(GROQ_API_KEY)) {
         return null; // Fallback géré par l'appelant
     }
+
+    $temperature = $options['temperature'] ?? 0.2;
+    $max_tokens = $options['max_tokens'] ?? 600;
+    $top_p = $options['top_p'] ?? 1.0;
+    $frequency_penalty = $options['frequency_penalty'] ?? 0.0;
+    $presence_penalty = $options['presence_penalty'] ?? 0.0;
 
     $payload = [
         'model' => 'llama-3.3-70b-versatile',
@@ -137,8 +143,11 @@ function callGroqIA($systemPrompt, $userPrompt) {
             ['role' => 'system', 'content' => $systemPrompt],
             ['role' => 'user', 'content' => $userPrompt]
         ],
-        'temperature' => 0.2,
-        'max_tokens' => 600
+        'temperature' => $temperature,
+        'max_tokens' => $max_tokens,
+        'top_p' => $top_p,
+        'frequency_penalty' => $frequency_penalty,
+        'presence_penalty' => $presence_penalty
     ];
 
 
