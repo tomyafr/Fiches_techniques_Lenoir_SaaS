@@ -606,10 +606,15 @@ h4 {
 }
 
 .mobile-header-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
     font-size: 0.9rem;
     font-weight: 700;
     color: var(--primary);
     letter-spacing: 0.03em;
+    white-space: nowrap;
 }
 
 .mobile-header-user {
