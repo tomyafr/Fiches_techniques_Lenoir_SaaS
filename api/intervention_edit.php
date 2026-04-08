@@ -126,6 +126,19 @@ $machines = $stmtMach->fetchAll();
             </script>
         <?php endif; ?>
 
+        <!-- BOUTON RETOUR DESKTOP -->
+        <div class="desktop-back-btn" style="margin-bottom: 1.5rem;">
+            <button type="button" class="btn btn-ghost" onclick="document.getElementById('modalQuit').style.display='flex'" 
+                style="color: var(--text-bright); background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); display:flex; align-items:center; gap:8px; padding: 0.5rem 1rem; border-radius: var(--radius-sm); transition: 0.3s; cursor: pointer;">
+                <img src="/assets/icon_back_blue.svg" style="height: 18px; width: 18px; filter: grayscale(1) brightness(2);"> 
+                Retour à l'écran précédent
+            </button>
+        </div>
+        <style>
+            @media (max-width: 1023px) { .desktop-back-btn { display: none; } }
+            .desktop-back-btn button:hover { background: rgba(255,255,255,0.1); }
+        </style>
+
         <!-- INTRO CLIENT -->
         <div class="card glass animate-in" style="margin-bottom: 2rem;">
             <div style="display:flex; justify-content:space-between; align-items:flex-start;">

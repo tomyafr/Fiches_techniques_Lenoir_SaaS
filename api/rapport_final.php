@@ -544,6 +544,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         <span class="mobile-header-user"></span>
     </header>
 
+    <!-- BOUTON RETOUR DESKTOP -->
+    <div class="desktop-back-btn" style="margin-bottom: 2rem; max-width: 1000px; margin-left: auto; margin-right: auto; padding: 0 1rem;">
+        <a href="intervention_edit.php?id=<?= $id ?>" class="btn btn-ghost" 
+            style="color: var(--text-bright); text-decoration: none; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); display:inline-flex; align-items:center; gap:8px; padding: 0.5rem 1rem; border-radius: var(--radius-sm); transition: 0.3s; cursor: pointer;">
+            <img src="/assets/icon_back_blue.svg" style="height: 18px; width: 18px; filter: grayscale(1) brightness(2);"> 
+            Retour à l'écran précédent
+        </a>
+    </div>
+    <style>
+        @media (max-width: 1023px) { .desktop-back-btn { display: none; } }
+        .desktop-back-btn a:hover { background: rgba(255,255,255,0.1); }
+    </style>
+
     <div class="rapport-page">
         <form method="POST" id="rapportForm" autocomplete="off">
             <?= csrfField() ?>
