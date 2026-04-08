@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Utiliser l'URL de base comme clé de stockage unique
     const pageId = window.location.pathname + window.location.search;
-    const storageKey = 'autosave_' + btoa(pageId).slice(0, 20);
+    const storageKey = 'autosave_' + btoa(pageId);
 
     // 1. Restaurer les données au chargement si un brouillon existe
     const savedData = localStorage.getItem(storageKey);
@@ -93,6 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // 4. Fonction pour purger le cache manuellement (appelée en PHP si succès)
 function clearAutosaveDraft() {
     const pageId = window.location.pathname + window.location.search;
-    const storageKey = 'autosave_' + btoa(pageId).slice(0, 20);
+    const storageKey = 'autosave_' + btoa(pageId);
     localStorage.removeItem(storageKey);
 }

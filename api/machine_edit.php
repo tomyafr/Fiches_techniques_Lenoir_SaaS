@@ -103,19 +103,16 @@ function generateDysfunctionsAI($machine, $type = 'E') {
         $formattedNC = array_map(fn($i) => "• " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['nc']);
         $formattedNR = array_map(fn($i) => "• " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['nr']);
 
-        $systemPrompt = "Tu es un expert technique Lenoir-Mec spécialiste des séparateurs magnétiques industriels. Rédige la section E) CAUSE DE DYSFONCTIONNEMENT en français. Format : une liste à puces courte (1 ligne par problème). Style : professionnel, technique, concis.";
-        $userPrompt = "Type: $typeMachine, Poste: $poste\nAA: " . implode(", ", $formattedAA) . "\nNC: " . implode(", ", $formattedNC) . "\nNR/HS: " . implode(", ", $formattedNR);
+        $systemPrompt = "Tu es un expert technique Lenoir-Mec spécialiste des séparateurs magnétiques industriels. Rédige la section E) CAUSE DE DYSFONCTIONNEMENT en français. Format : une liste à puces courte (1 ligne par problème). Style : professionnel, technique, concis. - NE REPRENDS PAS LE TITRE SECTION E. - Si la liste est vide, réponds par un message vide.";
+        $allIssues = array_merge($formattedNR, $formattedNC, $formattedAA);
+        $userPromptE = "LISTE DES POINTS :\n" . (empty($allIssues) ? "" : implode("\n", $allIssues));
 
-        $result = callGroqIA($systemPrompt, $userPrompt);
-        if (!$result) {
-            $all = array_merge($formattedNR, $formattedNC, $formattedAA);
-            return !empty($all) ? implode("\n", $all) : "Aucun dysfonctionnement majeur signalé.";
-        }
-        return $result;
+        $result = callGroqIA($systemPrompt, $userPromptE);
+        return $result ?: "";
     } else {
-        $systemPrompt = "En te basant sur les dysfonctionnements listés, rédige la section F) CONCLUSION. Format : 1-2 phrases max. Style rapport d'expertise Lenoir-Mec.";
+        $systemPrompt = "En te basant sur les dysfonctionnements listés, rédige la section F) CONCLUSION. Format : 1-2 phrases max. Style rapport d'expertise Lenoir-Mec. Si aucun dysfonctionnement, réponds par un message vide.";
         $userPrompt = "Machine: $typeMachine\nDysfonctionnements: " . json_encode($issues);
-        return callGroqIA($systemPrompt, $userPrompt) ?: "Votre équipement est conforme à nos standards technologiques.";
+        return callGroqIA($systemPrompt, $userPrompt) ?: "";
     }
 }
 
@@ -1960,7 +1957,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <?php 
                                     $dysText = trim($machine['dysfonctionnements'] ?? '');
                                     if (empty($dysText)) {
-                                        $dysText = "Aucun dysfonctionnement majeur signalé.";
+                                        $dysText = "";
                                     }
                                 ?>
                                 <div style="font-size:13px; white-space: pre-wrap; margin-bottom:10px;"><?= htmlspecialchars($dysText) ?></div>
@@ -1997,7 +1994,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <?php 
                                     $concText = trim($machine['conclusion'] ?? '');
                                     if (empty($concText)) {
-                                        $concText = "Votre équipement est conforme à nos standards officiels.";
+                                        $concText = "";
                                     }
                                 ?>
                                 <div style="font-size:13px; white-space: pre-wrap; margin-bottom:10px;"><?= htmlspecialchars($concText) ?></div>

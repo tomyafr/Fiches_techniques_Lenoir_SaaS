@@ -51,8 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $message = "Le N° O.F., la désignation et l'année sont obligatoires.";
         } else {
             $initMesures = json_encode(['repere' => $repere]);
-            $stmtIns = $db->prepare('INSERT INTO machines (intervention_id, numero_of, designation, annee_fabrication, commentaires, mesures, donnees_controle) VALUES (?, ?, ?, ?, ?, ?, ?)');
-            $stmtIns->execute([$id, $of, $designation, $annee, '', $initMesures, '{}']);
+            $stmtIns = $db->prepare('INSERT INTO machines (intervention_id, numero_of, designation, annee_fabrication, commentaires, mesures, donnees_controle, dysfonctionnements, conclusion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            $stmtIns->execute([$id, $of, $designation, $annee, '', $initMesures, '{}', '', '']);
             $message = "Machine ajoutée avec succès.";
         }
     } elseif ($_POST['action'] === 'save_signatures') {

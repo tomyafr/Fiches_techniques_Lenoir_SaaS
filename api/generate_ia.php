@@ -52,9 +52,8 @@ RÈGLES D'ANALYSE :
 - Liste TOUTES les anomalies fournies (Points Rouges/Orange).
 - Pour chaque point, sois précis et factuel (max 10 mots).
 - Si un commentaire est présent, utilise-le pour enrichir le constat.
-- NE REPRENDS PAS LE TITRE SECTION E.
-- SI et SEULEMENT SI la liste est vide ou dit 'Néant', réponds : 'Aucune anomalie détectée lors de l'inspection.'";
-    $userPromptE = "LISTE BRUTE DES POINTS À TRAITER :\n" . (empty($allIssues) ? "Néant" : implode("\n", $allIssues));
+- NE REPRENDS PAS LE TITRE SECTION E.";
+    $userPromptE = "LISTE BRUTE DES POINTS À TRAITER :\n" . (empty($allIssues) ? "" : implode("\n", $allIssues));
 
     $resultE = callGroqIA($systemPromptE, $userPromptE);
     
@@ -66,7 +65,7 @@ RÈGLES D'ANALYSE :
 
     // Fallback if IA fails (null or empty)
     if (!$resultE) {
-        $resultE = !empty($allIssues) ? implode("\n", $allIssues) : "Aucun dysfonctionnement majeur signalé.";
+        $resultE = !empty($allIssues) ? implode("\n", $allIssues) : "";
     }
     
     if ($type === 'E') {
@@ -107,7 +106,7 @@ Instructions :
         $countAA = count($issues['aa']);
         
         if ($countNR + $countNC + $countAA === 0) {
-            $resultF = "Votre équipement est conforme à nos standards officiels. L'équipement est pleinement opérationnel.";
+            $resultF = "";
         } else {
             $reco = "une révision technique";
             if ($countNR > 0) $reco = "le remplacement immédiat des pièces critiques (voir Section E)";
