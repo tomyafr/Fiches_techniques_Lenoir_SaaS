@@ -628,7 +628,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     },
                     sigTech: <?= json_encode($intervention['signature_technicien'] ?: $techSignatureBase64) ?>,
                     sigClient: <?= json_encode($intervention['signature_client'] ?? '') ?>,
-                    pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['numero_arc'] ?? 'rapport') . '_' . date('d-m-Y') . '.pdf') ?>,
+                    pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['nom_societe'] ?? 'Client') . '_' . date('d-m-Y') . '.pdf') ?>,
                     emptyFichesOption: 'include',
                     emptyMachinesIds: <?= json_encode($emptyMachinesIds) ?>,
                     machinesIds: [<?= implode(',', array_column($machines, 'id')) ?>],
