@@ -2566,7 +2566,18 @@ foreach ($recoFreq as $rfk => $rfv) {
         // Sync photos to hidden input BEFORE form submit
         (function () {
             var f = document.querySelector('form');
-            if (f) f.addEventListener('submit', function () { syncPhotos(); });
+            if (f) f.addEventListener('submit', function (e) { 
+                syncPhotos(); 
+                
+                // --- Vercel Payload Limit Safety Check ---
+                const serialized = document.getElementById('photosJsonInput').value;
+                const sizeMB = (serialized.length / (1024 * 1024)).toFixed(2);
+                if (serialized.length > 4.5 * 1024 * 1024) {
+                    alert("⚠️ Attention : La fiche contient trop de photos (" + sizeMB + " Mo). Vercel limite l'enregistrement à 4.5 Mo.\nVeuillez supprimer une ou deux photos avant d'enregistrer.");
+                    e.preventDefault();
+                    return false;
+                }
+            });
         })();
 
         function capturePhoto(key) {
@@ -2637,9 +2648,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                 handleResult(file);
             } else {
                 new Compressor(file, {
-                    quality: 0.6,
-                    maxWidth: 800,
-                    mimeType: 'image/jpeg', // Force JPEG (PNGs are too heavy for base64)
+                    quality: 0.5,
+                    maxWidth: 750,
+                    mimeType: 'image/jpeg', 
                     checkOrientation: true,
                     success(result) {
                         handleResult(result);
