@@ -3043,6 +3043,13 @@ foreach ($recoFreq as $rfk => $rfv) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/compressorjs/1.2.1/compressor.min.js"></script>
     <div id="autosave-indicator" style="position:fixed; bottom:20px; left:20px; background:rgba(0,0,0,0.8); border-left: 3px solid var(--accent-cyan); color:white; padding:8px 12px; border-radius:4px; opacity:0; transition:opacity 0.3s; z-index:9999; font-size:0.75rem; box-shadow: 0 4px 10px rgba(0,0,0,0.5);"></div>
     <script src="/assets/autosave.js"></script>
+
+    <!-- LIGHTBOX MODAL -->
+    <div id="lightbox-modal" onclick="this.style.display='none'">
+        <span class="lightbox-close">&times;</span>
+        <img id="lightbox-img">
+        <div id="lightbox-caption"></div>
+    </div>
 </body>
 
 </html>
