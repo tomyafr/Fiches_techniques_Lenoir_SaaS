@@ -100,7 +100,11 @@ function extractIssuesFromDonnees($donnees) {
         'sga_e3_stat' => 'Étage 3 - barreaux',
         'sga_intervalle' => 'Intervalle cycles de nettoyage',
         'sga_etanch_coffret' => 'Étanchéité sous coffret',
-        'sga_filtre_regulateur' => 'Filtre à air et régulateur de pression'
+        'sga_filtre_regulateur' => 'Filtre à air et régulateur de pression',
+        'sga_produit_stat' => 'Type de produit',
+        'sga_granulo_stat' => 'Granulométrie',
+        'sga_debit_stat' => 'Débit',
+        'sga_pression_stat' => 'Pression de service'
     ];
 
     $issues = ['aa' => [], 'nc' => [], 'nr' => []];
