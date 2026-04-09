@@ -309,7 +309,7 @@ $machines = $stmtMach->fetchAll();
                         <option value="ELECTROAIMANT FIXE RD" style="color:red;">ELECTROAIMANT FIXE RD *</option>
                         <option value="Tambour ou Poulie à Aimants Permanents TAP/PAP">Tambour ou Poulie à Aimants Permanents TAP/PAP</option>
                         <option value="ELECTROAIMANTS DE LEVAGE" style="color:red;">ELECTROAIMANTS DE LEVAGE *</option>
-                        <option value="Plaques Magnétiques PM">Plaques Magnétiques PM</option>
+                        <option value="Séparateur à grilles automatique SGA">Séparateur à grilles automatique SGA</option>
                     </select>
                 </div>
 

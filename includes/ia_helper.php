@@ -84,7 +84,23 @@ function extractIssuesFromDonnees($donnees) {
         'pm_temperature' => 'Température d\'utilisation',
         'pm_volet' => 'État du volet',
         'pm_chassis' => 'État des châssis',
-        'pm_ressauts' => 'État des ressauts'
+        'pm_ressauts' => 'État des ressauts',
+        // SEPARATEUR A GRILLES AUTOMATIQUE SGA
+        'sga_satisfaction' => 'Satisfaction de fonctionnement',
+        'sga_aspect' => 'Aspect général',
+        'sga_etancheite' => 'Contrôle étanchéité (portes, brides, nourrices, vérins, volets)',
+        'sga_coulissement' => 'Coulissement des barreaux',
+        'sga_detect_circuit' => 'Détecteurs position circuit magnétique',
+        'sga_detect_verins' => 'Détecteurs position vérins',
+        'sga_verins' => 'Vérins (ouverture/fermeture volets)',
+        'sga_limiteurs' => 'Limiteurs de débit barreaux',
+        'sga_bagues' => 'Bagues coulissantes',
+        'sga_e1_stat' => 'Étage 1 (supérieur) - barreaux',
+        'sga_e2_stat' => 'Étage 2 - barreaux',
+        'sga_e3_stat' => 'Étage 3 - barreaux',
+        'sga_intervalle' => 'Intervalle cycles de nettoyage',
+        'sga_etanch_coffret' => 'Étanchéité sous coffret',
+        'sga_filtre_regulateur' => 'Filtre à air et régulateur de pression'
     ];
 
     $issues = ['aa' => [], 'nc' => [], 'nr' => []];

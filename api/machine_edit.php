@@ -70,6 +70,7 @@ $isOVAP = $isOV && strpos($designation, 'OVAP') !== false;
 $isLevage = (strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AIMANT') !== false) && !$isAPRF && !$isPAP;
 $isPAP = strpos($designation, 'À AIMANTS PERMANENTS') !== false || strpos($designation, 'TAP/PAP') !== false || strpos($designation, 'PAP') !== false || strpos($designation, 'TAP') !== false;
 $isPM = strpos($designation, 'PM') !== false && strpos($designation, 'PLAQUE') !== false;
+$isSGA = strpos($designation, 'SGA') !== false || strpos($designation, 'GRILLE') !== false;
 
 // Temps prévisionnel par type
 if ($isEDX)
@@ -84,6 +85,8 @@ elseif ($isLevage)
     $tempsPrev = '1h30';
 elseif ($isPM)
     $tempsPrev = '0h20';
+elseif ($isSGA)
+    $tempsPrev = '3h30';
 else
     $tempsPrev = '1h00';
 
@@ -1449,6 +1452,145 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <img src="/assets/machines/pm_diagram.png" 
                              style="max-width:100%; height:auto; display:block; margin:0 auto;" 
                              alt="Schémas Plaques Magnétiques PM"
+                             onerror="this.style.display='none'">
+                    </div>
+
+                <?php elseif ($isSGA): ?>
+
+                    <?= newPdfPage() ?>
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
+                        <thead>
+                            <?= renderDiagonalHeader(3) ?>
+                        </thead>
+                        <tbody>
+                            <?= renderSectionHeader("Séparateur à grille magnétique à nettoyage automatique type SGA", 3) ?>
+                            <?= renderAprfRow("Satisfaction de fonctionnement", "sga_satisfaction", $donnees) ?>
+                            <?= renderAprfRow("Aspect général", "sga_aspect", $donnees) ?>
+
+                            <?= renderSectionHeader("CONTROLE D'ETANCHEITE", 3) ?>
+                            <?= renderAprfRow("Portes, brides, nourrices, vérins, volets", "sga_etancheite", $donnees) ?>
+
+                            <?= renderSectionHeader("FONCTIONS", 3) ?>
+                            <?= renderAprfRow("Coulissement de chaque barreau", "sga_coulissement", $donnees) ?>
+                            <tr>
+                                <td style="padding:4px;">Détecteurs de position du circuit magnétique</td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
+                                    <?= renderEtatRadios("sga_detect_circuit_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[sga_detect_circuit_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" placeholder="(Anciens modèles)"><?= htmlspecialchars($donnees['sga_detect_circuit_comment'] ?? '') ?></textarea></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px;">Détecteurs de position des vérins</td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
+                                    <?= renderEtatRadios("sga_detect_verins_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[sga_detect_verins_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" placeholder="(Anciens modèles)"><?= htmlspecialchars($donnees['sga_detect_verins_comment'] ?? '') ?></textarea></td>
+                            </tr>
+                            <?= renderAprfRow("Vérins (Ouverture et fermeture des volets)", "sga_verins", $donnees) ?>
+                            <?= renderAprfRow("Présence de limiteurs de débit à chaque barreaux", "sga_limiteurs", $donnees) ?>
+                            <?= renderAprfRow("Présence de bagues coulissantes", "sga_bagues", $donnees) ?>
+
+                            <?php for($e=1; $e<=3; $e++): ?>
+                                <?= renderSectionHeader("ETAGE ".($e==1 ? '1 (Supérieur)' : $e), 3) ?>
+                                <tr>
+                                    <td style="padding:4px;">
+                                        Nombre de barreaux : 
+                                        <input type="text" name="mesures[sga_e<?= $e ?>_nb]" value="<?= htmlspecialchars($mesures['sga_e'.$e.'_nb'] ?? '') ?>" class="pdf-input" style="width:40px; text-align:center;">
+                                    </td>
+                                    <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;" rowspan="7">
+                                        <?= renderEtatRadios("sga_e".$e."_stat", $donnees, 3) ?>
+                                    </td>
+                                    <td style="padding:0;" rowspan="7">
+                                        <textarea name="donnees[sga_e<?= $e ?>_comment]" class="pdf-textarea" style="border:none; width:100%; height:100%; min-height:100px; padding:4px;" placeholder="Commentaires étage <?= $e ?>..."><?= htmlspecialchars($donnees["sga_e".$e."_comment"] ?? '') ?></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:4px; font-weight:bold; background:#f5f5f5;">Barreaux (en partant de gauche) :</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:0;">
+                                        <table style="width:100%; border-collapse:collapse; border:none;">
+                                            <tr>
+                                                <td style="width:50%; border:none; padding:2px;">
+                                                    <?php for($b=1; $b<=5; $b++): ?>
+                                                        <div style="display:flex; justify-content:space-between; margin-bottom:2px; font-size:10px;">
+                                                            <span><?= $b ?> :</span>
+                                                            <span><input type="text" name="mesures[sga_e<?= $e ?>_b<?= $b ?>]" value="<?= htmlspecialchars($mesures['sga_e'.$e.'_b'.$b] ?? '') ?>" style="width:40px; border:none; border-bottom:1px dashed #000; text-align:center;"> Gauss Max</span>
+                                                        </div>
+                                                    <?php endfor; ?>
+                                                </td>
+                                                <td style="width:50%; border:none; padding:2px; border-left:1px solid #eee;">
+                                                    <?php for($b=6; $b<=11; $b++): ?>
+                                                        <div style="display:flex; justify-content:space-between; margin-bottom:2px; font-size:10px;">
+                                                            <span><?= $b ?> :</span>
+                                                            <span><input type="text" name="mesures[sga_e<?= $e ?>_b<?= $b ?>]" value="<?= htmlspecialchars($mesures['sga_e'.$e.'_b'.$b] ?? '') ?>" style="width:40px; border:none; border-bottom:1px dashed #000; text-align:center;"> Gauss Max</span>
+                                                        </div>
+                                                    <?php endfor; ?>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <!-- Filler rows to match rowspan if needed, but table structure handles it -->
+                            <?php endfor; ?>
+
+                            <?= renderSectionHeader("COFFRET D'ALIMENTATION ET COMMANDE", 3) ?>
+                            <?= renderAprfRow("Intervalle entre deux cycles de nettoyage", "sga_intervalle", $donnees) ?>
+                            <?= renderAprfRow("Etanchéité sous coffret", "sga_etanch_coffret", $donnees) ?>
+                            <?= renderAprfRow("Présence d'un filtre à air et d'un régulateur de pression", "sga_filtre_regulateur", $donnees) ?>
+
+                            <?= renderSectionHeader("APPLICATION CLIENT", 3) ?>
+                            <tr>
+                                <td style="padding:4px;">
+                                    Type de produit : 
+                                    <input type="text" name="mesures[sga_produit]" value="<?= htmlspecialchars($mesures['sga_produit'] ?? '') ?>" class="pdf-input" style="width:120px;">
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
+                                    <?= renderEtatRadios("sga_produit_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:4px;">
+                                    Aciers de <input type="text" name="mesures[sga_acier_min]" value="<?= htmlspecialchars($mesures['sga_acier_min'] ?? '') ?>" style="width:25px; border:none; border-bottom:1px dashed #000; text-align:center;"> à <input type="text" name="mesures[sga_acier_max]" value="<?= htmlspecialchars($mesures['sga_acier_max'] ?? '') ?>" style="width:25px; border:none; border-bottom:1px dashed #000; text-align:center;"> mm
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px;">
+                                    Granulométrie : 
+                                    <input type="text" name="mesures[sga_granulo]" value="<?= htmlspecialchars($mesures['sga_granulo'] ?? '') ?>" style="width:40px; border:none; border-bottom:1px dashed #000; text-align:center;"> mm
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
+                                    <?= renderEtatRadios("sga_granulo_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[sga_granulo_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;"><?= htmlspecialchars($donnees['sga_granulo_comment'] ?? '') ?></textarea></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px;">
+                                    Débit : 
+                                    <input type="text" name="mesures[sga_debit]" value="<?= htmlspecialchars($mesures['sga_debit'] ?? '') ?>" style="width:40px; border:none; border-bottom:1px dashed #000; text-align:center;"> t/h
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
+                                    <?= renderEtatRadios("sga_debit_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:4px;">
+                                    Avec densité de <input type="text" name="mesures[sga_densite]" value="<?= htmlspecialchars($mesures['sga_densite'] ?? '') ?>" style="width:50px; border:none; border-bottom:1px dashed #000; text-align:center;">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px;">
+                                    Pression de service : 
+                                    <input type="text" name="mesures[sga_pression]" value="<?= htmlspecialchars($mesures['sga_pression'] ?? '') ?>" style="width:40px; border:none; border-bottom:1px dashed #000; text-align:center;"> Bar
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
+                                    <?= renderEtatRadios("sga_pression_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[sga_pression_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;"><?= htmlspecialchars($donnees['sga_pression_comment'] ?? '') ?></textarea></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="text-align:center; margin-top:20px;">
+                        <img src="/assets/machines/sga_diagram.png" 
+                             style="max-width:100%; height:auto; display:block; margin:0 auto;" 
+                             alt="Schéma Séparateur à Grilles SGA"
                              onerror="this.style.display='none'">
                     </div>
 
