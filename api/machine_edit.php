@@ -40,7 +40,15 @@ if (!$machine) {
 
 $donnees = json_decode($machine['donnees_controle'] ?? '{}', true);
 $mesures = json_decode($machine['mesures'] ?? '{}', true);
-$photosData = json_decode($machine['photos'] ?? '{}', true) ?: [];
+
+// BUG-FIX: Vercel Payload Too Large (4.5MB limit)
+// On ne charge les photos en PHP que pour la génération PDF. 
+// Pour le web, on les charge en AJAX plus bas.
+if (isset($_GET['pdf'])) {
+    $photosData = json_decode($machine['photos'] ?? '{}', true) ?: [];
+} else {
+    $photosData = []; 
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     verifyCsrfToken();
@@ -2514,6 +2522,33 @@ foreach ($recoFreq as $rfk => $rfv) {
             modal.style.display = "block";
         }
 
+        async function loadPhotosAsync() {
+            try {
+                // Afficher un petit indicateur de chargement
+                const grid = document.getElementById('photosAnnexesGrid');
+                if (grid) grid.innerHTML = '<p style="color:#28a745; font-size:11px; margin:0;">⌛ Chargement des photos...</p>';
+                
+                const response = await fetch('get_machine_photos.php?id=<?= $id ?>');
+                if (!response.ok) throw new Error('Erreur lors du chargement des photos');
+                
+                const data = await response.json();
+                allPhotos = data;
+                
+                // On met à jour l'affichage
+                Object.keys(allPhotos).forEach(function (key) {
+                    renderThumbsForKey(key);
+                });
+                renderDescriptionMontage();
+                renderAnnexes();
+                syncPhotos();
+                console.log("Photos chargées via AJAX.");
+            } catch (err) {
+                console.error("Erreur AJAX photos:", err);
+                const grid = document.getElementById('photosAnnexesGrid');
+                if (grid) grid.innerHTML = '<p style="color:#dc3545; font-size:11px; margin:0;">❌ Erreur de chargement des photos.</p>';
+            }
+        }
+
         // ========== PHOTO SYSTEM ==========
         var allPhotos = {};
         var currentPhotoKey = '';
@@ -2947,13 +2982,18 @@ foreach ($recoFreq as $rfk => $rfv) {
                 if (ta.value) autoGrow(ta);
                 ta.addEventListener('input', function () { autoGrow(this); });
             });
-            // Photos
-            Object.keys(allPhotos).forEach(function (key) {
-                renderThumbsForKey(key);
-            });
-            renderDescriptionMontage();
-            renderAnnexes();
-            syncPhotos();
+            // Photos (Async Fix for Vercel Payload Limit)
+            <?php if (!isset($_GET['pdf'])): ?>
+                loadPhotosAsync();
+            <?php else: ?>
+                // Mode PDF : on utilise les données PHP déjà injectées
+                Object.keys(allPhotos).forEach(function (key) {
+                    renderThumbsForKey(key);
+                });
+                renderDescriptionMontage();
+                renderAnnexes();
+                syncPhotos();
+            <?php endif; ?>
 
             // Auto-set heure_debut to now if empty
             var debutInput = document.getElementById('heureDebut');
