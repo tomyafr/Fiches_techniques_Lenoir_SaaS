@@ -399,6 +399,67 @@ foreach ($recoFreq as $rfk => $rfv) {
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
         }
 
+        /* --- ZOOM / LIGHTBOX SYSTEM --- */
+        #lightbox-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            padding-top: 50px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
+            cursor: zoom-out;
+        }
+        #lightbox-modal img {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 80%;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            animation-name: zoom;
+            animation-duration: 0.3s;
+        }
+        @keyframes zoom {
+            from {transform:scale(0)}
+            to {transform:scale(1)}
+        }
+        #lightbox-caption {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+            text-align: center;
+            color: #ccc;
+            padding: 20px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .lightbox-close:hover {
+            color: #bbb;
+        }
+        /* Curseur loupe pour les photos cliquables */
+        .photo-thumb-wrap img, .montage-item img, .photo-annexe-item img {
+            cursor: zoom-in;
+            transition: opacity 0.2s;
+        }
+        .photo-thumb-wrap img:hover, .montage-item img:hover, .photo-annexe-item img:hover {
+            opacity: 0.8;
+        }
+
         @media screen and (max-width: 768px) {
             .pastille-group label {
                 width: 36px;
@@ -1017,7 +1078,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         foreach (array_slice($photos, 0, 4) as $i => $p) {
                             $html .= '
                             <div class="montage-item">
-                                <img src="' . htmlspecialchars($p['data']) . '" alt="Photo Matériel ' . ($i+1) . '">
+                                <img src="' . htmlspecialchars($p['data']) . '" alt="Photo Matériel ' . ($i+1) . '" onclick="openLightbox(this.src, \'Photo Matériel ' . ($i+1) . '\')">
                                 <button type="button" class="photo-del-overlay no-print-pdf" onclick="deletePhoto(\'desc_materiel\', ' . $i . ')">×</button>
                                 ' . (!empty($p['comment']) ? '<div class="photo-comment-overlay">' . htmlspecialchars($p['comment']) . '</div>' : '') . '
                             </div>';
@@ -2405,7 +2466,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     <?php if ($key === 'desc_materiel') continue; // Déjà affiché en Section B ?>
                                     <?php foreach ($photos as $p): ?>
                                         <div class="photo-annexe-item">
-                                            <img src="<?= htmlspecialchars($p['data']) ?>">
+                                            <img src="<?= htmlspecialchars($p['data']) ?>" onclick="openLightbox(this.src, '<?= addslashes(htmlspecialchars($p['caption'] ?? '')) ?>')">
                                             <?php 
                                             global $photoLabelsMap;
                                             $label = $photoLabelsMap[$key] ?? '';
@@ -2442,6 +2503,17 @@ foreach ($recoFreq as $rfk => $rfv) {
     <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none">
 
     <script>
+        // ========== ZOOM / LIGHTBOX ==========
+        function openLightbox(src, caption) {
+            const modal = document.getElementById('lightbox-modal');
+            const img = document.getElementById('lightbox-img');
+            const cap = document.getElementById('lightbox-caption');
+            if(!modal || !img) return;
+            img.src = src;
+            cap.innerHTML = caption || '';
+            modal.style.display = "block";
+        }
+
         // ========== PHOTO SYSTEM ==========
         var allPhotos = {};
         var currentPhotoKey = '';
@@ -2570,7 +2642,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             photos.forEach(function (p, i) {
                 var wrap = document.createElement('span');
                 wrap.className = 'photo-thumb-wrap';
-                wrap.innerHTML = '<img src="' + p.data + '" title="' + (p.caption || '') + '">' +
+                wrap.innerHTML = '<img src="' + p.data + '" title="' + (p.caption || '') + '" onclick="openLightbox(this.src, \'' + (p.caption || '').replace(/'/g, "\\'") + '\')">' +
                     '<button type="button" class="photo-del" onclick="deletePhoto(\'' + key + '\',' + i + ')">×</button>';
                 container.appendChild(wrap);
             });
@@ -2601,7 +2673,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             photos.slice(0, 4).forEach(function(p, i) {
                 html += `
                     <div class="montage-item">
-                        <img src="${p.data}" alt="Photo Matériel ${i+1}">
+                        <img src="${p.data}" alt="Photo Matériel ${i+1}" onclick="openLightbox(this.src, 'Photo Matériel ${i+1}')">
                         <button type="button" class="photo-del-overlay no-print-pdf" onclick="deletePhoto('desc_materiel', ${i})">×</button>
                     </div>`;
             });
@@ -2640,7 +2712,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         label = label.charAt(0).toUpperCase() + label.slice(1);
                     }
                     
-                    item.innerHTML = '<img src="' + p.data + '">' +
+                    item.innerHTML = '<img src="' + p.data + '" onclick="openLightbox(this.src, \'' + (p.caption || '').replace(/'/g, "\\'") + '\')">' +
                         '<p><strong>Photo ' + photoIndex + ' : ' + label + '</strong>' + (p.caption ? '<br><em>' + p.caption + '</em>' : '') + '</p>';
                     grid.appendChild(item);
                     photoIndex++;
