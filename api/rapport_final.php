@@ -587,12 +587,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <div style="margin-bottom:1rem; text-align:center;">
                         <img src="/assets/check_success.svg" style="height: 80px; width: 80px;">
                     </div>
-                    <h3 style="margin:0 0 0.5rem 0; color:#10b981;">Rapport finalisÃ© avec succÃ¨s !</h3>
+                    <h3 style="margin:0 0 0.5rem 0; color:#10b981;">Rapport finalisé avec succès !</h3>
                     <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1rem;">L'intervention ARC
-                        <?= htmlspecialchars($intervention['numero_arc']) ?> a Ã©tÃ© clÃ´turÃ©e.
+                        <?= htmlspecialchars($intervention['numero_arc']) ?> a été clôturée.
                     </p>
 
-                    <!-- Toast email (injectÃ© par JS) -->
+                    <!-- Toast email (injecté par JS) -->
                     <div id="emailToast"
                         style="display:none; margin-bottom:1rem; padding:0.75rem 1rem; border-radius:8px; font-size:0.85rem; font-weight:600;">
                     </div>
@@ -604,11 +604,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             <span id="btnSendEmailIcon"><img src="/assets/icon_email_send.svg" style="height: 18px; width: 18px; vertical-align: middle;"></span>
                             <span id="btnSendEmailLabel">Envoyer PDF par email</span>
                         </button>
-                        <!-- Bouton TÃ©lÃ©charger PDF -->
+                        <!-- Bouton Télécharger PDF -->
                         <button type="button" id="btnDownloadPDF" onclick="telechargerPDF()"
                             style="padding:0.7rem 1.5rem; background:var(--primary); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem;">
                             <span id="btnDownloadPDFIcon"><img src="/assets/icon_download.svg" style="height: 18px; width: 18px; vertical-align: middle; filter: brightness(0);"></span> 
-                            <span id="btnDownloadPDFLabel">TÃ©lÃ©charger le PDF</span>
+                            <span id="btnDownloadPDFLabel">Télécharger le PDF</span>
                         </button>
                         <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>"
                             style="padding:0.7rem 1.5rem; background:rgba(255,255,255,0.1); color:var(--text); border:1px solid var(--glass-border); border-radius:8px; font-weight:600; text-decoration:none; font-size:0.9rem; display:flex; align-items:center; gap:8px;">
@@ -678,7 +678,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
             <?php endif; ?>
 
-            <!-- ANALYSE IA GÃ‰NÃ‰RALE (Rectangle Orange) -->
+            <!-- ANALYSE IA GÉNÉRALE (Rectangle Orange) -->
             <div id="ai-synthesis-block" class="card" style="background: rgba(255, 179, 0, 0.1); border: 2px solid var(--primary); padding: 1.5rem; margin-bottom: 2rem; border-radius: 12px; position: relative;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                     <div style="display: flex; align-items: center; gap: 10px;">
@@ -686,16 +686,16 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <h2 style="color: var(--primary); margin: 0; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;">Analyse Intelligente Globale</h2>
                     </div>
                     <button type="button" onclick="generateAllIA()" id="btnGenerateAllIa" class="btn btn-primary" style="background: var(--primary); color: #000; font-weight: 700; font-size: 0.8rem; padding: 0.5rem 1rem; border-radius: 8px; display: flex; align-items: center; gap: 8px;">
-                        <span>ðŸš€</span> Lancer l'IA sur toutes les fiches
+                        <span>🚀</span> Lancer l'IA sur toutes les fiches
                     </button>
                 </div>
                 <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">
-                    Cette fonction analyse automatiquement chaque fiche pour gÃ©nÃ©rer les sections "Dysfonctionnements" et "Conclusions" en se basant sur vos relevÃ©s. 
-                    <strong>Les fiches dÃ©jÃ  modifiÃ©es manuellement ne seront pas Ã©crasÃ©es sans confirmation.</strong>
+                    Cette fonction analyse automatiquement chaque fiche pour générer les sections "Dysfonctionnements" et "Conclusions" en se basant sur vos relevés. 
+                    <strong>Les fiches déjà modifiées manuellement ne seront pas écrasées sans confirmation.</strong>
                 </p>
             </div>
 
-            <!-- EN-TÃŠTE -->
+            <!-- EN-TÊTE -->
             <div class="rapport-header">
                 <img src="/assets/lenoir_logo_trans.svg" alt="LENOIR-MEC" 
                     style="height: 60px; width: auto; object-fit: contain; display: block; margin: 0 auto 1.5rem auto;">
@@ -705,14 +705,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
             </div>
 
-            <!-- RÃ‰CAP MACHINES -->
-            <div class="section-title">Ã‰quipements contrÃ´lÃ©s (<?= count($machines) ?>)</div>
+            <!-- RÉCAP MACHINES -->
+            <div class="section-title">Équipements contrôlés (<?= count($machines) ?>)</div>
             <div class="machines-recap">
                 <?php foreach ($machines as $m): 
                     $mStatus = $m['conclusion'] ?? '';
-                    $statusColor = '#94a3b8'; // dÃ©faut
+                    $statusColor = '#94a3b8'; // défaut
                     if (stripos($mStatus, 'conforme') !== false && stripos($mStatus, 'non') === false) $statusColor = '#10b981';
-                    if (stripos($mStatus, 'amÃ©lioration') !== false) $statusColor = '#f59e0b';
+                    if (stripos($mStatus, 'amélioration') !== false) $statusColor = '#f59e0b';
                     if (stripos($mStatus, 'non conforme') !== false) $statusColor = '#f43f5e';
                     if (stripos($mStatus, 'remplacer') !== false) $statusColor = '#8b0000';
                     
@@ -724,7 +724,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         </div>
                         <strong style="color:#fff; font-size:0.85rem;"><?= htmlspecialchars($m['designation']) ?></strong>
                         <?php if (!empty($mm['repere'])): ?>
-                            <small style="opacity:0.6; color:#94a3b8;">â€“ <?= htmlspecialchars($mm['repere']) ?></small>
+                            <small style="opacity:0.6; color:#94a3b8;">– <?= htmlspecialchars($mm['repere']) ?></small>
                         <?php endif; ?>
                         <small style="margin-left: 4px; color: <?= $statusColor ?>; font-weight:bold;">(<?= (int)$m['points_count'] ?> pts)</small>
                     </span>
@@ -735,15 +735,15 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <div class="section-title">Informations client</div>
             <div class="card glass" style="padding: 1.5rem;">
                 <div class="form-group">
-                    <label class="label">SociÃ©tÃ© <span style="color:var(--error);">*</span></label>
+                    <label class="label">Société <span style="color:var(--error);">*</span></label>
                     <input type="text" name="nom_societe_display" class="input"
                         value="<?= htmlspecialchars($intervention['nom_societe']) ?>" disabled style="opacity:0.7;">
                 </div>
 
                 <div class="field-row">
                     <div class="form-group">
-                        <label class="label">PrÃ©nom du contact <span style="color:var(--error);">*</span></label>
-                        <input type="text" name="contact_prenom" id="contact_prenom" class="input" placeholder="PrÃ©nom..."
+                        <label class="label">Prénom du contact <span style="color:var(--error);">*</span></label>
+                        <input type="text" name="contact_prenom" id="contact_prenom" class="input" placeholder="Prénom..."
                             value="<?= htmlspecialchars($intervention['contact_prenom'] ?? '') ?>" required maxlength="50">
                     </div>
                     <div class="form-group">
@@ -755,7 +755,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                 <div class="field-row">
                     <div class="form-group">
-                        <label class="label">Fonction / RÃ´le</label>
+                        <label class="label">Fonction / Rôle</label>
                         <input type="text" name="contact_fonction" class="input" placeholder="Resp. maintenance..."
                             value="<?= htmlspecialchars($intervention['contact_fonction'] ?? $intervention['c_fonction'] ?? '') ?>">
                     </div>
@@ -769,13 +769,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                 <div class="field-row">
                     <div class="form-group">
-                        <label class="label">TÃ©lÃ©phone</label>
+                        <label class="label">Téléphone</label>
                         <input type="tel" name="contact_telephone" class="input" placeholder="06 12 34 56 78"
                             value="<?= htmlspecialchars($intervention['contact_telephone'] ?? $intervention['c_tel'] ?? '') ?>">
                     </div>
                     <div class="form-group">
                         <label class="label">Adresse</label>
-                        <input type="text" name="adresse" class="input" placeholder="Rue, numÃ©ro..."
+                        <input type="text" name="adresse" class="input" placeholder="Rue, numéro..."
                             value="<?= htmlspecialchars($intervention['adresse'] ?? '') ?>">
                     </div>
                 </div>
@@ -802,7 +802,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <!-- COMMENTAIRE TECHNICIEN -->
             <div class="section-title">Commentaire / Observations du technicien</div>
             <textarea name="commentaire_technicien" class="rapport-textarea large"
-                placeholder="Saisissez vos observations gÃ©nÃ©rales sur l'Ã©tat des Ã©quipements, les anomalies relevÃ©es, les recommandations..."><?= htmlspecialchars($intervention['commentaire_technicien'] ?? '') ?></textarea>
+                placeholder="Saisissez vos observations générales sur l'état des équipements, les anomalies relevées, les recommandations..."><?= htmlspecialchars($intervention['commentaire_technicien'] ?? '') ?></textarea>
 
             <!-- LE CLIENT SOUHAITE -->
             <div class="section-title">Le client souhaite</div>
@@ -815,12 +815,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 <label class="checkbox-item">
                     <input type="checkbox" name="souhait_offre_pieces" value="1" class="chk-souhait"
                         <?= ($intervention['souhait_offre_pieces'] ?? false) ? 'checked' : '' ?>>
-                    <span>Une offre de piÃ¨ces de rechange</span>
+                    <span>Une offre de pièces de rechange</span>
                 </label>
                 <label class="checkbox-item">
                     <input type="checkbox" name="souhait_pieces_intervention" value="1" class="chk-souhait"
                         <?= ($intervention['souhait_pieces_intervention'] ?? false) ? 'checked' : '' ?>>
-                    <span>PiÃ¨ces de rechange + intervention mise en place</span>
+                    <span>Pièces de rechange + intervention mise en place</span>
                 </label>
                 <label class="checkbox-item">
                     <input type="checkbox" name="souhait_aucune_offre" value="1" class="chk-souhait"
@@ -845,7 +845,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <!-- COMMENTAIRE CLIENT -->
             <div class="section-title">Commentaire du client</div>
             <textarea name="commentaire_client" class="rapport-textarea small"
-                placeholder="Remarques ou demandes spÃ©cifiques du client..."><?= htmlspecialchars($intervention['commentaire_client'] ?? '') ?></textarea>
+                placeholder="Remarques ou demandes spécifiques du client..."><?= htmlspecialchars($intervention['commentaire_client'] ?? '') ?></textarea>
 
             <!-- DATE & HEURE -->
             <div class="section-title">Date et heure</div>
@@ -879,7 +879,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
                     <div class="form-group" style="margin-bottom: 0.5rem;">
                         <input type="text" name="nom_signataire" class="input"
-                            placeholder="NOM PrÃ©nom du signataire (ex: DUPONT Jean)"
+                            placeholder="NOM Prénom du signataire (ex: DUPONT Jean)"
                             value="<?= htmlspecialchars($intervention['nom_signataire_client'] ?? '') ?>" required>
                     </div>
                     <canvas id="canvasClient" width="600" height="200"></canvas>
@@ -889,12 +889,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             <!-- BOUTON FINAL -->
             <button type="submit" class="btn-final" onclick="return validateAndSubmit()">
-                âœ“ Finaliser le rapport et terminer l'intervention
+                ✓ Finaliser le rapport et terminer l'intervention
             </button>
 
             <a href="intervention_edit.php?id=<?= $id ?>"
                 style="display:block; text-align:center; margin-top:1rem; color:var(--text-dim); font-size:0.85rem; text-decoration:none;">
-                â† Retour aux fiches
+                ← Retour aux fiches
             </a>
         </form>
     </div>
@@ -924,7 +924,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             .pastille-group label.selected.p-aa { background: #e67e22 !important; }
             .pastille-group label.selected.p-nc { background: #dc3545 !important; }
             .pastille-group label.selected.p-nr { background: #8b0000 !important; }
-            .pastille-group label.selected::after { content: "âœ“" !important; color: white !important; font-size: 14px; font-weight: bold; position: absolute; }
+            .pastille-group label.selected::after { content: "✓" !important; color: white !important; font-size: 14px; font-weight: bold; position: absolute; }
             .diagonal-header { height: 110px; vertical-align: bottom; padding: 0 !important; position: relative; background: #e0e0e0 !important; overflow: visible; -webkit-print-color-adjust: exact; border: 1px solid #1e4e6d !important; }
             .diagonal-wrapper { display: flex; width: 140px; height: 100%; margin: 0 auto; position: relative; }
             .diag-col { width: 28px; height: 100%; position: relative; border-right: 1px solid #1e4e6d; }
@@ -934,30 +934,46 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             .no-print-pdf, .btn-ia-refresh, .top-bar, .photo-btn, .photo-thumbs, #btnChrono, .photo-del-overlay { display: none !important; }
         `;
 
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // 2. INITIALISATION & UI SIGNATURES
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        function resizeCanvas(canvas) {
+        function resizeCanvas(canvas, pad) {
             const ratio = Math.max(window.devicePixelRatio || 1, 1);
             canvas.width = canvas.offsetWidth * ratio;
             canvas.height = canvas.offsetHeight * ratio;
             canvas.getContext("2d").scale(ratio, ratio);
+            if (pad) pad.clear(); 
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             const canvasC = document.getElementById('canvasClient');
             const canvasT = document.getElementById('canvasTech');
-            if (canvasC) {
-                resizeCanvas(canvasC);
-                padClient = new SignaturePad(canvasC, { penColor: 'blue' });
-            }
-            if (canvasT) {
-                resizeCanvas(canvasT);
-                padTech = new SignaturePad(canvasT, { penColor: 'black' });
+            
+            if (canvasC && canvasT) {
+                const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                
+                // Init Tech
+                canvasT.width = canvasT.offsetWidth * ratio;
+                canvasT.height = canvasT.offsetHeight * ratio;
+                canvasT.getContext("2d").scale(ratio, ratio);
+                padTech = new SignaturePad(canvasT, { penColor: 'black', minWidth: 1, maxWidth: 2.5 });
+
+                // Init Client
+                canvasC.width = canvasC.offsetWidth * ratio;
+                canvasC.height = canvasC.offsetHeight * ratio;
+                canvasC.getContext("2d").scale(ratio, ratio);
+                padClient = new SignaturePad(canvasC, { penColor: 'blue', minWidth: 1, maxWidth: 2.5 });
+
+                window.addEventListener('resize', () => {
+                    const dataC = padClient.toData();
+                    const dataT = padTech.toData();
+                    resizeCanvas(canvasC);
+                    resizeCanvas(canvasT);
+                    padClient.fromData(dataC);
+                    padTech.fromData(dataT);
+                });
             }
         });
 
         function validateAndSubmit() {
+            if (!padTech || !padClient) return false;
             if (padTech.isEmpty() || padClient.isEmpty()) {
                 alert('Signatures obligatoires (Tech + Client).');
                 return false;
