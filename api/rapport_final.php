@@ -701,6 +701,201 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     if (stripos($mStatus, 'conforme') !== false && stripos($mStatus, 'non') === false) $statusColor = '#10b981';
                     if (stripos($mStatus, 'amélioration') !== false) $statusColor = '#f59e0b';
                     if (stripos($mStatus, 'non conforme') !== false) $statusColor = '#f43f5e';
+            animation-duration: 1s;
+            animation-direction: reverse;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .download-status-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        @media print {
+            .mobile-header, .btn-final, .sig-clear { display: none !important; }
+            .rapport-logo { filter: none !important; }
+        }
+
+        @media screen {
+            .rapport-logo { filter: none; opacity: 1; }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="pdfDownloadOverlay">
+        <div class="loader-lenoir"></div>
+        <div class="download-status-text">Génération de votre rapport premium</div>
+        <div style="color: var(--text-dim); font-size: 0.9rem;">Veuillez patienter quelques instants...</div>
+    </div>
+    <style>
+        .mobile-header { display: flex !important; }
+        .rapport-page { margin-top: calc(var(--mobile-header-height) + 1rem); }
+    </style>
+    <header class="mobile-header">
+        <a href="intervention_edit.php?id=<?= $id ?>" class="btn btn-ghost"
+            style="padding: 0.4rem 0.8rem; color: var(--error); text-decoration: none; display:flex; align-items:center; gap:6px; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.5px; border-radius: var(--radius-sm); border: 1px solid rgba(244, 63, 94, 0.2); background: rgba(244, 63, 94, 0.05);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            RETOUR
+        </a>
+        <span class="mobile-header-title">Rapport Final</span>
+        <span class="mobile-header-user"></span>
+    </header>
+
+    <div class="rapport-page">
+        <form method="POST" id="rapportForm" autocomplete="off">
+            <?= csrfField() ?>
+            <input type="hidden" name="action" value="save_rapport">
+
+            <?php if (isset($_GET['msg']) && $_GET['msg'] === 'ok'): ?>
+                <div id="successBanner"
+                    style="background: rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.4); color:#10b981; padding:1.5rem; border-radius:12px; margin-bottom:1.5rem; text-align:center;">
+                    <div style="margin-bottom:1rem; text-align:center;">
+                        <img src="/assets/check_success.svg" style="height: 80px; width: 80px;">
+                    </div>
+                    <h3 style="margin:0 0 0.5rem 0; color:#10b981;">Rapport finalisé avec succès !</h3>
+                    <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1rem;">L'intervention ARC
+                        <?= htmlspecialchars($intervention['numero_arc']) ?> a été clôturée.
+                    </p>
+
+                    <!-- Toast email (injecté par JS) -->
+                    <div id="emailToast"
+                        style="display:none; margin-bottom:1rem; padding:0.75rem 1rem; border-radius:8px; font-size:0.85rem; font-weight:600;">
+                    </div>
+
+                    <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
+                        <!-- Bouton Envoyer PDF par email -->
+                        <button type="button" id="btnSendEmail" onclick="lancerEnvoiEmail()"
+                            style="padding:0.7rem 1.5rem; background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem;">
+                            <span id="btnSendEmailIcon"><img src="/assets/icon_email_send.svg" style="height: 18px; width: 18px; vertical-align: middle;"></span>
+                            <span id="btnSendEmailLabel">Envoyer PDF par email</span>
+                        </button>
+                        <!-- Bouton Télécharger PDF -->
+                        <button type="button" id="btnDownloadPDF" onclick="telechargerPDF()"
+                                style="background:#28a745; color:white; border:none; border-radius:8px; padding:12px 25px; font-weight:bold; cursor:pointer; display:flex; align-items:center; gap:10px; box-shadow:0 4px 6px rgba(0,0,0,0.2); font-size:16px;">
+                            <img src="/assets/icon_document_white.svg" style="height:20px; width:20px;">
+                            TÉLÉCHARGER LE RAPPORT (V3.2)
+                        </button>
+                        <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>"
+                            style="padding:0.7rem 1.5rem; background:rgba(255,255,255,0.1); color:var(--text); border:1px solid var(--glass-border); border-radius:8px; font-weight:600; text-decoration:none; font-size:0.9rem; display:flex; align-items:center; gap:8px;">
+                            <span><img src="/assets/icon_back_green.svg" style="height: 18px; width: 18px; vertical-align: middle;"></span>
+                            <span style="color:#27AE60;">Retour au tableau de bord</span>
+                        </a>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <!-- Données PHP exposées pour le JS -->
+            <script>
+                window.LM_RAPPORT = {
+                    interventionId: <?= (int) $id ?>,
+                    clientEmail: <?= json_encode($intervention['contact_email'] ?? $intervention['c_email'] ?? '') ?>,
+                    nomSociete: <?= json_encode($intervention['nom_societe'] ?? '') ?>,
+                    legal: {
+                        address: <?= json_encode(COMPANY_LEGAL_ADDRESS) ?>,
+                        contact: <?= json_encode(COMPANY_LEGAL_CONTACT) ?>,
+                        siret: <?= json_encode(COMPANY_LEGAL_SIRET) ?>
+                    },
+                    dateInt: <?= json_encode(date('d/m/Y', strtotime($intervention['date_intervention'] ?? 'now'))) ?>,
+                    csrfToken: <?= json_encode(getCsrfToken()) ?>,
+                    techName: <?= json_encode($techName) ?>,
+                    arc: <?= json_encode($intervention['numero_arc'] ?? '') ?>,
+                    synth: {
+                        tech: <?= json_encode($techName) ?>,
+                        date: <?= json_encode(date('d/m/Y', strtotime($intervention['date_intervention'] ?? 'now'))) ?>,
+                        duree: <?= json_encode($dureeSynth) ?>,
+                        nbMachines: <?= count($machines) ?>,
+                        ok: <?= $totalOk ?>,
+                        aa: <?= $totalAmeliorer ?>,
+                        nc: <?= $totalNonConforme ?>,
+                        nr: <?= $totalRemplacer ?>,
+                        na: <?= $totalNA ?>,
+                        score: <?= $scoreConformite ?>,
+                        nbMachinesFilled: <?= $nbMachinesFilled ?>,
+                        nbMachinesEmpty: <?= $nbMachinesEmpty ?>
+                    },
+                    sigTech: <?= json_encode($intervention['signature_technicien'] ?: $techSignatureBase64) ?>,
+                    sigClient: <?= json_encode($intervention['signature_client'] ?? '') ?>,
+                    pdfFilename: <?= json_encode('Rapport_Lenoir_Mec_' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $intervention['nom_societe'] ?? 'Client') . '_' . date('d-m-Y') . '.pdf') ?>,
+                    emptyFichesOption: 'include',
+                    emptyMachinesIds: <?= json_encode($emptyMachinesIds) ?>,
+                    machinesIds: [<?= implode(',', array_column($machines, 'id')) ?>],
+                    machinesData: <?= json_encode(array_values(array_map(function ($m) use ($intervention) {
+                        $mes = json_decode($m['mesures'] ?? '{}', true);
+                        return [
+                            'id' => $m['id'],
+                            'arc' => $intervention['numero_arc'],
+                            'of' => $m['numero_of'] ?? '',
+                            'designation' => $m['designation'] ?? '',
+                            'repere' => $mes['repere'] ?? '—',
+                            'annee' => $m['annee_fabrication'] ?? '',
+                            'points_count' => $m['points_count'] ?? 0,
+                            'dysfonctionnements' => $m['dysfonctionnements'] ?? '',
+                            'conclusion' => $m['conclusion'] ?? ''
+                        ];
+                    }, $machines))) ?>
+                };
+            </script>
+
+            <?php if (!empty($error)): ?>
+                <div
+                    style="background: rgba(244,63,94,0.15); border:1px solid rgba(244,63,94,0.4); color:#f43f5e; padding:1rem; border-radius:8px; margin-bottom:1.5rem; font-size:0.85rem; display:flex; align-items:center; gap:10px;">
+                    <img src="/assets/icons/warning.png" style="height: 18px; width: 18px;"> <?= htmlspecialchars($error) ?>
+                </div>
+            <?php endif; ?>
+
+            <!-- ANALYSE IA GÉNÉRALE (Rectangle Orange) -->
+            <div id="ai-synthesis-block" class="card" style="background: rgba(255, 179, 0, 0.1); border: 2px solid var(--primary); padding: 1.5rem; margin-bottom: 2rem; border-radius: 12px; position: relative;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <img src="/assets/ai_expert.jpg" style="height: 48px; width: 48px; object-fit: cover; border-radius: 8px; border: 2px solid rgba(255,255,255,0.2);">
+                        <h2 style="color: var(--primary); margin: 0; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;">Analyse Intelligente Globale</h2>
+                    </div>
+                    <button type="button" onclick="generateAllIA()" id="btnGenerateAllIa" class="btn btn-primary" style="background: var(--primary); color: #000; font-weight: 700; font-size: 0.8rem; padding: 0.5rem 1rem; border-radius: 8px; display: flex; align-items: center; gap: 8px;">
+                        <span>🚀</span> Lancer l'IA sur toutes les fiches
+                    </button>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">
+                    Cette fonction analyse automatiquement chaque fiche pour générer les sections "Dysfonctionnements" et "Conclusions" en se basant sur vos relevés. 
+                    <strong>Les fiches déjà modifiées manuellement ne seront pas écrasées sans confirmation.</strong>
+                </p>
+                <div id="ai-global-progress" style="display: none; margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 5px; color: var(--accent-cyan);">
+                        <span id="ai-progress-text">Traitement en cours...</span>
+                        <span id="ai-progress-percent">0%</span>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                        <div id="ai-progress-bar" style="width: 0%; height: 100%; background: var(--accent-cyan); transition: width 0.3s ease;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EN-TÊTE -->
+            <div class="rapport-header">
+                <img src="/assets/lenoir_logo_trans.svg" alt="LENOIR-MEC" 
+                    style="height: 60px; width: auto; object-fit: contain; display: block; margin: 0 auto 1.5rem auto;">
+                <h1>Rapport d'expertise sur site</h1>
+                <div class="arc-badge">
+                    ARC <?= htmlspecialchars($intervention['numero_arc']) ?>
+                </div>
+            </div>
+
+            <!-- RÉCAP MACHINES -->
+            <div class="section-title">Équipements contrôlés (<?= count($machines) ?>)</div>
+            <div class="machines-recap">
+                <?php foreach ($machines as $m): 
+                    $mStatus = $m['conclusion'] ?? '';
+                    $statusColor = '#94a3b8'; // défaut
+                    if (stripos($mStatus, 'conforme') !== false && stripos($mStatus, 'non') === false) $statusColor = '#10b981';
+                    if (stripos($mStatus, 'amélioration') !== false) $statusColor = '#f59e0b';
+                    if (stripos($mStatus, 'non conforme') !== false) $statusColor = '#f43f5e';
                     if (stripos($mStatus, 'remplacer') !== false) $statusColor = '#8b0000';
                     
                     $mm = json_decode($m['mesures'] ?? '{}', true);
@@ -1612,6 +1807,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 const totalMachines = reportMachineIds.length;
                 for (let mIdx = 0; mIdx < totalMachines; mIdx++) {
                     const mId = reportMachineIds[mIdx];
+                    
+                    // Petit délai pour laisser respirer le navigateur sur les très gros rapports
+                    if (mIdx > 0) await new Promise(r => setTimeout(r, 100));
 
                     // Si on a gardé la machine mais qu'elle est vide et qu'on voulait 'condensed'
                     if (emptyOption === 'condensed' && (emptyIds.includes(parseInt(mId, 10)) || emptyIds.includes(String(mId)))) {
@@ -1788,18 +1986,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                             p.style.position = 'relative';
                             p.style.paddingBottom = '5mm'; 
-                            p.querySelectorAll('.section-wrapper-pdf').forEach(w => w.style.marginBottom = '0');
-                            p.style.minHeight = 'auto'; // Help chaining
-                            p.appendChild(createPdfFooter());
-                            container.appendChild(p);
-                        });
-                    } catch (err) {
-                        console.error('Erreur fetch machine ' + mId, err);
-                    }
-                }
-            }
-
-            // Page de fin : On ne force plus systématiquement le saut de page
             // si le contenu précédent est court. On laisse html2pdf gérer ou on met un petit espacement.
             const pbFin = document.createElement('div');
             pbFin.style.height = '20px';
