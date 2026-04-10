@@ -186,7 +186,7 @@ foreach ($machines as &$m) {
     foreach ($donnees as $k => $v) {
         if (
             strpos($k, '_radio') !== false || strpos($k, '_stat') !== false ||
-            preg_match('/^(aprf|edx|ov|levage|pap)_(?!.*comment).*/', $k)
+            preg_match('/^(aprf|edx|ov|levage|pap|tap|pm|sga)_(?!.*comment).*/', $k)
         ) {
 
             if (!empty($v) && $v !== 'pc') {
