@@ -1086,7 +1086,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <div style="text-align:center; margin-top:50px;"><img src="/assets/tech_illustration.jpg" style="width:80%; border:2px solid #1e4e6d;"></div>
                     </div>
                 `;
-                coverPage.firstChild.appendChild(createPdfFooter());
+                coverPage.querySelector('.pdf-page').appendChild(createPdfFooter());
                 pdfChunks.push(await renderChunk(coverPage));
 
                 // 4. LES FICHES (En morceaux)
@@ -1136,7 +1136,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <div style="text-align:center; margin-top:50px;"><img src="/assets/qr_lenoir.png" style="width:100px;"><br><strong>www.raoul-lenoir.com</strong></div>
                     </div>
                 `;
-                endPage.firstChild.appendChild(createPdfFooter());
+                endPage.querySelector('.pdf-page').appendChild(createPdfFooter());
                 pdfChunks.push(await renderChunk(endPage));
 
                 // ASSEMBLAGE
