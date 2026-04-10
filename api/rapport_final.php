@@ -547,20 +547,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         <div id="pdfProgressDetail" style="color: var(--text-dim); font-size: 0.8rem; margin-top: 10px;">PrÃ©paration des donnÃ©es...</div>
     </div>
 
-    <!-- Interface IA globale -->
-    <div id="ai-global-progress" style="display:none; position:fixed; top:20px; right:20px; width:300px; background:rgba(15,23,42,0.95); backdrop-filter:blur(10px); border:1px solid var(--primary); border-radius:12px; padding:1.5rem; z-index:10001; box-shadow:0 20px 50px rgba(0,0,0,0.5);">
-        <div style="font-weight:bold; color:var(--primary); margin-bottom:10px; display:flex; align-items:center; gap:8px;">
-            <img src="/assets/ai_expert.jpg" style="height:24px; width:24px; border-radius:50%;">
-            <span>Analyse IA en cours...</span>
-        </div>
-        <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden; margin-bottom:10px;">
-            <div id="ai-progress-bar" style="width:0%; height:100%; background:var(--primary); transition:width 0.3s;"></div>
-        </div>
-        <div style="display:flex; justify-content:space-between; font-size:0.75rem;">
-            <span id="ai-progress-text" style="color:var(--text-dim);">DÃ©marrage...</span>
-            <span id="ai-progress-percent" style="color:var(--primary); font-weight:bold;">0%</span>
-        </div>
-    </div>
+    <!-- L'interface IA est désormais intégrée dans le bloc orange plus bas -->
 
     <style>
         .mobile-header { display: flex !important; }
@@ -689,7 +676,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <span>🚀</span> Lancer l'IA sur toutes les fiches
                     </button>
                 </div>
-                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">
+                
+                <!-- Interface de progression intégrée -->
+                <div id="ai-global-progress" style="display:none; margin-bottom: 1.5rem; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px;">
+                    <div style="width:100%; height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden; margin-bottom:10px; border: 1px solid rgba(255,255,255,0.05);">
+                        <div id="ai-progress-bar" style="width:0%; height:100%; background:var(--primary); transition:width 0.3s; box-shadow: 0 0 10px var(--primary);"></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
+                        <span id="ai-progress-text" style="color:#fff; font-weight: 500;">Démarrage...</span>
+                        <span id="ai-progress-percent" style="color:var(--primary); font-weight:bold;">0%</span>
+                    </div>
+                </div>
+
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin: 0;">
                     Cette fonction analyse automatiquement chaque fiche pour générer les sections "Dysfonctionnements" et "Conclusions" en se basant sur vos relevés. 
                     <strong>Les fiches déjà modifiées manuellement ne seront pas écrasées sans confirmation.</strong>
                 </p>
@@ -905,6 +904,27 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <script>
         let padClient, padTech;
+
+        window.LM_RAPPORT = {
+            interventionId: <?= json_encode($id) ?>,
+            pdfFilename: "Rapport_<?= addslashes($intervention['numero_arc']) ?>_<?= date('Y-m-d') ?>.pdf",
+            clientEmail: <?= json_encode($intervention['contact_email'] ?? '') ?>,
+            dateInt: <?= json_encode(date('d/m/Y', strtotime($intervention['date_intervention']))) ?>,
+            csrfToken: <?= json_encode(csrfToken()) ?>,
+            sigTech: <?= json_encode($sigTechB64 ?? '') ?>,
+            machinesIds: <?= json_encode(array_values(array_map(fn($m) => $m['id'], $machines))) ?>,
+            machinesData: <?= json_encode(array_values(array_map(fn($m) => ['id'=>$m['id'], 'designation'=>$m['designation']], $machines))) ?>,
+            info: {
+                client: <?= json_encode($intervention['nom_societe']) ?>,
+                numArc: <?= json_encode($intervention['numero_arc']) ?>,
+                ville: <?= json_encode($intervention['ville'] ?? '') ?>
+            },
+            legal: {
+                address: "RAOUL LENOIR - Zone Industrielle - 54400 LONGWY",
+                contact: "Tél: +33 (0)3 82 24 24 24 | Email: contact@raoul-lenoir.com",
+                siret: "SIRET: 123 456 789 00012 | TVA: FR 12 123456789"
+            }
+        };
 
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         // 1. STYLE ADN VISUELL PDF (V4.2 STABLE)
@@ -1174,10 +1194,18 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         async function generateAllIA() {
             if(!confirm("Lancer l'IA sur toutes les fiches ?")) return;
             const progress = document.getElementById('ai-global-progress');
+            const pBar = document.getElementById('ai-progress-bar');
+            const pText = document.getElementById('ai-progress-text');
+            const pPercent = document.getElementById('ai-progress-percent');
+            
             progress.style.display = 'block';
             const m = window.LM_RAPPORT.machinesData;
             for(let i=0; i<m.length; i++) {
-                document.getElementById('ai-progress-bar').style.width = Math.round((i/m.length)*100) + '%';
+                let percent = Math.round((i/m.length)*100);
+                pBar.style.width = percent + '%';
+                pPercent.innerText = percent + '%';
+                pText.innerText = `Analyse de : ${m[i].designation}...`;
+                
                 try {
                     const r = await fetch(`generate_ia.php?machine_id=${m[i].id}&intervention_id=${window.LM_RAPPORT.interventionId}`).then(res => res.json());
                     if(r.success) {
@@ -1189,7 +1217,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     }
                 } catch(e){}
             }
-            alert("IA terminée !"); location.reload();
+            pBar.style.width = '100%';
+            pPercent.innerText = '100%';
+            pText.innerText = 'Analyse terminée !';
+            setTimeout(() => { location.reload(); }, 1500);
         }
     </script>
 </body>
