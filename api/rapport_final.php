@@ -1907,53 +1907,80 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         }
 
         // ══════════════════════════════════════════════════════════════════
-        // GÉNÉRATION PDF (STABLE + OPTIMISÉ POUR GROS RAPPORTS)
+        // MOTEUR PDF SÉQUENTIEL HAUTE QUALITÉ (Fix pour pages blanches)
         // ══════════════════════════════════════════════════════════════════
-        async function genererPDFBase64() {
-            if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
+        async function _renderBeautifulSequential(isDownload) {
+            const jsPDFLib = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+            if (!jsPDFLib) throw new Error('jsPDF non disponible');
 
             const container = await buildFullPdfContainer();
             await ensureImagesBase64(container);
 
-            // Détection du nombre de pages pour ajuster la qualité et éviter les crashs
-            const pageCount = container.querySelectorAll('.pdf-page').length;
-            const dynamicScale = pageCount > 35 ? 1.5 : 2; 
+            // Important: On force un style propre pour le rendu
+            container.style.position = 'fixed';
+            container.style.top = '-10000px';
+            container.style.left = '0';
+            container.style.width = '210mm';
+            document.body.appendChild(container);
 
-            const opt = {
-                margin: [10, 0, 15, 0],
-                filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: dynamicScale, useCORS: true, logging: false },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.levage-diagram-container'] }
-            };
+            const pages = Array.from(container.querySelectorAll('.pdf-page'));
+            const pdf = new jsPDFLib({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
 
-            const worker = html2pdf().set(opt).from(container);
+            for (let i = 0; i < pages.length; i++) {
+                const page = pages[i];
+                if (i > 0) pdf.addPage();
 
-            await worker.toPdf().get('pdf').then(function (pdf) {
-                const totalPages = pdf.internal.getNumberOfPages();
-                for (let i = 1; i <= totalPages; i++) {
-                    pdf.setPage(i);
-                    pdf.setFont('helvetica', 'normal');
-                    pdf.setFontSize(9);
-                    pdf.setTextColor(50, 50, 50);
-                    pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
-                }
-            });
+                // On laisse un petit délai pour le rendu du DOM
+                await new Promise(r => setTimeout(r, 60));
 
-            const pdfBlob = await worker.outputPdf('blob');
+                const canvas = await html2canvas(page, {
+                    scale: 2, // Haute qualité conservée
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: '#ffffff',
+                    width: page.offsetWidth,
+                    height: page.offsetHeight
+                });
 
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.onerror = reject;
-                reader.readAsDataURL(pdfBlob);
-            });
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                // On plaque l'image sur toute la page A4 (210x297mm)
+                pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+                
+                // Nettoyage mémoire immédiat pour éviter le crash sur mobile
+                canvas.width = 0; canvas.height = 0;
+            }
+
+            // Numérotation des pages
+            const total = pdf.internal.getNumberOfPages();
+            for (let i = 1; i <= total; i++) {
+                pdf.setPage(i);
+                pdf.setFont('helvetica', 'normal');
+                pdf.setFontSize(9);
+                pdf.setTextColor(50, 50, 50);
+                pdf.text('Page ' + i + ' / ' + total, 105, 287, { align: 'center' });
+            }
+
+            document.body.removeChild(container);
+
+            if (isDownload) {
+                const filename = (window.LM_RAPPORT && window.LM_RAPPORT.pdfFilename) ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf';
+                pdf.save(filename);
+                return null;
+            } else {
+                const blob = pdf.output('blob');
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            }
         }
 
-        // ══════════════════════════════════════════════════════════════════
-        // TÉLÉCHARGEMENT PDF BOUTON DIRECT
-        // ══════════════════════════════════════════════════════════════════
+        async function genererPDFBase64() {
+            return await _renderBeautifulSequential(false);
+        }
+
         async function telechargerPDF() {
             const btn = document.getElementById('btnDownloadPDF');
             const icon = document.getElementById('btnDownloadPDFIcon');
@@ -1965,35 +1992,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 if (icon) icon.textContent = '⏳';
             }
             try {
-                const container = await buildFullPdfContainer();
-                await ensureImagesBase64(container);
-
-                const pageCount = container.querySelectorAll('.pdf-page').length;
-                const dynamicScale = pageCount > 35 ? 1.5 : 2;
-
-                const opt = {
-                    margin: [10, 0, 15, 0],
-                    filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: dynamicScale, useCORS: true, logging: false },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.levage-diagram-container'] }
-                };
-
-                const worker = html2pdf().set(opt).from(container);
-
-                await worker.toPdf().get('pdf').then(function (pdf) {
-                    const totalPages = pdf.internal.getNumberOfPages();
-                    for (let i = 1; i <= totalPages; i++) {
-                        pdf.setPage(i);
-                        pdf.setFont('helvetica', 'normal');
-                        pdf.setFontSize(9);
-                        pdf.setTextColor(50, 50, 50);
-                        pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
-                    }
-                });
-
-                await worker.save();
+                await _renderBeautifulSequential(true);
             } catch (e) {
                 console.error(e);
                 alert('Erreur génération PDF : ' + e.message);
