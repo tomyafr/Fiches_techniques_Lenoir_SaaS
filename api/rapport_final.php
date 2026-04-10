@@ -910,7 +910,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             pdfFilename: "Rapport_<?= addslashes($intervention['numero_arc']) ?>_<?= date('Y-m-d') ?>.pdf",
             clientEmail: <?= json_encode($intervention['contact_email'] ?? '') ?>,
             dateInt: <?= json_encode(date('d/m/Y', strtotime($intervention['date_intervention']))) ?>,
-            csrfToken: <?= json_encode(csrfToken()) ?>,
+            csrfToken: <?= json_encode(getCsrfToken()) ?>,
             sigTech: <?= json_encode($sigTechB64 ?? '') ?>,
             machinesIds: <?= json_encode(array_values(array_map(fn($m) => $m['id'], $machines))) ?>,
             machinesData: <?= json_encode(array_values(array_map(fn($m) => ['id'=>$m['id'], 'designation'=>$m['designation']], $machines))) ?>,
@@ -954,7 +954,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             .no-print-pdf, .btn-ia-refresh, .top-bar, .photo-btn, .photo-thumbs, #btnChrono, .photo-del-overlay { display: none !important; }
         `;
 
-        function initPads() {
+        window.addEventListener('load', () => {
             const canvasC = document.getElementById('canvasClient');
             const canvasT = document.getElementById('canvasTech');
             
@@ -965,10 +965,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 canvasT.width = canvasT.offsetWidth * ratio;
                 canvasT.height = (canvasT.offsetHeight || 200) * ratio;
                 canvasT.getContext("2d").scale(ratio, ratio);
-                padTech = new SignaturePad(canvasT, { penColor: 'rgb(0,0,0)', minWidth: 1, maxWidth: 3 });
+                padTech = new SignaturePad(canvasT, { penColor: 'rgb(0,0,0)', minWidth: 1.2, maxWidth: 3 });
                 
-                // Pré-chargement signature Tech si existante
-                if (window.LM_RAPPORT.sigTech) {
+                if (window.LM_RAPPORT && window.LM_RAPPORT.sigTech) {
                     padTech.fromDataURL(window.LM_RAPPORT.sigTech);
                 }
 
@@ -976,33 +975,26 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 canvasC.width = canvasC.offsetWidth * ratio;
                 canvasC.height = (canvasC.offsetHeight || 200) * ratio;
                 canvasC.getContext("2d").scale(ratio, ratio);
-                padClient = new SignaturePad(canvasC, { penColor: 'rgb(0,0,255)', minWidth: 1, maxWidth: 3 });
+                padClient = new SignaturePad(canvasC, { penColor: 'rgb(0,0,255)', minWidth: 1.2, maxWidth: 3 });
 
-                window.onresize = () => {
-                    if(padClient && padTech) {
-                        const dataC = padClient.toData();
-                        const dataT = padTech.toData();
-                        
-                        canvasC.width = canvasC.offsetWidth * ratio;
-                        canvasC.height = (canvasC.offsetHeight || 200) * ratio;
-                        canvasC.getContext("2d").scale(ratio, ratio);
-                        
-                        canvasT.width = canvasT.offsetWidth * ratio;
-                        canvasT.height = (canvasT.offsetHeight || 200) * ratio;
-                        canvasT.getContext("2d").scale(ratio, ratio);
-                        
-                        padClient.fromData(dataC);
-                        padTech.fromData(dataT);
-                    }
-                };
+                window.addEventListener('resize', () => {
+                    const dataC = padClient.toData();
+                    const dataT = padTech.toData();
+                    canvasC.width = canvasC.offsetWidth * ratio;
+                    canvasC.height = (canvasC.offsetHeight || 200) * ratio;
+                    canvasC.getContext("2d").scale(ratio, ratio);
+                    canvasT.width = canvasT.offsetWidth * ratio;
+                    canvasT.height = (canvasT.offsetHeight || 200) * ratio;
+                    canvasT.getContext("2d").scale(ratio, ratio);
+                    padClient.fromData(dataC);
+                    padTech.fromData(dataT);
+                });
             }
-        }
-
-        window.onload = initPads;
+        });
 
         function validateAndSubmit() {
             if (!padTech || !padClient) {
-                alert("Erreur: Les zones de signature ne sont pas chargées.");
+                alert("Erreur: Les zones de signature ne sont pas prêtes. Veuillez patienter ou rafraîchir.");
                 return false;
             }
             if (padTech.isEmpty() || padClient.isEmpty()) {
