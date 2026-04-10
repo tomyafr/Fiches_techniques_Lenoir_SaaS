@@ -145,7 +145,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-$now = date('d/m/Y') . ' Ã  ' . date('H:i');
+// Récupération des infos du technicien (Signature + Noms)
+$stmtU = $db->prepare('SELECT signature_base64, nom, prenom FROM users WHERE id = ?');
+$stmtU->execute([$userId]);
+$user = $stmtU->fetch();
+$sigTechB64 = $user['signature_base64'] ?? '';
+$techName = ($user['prenom'] ?? '') . ' ' . ($user['nom'] ?? '');
+
+$now = date('d/m/Y') . ' à ' . date('H:i');
 
 // --- CALCUL DES STATISTIQUES POUR LA SYNTHÃˆSE ---
 $totalOk = 0;
