@@ -1894,68 +1894,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             <div style="font-weight: bold; font-size: 10px; margin-top: 5px;">www.raoul-lenoir.com</div>
                         </div>
                     </div>
-                </div>
-            `;
-            endPage.appendChild(createPdfFooter());
-            container.appendChild(endPage);
-
-            await waitForImages(container);
-            return container;
-        }
-
-        // ══════════════════════════════════════════════════════════════════
-        // GÉNÉRATION PDF (html2pdf.js)
-        // ══════════════════════════════════════════════════════════════════
-        async function genererPDFBase64() {
-            if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
-
-            const container = await buildFullPdfContainer();
-            await ensureImagesBase64(container);
-
-            const opt = {
-                margin: [10, 0, 15, 0], // Top, Left, Bottom, Right
-                filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, logging: false },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.levage-diagram-container'] }
-            };
-
-            const worker = html2pdf().set(opt).from(container);
-
-            await worker.toPdf().get('pdf').then(function (pdf) {
-                const totalPages = pdf.internal.getNumberOfPages();
-                for (let i = 1; i <= totalPages; i++) {
-                    pdf.setPage(i);
-                    pdf.setFont('helvetica', 'normal');
-                    pdf.setFontSize(9);
-                    pdf.setTextColor(50, 50, 50);
-                    pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
-                }
-            });
-
-            const pdfBlob = await worker.outputPdf('blob');
-
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.onerror = reject;
-                reader.readAsDataURL(pdfBlob);
-            });
-        }
-
-        // ══════════════════════════════════════════════════════════════════
-        // TÉLÉCHARGEMENT PDF BOUTON DIRECT
-        // ══════════════════════════════════════════════════════════════════
-        async function telechargerPDF() {
-            const btn = document.getElementById('btnDownloadPDF');
-            const icon = document.getElementById('btnDownloadPDFIcon');
-            const label = document.getElementById('btnDownloadPDFLabel');
-
-            if (btn) { 
-                btn.disabled = true; 
-                if (label) label.textContent = 'Génération...';
-                if (icon) icon.textContent = '⏳';
             }
             try {
                 const container = await buildFullPdfContainer();
