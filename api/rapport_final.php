@@ -240,7 +240,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     <link rel="stylesheet" href="/assets/style.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#020617">
-    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 
     <style>
         .rapport-page {
@@ -1248,6 +1248,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         }
 
         async function genererPDFBlob(onProgress) {
+            if (typeof PDFLib === 'undefined') {
+                throw new Error("La bibliothèque PDF-LIB n'est pas chargée. Veuillez vérifier votre connexion ou rafraîchir la page.");
+            }
             const { PDFDocument, rgb } = PDFLib;
             const finalPdf = await PDFDocument.create();
             const ids = (window.LM_RAPPORT && window.LM_RAPPORT.machinesIds) ? window.LM_RAPPORT.machinesIds : [];
