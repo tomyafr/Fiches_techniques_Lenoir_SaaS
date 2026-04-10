@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 header('Content-Type: text/html; charset=utf-8');
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/ia_helper.php';
@@ -2474,7 +2474,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     <?php if ($key === 'desc_materiel') continue; // Déjà affiché en Section B ?>
                                     <?php foreach ($photos as $p): ?>
                                         <div class="photo-annexe-item">
-                                            <img src="<?= htmlspecialchars($p['data']) ?>" onclick="openLightbox(this.src, '<?= addslashes(htmlspecialchars($p['caption'] ?? '')) ?>')">
+                                            <?php $imgS = (isset($_GET['pdf']) && strlen($p['data']) > 50000) ? "get_machine_photo.php?machine_id=$id&key=$key&photo_id=".$p['id'] : $p['data']; ?><img src="<?= htmlspecialchars($imgS) ?>" onclick="openLightbox(this.src, '<?= addslashes(htmlspecialchars($p['caption'] ?? '')) ?>')">
                                             <?php 
                                             global $photoLabelsMap;
                                             $label = $photoLabelsMap[$key] ?? '';

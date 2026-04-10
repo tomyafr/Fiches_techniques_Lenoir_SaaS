@@ -186,7 +186,7 @@ foreach ($machines as &$m) {
     foreach ($donnees as $k => $v) {
         if (
             strpos($k, '_radio') !== false || strpos($k, '_stat') !== false ||
-            preg_match('/^(aprf|edx|ov|levage|pap|tap|pm|sga)_(?!.*comment).*/', $k)
+            preg_match('/^([a-z0-9]{2,10})_(?!.*[Cc]omment).*/', $k)
         ) {
 
             if (!empty($v) && $v !== 'pc') {
@@ -1601,7 +1601,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             // --- 2. FETCH & APPEND MACHINES ---
             if (window.LM_RAPPORT && window.LM_RAPPORT.machinesIds) {
                 let reportMachineIds = [...window.LM_RAPPORT.machinesIds];
-                const emptyOption = window.LM_RAPPORT.emptyFichesOption || 'exclude';
+                const emptyOption = 'include';
                 const emptyIds = window.LM_RAPPORT.emptyMachinesIds || [];
 
                 // Si option = 'exclude', on retire carrément les machines vides de la boucle !
@@ -1657,6 +1657,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         const html = await res.text();
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(html, 'text/html');
+
+                        
+                        // --- V3.3 STABILITY PATCH ---
+                        await new Promise(r => setTimeout(r, 100));
 
                         const pages = doc.querySelectorAll('.pdf-page');
                         pages.forEach((p, pIdx) => {
