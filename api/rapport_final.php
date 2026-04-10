@@ -946,6 +946,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 canvasT.height = (canvasT.offsetHeight || 200) * ratio;
                 canvasT.getContext("2d").scale(ratio, ratio);
                 padTech = new SignaturePad(canvasT, { penColor: 'rgb(0,0,0)', minWidth: 1, maxWidth: 3 });
+                
+                // Pré-chargement signature Tech si existante
+                if (window.LM_RAPPORT.sigTech) {
+                    padTech.fromDataURL(window.LM_RAPPORT.sigTech);
+                }
 
                 // Client Pad
                 canvasC.width = canvasC.offsetWidth * ratio;
