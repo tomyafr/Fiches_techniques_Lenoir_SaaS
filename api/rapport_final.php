@@ -1092,30 +1092,50 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         // ══════════════════════════════════════════════════════════════════
 
         const PDF_STYLES = `
-            .pdf-page { width: 21cm; min-height: 100px; background: white; color: black; padding: 0 15mm; box-sizing: border-box; margin: 0; font-family: Arial, sans-serif; font-size: 13px; position: relative; }
-            .pdf-section-title { text-align: left !important; color: #d35400 !important; font-size: 16px !important; margin-bottom: 20px !important; border-bottom: 2px solid #d35400 !important; padding-bottom: 5px !important; text-transform: uppercase !important; font-weight: bold !important; page-break-after: avoid !important; }
-            .section-wrapper-pdf { page-break-inside: avoid !important; break-inside: avoid !important; margin-top: 25px !important; margin-bottom: 25px !important; display: block !important; width: 100% !important; }
-            .pdf-table-container, .card, .sig-zone, .photo-annexe-item { page-break-inside: avoid !important; }
-            .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; color: black; font-size: 11px; table-layout: fixed; }
-            .pdf-table th, .pdf-table td { border: 1px solid #000; padding: 4px; vertical-align: middle; word-wrap: break-word; word-break: break-word; }
-            .pdf-table th { background-color: #f0f0f0; text-align: left; text-transform: uppercase; }
-            .pastille-group { display: flex; gap: 4px; align-items: center; justify-content: center; width: 100%; height: 100%; }
-            .pastille-group input[type="radio"] { display: none !important; }
-            .pastille-group label { display: inline-block; width: 18px; height: 18px; border-radius: 50%; border: 1px solid #777 !important; background: #eee !important; position: relative; }
-            .pastille-group label.selected.p-ok { background-color: #28a745 !important; border-color: #1e7e34 !important; }
-            .pastille-group label.selected.p-aa { background-color: #f39c12 !important; border-color: #d35400 !important; }
-            .pastille-group label.selected.p-nc { background-color: #dc3545 !important; border-color: #bd2130 !important; }
-            .pastille-group label.selected.p-nr { background-color: #8b0000 !important; border-color: #5a0000 !important; }
-            .pastille-group label.selected.p-na { background-color: #95a5a6 !important; border-color: #7f8c8d !important; }
-            .pastille-group label.selected::after { content: ""; position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; background: white; border-radius: 50%; transform: translate(-50%, -50%); }
-            .diagonal-header { height: 120px; vertical-align: bottom; padding: 0 !important; position: relative; background: #e0e0e0 !important; border: 1px solid #000 !important; }
-            .diagonal-wrapper { display: flex; width: 140px; height: 100%; position: relative; margin: 0 auto; }
+            .pdf-page { width: 21cm; min-height: 29.7cm; padding: 1.5cm 1cm 1.5cm 1cm; background: white; color: black; font-family: Arial, sans-serif; font-size: 13px; position: relative; box-sizing: border-box; margin: 0; overflow: visible !important; }
+            .pdf-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 20px; }
+            .lenoir-title { font-size: 24px; font-weight: 900; color: #000; margin: 0; text-transform: uppercase; }
+            .pdf-title-box { text-align: center; border: 2px solid #000; padding: 10px; font-size: 20px; font-weight: bold; background: #f0f0f0; margin-bottom: 20px; }
+            .pdf-section-title { font-weight: bold; font-size: 16px; color: #d35400 !important; margin-bottom: 10px; border-bottom: 2px solid #d35400; padding-bottom: 5px; text-transform: uppercase; page-break-after: avoid; break-after: avoid; }
+            .section-wrapper-pdf { page-break-inside: avoid; break-inside: avoid; margin-top: 25px; margin-bottom: 25px; display: block; width: 100%; border: none; }
+            
+            .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; color: black; font-size: 11px; table-layout: fixed; page-break-inside: auto; }
+            .pdf-table tr { page-break-inside: avoid; break-inside: avoid; }
+            .pdf-table th, .pdf-table td { border: 1px solid #000; padding: 4px 5px; vertical-align: middle; word-wrap: break-word; }
+            
+            .section-header-row { height: 30px; background: #5b9bd5 !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .section-header-row td { background: #5b9bd5 !important; color: white !important; font-weight: bold; border: 1px solid #000; }
+            
+            /* PASTILLE SYSTEM */
+            .pastille-group { display: flex; align-items: center; justify-content: space-around; width: 135px; margin: 0 auto; -webkit-print-color-adjust: exact; }
+            .pastille-group input { display: none !important; }
+            .pastille-group label { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; border: 1px solid #777; background: #eee; position: relative; box-sizing: border-box; -webkit-print-color-adjust: exact; }
+            .pastille-group label.p-na { background: #bbb !important; }
+            .pastille-group label.p-ok { background: #28a745 !important; }
+            .pastille-group label.p-aa { background: #e67e22 !important; }
+            .pastille-group label.p-nc { background: #dc3545 !important; }
+            .pastille-group label.p-nr { background: #8b0000 !important; }
+            .pastille-group label.selected::after { content: "✓"; color: white !important; font-size: 12px; font-weight: bold; }
+            
+            /* DIAGONAL HEADERS */
+            .diagonal-header { height: 110px; vertical-align: bottom; padding: 0 !important; position: relative; background: #e0e0e0 !important; overflow: visible; -webkit-print-color-adjust: exact; }
+            .diagonal-wrapper { display: flex; width: 140px; height: 100%; margin: 0 auto; position: relative; border-left: 1px solid #000; }
             .diag-col { width: 28px; height: 100%; position: relative; flex-shrink: 0; }
-            .diag-col::before { content: ""; position: absolute; left: 100%; top: 0; bottom: 30px; width: 1px; background: #000; transform: skewX(-35deg); transform-origin: bottom left; }
-            .diag-text { position: absolute; bottom: 35px; left: 100%; padding-left: 5px; transform: rotate(-55deg); transform-origin: bottom left; text-align: left; white-space: nowrap; font-size: 8px; font-weight: bold; width: 200px; }
-            .pdf-textarea-rendered { width: 100%; font-family: Arial; font-size: 9pt; color: black; white-space: pre-wrap; padding: 4px; }
+            .diag-col::after { content: ""; position: absolute; left: 100%; bottom: 0; width: 1px; height: 35px; background: #000; }
+            .diag-col::before { content: ""; position: absolute; left: 100%; top: 0; bottom: 35px; width: 1px; background: #000; transform: skewX(-35deg); transform-origin: bottom left; }
+            .diag-text { position: absolute; bottom: 38px; left: 100%; padding-left: 4px; transform: rotate(-55deg); transform-origin: bottom left; text-align: left; white-space: nowrap; font-size: 8px; font-weight: bold; color: #000; width: 200px; }
+            
+            /* PHOTO SYSTEM */
+            .photo-montage-grid { display : grid; gap: 10px; margin: 15px auto; width: 100%; max-width: 550px; page-break-inside: avoid; }
+            .montage-item { border: 1px solid #000; background: #eee; height: 200px; overflow: hidden; }
+            .montage-item img { width: 100%; height: 100%; object-fit: contain; }
+            .grid-3 { grid-template-columns: 1.2fr 0.8fr; grid-template-rows: 200px 200px; }
+            .grid-3 .montage-item:first-child { grid-row: span 2; height: 100%; }
+            
+            .pdf-textarea-rendered { width: 100%; font-family: Arial; font-size: 10px; color: black; white-space: pre-wrap; margin-top: 5px; }
             .no-print-pdf, .btn-ia-refresh, .top-bar, .photo-btn, .photo-thumbs, #btnChrono { display: none !important; }
-            img { max-width: 100%; }
+            img { max-width: 100%; height: auto; }
+            .pdf-footer { position: absolute; bottom: 1cm; left: 0; right: 0; text-align: center; font-size: 9px; font-weight: bold; border-top: 1px solid #000; padding-top: 5px; margin: 0 1cm; }
         `;
 
         async function waitForImages(element) {
@@ -1152,6 +1172,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 const html = await res.text();
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
+                
+                // Keep machine-specific styles
+                doc.querySelectorAll('style').forEach(s => {
+                    const s2 = document.createElement('style');
+                    s2.textContent = s.textContent;
+                    container.appendChild(s2);
+                });
+
                 const pages = Array.from(doc.querySelectorAll('.pdf-page'));
                 pages.forEach((p, pIdx) => {
                     p.style.margin = '0'; p.style.boxShadow = 'none';
