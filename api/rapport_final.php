@@ -902,7 +902,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     <!-- Libs PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.5/signature_pad.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <script>
         let padClient, padTech;
 
@@ -934,48 +934,54 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             .no-print-pdf, .btn-ia-refresh, .top-bar, .photo-btn, .photo-thumbs, #btnChrono, .photo-del-overlay { display: none !important; }
         `;
 
-        function resizeCanvas(canvas, pad) {
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = canvas.offsetHeight * ratio;
-            canvas.getContext("2d").scale(ratio, ratio);
-            if (pad) pad.clear(); 
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
+        function initPads() {
             const canvasC = document.getElementById('canvasClient');
             const canvasT = document.getElementById('canvasTech');
             
-            if (canvasC && canvasT) {
+            if (canvasC && canvasT && typeof SignaturePad !== 'undefined') {
                 const ratio = Math.max(window.devicePixelRatio || 1, 1);
                 
-                // Init Tech
+                // Tech Pad
                 canvasT.width = canvasT.offsetWidth * ratio;
-                canvasT.height = canvasT.offsetHeight * ratio;
+                canvasT.height = (canvasT.offsetHeight || 200) * ratio;
                 canvasT.getContext("2d").scale(ratio, ratio);
-                padTech = new SignaturePad(canvasT, { penColor: 'black', minWidth: 1, maxWidth: 2.5 });
+                padTech = new SignaturePad(canvasT, { penColor: 'rgb(0,0,0)', minWidth: 1, maxWidth: 3 });
 
-                // Init Client
+                // Client Pad
                 canvasC.width = canvasC.offsetWidth * ratio;
-                canvasC.height = canvasC.offsetHeight * ratio;
+                canvasC.height = (canvasC.offsetHeight || 200) * ratio;
                 canvasC.getContext("2d").scale(ratio, ratio);
-                padClient = new SignaturePad(canvasC, { penColor: 'blue', minWidth: 1, maxWidth: 2.5 });
+                padClient = new SignaturePad(canvasC, { penColor: 'rgb(0,0,255)', minWidth: 1, maxWidth: 3 });
 
-                window.addEventListener('resize', () => {
-                    const dataC = padClient.toData();
-                    const dataT = padTech.toData();
-                    resizeCanvas(canvasC);
-                    resizeCanvas(canvasT);
-                    padClient.fromData(dataC);
-                    padTech.fromData(dataT);
-                });
+                window.onresize = () => {
+                    if(padClient && padTech) {
+                        const dataC = padClient.toData();
+                        const dataT = padTech.toData();
+                        
+                        canvasC.width = canvasC.offsetWidth * ratio;
+                        canvasC.height = (canvasC.offsetHeight || 200) * ratio;
+                        canvasC.getContext("2d").scale(ratio, ratio);
+                        
+                        canvasT.width = canvasT.offsetWidth * ratio;
+                        canvasT.height = (canvasT.offsetHeight || 200) * ratio;
+                        canvasT.getContext("2d").scale(ratio, ratio);
+                        
+                        padClient.fromData(dataC);
+                        padTech.fromData(dataT);
+                    }
+                };
             }
-        });
+        }
+
+        window.onload = initPads;
 
         function validateAndSubmit() {
-            if (!padTech || !padClient) return false;
+            if (!padTech || !padClient) {
+                alert("Erreur: Les zones de signature ne sont pas chargées.");
+                return false;
+            }
             if (padTech.isEmpty() || padClient.isEmpty()) {
-                alert('Signatures obligatoires (Tech + Client).');
+                alert('Signatures obligatoires (Technicien + Client).');
                 return false;
             }
             const nomC = document.querySelector('[name="nom_signataire"]')?.value.trim();
