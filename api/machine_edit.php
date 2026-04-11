@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 header('Content-Type: text/html; charset=utf-8');
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/ia_helper.php';
@@ -1149,13 +1149,25 @@ foreach ($recoFreq as $rfk => $rfv) {
                 }
                 function photoCamBtn($key, $label = '')
                 {
-                    global $photoLabelsMap;
+                    global $photoLabelsMap, $photosData, $id;
                     if (!isset($photoLabelsMap)) $photoLabelsMap = [];
                     if ($label) $photoLabelsMap[$key] = $label;
                     
+                    $thumbsHtml = '';
+                    if (isset($_GET['pdf']) && !empty($photosData[$key])) {
+                        foreach ($photosData[$key] as $p) {
+                            $imgS = (strlen($p['data']) > 50000) 
+                                ? "get_machine_photo.php?machine_id=$id&key=$key&photo_id=".$p['id'] 
+                                : $p['data'];
+                            $thumbsHtml .= '<span class="photo-thumb-wrap" style="margin-right:5px;">
+                                <img src="' . htmlspecialchars($imgS) . '" style="width:40px; height:40px; object-fit:cover; border:1px solid #ccc; vertical-align:middle;">
+                            </span>';
+                        }
+                    }
+
                     return '<div style="display:flex; align-items:center; gap:4px; margin-top:2px;">
-                        <button type="button" class="photo-btn" onclick="capturePhoto(\'' . $key . '\')">📷</button>
-                        <span class="photo-thumbs" id="thumbs_' . $key . '"></span>
+                        <button type="button" class="photo-btn no-print-pdf" onclick="capturePhoto(\'' . $key . '\')">📷</button>
+                        <span class="photo-thumbs" id="thumbs_' . $key . '">' . $thumbsHtml . '</span>
                     </div>';
                 }
 
