@@ -145,9 +145,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-$now = date('d/m/Y') . ' à ' . date('H:i');
+$now = date('d/m/Y') . ' ├á ' . date('H:i');
 
-// --- CALCUL DES STATISTIQUES POUR LA SYNTHÈSE ---
+// --- CALCUL DES STATISTIQUES POUR LA SYNTH├êSE ---
 $totalOk = 0;
 $totalAmeliorer = 0;
 $totalNonConforme = 0;
@@ -162,7 +162,7 @@ foreach ($machines as &$m) {
     $donnees = json_decode($m['donnees_controle'] ?? '{}', true);
     $mesures = json_decode($m['mesures'] ?? '{}', true);
 
-    // Durée réalisée par machine
+    // Dur├®e r├®alis├®e par machine
     $t = $mesures['temps_realise'] ?? '';
     if (preg_match('/(\d+)\s*h\s*(\d*)/i', $t, $mt)) {
         $totalMinutes += (int) $mt[1] * 60 + (int) ($mt[2] ?: 0);
@@ -181,7 +181,7 @@ foreach ($machines as &$m) {
         }
     }
 
-    // États de contrôle
+    // ├ëtats de contr├┤le
     $pointsCount = 0;
     foreach ($donnees as $k => $v) {
         if (
@@ -193,7 +193,7 @@ foreach ($machines as &$m) {
                 $pointsCount++;
                 if ($v === 'c' || $v === 'bon' || $v === 'OK')
                     $totalOk++;
-                elseif ($v === 'aa' || $v === 'r' || $v === 'A améliorer')
+                elseif ($v === 'aa' || $v === 'r' || $v === 'A am├®liorer')
                     $totalAmeliorer++;
                 elseif ($v === 'nc' || $v === 'hs' || $v === 'Non conforme')
                     $totalNonConforme++;
@@ -216,7 +216,7 @@ $h_synth = floor($totalMinutes / 60);
 $m_synth = $totalMinutes % 60;
 
 if ($totalMinutes == 0) {
-    $dureeSynth = "Non renseigné";
+    $dureeSynth = "Non renseign├®";
 } else {
     $dureeSynth = "";
     if ($h_synth > 0) {
@@ -537,7 +537,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 <body>
     <div id="pdfDownloadOverlay">
         <div class="loader-lenoir"></div>
-        <div class="download-status-text">Génération de votre rapport premium</div>
+        <div class="download-status-text">G├®n├®ration de votre rapport premium</div>
         <div style="color: var(--text-dim); font-size: 0.9rem;">Veuillez patienter quelques instants...</div>
     </div>
     <style>
@@ -565,12 +565,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <div style="margin-bottom:1rem; text-align:center;">
                         <img src="/assets/check_success.svg" style="height: 80px; width: 80px;">
                     </div>
-                    <h3 style="margin:0 0 0.5rem 0; color:#10b981;">Rapport finalisé avec succès !</h3>
+                    <h3 style="margin:0 0 0.5rem 0; color:#10b981;">Rapport finalis├® avec succ├¿s !</h3>
                     <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1rem;">L'intervention ARC
-                        <?= htmlspecialchars($intervention['numero_arc']) ?> a été clôturée.
+                        <?= htmlspecialchars($intervention['numero_arc']) ?> a ├®t├® cl├┤tur├®e.
                     </p>
 
-                    <!-- Toast email (injecté par JS) -->
+                    <!-- Toast email (inject├® par JS) -->
                     <div id="emailToast"
                         style="display:none; margin-bottom:1rem; padding:0.75rem 1rem; border-radius:8px; font-size:0.85rem; font-weight:600;">
                     </div>
@@ -582,11 +582,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             <span id="btnSendEmailIcon"><img src="/assets/icon_email_send.svg" style="height: 18px; width: 18px; vertical-align: middle;"></span>
                             <span id="btnSendEmailLabel">Envoyer PDF par email</span>
                         </button>
-                        <!-- Bouton Télécharger PDF -->
+                        <!-- Bouton T├®l├®charger PDF -->
                         <button type="button" id="btnDownloadPDF" onclick="telechargerPDF()"
                             style="padding:0.7rem 1.5rem; background:var(--primary); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem;">
                             <span id="btnDownloadPDFIcon"><img src="/assets/icon_download.svg" style="height: 18px; width: 18px; vertical-align: middle; filter: brightness(0);"></span> 
-                            <span id="btnDownloadPDFLabel">Télécharger le PDF</span>
+                            <span id="btnDownloadPDFLabel">T├®l├®charger le PDF</span>
                         </button>
                         <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>"
                             style="padding:0.7rem 1.5rem; background:rgba(255,255,255,0.1); color:var(--text); border:1px solid var(--glass-border); border-radius:8px; font-weight:600; text-decoration:none; font-size:0.9rem; display:flex; align-items:center; gap:8px;">
@@ -597,7 +597,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
             <?php endif; ?>
 
-            <!-- Données PHP exposées pour le JS -->
+            <!-- Donn├®es PHP expos├®es pour le JS -->
             <script>
                 window.LM_RAPPORT = {
                     interventionId: <?= (int) $id ?>,
@@ -639,7 +639,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             'arc' => $intervention['numero_arc'],
                             'of' => $m['numero_of'] ?? '',
                             'designation' => $m['designation'] ?? '',
-                            'repere' => $mes['repere'] ?? '—',
+                            'repere' => $mes['repere'] ?? 'ÔÇö',
                             'annee' => $m['annee_fabrication'] ?? '',
                             'points_count' => $m['points_count'] ?? 0,
                             'dysfonctionnements' => $m['dysfonctionnements'] ?? '',
@@ -656,7 +656,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
             <?php endif; ?>
 
-            <!-- ANALYSE IA GÉNÉRALE (Rectangle Orange) -->
+            <!-- ANALYSE IA G├ëN├ëRALE (Rectangle Orange) -->
             <div id="ai-synthesis-block" class="card" style="background: rgba(255, 179, 0, 0.1); border: 2px solid var(--primary); padding: 1.5rem; margin-bottom: 2rem; border-radius: 12px; position: relative;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                     <div style="display: flex; align-items: center; gap: 10px;">
@@ -664,12 +664,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <h2 style="color: var(--primary); margin: 0; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;">Analyse Intelligente Globale</h2>
                     </div>
                     <button type="button" onclick="generateAllIA()" id="btnGenerateAllIa" class="btn btn-primary" style="background: var(--primary); color: #000; font-weight: 700; font-size: 0.8rem; padding: 0.5rem 1rem; border-radius: 8px; display: flex; align-items: center; gap: 8px;">
-                        <span>🚀</span> Lancer l'IA sur toutes les fiches
+                        <span>­ƒÜÇ</span> Lancer l'IA sur toutes les fiches
                     </button>
                 </div>
                 <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">
-                    Cette fonction analyse automatiquement chaque fiche pour générer les sections "Dysfonctionnements" et "Conclusions" en se basant sur vos relevés. 
-                    <strong>Les fiches déjà modifiées manuellement ne seront pas écrasées sans confirmation.</strong>
+                    Cette fonction analyse automatiquement chaque fiche pour g├®n├®rer les sections "Dysfonctionnements" et "Conclusions" en se basant sur vos relev├®s. 
+                    <strong>Les fiches d├®j├á modifi├®es manuellement ne seront pas ├®cras├®es sans confirmation.</strong>
                 </p>
                 <div id="ai-global-progress" style="display: none; margin-top: 1rem;">
                     <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 5px; color: var(--accent-cyan);">
@@ -682,7 +682,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
             </div>
 
-            <!-- EN-TàŠTE -->
+            <!-- EN-T├èTE -->
             <div class="rapport-header">
                 <img src="/assets/lenoir_logo_trans.svg" alt="LENOIR-MEC" 
                     style="height: 60px; width: auto; object-fit: contain; display: block; margin: 0 auto 1.5rem auto;">
@@ -692,14 +692,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
             </div>
 
-            <!-- RÉCAP MACHINES -->
-            <div class="section-title">Équipements contrôlés (<?= count($machines) ?>)</div>
+            <!-- R├ëCAP MACHINES -->
+            <div class="section-title">├ëquipements contr├┤l├®s (<?= count($machines) ?>)</div>
             <div class="machines-recap">
                 <?php foreach ($machines as $m): 
                     $mStatus = $m['conclusion'] ?? '';
-                    $statusColor = '#94a3b8'; // défaut
+                    $statusColor = '#94a3b8'; // d├®faut
                     if (stripos($mStatus, 'conforme') !== false && stripos($mStatus, 'non') === false) $statusColor = '#10b981';
-                    if (stripos($mStatus, 'amélioration') !== false) $statusColor = '#f59e0b';
+                    if (stripos($mStatus, 'am├®lioration') !== false) $statusColor = '#f59e0b';
                     if (stripos($mStatus, 'non conforme') !== false) $statusColor = '#f43f5e';
                     if (stripos($mStatus, 'remplacer') !== false) $statusColor = '#8b0000';
                     
@@ -711,7 +711,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         </div>
                         <strong style="color:#fff; font-size:0.85rem;"><?= htmlspecialchars($m['designation']) ?></strong>
                         <?php if (!empty($mm['repere'])): ?>
-                            <small style="opacity:0.6; color:#94a3b8;">– <?= htmlspecialchars($mm['repere']) ?></small>
+                            <small style="opacity:0.6; color:#94a3b8;">ÔÇô <?= htmlspecialchars($mm['repere']) ?></small>
                         <?php endif; ?>
                         <small style="margin-left: 4px; color: <?= $statusColor ?>; font-weight:bold;">(<?= (int)$m['points_count'] ?> pts)</small>
                     </span>
@@ -722,15 +722,15 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <div class="section-title">Informations client</div>
             <div class="card glass" style="padding: 1.5rem;">
                 <div class="form-group">
-                    <label class="label">Société <span style="color:var(--error);">*</span></label>
+                    <label class="label">Soci├®t├® <span style="color:var(--error);">*</span></label>
                     <input type="text" name="nom_societe_display" class="input"
                         value="<?= htmlspecialchars($intervention['nom_societe']) ?>" disabled style="opacity:0.7;">
                 </div>
 
                 <div class="field-row">
                     <div class="form-group">
-                        <label class="label">Prénom du contact <span style="color:var(--error);">*</span></label>
-                        <input type="text" name="contact_prenom" id="contact_prenom" class="input" placeholder="Prénom..."
+                        <label class="label">Pr├®nom du contact <span style="color:var(--error);">*</span></label>
+                        <input type="text" name="contact_prenom" id="contact_prenom" class="input" placeholder="Pr├®nom..."
                             value="<?= htmlspecialchars($intervention['contact_prenom'] ?? '') ?>" required maxlength="50">
                     </div>
                     <div class="form-group">
@@ -742,7 +742,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                 <div class="field-row">
                     <div class="form-group">
-                        <label class="label">Fonction / Rôle</label>
+                        <label class="label">Fonction / R├┤le</label>
                         <input type="text" name="contact_fonction" class="input" placeholder="Resp. maintenance..."
                             value="<?= htmlspecialchars($intervention['contact_fonction'] ?? $intervention['c_fonction'] ?? '') ?>">
                     </div>
@@ -756,13 +756,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                 <div class="field-row">
                     <div class="form-group">
-                        <label class="label">Téléphone</label>
+                        <label class="label">T├®l├®phone</label>
                         <input type="tel" name="contact_telephone" class="input" placeholder="06 12 34 56 78"
                             value="<?= htmlspecialchars($intervention['contact_telephone'] ?? $intervention['c_tel'] ?? '') ?>">
                     </div>
                     <div class="form-group">
                         <label class="label">Adresse</label>
-                        <input type="text" name="adresse" class="input" placeholder="Rue, numéro..."
+                        <input type="text" name="adresse" class="input" placeholder="Rue, num├®ro..."
                             value="<?= htmlspecialchars($intervention['adresse'] ?? '') ?>">
                     </div>
                 </div>
@@ -789,7 +789,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <!-- COMMENTAIRE TECHNICIEN -->
             <div class="section-title">Commentaire / Observations du technicien</div>
             <textarea name="commentaire_technicien" class="rapport-textarea large"
-                placeholder="Saisissez vos observations générales sur l'état des équipements, les anomalies relevées, les recommandations..."><?= htmlspecialchars($intervention['commentaire_technicien'] ?? '') ?></textarea>
+                placeholder="Saisissez vos observations g├®n├®rales sur l'├®tat des ├®quipements, les anomalies relev├®es, les recommandations..."><?= htmlspecialchars($intervention['commentaire_technicien'] ?? '') ?></textarea>
 
             <!-- LE CLIENT SOUHAITE -->
             <div class="section-title">Le client souhaite</div>
@@ -802,12 +802,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 <label class="checkbox-item">
                     <input type="checkbox" name="souhait_offre_pieces" value="1" class="chk-souhait"
                         <?= ($intervention['souhait_offre_pieces'] ?? false) ? 'checked' : '' ?>>
-                    <span>Une offre de pièces de rechange</span>
+                    <span>Une offre de pi├¿ces de rechange</span>
                 </label>
                 <label class="checkbox-item">
                     <input type="checkbox" name="souhait_pieces_intervention" value="1" class="chk-souhait"
                         <?= ($intervention['souhait_pieces_intervention'] ?? false) ? 'checked' : '' ?>>
-                    <span>Pièces de rechange + intervention mise en place</span>
+                    <span>Pi├¿ces de rechange + intervention mise en place</span>
                 </label>
                 <label class="checkbox-item">
                     <input type="checkbox" name="souhait_aucune_offre" value="1" class="chk-souhait"
@@ -832,7 +832,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <!-- COMMENTAIRE CLIENT -->
             <div class="section-title">Commentaire du client</div>
             <textarea name="commentaire_client" class="rapport-textarea small"
-                placeholder="Remarques ou demandes spécifiques du client..."><?= htmlspecialchars($intervention['commentaire_client'] ?? '') ?></textarea>
+                placeholder="Remarques ou demandes sp├®cifiques du client..."><?= htmlspecialchars($intervention['commentaire_client'] ?? '') ?></textarea>
 
             <!-- DATE & HEURE -->
             <div class="section-title">Date et heure</div>
@@ -866,7 +866,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
                     <div class="form-group" style="margin-bottom: 0.5rem;">
                         <input type="text" name="nom_signataire" class="input"
-                            placeholder="NOM Prénom du signataire (ex: DUPONT Jean)"
+                            placeholder="NOM Pr├®nom du signataire (ex: DUPONT Jean)"
                             value="<?= htmlspecialchars($intervention['nom_signataire_client'] ?? '') ?>" required>
                     </div>
                     <canvas id="canvasClient" width="600" height="200"></canvas>
@@ -876,12 +876,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             <!-- BOUTON FINAL -->
             <button type="submit" class="btn-final" onclick="return validateAndSubmit()">
-                ✓ Finaliser le rapport et terminer l'intervention
+                Ô£ô Finaliser le rapport et terminer l'intervention
             </button>
 
             <a href="intervention_edit.php?id=<?= $id ?>"
                 style="display:block; text-align:center; margin-top:1rem; color:var(--text-dim); font-size:0.85rem; text-decoration:none;">
-                ← Retour aux fiches
+                ÔåÉ Retour aux fiches
             </a>
         </form>
     </div>
@@ -889,7 +889,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     <!-- Libs PDF : jsPDF + html2canvas exposes comme globals -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- html2pdf.js pour génération PDF côté client -->
+    <!-- html2pdf.js pour g├®n├®ration PDF c├┤t├® client -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     <script>
@@ -907,7 +907,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             context.scale(ratio, ratio);
 
             if (pad) {
-                pad.clear(); // Réinitialise pour éviter les distorsions si on redimensionne
+                pad.clear(); // R├®initialise pour ├®viter les distorsions si on redimensionne
             }
         }
 
@@ -976,11 +976,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
         function validateAndSubmit() {
             if (!padClient || !padTech) {
-                alert('Erreur: les zones de signature ne sont pas prêtes. Veuillez rafraîchir la page.');
+                alert('Erreur: les zones de signature ne sont pas pr├¬tes. Veuillez rafra├«chir la page.');
                 return false;
             }
 
-            // --- BUG-005, BUG-014, BUG-015: Contrôle de qualité des textes ---
+            // --- BUG-005, BUG-014, BUG-015: Contr├┤le de qualit├® des textes ---
             const fieldsToCheck = [
                 { name: 'commentaire_technicien', label: 'Observations du technicien' },
                 { name: 'commentaire_client', label: 'Commentaire du client' },
@@ -1006,7 +1006,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 }
 
                 if (foundMatch) {
-                    if (!confirm("âš ï¸ Le champ '" + f.label + "' contient des données semblant être du test ou non-professionnelles (\"" + val.substring(0, 20) + "...\"). Voulez-vous vraiment continuer ?")) {
+                    if (!confirm("ÔÜá´©Å Le champ '" + f.label + "' contient des donn├®es semblant ├¬tre du test ou non-professionnelles (\"" + val.substring(0, 20) + "...\"). Voulez-vous vraiment continuer ?")) {
                         return false;
                     }
                 }
@@ -1018,11 +1018,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 return false;
             }
 
-            // --- BUG-008: Contrôle de complétude des fiches ---
+            // --- BUG-008: Contr├┤le de compl├®tude des fiches ---
             const machinesData = window.LM_RAPPORT.machinesData;
             for (let m of machinesData) {
                 if (m.points_count === 0) {
-                    alert('âŒ Complétude insuffisante : La fiche machine "' + m.designation + '" est entièrement vide (0 point de contrôle rempli). Veuillez la compléter avant de finaliser.');
+                    alert('ÔØî Compl├®tude insuffisante : La fiche machine "' + m.designation + '" est enti├¿rement vide (0 point de contr├┤le rempli). Veuillez la compl├®ter avant de finaliser.');
                     return false;
                 }
             }
@@ -1048,7 +1048,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            // --- BUG-018: Exclusivité des checkboxes "Le client souhaite" ---
+            // --- BUG-018: Exclusivit├® des checkboxes "Le client souhaite" ---
             const chkUnique = document.querySelector('[name="souhait_rapport_unique"]');
             const otherChks = document.querySelectorAll('[name="souhait_offre_pieces"], [name="souhait_pieces_intervention"], [name="souhait_aucune_offre"]');
 
@@ -1089,11 +1089,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         });
 
 
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // CRÉATION DU CONTENEUR COMPLET POUR LE PDF (ASYNCHRONE)
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+        // CR├ëATION DU CONTENEUR COMPLET POUR LE PDF (ASYNCHRONE)
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
 
-        // Helper : Attendre que toutes les images soient chargées
+        // Helper : Attendre que toutes les images soient charg├®es
         async function waitForImages(element) {
             const images = element.querySelectorAll('img');
             const promises = Array.from(images).map(img => {
@@ -1133,8 +1133,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 try {
                     // Prepend origin if relative
                     let absoluteUrl = src;
-                    if (!src.startsWith('http') && !src.startsWith('data:')) {
-                        absoluteUrl = new URL(src, window.location.href).href;
+                    if (src.startsWith('/') && !src.startsWith('//')) {
+                        absoluteUrl = window.location.origin + src;
                     }
                     
                     const resp = await fetch(absoluteUrl);
@@ -1164,7 +1164,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             container.style.backgroundColor = 'white';
             container.style.color = 'black';
 
-            // --- 0. STYLES SPÉCIFIQUES ---
+            // --- 0. STYLES SP├ëCIFIQUES ---
             const styleNode = document.createElement('style');
             styleNode.textContent = `
                 .pdf-page {
@@ -1247,7 +1247,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .pastille-group label.p-nr { background-color: #d1d1d1 !important; }
                 .pastille-group label.p-na { background-color: #d1d1d1 !important; }
 
-                /* État sélectionné : On retrouve les vraies couleurs du SaaS */
+                /* ├ëtat s├®lectionn├® : On retrouve les vraies couleurs du SaaS */
                 .pastille-group label.selected.p-ok { background-color: #28a745 !important; border-color: #1e7e34 !important; }
                 .pastille-group label.selected.p-aa { background-color: #f39c12 !important; border-color: #d35400 !important; }
                 .pastille-group label.selected.p-nc { background-color: #dc3545 !important; border-color: #bd2130 !important; }
@@ -1288,7 +1288,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     border: none !important;
                     position: relative;
                 }
-                /* La barre verticale courte à droite de la zone grise */
+                /* La barre verticale courte ├á droite de la zone grise */
                 .diagonal-wrapper::after {
                     content: "";
                     position: absolute;
@@ -1394,10 +1394,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             // Generate HTML lines for machines
             const machinesTrs = window.LM_RAPPORT.machinesData.map(m => `
                 <tr style="border-bottom:1px solid #000;">
-                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.arc || '—'}</td>
-                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.of || '—'}</td>
-                    <td style="padding:6px; border-right:1px solid #000;">${m.designation || '—'}</td>
-                    <td style="padding:6px; text-align:center;">${m.annee || '—'}</td>
+                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.arc || 'ÔÇö'}</td>
+                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.of || 'ÔÇö'}</td>
+                    <td style="padding:6px; border-right:1px solid #000;">${m.designation || 'ÔÇö'}</td>
+                    <td style="padding:6px; text-align:center;">${m.annee || 'ÔÇö'}</td>
                 </tr>
             `).join('');
 
@@ -1414,7 +1414,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         </td>
                         <td style="width: 60%; vertical-align: bottom; text-align: right; padding-bottom: 5px;">
                             <div style="font-size: 11px; font-weight: normal; color: #1e4e6d; font-style: italic;">
-                                Le spécialiste des applications magnétiques pour la séparation et le levage industriel
+                                Le sp├®cialiste des applications magn├®tiques pour la s├®paration et le levage industriel
                             </div>
                         </td>
                     </tr>
@@ -1424,7 +1424,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 <!-- GRAND CADRE BLEU -->
                 <div style="border: 3px solid #1e4e6d; padding: 15px; margin-bottom: 30px;">
                     <h1 style="text-align: center; color: #1e4e6d; font-size: 26px; font-weight: bold; margin: 10px 0 20px 0;">RAPPORT DE L'EXPERTISE</h1>
-                    <div style="text-align: right; font-weight: bold; font-size: 14px; color: black; margin-bottom: 15px;">N°ARC : ${numArc}</div>
+                    <div style="text-align: right; font-weight: bold; font-size: 14px; color: black; margin-bottom: 15px;">N┬░ARC : ${numArc}</div>
 
                     <!-- TABLEAU CLIENT -->
                     <table style="width:100%; border-collapse:collapse; border: 2px solid #1e4e6d; margin-bottom:20px; font-size:12px; font-family: Arial, sans-serif;">
@@ -1446,7 +1446,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <tr>
                             <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Adresse</td>
                             <td style="padding: 6px; border: 1px solid #000;">${adresse || '_____'}</td>
-                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Prénom</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Pr├®nom</td>
                             <td style="padding: 6px; border: 1px solid #000;">${contactPrenom || '_____'}</td>
                         </tr>
                         <tr>
@@ -1458,7 +1458,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <tr>
                             <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Ville</td>
                             <td style="padding: 6px; border: 1px solid #000;">${ville || '_____'}</td>
-                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Téléphone</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">T├®l├®phone</td>
                             <td style="padding: 6px; border: 1px solid #000;">${contactTel || '_____'}</td>
                         </tr>
                         <tr>
@@ -1478,18 +1478,18 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         </tr>
                         <tr>
                             <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 8%;">Poste</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 25%;">N° A.R.C (N° de série)</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 45%;">Désignation du Produit</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 12%;">Repère</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 10%;">Année</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 25%;">N┬░ A.R.C (N┬░ de s├®rie)</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 45%;">D├®signation du Produit</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 12%;">Rep├¿re</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 10%;">Ann├®e</td>
                         </tr>
                         ${window.LM_RAPPORT.machinesData.map((m, idx) => `
                             <tr>
                                 <td style="text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000;">${m.poste || (idx + 1)}</td>
-                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.arc || '—'} ${m.of ? ' - ' + m.of : ''}</td>
-                                <td style="padding: 6px; border: 1px solid #000;">${m.designation || '—'}</td>
-                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.repere || '—'}</td>
-                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.annee || '—'}</td>
+                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.arc || 'ÔÇö'} ${m.of ? ' - ' + m.of : ''}</td>
+                                <td style="padding: 6px; border: 1px solid #000;">${m.designation || 'ÔÇö'}</td>
+                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.repere || 'ÔÇö'}</td>
+                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.annee || 'ÔÇö'}</td>
                             </tr>
                         `).join('')}
                     </table>
@@ -1513,7 +1513,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             rapportCloneWrapper.appendChild(createPdfFooter());
             container.appendChild(rapportCloneWrapper);
 
-            // --- 1.2 PAGE SYNTHÈSE + PRÉAMBULE (FUSIONNÉS POUR ÉCONOMISER DES PAGES) ---
+            // --- 1.2 PAGE SYNTH├êSE + PR├ëAMBULE (FUSIONN├ëS POUR ├ëCONOMISER DES PAGES) ---
             const synthPreambulePage = document.createElement('div');
             synthPreambulePage.className = 'pdf-page';
             synthPreambulePage.style.margin = '0';
@@ -1522,7 +1522,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             synthPreambulePage.style.paddingTop = '15mm';
             const s = window.LM_RAPPORT.synth;
 
-            // Calcul mois prochain pour le préambule
+            // Calcul mois prochain pour le pr├®ambule
             let moisProchainText = "";
             let villePreambule = ville || "[VILLE DU CLIENT]";
             if (dateExp && dateExp.includes('/')) {
@@ -1530,7 +1530,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 if (parts.length === 3) {
                     const mIndex = parseInt(parts[1], 10) - 1;
                     const y = parseInt(parts[2], 10) + 1;
-                    const moisNoms = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+                    const moisNoms = ['janvier', 'f├®vrier', 'mars', 'avril', 'mai', 'juin', 'juillet', 'ao├╗t', 'septembre', 'octobre', 'novembre', 'd├®cembre'];
                     if (mIndex >= 0 && mIndex < 12) {
                         moisProchainText = moisNoms[mIndex] + ' ' + y;
                     }
@@ -1541,13 +1541,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             synthPreambulePage.innerHTML = `
                 <div style="padding-top: 10px;">
                     <div style="padding: 20px; color: #000; background: #fff; margin-bottom: 30px; page-break-inside: avoid;">
-                        <h2 style="font-weight: bold; font-size: 18px; color: #1e4e6d; margin: 0 0 25px 0; padding-bottom: 5px; border-bottom: 2px solid #1e4e6d; text-transform: uppercase; width: 100%;">SYNTHÈSE DE L'INTERVENTION</h2>
+                        <h2 style="font-weight: bold; font-size: 18px; color: #1e4e6d; margin: 0 0 25px 0; padding-bottom: 5px; border-bottom: 2px solid #1e4e6d; text-transform: uppercase; width: 100%;">SYNTH├êSE DE L'INTERVENTION</h2>
                         
                         <div style="margin-bottom: 15px; font-size: 13px; line-height: 1.6;">
                             <div><strong>Technicien :</strong> ${s.tech}</div>
                             <div><strong>Date :</strong> ${s.date}</div>
-                            <div><strong>Durée totale :</strong> ${s.duree}</div>
-                            <div><strong>Équipements contrôlés :</strong> ${s.nbMachines}</div>
+                            <div><strong>Dur├®e totale :</strong> ${s.duree}</div>
+                            <div><strong>├ëquipements contr├┤l├®s :</strong> ${s.nbMachines}</div>
                         </div>
 
                         <div style="margin: 20px 0; font-size: 13px;">
@@ -1557,7 +1557,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             </div>
                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
                                 <span style="display: inline-block; width: 12px; height: 12px; background: #1e4e6d; margin-right: 10px;"></span>
-                                <strong>${s.aa} points à améliorer</strong>
+                                <strong>${s.aa} points ├á am├®liorer</strong>
                             </div>
                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
                                 <span style="display: inline-block; width: 12px; height: 12px; background: #dc3545; margin-right: 10px;"></span>
@@ -1565,13 +1565,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             </div>
                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
                                 <span style="display: inline-block; width: 12px; height: 12px; background: #8b0000; margin-right: 10px;"></span>
-                                <strong>${s.nr} remplacement${s.nr > 1 ? 's' : ''} nécessaire${s.nr > 1 ? 's' : ''}</strong>
+                                <strong>${s.nr} remplacement${s.nr > 1 ? 's' : ''} n├®cessaire${s.nr > 1 ? 's' : ''}</strong>
                             </div>
                         </div>
 
                         <div style="margin-top: 25px; text-align: center;">
-                            <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px; text-transform: uppercase;">SCORE DE CONFORMITÉ : ${s.score}%</div>
-                            ${s.nbMachinesEmpty > 0 ? `<div style="font-size: 11px; color: #dc3545; font-weight: bold; margin-bottom: 8px;">âš ï¸ ${s.nbMachinesEmpty} fiche(s) non remplie(s) — score calculé sur ${s.nbMachinesFilled}/${s.nbMachinesFilled + s.nbMachinesEmpty} fiches uniquement</div>` : ''}
+                            <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px; text-transform: uppercase;">SCORE DE CONFORMIT├ë : ${s.score}%</div>
+                            ${s.nbMachinesEmpty > 0 ? `<div style="font-size: 11px; color: #dc3545; font-weight: bold; margin-bottom: 8px;">ÔÜá´©Å ${s.nbMachinesEmpty} fiche(s) non remplie(s) ÔÇö score calcul├® sur ${s.nbMachinesFilled}/${s.nbMachinesFilled + s.nbMachinesEmpty} fiches uniquement</div>` : ''}
                             <div style="width: 100%; height: 20px; background: #e2e8f0; border: 1px solid #000; position: relative; overflow: hidden; border-radius: 4px;">
                                 <div style="width: ${s.score}%; height: 100%; background: ${s.score < 33 ? '#dc3545' : (s.score < 66 ? '#f59e0b' : '#22c55e')}; transition: width 0.5s;"></div>
                             </div>
@@ -1579,18 +1579,18 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
 
                     <div style="font-size: 13px; line-height: 1.5; color: black; font-family: Arial, sans-serif; page-break-inside: avoid;">
-                        <h2 style="color: #1e4e6d; font-size: 16px; text-transform: uppercase; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px;">PRÉAMBULE :</h2>
+                        <h2 style="color: #1e4e6d; font-size: 16px; text-transform: uppercase; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px;">PR├ëAMBULE :</h2>
                         
                         <p style="margin-bottom: 12px;">
-                            Ce rapport est établi suite à une expertise effectuée le ${dateExp} sur votre site de ${villePreambule}.
+                            Ce rapport est ├®tabli suite ├á une expertise effectu├®e le ${dateExp} sur votre site de ${villePreambule}.
                         </p>
                         
                         <p style="margin-bottom: 12px;">
-                            Nos expertises permettent de vous accompagner dans votre démarche ISO 22000 :2005 et HACCP. Notre analyse est suivie de conclusions ou recommandations que nous vous invitons à suivre pour la pérennité et la qualité de votre production.
+                            Nos expertises permettent de vous accompagner dans votre d├®marche ISO 22000 :2005 et HACCP. Notre analyse est suivie de conclusions ou recommandations que nous vous invitons ├á suivre pour la p├®rennit├® et la qualit├® de votre production.
                         </p>
                         
                         <p style="margin-bottom: 12px;">
-                            Dans le cadre de notre prestation annuelle, la prochaine expertise aura lieu en ${moisProchainText}. Nous vous contacterons pour établir une date appropriée à vos impératifs de production.
+                            Dans le cadre de notre prestation annuelle, la prochaine expertise aura lieu en ${moisProchainText}. Nous vous contacterons pour ├®tablir une date appropri├®e ├á vos imp├®ratifs de production.
                         </p>
                     </div>
                 </div>
@@ -1604,7 +1604,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 const emptyOption = 'include';
                 const emptyIds = window.LM_RAPPORT.emptyMachinesIds || [];
 
-                // Si option = 'exclude', on retire carrément les machines vides de la boucle !
+                // Si option = 'exclude', on retire carr├®ment les machines vides de la boucle !
                 if (emptyOption === 'exclude' && emptyIds.length > 0) {
                     reportMachineIds = reportMachineIds.filter(id => !emptyIds.includes(parseInt(id, 10)) && !emptyIds.includes(String(id)));
                 }
@@ -1613,10 +1613,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 for (let mIdx = 0; mIdx < totalMachines; mIdx++) {
                     const mId = reportMachineIds[mIdx];
 
-                    // Si on a gardé la machine mais qu'elle est vide et qu'on voulait 'condensed'
+                    // Si on a gard├® la machine mais qu'elle est vide et qu'on voulait 'condensed'
                     if (emptyOption === 'condensed' && (emptyIds.includes(parseInt(mId, 10)) || emptyIds.includes(String(mId)))) {
                         const mData = window.LM_RAPPORT.machinesData.find(m => parseInt(m.id, 10) === parseInt(mId, 10)) || {};
-                        const mDesignation = mData.designation || 'Équipement';
+                        const mDesignation = mData.designation || '├ëquipement';
                         const mArc = mData.arc || numArc;
 
                         const p = document.createElement('div');
@@ -1629,19 +1629,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             
                             <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000;">
                                 <tr>
-                                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N° A.R.C.</td>
+                                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N┬░ A.R.C.</td>
                                     <td style="width:35%; border:1px solid #000; padding:6px; font-weight:bold;">${mArc}</td>
-                                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Désignation</td>
+                                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">D├®signation</td>
                                     <td style="width:35%; border:1px solid #000; padding:6px;"><b>${mDesignation}</b></td>
                                 </tr>
                             </table>
 
                             <div style="margin-top: 150px; text-align: center;">
                                 <div style="font-size: 24px; font-weight: bold; color: #dc3545; text-transform: uppercase; border: 4px solid #dc3545; display: inline-block; padding: 20px 40px; transform: rotate(-5deg);">
-                                    ÉQUIPEMENT NON CONTRà”LÉ
+                                    ├ëQUIPEMENT NON CONTR├öL├ë
                                 </div>
                                 <div style="margin-top: 30px; color: #555; font-size: 14px;">
-                                    Aucune donnée n'a été saisie pour ce matériel lors de l'intervention.
+                                    Aucune donn├®e n'a ├®t├® saisie pour ce mat├®riel lors de l'intervention.
                                 </div>
                             </div>
                         `;
@@ -1649,7 +1649,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         p.style.pageBreakBefore = 'always';
                         container.appendChild(p);
 
-                        continue; // Passe directement à la machine suivante sans fetch html !
+                        continue; // Passe directement ├á la machine suivante sans fetch html !
                     }
 
                     try {
@@ -1672,7 +1672,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 }
                             });
 
-                            // --- NETTOYAGE RADICAL DES ÉLÉMENTS D'INTERFACE ---
+                            // --- NETTOYAGE RADICAL DES ├ëL├ëMENTS D'INTERFACE ---
                             p.querySelectorAll('.photo-btn, .btn-ia-refresh, .top-bar, .photo-thumbs, #btnChrono, .no-print-pdf, .photo-del-overlay').forEach(el => el.remove());
 
                             // FIX: Blank pages. Strip default screen margins and shadows so they don't push into invisible overflowing pages
@@ -1691,7 +1691,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 p.style.marginTop = '0';
                                 p.style.paddingTop = '10mm'; 
                                 
-                                // On ajoute discretement le numéro de fiche AU DESSUS du header officiel LENOIR
+                                // On ajoute discretement le num├®ro de fiche AU DESSUS du header officiel LENOIR
                                 const hDiv = document.createElement('div');
                                 hDiv.style.textAlign = 'right';
                                 hDiv.style.fontSize = '12px';
@@ -1727,13 +1727,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             });
 
                             p.querySelectorAll('img').forEach(img => {
-                                const src = img.getAttribute('src');
-                                if (!src || src.startsWith('data:')) return;
-                                let absoluteUrl = src;
-                                if (!src.startsWith('http')) {
-                                    absoluteUrl = new URL(src, window.location.href).href;
+                                let src = img.getAttribute('src') || '';
+                                if (src.startsWith('/') && !src.startsWith('//')) {
+                                    img.src = window.location.origin + src;
                                 }
-                                img.src = absoluteUrl;
                             });
 
                             p.querySelectorAll('textarea').forEach(ta => {
@@ -1742,7 +1739,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 // NEW FIX FOR PERFORMANCE / NON REALISE Bug:
                                 const specialKeys = ['aprf_attraction_comment', 'ov_perf_bille', 'ov_perf_ecrou', 'ov_perf_rond50', 'ov_perf_rond100', 'levage_charge_maxi_comment', 'levage_temp_maxi_comment'];
                                 if (specialKeys.some(k => ta.name && ta.name.includes(k))) {
-                                    if (!val.trim()) val = "Non réalisé";
+                                    if (!val.trim()) val = "Non r├®alis├®";
                                 }
 
                                 if (val.trim()) {
@@ -1755,7 +1752,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 ta.remove();
                             });
 
-                            // BUGFIX PDF: Séparateur de table (tbody)
+                            // BUGFIX PDF: S├®parateur de table (tbody)
                             // html2pdf coupe en deux les <tr> sauvagement. 
                             // La seule vraie solution est de wrapper chaque ligne logique dans son propre <tbody> !
                             p.querySelectorAll('table.pdf-table').forEach(table => {
@@ -1774,7 +1771,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                     });
                                     if (maxSpan - 1 > pendingSpans) pendingSpans = maxSpan - 1;
 
-                                    currentTbody.appendChild(row); // Déplace le tr dans le nouveau tbody
+                                    currentTbody.appendChild(row); // D├®place le tr dans le nouveau tbody
 
                                     if (pendingSpans > 0) {
                                         pendingSpans--;
@@ -1806,8 +1803,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 }
             }
 
-            // Page de fin : On ne force plus systématiquement le saut de page
-            // si le contenu précédent est court. On laisse html2pdf gérer ou on met un petit espacement.
+            // Page de fin : On ne force plus syst├®matiquement le saut de page
+            // si le contenu pr├®c├®dent est court. On laisse html2pdf g├®rer ou on met un petit espacement.
             const pbFin = document.createElement('div');
             pbFin.style.height = '20px';
             container.appendChild(pbFin);
@@ -1838,7 +1835,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             endPage.innerHTML = `
                 <div style="font-family: Arial, sans-serif; font-size: 11px; color: #000;">
                     
-                    <!-- OBSERVATIONS GÉNÉRALES -->
+                    <!-- OBSERVATIONS G├ëN├ëRALES -->
                     <div style="font-weight: bold; font-size: 14px; color: #1e4e6d; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px; text-transform: uppercase;">OBSERVATIONS DU TECHNICIEN</div>
                     <div style="padding: 8px 0; min-height: 40px; font-size: 12px; white-space: pre-wrap; margin-bottom: 20px;">${commentaryTech}</div>
 
@@ -1848,10 +1845,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <!-- LE CLIENT SOUHAITE -->
                     <div style="font-weight: bold; font-size: 14px; color: #1e4e6d; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
                     <div style="padding: 8px 0; margin-bottom: 20px;">
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? '☐‘' : '☐'} Ce Rapport d\'expertise uniquement</div>
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? '☐‘' : '☐'} Une offre de Pièces de Rechange</div>
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitIntervention ? '☐‘' : '☐'} Une offre de PR + intervention mise en place</div>
-                        <div style="font-size: 11px;">${souhaitAucune ? '☐‘' : '☐'} Aucune offre</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? 'Ôÿæ' : 'ÔÿÉ'} Ce Rapport d\'expertise uniquement</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? 'Ôÿæ' : 'ÔÿÉ'} Une offre de Pi├¿ces de Rechange</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitIntervention ? 'Ôÿæ' : 'ÔÿÉ'} Une offre de PR + intervention mise en place</div>
+                        <div style="font-size: 11px;">${souhaitAucune ? 'Ôÿæ' : 'ÔÿÉ'} Aucune offre</div>
                     </div>
 
                     <!-- DATE ET HEURE -->
@@ -1865,14 +1862,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <table style="width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 15px;">
                         <tr style="height: 120px;">
                             <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
-                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Contrôleur (NOM Prénom) :</div>
+                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Contr├┤leur (NOM Pr├®nom) :</div>
                                 <div style="margin-bottom: 10px;"><strong>${techNameLabel}</strong></div>
                                 <div style="text-align: center;">
                                     <img src="${sigTechImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
                                 </div>
                             </td>
                             <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
-                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Client (NOM Prénom) :</div>
+                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Client (NOM Pr├®nom) :</div>
                                 <div style="margin-bottom: 10px;"><strong>${nomSignataireFin}</strong></div>
                                 <div style="text-align: center;">
                                     <img src="${sigClientImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
@@ -1885,12 +1882,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <div style="border: 2px solid #000; padding: 0; text-align: center; margin-bottom: 15px;">
                         <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR TOUTE INFORMATION TECHNIQUE SUR CE RAPPORT</div>
                         <div style="background-color: #fff; padding: 6px; border-bottom: 2px solid #000;">
-                            <div style="font-size: 12px;">➤ <strong>Soufyane SALAH</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Chargé d'Affaires</span></div>
+                            <div style="font-size: 12px;">Ô×ñ <strong>Soufyane SALAH</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Charg├® d'Affaires</span></div>
                         </div>
                         
-                        <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR LA PLANIFICATION D'UNE VÉRIFICATION PÉRIODIQUE</div>
+                        <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR LA PLANIFICATION D'UNE V├ëRIFICATION P├ëRIODIQUE</div>
                         <div style="background-color: #fff; padding: 6px;">
-                            <div style="font-size: 12px;">➤ <strong>Sophie NIAY</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Responsable Service Clients</span></div>
+                            <div style="font-size: 12px;">Ô×ñ <strong>Sophie NIAY</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Responsable Service Clients</span></div>
                         </div>
                     </div>
 
@@ -1913,9 +1910,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             return container;
         }
 
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // GÉNÉRATION PDF (html2pdf.js)
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+        // G├ëN├ëRATION PDF (html2pdf.js)
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         async function genererPDFBase64() {
             if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
 
@@ -1954,9 +1951,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             });
         }
 
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // TÉLÉCHARGEMENT PDF BOUTON DIRECT
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+        // T├ëL├ëCHARGEMENT PDF BOUTON DIRECT
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         async function telechargerPDF() {
             const btn = document.getElementById('btnDownloadPDF');
             const icon = document.getElementById('btnDownloadPDFIcon');
@@ -1964,8 +1961,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             if (btn) { 
                 btn.disabled = true; 
-                if (label) label.textContent = 'Génération...';
-                if (icon) icon.textContent = '⏳';
+                if (label) label.textContent = 'G├®n├®ration...';
+                if (icon) icon.textContent = 'ÔÅ│';
             }
             try {
                 const container = await buildFullPdfContainer();
@@ -1995,19 +1992,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                 await worker.save();
             } catch (e) {
-                alert('Erreur génération PDF : ' + e.message);
+                alert('Erreur g├®n├®ration PDF : ' + e.message);
             } finally {
                 if (btn) { 
                     btn.disabled = false; 
-                    if (label) label.textContent = 'Télécharger le PDF';
+                    if (label) label.textContent = 'T├®l├®charger le PDF';
                     if (icon) icon.innerHTML = '<img src="/assets/icon_download.svg" style="height: 18px; width: 18px; vertical-align: middle; filter: brightness(0);">';
                 }
             }
         }
 
-        // -------------------------------------------------------------------------
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         // TOAST UI
-        // -------------------------------------------------------------------------
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         function afficherToast(message, type = 'success') {
             const toast = document.getElementById('emailToast');
             if (!toast) return;
@@ -2030,9 +2027,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             toast.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        // -------------------------------------------------------------------------
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         // FILE D'ATTENTE HORS-LIGNE (IndexedDB)
-        // -------------------------------------------------------------------------
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         const DB_NAME = 'LMEmailQueue';
         const DB_VERSION = 1;
         const STORE_NAME = 'pendingEmails';
@@ -2072,24 +2069,24 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         if (res.success) {
                             // Supprimer de la file
                             db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME).delete(item.id);
-                            console.log('[LM] Email rejoué avec succès :', item.client_email);
+                            console.log('[LM] Email rejou├® avec succ├¿s :', item.client_email);
                         }
                     } catch (e) {
-                        console.warn('[LM] Rejouer échoué :', e);
+                        console.warn('[LM] Rejouer ├®chou├® :', e);
                     }
                 }
             };
         }
 
-        // Écouter la reconnexion réseau
+        // ├ëcouter la reconnexion r├®seau
         window.addEventListener('online', () => {
-            console.log('[LM] Connexion rétablie – rejouer la file d\'attente email');
+            console.log('[LM] Connexion r├®tablie ÔÇô rejouer la file d\'attente email');
             rejouerFileDAttente();
         });
 
-        // -------------------------------------------------------------------------
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         // APPEL API ENVOI EMAIL
-        // -------------------------------------------------------------------------
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         async function envoyerParAPI(interventionId, pdfBase64, clientEmail, csrfToken) {
             const formData = new FormData();
             formData.append('intervention_id', interventionId);
@@ -2106,16 +2103,16 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             return resp.json();
         }
 
-        // -------------------------------------------------------------------------
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         // FONCTION PRINCIPALE : LANCER L'ENVOI EMAIL
-        // -------------------------------------------------------------------------
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         async function lancerEnvoiEmail(auto = false) {
             if (!window.LM_RAPPORT) return;
 
             const { interventionId, clientEmail, csrfToken, nomSociete } = window.LM_RAPPORT;
 
             if (!clientEmail) {
-                afficherToast('⚠️ Aucun email client renseigné. Veuillez reprendre le formulaire.', 'error');
+                afficherToast('ÔÜá´©Å Aucun email client renseign├®. Veuillez reprendre le formulaire.', 'error');
                 return;
             }
 
@@ -2124,22 +2121,22 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const label = document.getElementById('btnSendEmailLabel');
 
             if (btn) btn.disabled = true;
-            if (icon) icon.textContent = '⏳';
-            if (label) label.textContent = 'Génération du PDF…';
+            if (icon) icon.textContent = 'ÔÅ│';
+            if (label) label.textContent = 'G├®n├®ration du PDFÔÇª';
 
             let pdfBase64;
             try {
                 pdfBase64 = await genererPDFBase64();
             } catch (e) {
                 if (btn) btn.disabled = false;
-                if (icon) icon.textContent = '📧';
+                if (icon) icon.textContent = '­ƒôº';
                 if (label) label.textContent = 'Envoyer PDF par email';
-                afficherToast('❌ Erreur génération PDF : ' + e.message, 'error');
+                afficherToast('ÔØî Erreur g├®n├®ration PDF : ' + e.message, 'error');
                 return;
             }
 
-            if (icon) icon.textContent = '📤';
-            if (label) label.textContent = 'Envoi en cours…';
+            if (icon) icon.textContent = '­ƒôñ';
+            if (label) label.textContent = 'Envoi en coursÔÇª';
 
             // Hors-ligne : mettre en file d'attente
             if (!navigator.onLine) {
@@ -2150,12 +2147,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         client_email: clientEmail,
                         csrf_token: csrfToken,
                     });
-                    afficherToast('📶 Hors-ligne – email mis en file d\'attente. Il sera envoyé automatiquement à la reconnexion.', 'warning');
+                    afficherToast('­ƒô Hors-ligne ÔÇô email mis en file d\'attente. Il sera envoy├® automatiquement ├á la reconnexion.', 'warning');
                 } catch (e) {
-                    afficherToast('❌ Impossible de mettre l\'email en file d\'attente.', 'error');
+                    afficherToast('ÔØî Impossible de mettre l\'email en file d\'attente.', 'error');
                 }
                 if (btn) btn.disabled = false;
-                if (icon) icon.textContent = '📧';
+                if (icon) icon.textContent = '­ƒôº';
                 if (label) label.textContent = 'Envoyer PDF par email';
                 return;
             }
@@ -2164,19 +2161,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             try {
                 const result = await envoyerParAPI(interventionId, pdfBase64, clientEmail, csrfToken);
                 if (result.success) {
-                    afficherToast('✅ Rapport envoyé avec succès à ' + result.email, 'success');
+                    afficherToast('Ô£à Rapport envoy├® avec succ├¿s ├á ' + result.email, 'success');
                     if (btn) btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
-                    if (icon) icon.textContent = '✅';
-                    if (label) label.textContent = 'Email envoyé !';
+                    if (icon) icon.textContent = 'Ô£à';
+                    if (label) label.textContent = 'Email envoy├® !';
                     btn.disabled = true; // Ne pas renvoyer
                 } else {
-                    afficherToast('❌ ' + (result.message || 'Erreur envoi email'), 'error');
+                    afficherToast('ÔØî ' + (result.message || 'Erreur envoi email'), 'error');
                     if (btn) btn.disabled = false;
-                    if (icon) icon.textContent = '🔄';
-                    if (label) label.textContent = 'Réessayer l\'envoi';
+                    if (icon) icon.textContent = '­ƒöä';
+                    if (label) label.textContent = 'R├®essayer l\'envoi';
                 }
             } catch (e) {
-                // Réseau coupé pendant l'envoi
+                // R├®seau coup├® pendant l'envoi
                 try {
                     await sauvegarderEnFile({
                         intervention_id: interventionId,
@@ -2184,19 +2181,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         client_email: clientEmail,
                         csrf_token: csrfToken,
                     });
-                    afficherToast('📶 Connexion perdue – email mis en file d\'attente. Il sera envoyé à la reconnexion.', 'warning');
+                    afficherToast('­ƒô Connexion perdue ÔÇô email mis en file d\'attente. Il sera envoy├® ├á la reconnexion.', 'warning');
                 } catch (qe) {
-                    afficherToast('❌ Erreur réseau et impossible de mettre en file : ' + e.message, 'error');
+                    afficherToast('ÔØî Erreur r├®seau et impossible de mettre en file : ' + e.message, 'error');
                 }
                 if (btn) btn.disabled = false;
-                if (icon) icon.textContent = '🔄';
-                if (label) label.textContent = 'Réessayer l\'envoi';
+                if (icon) icon.textContent = '­ƒöä';
+                if (label) label.textContent = 'R├®essayer l\'envoi';
             }
         }
 
-        // -------------------------------------------------------------------------
-        // GÉNÉRATION MASSIVE IA (Toutes les fiches)
-        // -------------------------------------------------------------------------
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+        // G├ëN├ëRATION MASSIVE IA (Toutes les fiches)
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         async function generateAllIA() {
             const btn = document.getElementById('btnGenerateAllIa');
             const progressZone = document.getElementById('ai-global-progress');
@@ -2205,11 +2202,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const progressPercent = document.getElementById('ai-progress-percent');
             
             if (!containerSuccessBanner()) {
-                if (!confirm("Cette opération va analyser toutes les machines de l'intervention. Les fiches déjà modifiées manuellement seront ignorées. Continuer ?")) return;
+                if (!confirm("Cette op├®ration va analyser toutes les machines de l'intervention. Les fiches d├®j├á modifi├®es manuellement seront ignor├®es. Continuer ?")) return;
             }
 
             btn.disabled = true;
-            btn.innerHTML = '<span>⚙️</span> Analyse en cours...';
+            btn.innerHTML = '<span>ÔÜÖ´©Å</span> Analyse en cours...';
             progressZone.style.display = 'block';
 
             const machines = window.LM_RAPPORT.machinesData;
@@ -2225,12 +2222,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 progressText.textContent = `Analyse de : ${m.designation}...`;
 
                 try {
-                    // On considère qu'une fiche est déjà remplie si Dysfonctionnements OU Conclusion
-                    // contiennent du texte autre que les valeurs par défaut.
+                    // On consid├¿re qu'une fiche est d├®j├á remplie si Dysfonctionnements OU Conclusion
+                    // contiennent du texte autre que les valeurs par d├®faut.
                     const dys = (m.dysfonctionnements || "").trim();
                     const conc = (m.conclusion || "").trim();
                     const isManual = (dys.length > 5 && !dys.includes("Aucun dysfonctionnement majeur")) 
-                                  || (conc.length > 5 && !conc.includes("conforme à nos standards"));
+                                  || (conc.length > 5 && !conc.includes("conforme ├á nos standards"));
 
                     if (isManual) {
                         skipCount++;
@@ -2260,10 +2257,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             progressBar.style.width = '100%';
             progressPercent.textContent = '100%';
-            progressText.textContent = 'Analyse terminée !';
+            progressText.textContent = 'Analyse termin├®e !';
             
             setTimeout(() => {
-                alert(`Analyse terminée !\n- ${successCount} fiches générées\n- ${skipCount} fiches ignorées (déjà remplies)\n\nLe rapport va être actualisé.`);
+                alert(`Analyse termin├®e !\n- ${successCount} fiches g├®n├®r├®es\n- ${skipCount} fiches ignor├®es (d├®j├á remplies)\n\nLe rapport va ├¬tre actualis├®.`);
                 location.reload();
             }, 500);
         }
