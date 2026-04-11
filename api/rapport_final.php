@@ -75,10 +75,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $contactTel = trim($_POST['contact_telephone'] ?? '');
             $nomSignataire = trim($_POST['nom_signataire'] ?? '');
 
-            if (empty($contactPrenom)) { $error = "Le prÃ©nom du contact est obligatoire."; }
+            if (empty($contactPrenom)) { $error = "Le prénom du contact est obligatoire."; }
             elseif (empty($contactNom)) { $error = "Le nom du contact est obligatoire."; }
-            elseif (strlen($contactPrenom) > 50) { $error = "Le prÃ©nom du contact ne doit pas dÃ©passer 50 caractÃ¨res."; }
-            elseif (strlen($contactNom) > 50) { $error = "Le nom du contact ne doit pas dÃ©passer 50 caractÃ¨res."; }
+            elseif (strlen($contactPrenom) > 50) { $error = "Le prénom du contact ne doit pas dépasser 50 caractères."; }
+            elseif (strlen($contactNom) > 50) { $error = "Le nom du contact ne doit pas dépasser 50 caractères."; }
             elseif (empty($nomSignataire)) { $error = "Le nom du signataire est obligatoire."; }
 
             if (isset($error)) { throw new Exception($error); }
@@ -145,17 +145,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// Récupération des infos du technicien (Signature + Noms)
-$stmtU = $db->prepare('SELECT signature_base64, nom, prenom FROM users WHERE id = ?');
-$stmtU->execute([$userId]);
-$user = $stmtU->fetch();
-// Priorité à la signature de l'intervention, sinon celle du profil
-$sigTechB64 = !empty($intervention['signature_technicien']) ? $intervention['signature_technicien'] : ($user['signature_base64'] ?? '');
-$techName = ($user['prenom'] ?? '') . ' ' . ($user['nom'] ?? '');
-
 $now = date('d/m/Y') . ' à ' . date('H:i');
 
-// --- CALCUL DES STATISTIQUES POUR LA SYNTHÃˆSE ---
+// --- CALCUL DES STATISTIQUES POUR LA SYNTHÈSE ---
 $totalOk = 0;
 $totalAmeliorer = 0;
 $totalNonConforme = 0;
@@ -170,7 +162,7 @@ foreach ($machines as &$m) {
     $donnees = json_decode($m['donnees_controle'] ?? '{}', true);
     $mesures = json_decode($m['mesures'] ?? '{}', true);
 
-    // DurÃ©e rÃ©alisÃ©e par machine
+    // Durée réalisée par machine
     $t = $mesures['temps_realise'] ?? '';
     if (preg_match('/(\d+)\s*h\s*(\d*)/i', $t, $mt)) {
         $totalMinutes += (int) $mt[1] * 60 + (int) ($mt[2] ?: 0);
@@ -189,7 +181,7 @@ foreach ($machines as &$m) {
         }
     }
 
-    // Ã‰tats de contrÃ´le
+    // États de contrôle
     $pointsCount = 0;
     foreach ($donnees as $k => $v) {
         if (
@@ -201,7 +193,7 @@ foreach ($machines as &$m) {
                 $pointsCount++;
                 if ($v === 'c' || $v === 'bon' || $v === 'OK')
                     $totalOk++;
-                elseif ($v === 'aa' || $v === 'r' || $v === 'A amÃ©liorer')
+                elseif ($v === 'aa' || $v === 'r' || $v === 'A améliorer')
                     $totalAmeliorer++;
                 elseif ($v === 'nc' || $v === 'hs' || $v === 'Non conforme')
                     $totalNonConforme++;
@@ -224,7 +216,7 @@ $h_synth = floor($totalMinutes / 60);
 $m_synth = $totalMinutes % 60;
 
 if ($totalMinutes == 0) {
-    $dureeSynth = "Non renseignÃ©";
+    $dureeSynth = "Non renseigné";
 } else {
     $dureeSynth = "";
     if ($h_synth > 0) {
@@ -545,18 +537,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 <body>
     <div id="pdfDownloadOverlay">
         <div class="loader-lenoir"></div>
-        <div class="download-status-text" id="pdfProgressText">GÃ©nÃ©ration de votre rapport premium</div>
-        
-        <!-- Bar de progression globale -->
-        <div style="width: 250px; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; margin-top: 20px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.2);">
-            <div id="pdfProgressBar" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.3s ease;"></div>
-        </div>
-        
-        <div id="pdfProgressDetail" style="color: var(--text-dim); font-size: 0.8rem; margin-top: 10px;">PrÃ©paration des donnÃ©es...</div>
+        <div class="download-status-text">Génération de votre rapport premium</div>
+        <div style="color: var(--text-dim); font-size: 0.9rem;">Veuillez patienter quelques instants...</div>
     </div>
-
-    <!-- L'interface IA est désormais intégrée dans le bloc orange plus bas -->
-
     <style>
         .mobile-header { display: flex !important; }
         .rapport-page { margin-top: calc(var(--mobile-header-height) + 1rem); }
@@ -614,7 +597,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
             <?php endif; ?>
 
-            <!-- DonnÃ©es PHP exposÃ©es pour le JS -->
+            <!-- Données PHP exposées pour le JS -->
             <script>
                 window.LM_RAPPORT = {
                     interventionId: <?= (int) $id ?>,
@@ -656,7 +639,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             'arc' => $intervention['numero_arc'],
                             'of' => $m['numero_of'] ?? '',
                             'designation' => $m['designation'] ?? '',
-                            'repere' => $mes['repere'] ?? 'â€”',
+                            'repere' => $mes['repere'] ?? '—',
                             'annee' => $m['annee_fabrication'] ?? '',
                             'points_count' => $m['points_count'] ?? 0,
                             'dysfonctionnements' => $m['dysfonctionnements'] ?? '',
@@ -684,22 +667,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <span>🚀</span> Lancer l'IA sur toutes les fiches
                     </button>
                 </div>
-                
-                <!-- Interface de progression intégrée -->
-                <div id="ai-global-progress" style="display:none; margin-bottom: 1.5rem; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px;">
-                    <div style="width:100%; height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden; margin-bottom:10px; border: 1px solid rgba(255,255,255,0.05);">
-                        <div id="ai-progress-bar" style="width:0%; height:100%; background:var(--primary); transition:width 0.3s; box-shadow: 0 0 10px var(--primary);"></div>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
-                        <span id="ai-progress-text" style="color:#fff; font-weight: 500;">Démarrage...</span>
-                        <span id="ai-progress-percent" style="color:var(--primary); font-weight:bold;">0%</span>
-                    </div>
-                </div>
-
-                <p style="font-size: 0.85rem; color: var(--text-dim); margin: 0;">
+                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">
                     Cette fonction analyse automatiquement chaque fiche pour générer les sections "Dysfonctionnements" et "Conclusions" en se basant sur vos relevés. 
                     <strong>Les fiches déjà modifiées manuellement ne seront pas écrasées sans confirmation.</strong>
                 </p>
+                <div id="ai-global-progress" style="display: none; margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 5px; color: var(--accent-cyan);">
+                        <span id="ai-progress-text">Traitement en cours...</span>
+                        <span id="ai-progress-percent">0%</span>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                        <div id="ai-progress-bar" style="width: 0%; height: 100%; background: var(--accent-cyan); transition: width 0.3s ease;"></div>
+                    </div>
+                </div>
             </div>
 
             <!-- EN-TÊTE -->
@@ -906,323 +886,1393 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         </form>
     </div>
 
-    <!-- Libs PDF -->
+    <!-- Libs PDF : jsPDF + html2canvas exposes comme globals -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- html2pdf.js pour génération PDF côté client -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     <script>
         let padClient, padTech;
 
-        window.LM_RAPPORT = {
-            interventionId: <?= json_encode($id) ?>,
-            pdfFilename: "Rapport_<?= addslashes($intervention['numero_arc']) ?>_<?= date('Y-m-d') ?>.pdf",
-            clientEmail: <?= json_encode($intervention['contact_email'] ?? '') ?>,
-            dateInt: <?= json_encode(date('d/m/Y', strtotime($intervention['date_intervention']))) ?>,
-            csrfToken: <?= json_encode(getCsrfToken()) ?>,
-            sigTech: <?= json_encode($sigTechB64 ?? '') ?>,
-            machinesIds: <?= json_encode(array_values(array_map(fn($m) => $m['id'], $machines))) ?>,
-            machinesData: <?= json_encode(array_values(array_map(fn($m) => ['id'=>$m['id'], 'designation'=>$m['designation']], $machines))) ?>,
-            info: {
-                client: <?= json_encode($intervention['nom_societe']) ?>,
-                numArc: <?= json_encode($intervention['numero_arc']) ?>,
-                ville: <?= json_encode($intervention['ville'] ?? '') ?>
-            },
-            legal: {
-                address: "RAOUL LENOIR - Zone Industrielle - 54400 LONGWY",
-                contact: "Tél: +33 (0)3 82 24 24 24 | Email: contact@raoul-lenoir.com",
-                siret: "SIRET: 123 456 789 00012 | TVA: FR 12 123456789"
+        function resizeCanvas(canvas, pad = null) {
+            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            const containerWidth = canvas.offsetWidth || canvas.parentElement.offsetWidth || 600;
+
+            canvas.width = containerWidth * ratio;
+            canvas.height = 200 * ratio;
+            canvas.style.height = '200px';
+
+            const context = canvas.getContext('2d');
+            context.scale(ratio, ratio);
+
+            if (pad) {
+                pad.clear(); // Réinitialise pour éviter les distorsions si on redimensionne
             }
-        };
+        }
 
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // 1. STYLE ADN VISUELL PDF (V4.2 STABLE)
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        const GLOBAL_PDF_STYLES = `
-            .pdf-page { width: 21cm; min-height: 29.7cm; padding: 1.5cm 1cm 1.5cm 1cm; background: white; color: black; font-family: Arial, sans-serif; font-size: 13px; position: relative; box-sizing: border-box; margin: 0; overflow: visible !important; }
-            .pdf-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #1e4e6d; padding-bottom: 15px; margin-bottom: 20px; }
-            .lenoir-title { font-size: 24px; font-weight: 900; color: #1e4e6d; margin: 0; text-transform: uppercase; }
-            .pdf-title-box { text-align: center; border: 2px solid #1e4e6d; padding: 10px; font-size: 20px; font-weight: bold; background: #f0f0f0; margin-bottom: 20px; color: #1e4e6d; }
-            .pdf-section-title { font-weight: bold; font-size: 16px; color: #d35400 !important; margin-bottom: 10px; border-bottom: 2px solid #d35400; padding-bottom: 5px; text-transform: uppercase; }
-            .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; color: black; font-size: 11px; table-layout: fixed; }
-            .pdf-table th, .pdf-table td { border: 1px solid #1e4e6d; padding: 4px 5px; vertical-align: middle; word-wrap: break-word; }
-            .section-header-row { height: 30px; background: #5b9bd5 !important; color: white !important; font-weight: bold; -webkit-print-color-adjust: exact; }
-            .pastille-group { display: flex; align-items: center; justify-content: space-around; width: 135px; margin: 0 auto; -webkit-print-color-adjust: exact; }
-            .pastille-group label { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; border: 1px solid #777; background: #eee; position: relative; -webkit-print-color-adjust: exact; }
-            .pastille-group label.selected.p-ok { background: #28a745 !important; }
-            .pastille-group label.selected.p-aa { background: #e67e22 !important; }
-            .pastille-group label.selected.p-nc { background: #dc3545 !important; }
-            .pastille-group label.selected.p-nr { background: #8b0000 !important; }
-            .pastille-group label.selected::after { content: "✓" !important; color: white !important; font-size: 14px; font-weight: bold; position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); }
-            .diagonal-header { height: 120px; vertical-align: bottom; padding: 0 !important; position: relative; background: #f8f9fa !important; border: 1px solid #1e4e6d !important; -webkit-print-color-adjust: exact; }
-            .diagonal-wrapper { display: flex; width: 100%; height: 100%; position: relative; }
-            .diag-col { flex: 1; height: 100%; position: relative; border-right: 1px solid #1e4e6d; }
-            .diag-col:last-child { border-right: none; }
-            .diag-col::before { content: ""; position: absolute; left: 100%; top: 0; bottom: 30px; width: 1px; background: #1e4e6d; transform: skewX(-32deg); transform-origin: bottom left; }
-            .diag-text { position: absolute; bottom: 35px; left: 105%; transform: rotate(-58deg); transform-origin: bottom left; font-size: 8px; font-weight: bold; white-space: nowrap; width: 150px; color: #1e4e6d; }
-            .pdf-footer { position: absolute; bottom: 1cm; left: 1cm; right: 1cm; text-align: center; font-size: 9px; font-weight: bold; border-top: 1px solid #1e4e6d; padding-top: 5px; color: #555; }
-            .no-print-pdf, .btn-ia-refresh, .top-bar, .photo-btn, .photo-thumbs, #btnChrono, .photo-del-overlay { display: none !important; }
-        `;
+        let canvasWidthT = 0;
+        let canvasWidthC = 0;
 
-        window.addEventListener('load', () => {
+        function initSignatures() {
             const canvasC = document.getElementById('canvasClient');
             const canvasT = document.getElementById('canvasTech');
-            
-            if (canvasC && canvasT && typeof SignaturePad !== 'undefined') {
-                const ratio = Math.max(window.devicePixelRatio || 1, 1);
-                
-                // Tech Pad
-                canvasT.width = canvasT.offsetWidth * ratio;
-                canvasT.height = (canvasT.offsetHeight || 200) * ratio;
-                canvasT.getContext("2d").scale(ratio, ratio);
-                padTech = new SignaturePad(canvasT, { penColor: 'rgb(0,0,0)', minWidth: 1.2, maxWidth: 3 });
-                
-                if (window.LM_RAPPORT && window.LM_RAPPORT.sigTech) {
-                    padTech.fromDataURL(window.LM_RAPPORT.sigTech);
-                }
 
-                // Client Pad
-                canvasC.width = canvasC.offsetWidth * ratio;
-                canvasC.height = (canvasC.offsetHeight || 200) * ratio;
-                canvasC.getContext("2d").scale(ratio, ratio);
-                padClient = new SignaturePad(canvasC, { penColor: 'rgb(0,0,255)', minWidth: 1.2, maxWidth: 3 });
+            if (!window.SignaturePad) {
+                console.error("SignaturePad library not loaded");
+                return;
+            }
+            if (!canvasC || !canvasT) return;
 
-                window.addEventListener('resize', () => {
-                    const dataC = padClient.toData();
-                    const dataT = padTech.toData();
-                    canvasC.width = canvasC.offsetWidth * ratio;
-                    canvasC.height = (canvasC.offsetHeight || 200) * ratio;
-                    canvasC.getContext("2d").scale(ratio, ratio);
-                    canvasT.width = canvasT.offsetWidth * ratio;
-                    canvasT.height = (canvasT.offsetHeight || 200) * ratio;
-                    canvasT.getContext("2d").scale(ratio, ratio);
-                    padClient.fromData(dataC);
-                    padTech.fromData(dataT);
-                });
+            const dpr = Math.max(window.devicePixelRatio || 1, 1);
+
+            // Tech Pad
+            resizeCanvas(canvasT);
+            canvasWidthT = canvasT.offsetWidth;
+            padTech = new SignaturePad(canvasT, {
+                penColor: 'black',
+                throttle: 16,
+                minWidth: 1.5,
+                maxWidth: 4.5
+            });
+            if (window.LM_RAPPORT && window.LM_RAPPORT.sigTech) {
+                try {
+                    padTech.fromDataURL(window.LM_RAPPORT.sigTech, { ratio: dpr, width: canvasT.width / dpr, height: canvasT.height / dpr });
+                } catch (e) { console.error("Error loading tech sig:", e); }
+            }
+
+            // Client Pad
+            resizeCanvas(canvasC);
+            canvasWidthC = canvasC.offsetWidth;
+            padClient = new SignaturePad(canvasC, {
+                penColor: 'blue',
+                throttle: 16,
+                minWidth: 1.5,
+                maxWidth: 4.5
+            });
+            if (window.LM_RAPPORT && window.LM_RAPPORT.sigClient) {
+                try {
+                    padClient.fromDataURL(window.LM_RAPPORT.sigClient, { ratio: dpr, width: canvasC.width / dpr, height: canvasC.height / dpr });
+                } catch (e) { console.error("Error loading client sig:", e); }
+            }
+        }
+
+
+
+        window.addEventListener('resize', () => {
+            const cT = document.getElementById('canvasTech');
+            const cC = document.getElementById('canvasClient');
+
+            // Only resize and clear if the actual container width changed (to avoid scroll-resize issues on mobile)
+            if (cT && padTech && cT.offsetWidth && cT.offsetWidth !== canvasWidthT) {
+                canvasWidthT = cT.offsetWidth;
+                resizeCanvas(cT, padTech);
+            }
+            if (cC && padClient && cC.offsetWidth && cC.offsetWidth !== canvasWidthC) {
+                canvasWidthC = cC.offsetWidth;
+                resizeCanvas(cC, padClient);
             }
         });
 
         function validateAndSubmit() {
-            if (!padTech || !padClient) {
-                alert("Erreur: Les zones de signature ne sont pas prêtes. Veuillez patienter ou rafraîchir.");
+            if (!padClient || !padTech) {
+                alert('Erreur: les zones de signature ne sont pas prêtes. Veuillez rafraîchir la page.');
                 return false;
             }
-            if (padTech.isEmpty() || padClient.isEmpty()) {
-                alert('Signatures obligatoires (Technicien + Client).');
+
+            // --- BUG-005, BUG-014, BUG-015: Contrôle de qualité des textes ---
+            const fieldsToCheck = [
+                { name: 'commentaire_technicien', label: 'Observations du technicien' },
+                { name: 'commentaire_client', label: 'Commentaire du client' },
+                { name: 'nom_signataire', label: 'Nom du signataire' }
+            ];
+            const testPatterns = [/test/i, /lorem/i, /(.)\1{4,}/];
+            const forbiddenWords = ['nul', 'rien', 'sans', 'na', 'n/a'];
+
+            for (let f of fieldsToCheck) {
+                const val = document.querySelector('[name="' + f.name + '"]')?.value || '';
+                if (val.length < 2 && val.length > 0) continue; // Skip very shorts handled elsewhere
+
+                let foundMatch = false;
+                for (let p of testPatterns) {
+                    if (p.test(val)) {
+                        foundMatch = true;
+                        break;
+                    }
+                }
+
+                if (!foundMatch && forbiddenWords.includes(val.toLowerCase().trim())) {
+                    foundMatch = true;
+                }
+
+                if (foundMatch) {
+                    if (!confirm("⚠️ Le champ '" + f.label + "' contient des données semblant être du test ou non-professionnelles (\"" + val.substring(0, 20) + "...\"). Voulez-vous vraiment continuer ?")) {
+                        return false;
+                    }
+                }
+            }
+
+            const nomSignataire = document.querySelector('[name="nom_signataire"]')?.value.trim() || '';
+            if (!nomSignataire) {
+                alert('Le nom du signataire est obligatoire.');
                 return false;
             }
-            const nomC = document.querySelector('[name="nom_signataire"]')?.value.trim();
-            if (!nomC) {
-                alert('Nom du signataire obligatoire.');
+
+            // --- BUG-008: Contrôle de complétude des fiches ---
+            const machinesData = window.LM_RAPPORT.machinesData;
+            for (let m of machinesData) {
+                if (m.points_count === 0) {
+                    alert('❌ Complétude insuffisante : La fiche machine "' + m.designation + '" est entièrement vide (0 point de contrôle rempli). Veuillez la compléter avant de finaliser.');
+                    return false;
+                }
+            }
+
+            const contactNom = document.getElementById('contact_nom')?.value.trim() || '';
+            if (!contactNom) {
+                alert('Le nom du contact est obligatoire.');
                 return false;
             }
+
+            if (padTech.isEmpty()) {
+                alert('Veuillez signer en tant que technicien.');
+                return false;
+            }
+            if (padClient.isEmpty()) {
+                alert('Veuillez faire signer le client.');
+                return false;
+            }
+
             document.getElementById('sigTechInput').value = padTech.toDataURL();
             document.getElementById('sigClientInput').value = padClient.toDataURL();
             return true;
         }
 
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // 3. MOTEUR PDF CHUNKED (V4.2)
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        async function ensureImagesBase64(container) {
-            const imgs = Array.from(container.querySelectorAll('img'));
-            for (const img of imgs) {
-                const src = img.getAttribute('src');
-                if (!src || src.startsWith('data:')) continue;
-                try {
-                    const abs = src.startsWith('/') ? window.location.origin + src : src;
-                    const b = await fetch(abs).then(r => r.blob());
-                    img.src = await new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsDataURL(b); });
-                } catch (e) {}
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- BUG-018: Exclusivité des checkboxes "Le client souhaite" ---
+            const chkUnique = document.querySelector('[name="souhait_rapport_unique"]');
+            const otherChks = document.querySelectorAll('[name="souhait_offre_pieces"], [name="souhait_pieces_intervention"], [name="souhait_aucune_offre"]');
+
+            if (chkUnique) {
+                chkUnique.addEventListener('change', function () {
+                    if (this.checked) {
+                        otherChks.forEach(c => c.checked = false);
+                    }
+                });
+                otherChks.forEach(c => {
+                    c.addEventListener('change', function () {
+                        if (this.checked) {
+                            chkUnique.checked = false;
+                        }
+                    });
+                });
             }
+
+            const contactNomInput = document.getElementById('contact_nom');
+            const warningEl = document.getElementById('contact_nom_warning');
+
+            if (contactNomInput) {
+                contactNomInput.addEventListener('input', function () {
+                    const val = this.value;
+                    // Detect more than 3 consecutive identical characters
+                    if (/(.)\1{3,}/.test(val)) {
+                        warningEl.style.display = 'block';
+                    } else {
+                        warningEl.style.display = 'none';
+                    }
+                });
+            }
+        });
+
+        // Initialize signatures when layout is completely established to avoid zero-width bugs
+        window.addEventListener('load', () => {
+            setTimeout(initSignatures, 100);
+        });
+
+
+        // ══════════════════════════════════════════════════════════════════
+        // CRÉATION DU CONTENEUR COMPLET POUR LE PDF (ASYNCHRONE)
+        // ══════════════════════════════════════════════════════════════════
+
+        // Helper : Attendre que toutes les images soient chargées
+        async function waitForImages(element) {
+            const images = element.querySelectorAll('img');
+            const promises = Array.from(images).map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise(resolve => {
+                    img.onload = resolve;
+                    img.onerror = resolve;
+                });
+            });
+            await Promise.all(promises);
+            return new Promise(r => setTimeout(r, 200));
         }
 
-        async function renderChunk(container) {
-            await ensureImagesBase64(container);
-            const style = document.createElement('style');
-            style.textContent = GLOBAL_PDF_STYLES;
-            container.appendChild(style);
-            
-            const opt = { 
-                margin: 0, 
-                image:{type:'jpeg',quality:0.98}, 
-                html2canvas:{scale:2,useCORS:true}, 
-                jsPDF:{unit:'mm',format:'a4',orientation:'portrait'} 
-            };
-            const pdfBlob = await html2pdf().set(opt).from(container).outputPdf('blob');
-            return new Uint8Array(await pdfBlob.arrayBuffer());
-        }
-
+        // helper: create footer
         function createPdfFooter() {
             const f = document.createElement('div');
-            f.className = 'pdf-footer';
             const leg = window.LM_RAPPORT.legal;
+            f.style.marginTop = '30px';
+            f.style.width = '100%';
+            f.style.textAlign = 'center';
+            f.style.fontSize = '9px';
+            f.style.fontWeight = 'bold';
+            f.style.borderTop = '2px solid #000';
+            f.style.paddingTop = '5px';
+            f.style.paddingBottom = '5px';
+            f.style.pageBreakInside = 'avoid';
             f.innerHTML = `${leg.address}<br>${leg.contact}<br>${leg.siret}`;
             return f;
         }
 
-        async function genererPDFBlob() {
-            const overlay = document.getElementById('pdfDownloadOverlay');
-            const progressBar = document.getElementById('pdfProgressBar');
-            const progressText = document.getElementById('pdfProgressDetail');
-            
-            overlay.style.display = 'flex';
-            const pdfChunks = [];
-            
-            try {
-                // CHUNK 1: COUVERTURE
-                progressText.textContent = "Couverture...";
-                progressBar.style.width = "10%";
-                const coverPage = document.createElement('div');
-                coverPage.style.width = '21cm';
-                const i = window.LM_RAPPORT.info;
-                coverPage.innerHTML = `
-                    <div class="pdf-page">
-                        <div class="pdf-header"><h1 class="lenoir-title">RAOUL LENOIR</h1><img src="/assets/lenoir_logo_doc.png" style="height:60px;"></div>
-                        <div class="pdf-title-box">RAPPORT D'EXPERTISE TECHNIQUE</div>
-                        <div class="section-wrapper-pdf">
-                            <h2 class="pdf-section-title">CLIENT : ${i.client}</h2>
-                            <p><strong>N° ARC : ${i.numArc}</strong></p>
-                            <p>Expertise à : ${i.ville}</p>
-                            <p>Date : ${window.LM_RAPPORT.dateInt}</p>
-                        </div>
-                        <div style="text-align:center; margin-top:100px; opacity:0.1;"><img src="/assets/lenoir_logo_doc.png" style="width:40%;"></div>
-                    </div>
-                `;
-                coverPage.querySelector('.pdf-page').appendChild(createPdfFooter());
-                pdfChunks.push(await renderChunk(coverPage));
-
-                // 4. LES FICHES (En morceaux)
-                const ids = window.LM_RAPPORT.machinesIds || [];
-                for (let idx=0; idx<ids.length; idx++) {
-                    progressBar.style.width = (10 + Math.round((idx/ids.length)*80)) + "%";
-                    progressText.textContent = `Machine ${idx+1}/${ids.length}...`;
-                    
-                    const res = await fetch(`machine_edit.php?id=${ids[idx]}&pdf=1`);
-                    const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
-                    const mCont = document.createElement('div');
-                    mCont.style.width = '21cm';
-                    
-                    doc.querySelectorAll('.pdf-page').forEach((p, pIdx) => {
-                        p.className = 'pdf-page';
-                        p.style.margin = '0';
-                        p.querySelectorAll('.no-print-pdf, .top-bar, .photo-btn, .photo-thumbs, #btnChrono, .btn-ia-refresh, .photo-del-overlay').forEach(el => el.remove());
-                        if (pIdx===0) {
-                            const h = document.createElement('div');
-                            h.style = "text-align:right; font-weight:bold; color:#1e4e6d; margin-bottom:10px;";
-                            h.textContent = `FICHE ${idx + 1} / ${ids.length}`;
-                            p.insertBefore(h, p.firstChild);
-                        }
-                        p.querySelectorAll('input[type="radio"]:checked').forEach(r => r.closest('label')?.classList.add('selected'));
-                        p.appendChild(createPdfFooter());
-                        mCont.appendChild(p);
-                    });
-                    pdfChunks.push(await renderChunk(mCont));
-                }
-
-                // CHUNK FINAL: SIGNATURES
-                progressText.textContent = "Finalisation...";
-                const endPage = document.createElement('div');
-                endPage.style.width = '21cm';
-                const sigT = padTech.toDataURL();
-                const sigC = padClient.toDataURL();
-                const nomC = document.querySelector('[name="nom_signataire"]')?.value || '_____';
-                endPage.innerHTML = `
-                    <div class="pdf-page">
-                        <div class="pdf-section-title">CONCLUSIONS & SIGNATURES</div>
-                        <table class="pdf-table" style="height:250px;">
-                            <tr>
-                                <td style="width:50%; vertical-align:top;"><strong>TECHNICIEN :</strong><br><img src="${sigT}" style="max-height:100px; display:block; margin:20px auto;"></td>
-                                <td style="width:50%; vertical-align:top;"><strong>CLIENT (${nomC}) :</strong><br><img src="${sigC}" style="max-height:100px; display:block; margin:20px auto;"></td>
-                            </tr>
-                        </table>
-                        <div style="text-align:center; margin-top:50px;"><img src="/assets/qr_lenoir.png" style="width:100px;"><br><strong>www.raoul-lenoir.com</strong></div>
-                    </div>
-                `;
-                endPage.querySelector('.pdf-page').appendChild(createPdfFooter());
-                pdfChunks.push(await renderChunk(endPage));
-
-                // ASSEMBLAGE
-                progressText.textContent = "Fusion...";
-                const merged = await PDFLib.PDFDocument.create();
-                for (const bytes of pdfChunks) {
-                    const doc = await PDFLib.PDFDocument.load(bytes);
-                    const copied = await merged.copyPages(doc, doc.getPageIndices());
-                    copied.forEach(p => merged.addPage(p));
-                }
-                return await merged.save();
-                
-            } finally { overlay.style.display = 'none'; }
-        }
-
-        async function telechargerPDF() {
-            const btn = document.getElementById('btnDownloadPDF');
-            if (btn) btn.disabled = true;
-            try {
-                const bytes = await genererPDFBlob();
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(new Blob([bytes], {type:'application/pdf'}));
-                link.download = window.LM_RAPPORT.pdfFilename || 'rapport.pdf';
-                link.click();
-            } catch (e) { alert("Erreur : " + e.message); }
-            finally { if (btn) btn.disabled = false; }
-        }
-
-        async function genererPDFBase64() {
-            const bytes = await genererPDFBlob();
-            return btoa(String.fromCharCode(...bytes));
-        }
-
-        async function lancerEnvoiEmail() {
-            const btn = document.getElementById('btnSendEmail');
-            if(btn) btn.disabled = true;
-            try {
-                const b64 = await genererPDFBase64();
-                const fd = new FormData();
-                fd.append('intervention_id', window.LM_RAPPORT.interventionId);
-                fd.append('pdf_data', b64);
-                fd.append('client_email', window.LM_RAPPORT.clientEmail);
-                fd.append('csrf_token', window.LM_RAPPORT.csrfToken);
-                const r = await fetch('/envoyer_rapport.php', { method:'POST', body:fd }).then(res => res.json());
-                const toast = document.getElementById('emailToast');
-                toast.textContent = r.success ? '✅ Envoyé !' : '❌ Erreur : ' + r.message;
-                toast.style.background = r.success ? '#10b981' : '#f43f5e';
-                toast.style.display = 'block';
-                setTimeout(() => toast.style.display = 'none', 5000);
-            } catch(e) { alert("Erreur Envoi : " + e.message); }
-            finally { if(btn) btn.disabled = false; }
-        }
-
-        async function generateAllIA() {
-            if(!confirm("Lancer l'IA sur toutes les fiches ?")) return;
-            const progress = document.getElementById('ai-global-progress');
-            const pBar = document.getElementById('ai-progress-bar');
-            const pText = document.getElementById('ai-progress-text');
-            const pPercent = document.getElementById('ai-progress-percent');
-            
-            progress.style.display = 'block';
-            const m = window.LM_RAPPORT.machinesData;
-            for(let i=0; i<m.length; i++) {
-                let percent = Math.round((i/m.length)*100);
-                pBar.style.width = percent + '%';
-                pPercent.innerText = percent + '%';
-                pText.innerText = `Analyse de : ${m[i].designation}...`;
+        async function ensureImagesBase64(container) {
+            const imgs = Array.from(container.querySelectorAll('img'));
+            const promises = imgs.map(async img => {
+                const src = img.src || img.getAttribute('src');
+                if (!src || src.startsWith('data:')) return;
                 
                 try {
-                    const r = await fetch(`generate_ia.php?machine_id=${m[i].id}&intervention_id=${window.LM_RAPPORT.interventionId}`).then(res => res.json());
-                    if(r.success) {
-                        await fetch('save_ia.php', {
-                            method:'POST',
-                            headers:{'Content-Type':'application/x-www-form-urlencoded'},
-                            body:`machine_id=${m[i].id}&intervention_id=${window.LM_RAPPORT.interventionId}&dysfonctionnements=${encodeURIComponent(r.dysfonctionnements)}&conclusion=${encodeURIComponent(r.conclusion)}&csrf_token=${window.LM_RAPPORT.csrfToken}`
-                        });
+                    // Prepend origin if relative
+                    let absoluteUrl = src;
+                    if (src.startsWith('/') && !src.startsWith('//')) {
+                        absoluteUrl = window.location.origin + src;
                     }
-                } catch(e){}
+                    
+                    const resp = await fetch(absoluteUrl);
+                    if (!resp.ok) throw new Error('Fetch failed');
+                    const blob = await resp.blob();
+                    
+                    return new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            img.src = reader.result;
+                            resolve();
+                        };
+                        reader.onerror = resolve;
+                        reader.readAsDataURL(blob);
+                    });
+                } catch (e) {
+                    console.error('Failed to b64 image: ' + src, e);
+                }
+            });
+            await Promise.all(promises);
+        }
+
+        async function buildFullPdfContainer() {
+            const container = document.createElement('div');
+            container.id = 'pdf-full-wrapper';
+            container.style.width = '210mm';
+            container.style.backgroundColor = 'white';
+            container.style.color = 'black';
+
+            // --- 0. STYLES SPÉCIFIQUES ---
+            const styleNode = document.createElement('style');
+            styleNode.textContent = `
+                .pdf-page {
+                    width: 21cm;
+                    min-height: 100px;
+                    background: white;
+                    color: black;
+                    padding: 0 15mm;
+                    box-sizing: border-box;
+                    margin: 0;
+                    font-family: Arial, sans-serif;
+                    font-size: 13px;
+                    position: relative;
+                }
+                .pdf-section-title {
+                    text-align: left !important;
+                    color: #d35400 !important;
+                    font-size: 16px !important;
+                    margin-bottom: 20px !important;
+                    border-bottom: 2px solid #d35400 !important;
+                    padding-bottom: 5px !important;
+                    text-transform: uppercase !important;
+                    font-weight: bold !important;
+                    page-break-after: avoid !important;
+                }
+                .section-wrapper-pdf {
+                    page-break-inside: avoid !important;
+                    break-inside: avoid !important;
+                    margin-top: 25px !important;
+                    margin-bottom: 25px !important;
+                    display: block !important;
+                    width: 100% !important;
+                }
+                .html2pdf__page-break {
+                    height: 1px;
+                    width: 100%;
+                    overflow: hidden;
+                    page-break-before: always !important;
+                    break-before: page !important;
+                    display: block;
+                    clear: both;
+                }
+                .pdf-table-container, .card, .sig-zone, .photo-annexe-item {
+                    page-break-inside: avoid !important;
+                }
+                .pdf-table, table.controles { 
+                    page-break-inside: auto !important; 
+                }
+                .pdf-table tr, table.controles tr { 
+                    page-break-inside: avoid !important; 
+                    page-break-after: auto !important;
+                }
+                .pdf-section {
+                    margin-bottom: 15px;
+                }
+                .pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; color: black; font-size: 11px; table-layout: fixed; }
+                .pdf-table th, .pdf-table td { border: 1px solid #000; padding: 4px; vertical-align: middle; word-wrap: break-word; word-break: break-word; }
+                .pdf-table thead th { border-top: 1px solid #000 !important; }
+                .pdf-table th { background-color: #f0f0f0; text-align: left; text-transform: uppercase; }
+                
+                .pdf-table .col-comment, .pdf-table td:last-child {
+                    max-width: 65mm;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                
+                .pastille-group { display: flex; gap: 4px; align-items: center; justify-content: center; width: 100%; height: 100%; box-sizing: border-box; }
+                .pastille-group input[type="radio"] { display: none !important; }
+                .pastille-group label {
+                    display: inline-block;
+                    width: 18px; height: 18px; border-radius: 50%;
+                    border: 1px solid #777 !important; background: #eee !important;
+                    position: relative; cursor: default;
+                    box-sizing: border-box;
+                }
+                /* Gommettes couleurs pleines */
+                .pastille-group label.p-ok { background-color: #d1d1d1 !important; }
+                .pastille-group label.p-aa { background-color: #d1d1d1 !important; }
+                .pastille-group label.p-nc { background-color: #d1d1d1 !important; }
+                .pastille-group label.p-nr { background-color: #d1d1d1 !important; }
+                .pastille-group label.p-na { background-color: #d1d1d1 !important; }
+
+                /* État sélectionné : On retrouve les vraies couleurs du SaaS */
+                .pastille-group label.selected.p-ok { background-color: #28a745 !important; border-color: #1e7e34 !important; }
+                .pastille-group label.selected.p-aa { background-color: #f39c12 !important; border-color: #d35400 !important; }
+                .pastille-group label.selected.p-nc { background-color: #dc3545 !important; border-color: #bd2130 !important; }
+                .pastille-group label.selected.p-nr { background-color: #8b0000 !important; border-color: #5a0000 !important; }
+                .pastille-group label.selected.p-na { background-color: #95a5a6 !important; border-color: #7f8c8d !important; }
+
+                /* Le point blanc central pour simuler le bouton radio premium */
+                .pastille-group label.selected::after {
+                    content: "";
+                    position: absolute;
+                    top: 50%; left: 50%;
+                    width: 6px; height: 6px;
+                    background: white;
+                    border-radius: 50%;
+                    transform: translate(-50%, -50%);
+                }
+
+                /* === DIAGONAL HEADERS CSS === */
+                .diagonal-header {
+                    height: 120px;
+                    vertical-align: bottom;
+                    padding: 0 !important;
+                    position: relative;
+                    background: #e0e0e0 !important;
+                    overflow: visible;
+                    border: 1px solid #000 !important;
+                    border-right: none !important;
+                }
+                .diagonal-header + th {
+                    border-left: none !important;
+                }
+                .diagonal-wrapper {
+                    display: flex;
+                    width: 140px;
+                    height: 100%;
+                    align-items: stretch;
+                    margin: 0 auto;
+                    border: none !important;
+                    position: relative;
+                }
+                /* La barre verticale courte à droite de la zone grise */
+                .diagonal-wrapper::after {
+                    content: "";
+                    position: absolute;
+                    right: 0;
+                    bottom: 0;
+                    width: 1px;
+                    height: 30px;
+                    background: #000;
+                    z-index: 5;
+                }
+                .machine-icon {
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: transparent;
+                    border-radius: 8px;
+                    flex-shrink: 0;
+                }
+                .diag-col {
+                    width: 28px;
+                    height: 100%;
+                    position: relative;
+                    flex-shrink: 0;
+                }
+                .diag-col.col-3 { width: 46.6px; }
+                .diag-col::after {
+                    content: "";
+                    position: absolute;
+                    left: 100%;
+                    bottom: 0;
+                    width: 1px;
+                    height: 30px;
+                    background: #000;
+                    z-index: 2;
+                }
+                .diag-col::before {
+                    content: "";
+                    position: absolute;
+                    left: 100%;
+                    top: 0;
+                    bottom: 30px;
+                    width: 1px;
+                    background: #000;
+                    transform: skewX(-35deg);
+                    transform-origin: bottom left;
+                }
+                .diag-text {
+                    position: absolute;
+                    bottom: 35px;
+                    left: 100%;
+                    padding-left: 5px;
+                    transform: rotate(-55deg);
+                    transform-origin: bottom left;
+                    text-align: left;
+                    white-space: nowrap;
+                    font-size: 8px;
+                    font-weight: bold;
+                    color: #000;
+                    width: 200px;
+                    line-height: 1.1;
+                }
+
+                .pdf-input { border: none; border-bottom: 1px dashed #000; background: transparent; font-size: 13px; font-family: Arial; padding: 2px; width: 100%; color: black; outline:none; }
+                .pdf-textarea-rendered { 
+                    width: 100%; font-family: Arial; font-size: 9pt; color: black; white-space: pre-wrap; word-wrap: break-word; padding:4px; box-sizing: border-box;
+                }
+                .no-print-pdf, .btn-ia-refresh, .top-bar, .photo-btn, .photo-thumbs, #btnChrono { display: none !important; }
+                
+                .photo-annexe-item { text-align: center; max-width: 200px; margin-bottom: 10px; }
+                .photo-annexe-item img { width: 180px; height: 135px; object-fit: cover; border: 1px solid #000; }
+                .photo-annexe-item p { font-size: 8pt; margin: 3px 0 0 0; color: #000; line-height: 1.2; }
+
+                img { max-width: 100%; }
+                .levage-diagram-container { page-break-inside: avoid !important; break-inside: avoid !important; }
+            `;
+            container.appendChild(styleNode);
+
+            // Fetch data from form for Page 1
+            const numArc = window.LM_RAPPORT.arc;
+            const nomSociete = document.querySelector('[name="nom_societe_display"]')?.value || window.LM_RAPPORT.nomSociete;
+            const adresse = document.querySelector('[name="adresse"]')?.value || '';
+            const cp = document.querySelector('[name="code_postal"]')?.value || '';
+            const ville = document.querySelector('[name="ville"]')?.value || '';
+            const pays = document.querySelector('[name="pays"]')?.value || '';
+
+            const contactPrenom = document.querySelector('[name="contact_prenom"]')?.value || '';
+            const contactNom = document.querySelector('[name="contact_nom"]')?.value || '';
+            const contactFonction = document.querySelector('[name="contact_fonction"]')?.value || '';
+            const contactTel = document.querySelector('[name="contact_telephone"]')?.value || '';
+            const contactEmail = document.querySelector('[name="contact_email"]')?.value || '';
+
+            const nomSignataire = document.querySelector('[name="nom_signataire"]')?.value || '_____';
+
+            const commentaire = document.querySelector('[name="commentaire_technicien"]')?.value || '';
+
+            const techName = "<?= htmlspecialchars($techName) ?>";
+            const dateExp = window.LM_RAPPORT.dateInt;
+            const sigTechData = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
+            const sigClientData = window.LM_RAPPORT.sigClient || document.getElementById('canvasClient')?.toDataURL() || '';
+
+            // Generate HTML lines for machines
+            const machinesTrs = window.LM_RAPPORT.machinesData.map(m => `
+                <tr style="border-bottom:1px solid #000;">
+                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.arc || '—'}</td>
+                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.of || '—'}</td>
+                    <td style="padding:6px; border-right:1px solid #000;">${m.designation || '—'}</td>
+                    <td style="padding:6px; text-align:center;">${m.annee || '—'}</td>
+                </tr>
+            `).join('');
+
+            // --- 1. PAGE RAPPORT FINAL (COUVERTURE + INFOS) ---
+            const rapportCloneWrapper = document.createElement('div');
+            rapportCloneWrapper.className = 'pdf-page';
+            // Layout exact as requested
+            rapportCloneWrapper.innerHTML = `
+                <!-- HEADER (Logo, Slogan) -->
+                <table style="width:100%; border:none; margin-bottom:15px; border-bottom: 2px solid #1e4e6d;">
+                    <tr>
+                        <td style="width: 40%; vertical-align: bottom; padding-bottom: 10px;">
+                            <img src="/assets/lenoir_logo_doc.png" style="height:60px;">
+                        </td>
+                        <td style="width: 60%; vertical-align: bottom; text-align: right; padding-bottom: 5px;">
+                            <div style="font-size: 11px; font-weight: normal; color: #1e4e6d; font-style: italic;">
+                                Le spécialiste des applications magnétiques pour la séparation et le levage industriel
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <div style="text-align: right; color: #555; font-weight: bold; font-size: 11px; margin-top: 5px; margin-bottom: 15px;">RAPPORT D'EXPERTISE</div>
+
+                <!-- GRAND CADRE BLEU -->
+                <div style="border: 3px solid #1e4e6d; padding: 15px; margin-bottom: 30px;">
+                    <h1 style="text-align: center; color: #1e4e6d; font-size: 26px; font-weight: bold; margin: 10px 0 20px 0;">RAPPORT DE L'EXPERTISE</h1>
+                    <div style="text-align: right; font-weight: bold; font-size: 14px; color: black; margin-bottom: 15px;">N°ARC : ${numArc}</div>
+
+                    <!-- TABLEAU CLIENT -->
+                    <table style="width:100%; border-collapse:collapse; border: 2px solid #1e4e6d; margin-bottom:20px; font-size:12px; font-family: Arial, sans-serif;">
+                        <tr>
+                            <td colspan="4" style="background-color: #5b9bd5; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 6px; border: 1px solid #000;">
+                                COORDONNEES DU CLIENT
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 50%;">SOCIETE</td>
+                            <td colspan="2" style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 50%;">CONTACT SUR SITE</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000; width: 15%;">Nom</td>
+                            <td style="padding: 6px; border: 1px solid #000; width: 35%;">${nomSociete || '_____'}</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000; width: 15%;">Nom</td>
+                            <td style="padding: 6px; border: 1px solid #000; width: 35%;">${contactNom || '_____'}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Adresse</td>
+                            <td style="padding: 6px; border: 1px solid #000;">${adresse || '_____'}</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Prénom</td>
+                            <td style="padding: 6px; border: 1px solid #000;">${contactPrenom || '_____'}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">CP</td>
+                            <td style="padding: 6px; border: 1px solid #000;">${cp || '_____'}</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Fonction</td>
+                            <td style="padding: 6px; border: 1px solid #000;">${contactFonction || '_____'}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Ville</td>
+                            <td style="padding: 6px; border: 1px solid #000;">${ville || '_____'}</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Téléphone</td>
+                            <td style="padding: 6px; border: 1px solid #000;">${contactTel || '_____'}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Pays</td>
+                            <td style="padding: 6px; border: 1px solid #000;">${pays || 'France'}</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Courriel</td>
+                            <td style="padding: 6px; border: 1px solid #000; color: blue; text-decoration: underline;">${contactEmail || '_____'}</td>
+                        </tr>
+                    </table>
+
+                    <!-- TABLEAU PARC MACHINE -->
+                    <table style="width:100%; border-collapse:collapse; border: 2px solid #1e4e6d; font-size:12px; font-family: Arial, sans-serif;">
+                        <tr>
+                            <td colspan="5" style="background-color: #5b9bd5; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 6px; border: 1px solid #000;">
+                                PARC MACHINE
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 8%;">Poste</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 25%;">N° A.R.C (N° de série)</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 45%;">Désignation du Produit</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 12%;">Repère</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 10%;">Année</td>
+                        </tr>
+                        ${window.LM_RAPPORT.machinesData.map((m, idx) => `
+                            <tr>
+                                <td style="text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000;">${m.poste || (idx + 1)}</td>
+                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.arc || '—'} ${m.of ? ' - ' + m.of : ''}</td>
+                                <td style="padding: 6px; border: 1px solid #000;">${m.designation || '—'}</td>
+                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.repere || '—'}</td>
+                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.annee || '—'}</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+                </div>
+
+                <!-- SIGNATURES (Hors du cadre orange) -->
+                <table style="width:100%; border-collapse:collapse; border: 2px solid #1e4e6d; font-size:13px; font-family: Arial, sans-serif;">
+                    <tr>
+                        <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #1e4e6d; width: 25%;">Technicien sur Site :</td>
+                        <td style="padding: 15px 10px; border: 1px solid #1e4e6d; width: 30%;">${techName}</td>
+                        <td rowspan="2" style="padding: 5px; border: 1px solid #1e4e6d; width: 45%; text-align: center; vertical-align: middle;">
+                            <img src="${sigTechData}" style="max-height:80px; max-width:100%;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #1e4e6d;">Date d'expertise :</td>
+                        <td style="padding: 15px 10px; border: 1px solid #1e4e6d;">${dateExp}</td>
+                    </tr>
+                </table>
+            `;
+            rapportCloneWrapper.appendChild(createPdfFooter());
+            container.appendChild(rapportCloneWrapper);
+
+            // --- 1.2 PAGE SYNTHÈSE + PRÉAMBULE (FUSIONNÉS POUR ÉCONOMISER DES PAGES) ---
+            const synthPreambulePage = document.createElement('div');
+            synthPreambulePage.className = 'pdf-page';
+            synthPreambulePage.style.margin = '0';
+            synthPreambulePage.style.boxShadow = 'none';
+            synthPreambulePage.style.pageBreakBefore = 'always';
+            synthPreambulePage.style.paddingTop = '15mm';
+            const s = window.LM_RAPPORT.synth;
+
+            // Calcul mois prochain pour le préambule
+            let moisProchainText = "";
+            let villePreambule = ville || "[VILLE DU CLIENT]";
+            if (dateExp && dateExp.includes('/')) {
+                const parts = dateExp.split('/');
+                if (parts.length === 3) {
+                    const mIndex = parseInt(parts[1], 10) - 1;
+                    const y = parseInt(parts[2], 10) + 1;
+                    const moisNoms = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+                    if (mIndex >= 0 && mIndex < 12) {
+                        moisProchainText = moisNoms[mIndex] + ' ' + y;
+                    }
+                }
             }
-            pBar.style.width = '100%';
-            pPercent.innerText = '100%';
-            pText.innerText = 'Analyse terminée !';
-            setTimeout(() => { location.reload(); }, 1500);
+            if (!moisProchainText) moisProchainText = "[MOIS PROCHAIN]";
+
+            synthPreambulePage.innerHTML = `
+                <div style="padding-top: 10px;">
+                    <div style="padding: 20px; color: #000; background: #fff; margin-bottom: 30px; page-break-inside: avoid;">
+                        <h2 style="font-weight: bold; font-size: 18px; color: #1e4e6d; margin: 0 0 25px 0; padding-bottom: 5px; border-bottom: 2px solid #1e4e6d; text-transform: uppercase; width: 100%;">SYNTHÈSE DE L'INTERVENTION</h2>
+                        
+                        <div style="margin-bottom: 15px; font-size: 13px; line-height: 1.6;">
+                            <div><strong>Technicien :</strong> ${s.tech}</div>
+                            <div><strong>Date :</strong> ${s.date}</div>
+                            <div><strong>Durée totale :</strong> ${s.duree}</div>
+                            <div><strong>Équipements contrôlés :</strong> ${s.nbMachines}</div>
+                        </div>
+
+                        <div style="margin: 20px 0; font-size: 13px;">
+                            <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                <span style="display: inline-block; width: 12px; height: 12px; background: #28a745; margin-right: 10px;"></span>
+                                <strong>${s.ok} points conformes</strong>
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                <span style="display: inline-block; width: 12px; height: 12px; background: #1e4e6d; margin-right: 10px;"></span>
+                                <strong>${s.aa} points à améliorer</strong>
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                <span style="display: inline-block; width: 12px; height: 12px; background: #dc3545; margin-right: 10px;"></span>
+                                <strong>${s.nc} point${s.nc > 1 ? 's' : ''} non conforme${s.nc > 1 ? 's' : ''}</strong>
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                                <span style="display: inline-block; width: 12px; height: 12px; background: #8b0000; margin-right: 10px;"></span>
+                                <strong>${s.nr} remplacement${s.nr > 1 ? 's' : ''} nécessaire${s.nr > 1 ? 's' : ''}</strong>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 25px; text-align: center;">
+                            <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px; text-transform: uppercase;">SCORE DE CONFORMITÉ : ${s.score}%</div>
+                            ${s.nbMachinesEmpty > 0 ? `<div style="font-size: 11px; color: #dc3545; font-weight: bold; margin-bottom: 8px;">⚠️ ${s.nbMachinesEmpty} fiche(s) non remplie(s) — score calculé sur ${s.nbMachinesFilled}/${s.nbMachinesFilled + s.nbMachinesEmpty} fiches uniquement</div>` : ''}
+                            <div style="width: 100%; height: 20px; background: #e2e8f0; border: 1px solid #000; position: relative; overflow: hidden; border-radius: 4px;">
+                                <div style="width: ${s.score}%; height: 100%; background: ${s.score < 33 ? '#dc3545' : (s.score < 66 ? '#f59e0b' : '#22c55e')}; transition: width 0.5s;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 13px; line-height: 1.5; color: black; font-family: Arial, sans-serif; page-break-inside: avoid;">
+                        <h2 style="color: #1e4e6d; font-size: 16px; text-transform: uppercase; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px;">PRÉAMBULE :</h2>
+                        
+                        <p style="margin-bottom: 12px;">
+                            Ce rapport est établi suite à une expertise effectuée le ${dateExp} sur votre site de ${villePreambule}.
+                        </p>
+                        
+                        <p style="margin-bottom: 12px;">
+                            Nos expertises permettent de vous accompagner dans votre démarche ISO 22000 :2005 et HACCP. Notre analyse est suivie de conclusions ou recommandations que nous vous invitons à suivre pour la pérennité et la qualité de votre production.
+                        </p>
+                        
+                        <p style="margin-bottom: 12px;">
+                            Dans le cadre de notre prestation annuelle, la prochaine expertise aura lieu en ${moisProchainText}. Nous vous contacterons pour établir une date appropriée à vos impératifs de production.
+                        </p>
+                    </div>
+                </div>
+            `;
+            synthPreambulePage.appendChild(createPdfFooter());
+            container.appendChild(synthPreambulePage);
+
+            // --- 2. FETCH & APPEND MACHINES ---
+            if (window.LM_RAPPORT && window.LM_RAPPORT.machinesIds) {
+                let reportMachineIds = [...window.LM_RAPPORT.machinesIds];
+                const emptyOption = 'include';
+                const emptyIds = window.LM_RAPPORT.emptyMachinesIds || [];
+
+                // Si option = 'exclude', on retire carrément les machines vides de la boucle !
+                if (emptyOption === 'exclude' && emptyIds.length > 0) {
+                    reportMachineIds = reportMachineIds.filter(id => !emptyIds.includes(parseInt(id, 10)) && !emptyIds.includes(String(id)));
+                }
+
+                const totalMachines = reportMachineIds.length;
+                for (let mIdx = 0; mIdx < totalMachines; mIdx++) {
+                    const mId = reportMachineIds[mIdx];
+
+                    // Si on a gardé la machine mais qu'elle est vide et qu'on voulait 'condensed'
+                    if (emptyOption === 'condensed' && (emptyIds.includes(parseInt(mId, 10)) || emptyIds.includes(String(mId)))) {
+                        const mData = window.LM_RAPPORT.machinesData.find(m => parseInt(m.id, 10) === parseInt(mId, 10)) || {};
+                        const mDesignation = mData.designation || 'Équipement';
+                        const mArc = mData.arc || numArc;
+
+                        const p = document.createElement('div');
+                        p.className = 'pdf-page';
+                        p.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 3px solid #5B9BD5; padding-bottom: 5px;">
+                                <div style="font-size: 14px; font-weight: bold; color: #1B4F72;">FICHE ${mIdx + 1} / ${totalMachines}</div>
+                                <img src="/assets/lenoir_logo_doc.png" style="height: 45px;">
+                            </div>
+                            
+                            <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000;">
+                                <tr>
+                                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N° A.R.C.</td>
+                                    <td style="width:35%; border:1px solid #000; padding:6px; font-weight:bold;">${mArc}</td>
+                                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Désignation</td>
+                                    <td style="width:35%; border:1px solid #000; padding:6px;"><b>${mDesignation}</b></td>
+                                </tr>
+                            </table>
+
+                            <div style="margin-top: 150px; text-align: center;">
+                                <div style="font-size: 24px; font-weight: bold; color: #dc3545; text-transform: uppercase; border: 4px solid #dc3545; display: inline-block; padding: 20px 40px; transform: rotate(-5deg);">
+                                    ÉQUIPEMENT NON CONTRÔLÉ
+                                </div>
+                                <div style="margin-top: 30px; color: #555; font-size: 14px;">
+                                    Aucune donnée n'a été saisie pour ce matériel lors de l'intervention.
+                                </div>
+                            </div>
+                        `;
+
+                        p.style.pageBreakBefore = 'always';
+                        container.appendChild(p);
+
+                        continue; // Passe directement à la machine suivante sans fetch html !
+                    }
+
+                    try {
+                        const res = await fetch('machine_edit.php?id=' + mId + '&pdf=1');
+                        const html = await res.text();
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+
+                        
+                        // --- V3.3 STABILITY PATCH ---
+                        await new Promise(r => setTimeout(r, 100));
+
+                        const pages = doc.querySelectorAll('.pdf-page');
+                        pages.forEach((p, pIdx) => {
+                            // Bug 5 & New Fix: Remove empty photos section
+                            const hasPhotos = p.querySelectorAll('.photo-annexe-item img').length > 0;
+                            p.querySelectorAll('.photos-annexes-wrapper').forEach(wrapper => {
+                                if (!wrapper.querySelector('.photo-annexe-item')) {
+                                    wrapper.remove();
+                                }
+                            });
+
+                            // --- NETTOYAGE RADICAL DES ÉLÉMENTS D'INTERFACE ---
+                            p.querySelectorAll('.photo-btn, .btn-ia-refresh, .top-bar, .photo-thumbs, #btnChrono, .no-print-pdf, .photo-del-overlay').forEach(el => el.remove());
+
+                            // FIX: Blank pages. Strip default screen margins and shadows so they don't push into invisible overflowing pages
+                            p.style.margin = '0';
+                            p.style.boxShadow = 'none';
+
+                            // If it's a diagram/photo page and it's empty after cleanup, skip it
+                            const contentText = p.textContent.trim();
+                            if ((pIdx > 0) && contentText.length < 50 && !hasPhotos && !p.querySelector('img')) {
+                                return; // Skip empty pages
+                            }
+
+                            // Chaque machine commence obligatoirement sur une nouvelle page
+                            if (pIdx === 0) {
+                                p.style.pageBreakBefore = 'always';
+                                p.style.marginTop = '0';
+                                p.style.paddingTop = '10mm'; 
+                                
+                                // On ajoute discretement le numéro de fiche AU DESSUS du header officiel LENOIR
+                                const hDiv = document.createElement('div');
+                                hDiv.style.textAlign = 'right';
+                                hDiv.style.fontSize = '12px';
+                                hDiv.style.fontWeight = 'bold';
+                                hDiv.style.color = '#1B4F72';
+                                hDiv.style.marginBottom = '5px';
+                                hDiv.innerHTML = `FICHE ${mIdx + 1} / ${totalMachines}`;
+                                p.insertBefore(hDiv, p.firstChild);
+                            }
+
+                            p.querySelectorAll('input[type="radio"]:checked').forEach(r => {
+                                const lbl = r.closest('label');
+                                if (lbl) lbl.classList.add('selected');
+                            });
+
+                            p.querySelectorAll('input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"]):not([type="file"])').forEach(inp => {
+                                let val = (inp.value || '').trim();
+                                if (inp.name === 'mesures[poste]') {
+                                    val = val ? val : (mIdx + 1);
+                                } else if (!val) {
+                                    val = '';
+                                }
+
+                                let style = inp.getAttribute('style') || '';
+                                let newStyle = style + "; border-bottom:1px dashed black; display:inline-block; min-width:30px; padding:0 3px; font-weight:bold;";
+                                inp.outerHTML = `<span style="${newStyle}">${val}</span>`;
+                            });
+
+                            p.querySelectorAll('select').forEach(sel => {
+                                let valText = sel.options[sel.selectedIndex]?.text || '';
+                                if (!sel.value) valText = '';
+                                sel.outerHTML = `<span style="border-bottom:1px dashed black; display:inline-block; min-width:30px; padding:0 3px; font-weight:bold; color:black;">${valText}</span>`;
+                            });
+
+                            p.querySelectorAll('img').forEach(img => {
+                                let src = img.getAttribute('src') || '';
+                                if (src.startsWith('/') && !src.startsWith('//')) {
+                                    img.src = window.location.origin + src;
+                                }
+                            });
+
+                            p.querySelectorAll('textarea').forEach(ta => {
+                                let val = ta.value || ta.innerHTML;
+
+                                // NEW FIX FOR PERFORMANCE / NON REALISE Bug:
+                                const specialKeys = ['aprf_attraction_comment', 'ov_perf_bille', 'ov_perf_ecrou', 'ov_perf_rond50', 'ov_perf_rond100', 'levage_charge_maxi_comment', 'levage_temp_maxi_comment'];
+                                if (specialKeys.some(k => ta.name && ta.name.includes(k))) {
+                                    if (!val.trim()) val = "Non réalisé";
+                                }
+
+                                if (val.trim()) {
+                                    const div = document.createElement('div');
+                                    div.className = 'pdf-textarea-rendered';
+                                    div.style.minHeight = '15px';
+                                    div.textContent = val;
+                                    ta.parentNode.insertBefore(div, ta);
+                                }
+                                ta.remove();
+                            });
+
+                            // BUGFIX PDF: Séparateur de table (tbody)
+                            // html2pdf coupe en deux les <tr> sauvagement. 
+                            // La seule vraie solution est de wrapper chaque ligne logique dans son propre <tbody> !
+                            p.querySelectorAll('table.pdf-table').forEach(table => {
+                                const rows = Array.from(table.querySelectorAll('tr'));
+                                if (!rows.length) return;
+
+                                let currentTbody = document.createElement('tbody');
+                                currentTbody.style.pageBreakInside = 'avoid';
+                                table.appendChild(currentTbody);
+
+                                let pendingSpans = 0;
+                                rows.forEach(row => {
+                                    let maxSpan = 1;
+                                    row.querySelectorAll('th, td').forEach(c => {
+                                        if (c.rowSpan > maxSpan) maxSpan = c.rowSpan;
+                                    });
+                                    if (maxSpan - 1 > pendingSpans) pendingSpans = maxSpan - 1;
+
+                                    currentTbody.appendChild(row); // Déplace le tr dans le nouveau tbody
+
+                                    if (pendingSpans > 0) {
+                                        pendingSpans--;
+                                    } else {
+                                        currentTbody = document.createElement('tbody');
+                                        currentTbody.style.pageBreakInside = 'avoid';
+                                        table.appendChild(currentTbody);
+                                    }
+                                });
+
+                                // Supprimer les tbody/thead originaux devenus vides
+                                Array.from(table.children).forEach(child => {
+                                    if ((child.tagName === 'TBODY' || child.tagName === 'THEAD') && child.children.length === 0) {
+                                        child.remove();
+                                    }
+                                });
+                            });
+
+                            p.style.position = 'relative';
+                            p.style.paddingBottom = '5mm'; 
+                            p.querySelectorAll('.section-wrapper-pdf').forEach(w => w.style.marginBottom = '0');
+                            p.style.minHeight = 'auto'; // Help chaining
+                            p.appendChild(createPdfFooter());
+                            container.appendChild(p);
+                        });
+                    } catch (err) {
+                        console.error('Erreur fetch machine ' + mId, err);
+                    }
+                }
+            }
+
+            // Page de fin : On ne force plus systématiquement le saut de page
+            // si le contenu précédent est court. On laisse html2pdf gérer ou on met un petit espacement.
+            const pbFin = document.createElement('div');
+            pbFin.style.height = '20px';
+            container.appendChild(pbFin);
+
+            // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC + SIGNATURES + OBSERVATIONS) ---
+
+            const endPage = document.createElement('div');
+            endPage.className = 'pdf-page';
+            endPage.style.padding = '0 15mm';
+            endPage.style.position = 'relative';
+            endPage.style.pageBreakBefore = 'always';
+
+            const originalRapport = document.getElementById('rapportForm');
+            const souhaitRapport = originalRapport.querySelector('[name="souhait_rapport_unique"]').checked;
+            const souhaitPieces = originalRapport.querySelector('[name="souhait_offre_pieces"]').checked;
+            const souhaitIntervention = originalRapport.querySelector('[name="souhait_pieces_intervention"]').checked;
+            const souhaitAucune = originalRapport.querySelector('[name="souhait_aucune_offre"]').checked;
+            const nomSignataireFin = originalRapport.querySelector('[name="nom_signataire"]').value || '_____';
+            const techNameLabel = "<?= htmlspecialchars($techName) ?>";
+            const dateStr = window.LM_RAPPORT.dateInt;
+
+            const commentaryTech = originalRapport.querySelector('[name="commentaire_technicien"]')?.value || '';
+            const commentaryClient = originalRapport.querySelector('[name="commentaire_client"]')?.value || '';
+
+            const sigTechImg = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
+            const sigClientImg = window.LM_RAPPORT.sigClient || document.getElementById('canvasClient')?.toDataURL() || '';
+
+            endPage.innerHTML = `
+                <div style="font-family: Arial, sans-serif; font-size: 11px; color: #000;">
+                    
+                    <!-- OBSERVATIONS GÉNÉRALES -->
+                    <div style="font-weight: bold; font-size: 14px; color: #1e4e6d; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px; text-transform: uppercase;">OBSERVATIONS DU TECHNICIEN</div>
+                    <div style="padding: 8px 0; min-height: 40px; font-size: 12px; white-space: pre-wrap; margin-bottom: 20px;">${commentaryTech}</div>
+
+                    <div style="font-weight: bold; font-size: 14px; color: #1e4e6d; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px; text-transform: uppercase;">COMMENTAIRE DU CLIENT</div>
+                    <div style="padding: 8px 0; font-size: 12px; white-space: pre-wrap; margin-bottom: 20px;">${commentaryClient}</div>
+
+                    <!-- LE CLIENT SOUHAITE -->
+                    <div style="font-weight: bold; font-size: 14px; color: #1e4e6d; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
+                    <div style="padding: 8px 0; margin-bottom: 20px;">
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? '☑' : '☐'} Ce Rapport d\'expertise uniquement</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? '☑' : '☐'} Une offre de Pièces de Rechange</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitIntervention ? '☑' : '☐'} Une offre de PR + intervention mise en place</div>
+                        <div style="font-size: 11px;">${souhaitAucune ? '☑' : '☐'} Aucune offre</div>
+                    </div>
+
+                    <!-- DATE ET HEURE -->
+                    <div style="font-weight: bold; font-size: 14px; color: #1e4e6d; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px; text-transform: uppercase;">DATE ET LIEU</div>
+                    <div style="padding: 8px 0; margin-bottom: 20px; font-size: 13px; font-weight: bold;">
+                        Fait le ${dateStr}
+                    </div>
+
+                    <!-- SIGNATURES -->
+                    <div style="font-weight: bold; font-size: 14px; color: #1e4e6d; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px; text-transform: uppercase;">SIGNATURES</div>
+                    <table style="width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 15px;">
+                        <tr style="height: 120px;">
+                            <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
+                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Contrôleur (NOM Prénom) :</div>
+                                <div style="margin-bottom: 10px;"><strong>${techNameLabel}</strong></div>
+                                <div style="text-align: center;">
+                                    <img src="${sigTechImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
+                                </div>
+                            </td>
+                            <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
+                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Client (NOM Prénom) :</div>
+                                <div style="margin-bottom: 10px;"><strong>${nomSignataireFin}</strong></div>
+                                <div style="text-align: center;">
+                                    <img src="${sigClientImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- CONTACTS ORANGE -->
+                    <div style="border: 2px solid #000; padding: 0; text-align: center; margin-bottom: 15px;">
+                        <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR TOUTE INFORMATION TECHNIQUE SUR CE RAPPORT</div>
+                        <div style="background-color: #fff; padding: 6px; border-bottom: 2px solid #000;">
+                            <div style="font-size: 12px;">➤ <strong>Soufyane SALAH</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Chargé d'Affaires</span></div>
+                        </div>
+                        
+                        <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR LA PLANIFICATION D'UNE VÉRIFICATION PÉRIODIQUE</div>
+                        <div style="background-color: #fff; padding: 6px;">
+                            <div style="font-size: 12px;">➤ <strong>Sophie NIAY</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Responsable Service Clients</span></div>
+                        </div>
+                    </div>
+
+                    <!-- FOOTER SECTION WITH QR CODE -->
+                    <div style="text-align: center; color: #1B4F72; margin-top: 5px;">
+                        <div style="font-weight: bold; margin-bottom: 8px;">UNE SEULE ADRESSE COMMUNE : contact@raoul-lenoir.com</div>
+                        
+                        <div style="margin-top: 5px;">
+                            <div style="font-size: 10px; font-weight: bold; margin-bottom: 3px;">Visitez notre site !</div>
+                            <img src="/assets/qr_lenoir.png" style="width: 100px; height: 100px; display: block; margin: 0 auto;">
+                            <div style="font-weight: bold; font-size: 10px; margin-top: 5px;">www.raoul-lenoir.com</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            endPage.appendChild(createPdfFooter());
+            container.appendChild(endPage);
+
+            await waitForImages(container);
+            return container;
+        }
+
+        // ══════════════════════════════════════════════════════════════════
+        // GÉNÉRATION PDF (html2pdf.js)
+        // ══════════════════════════════════════════════════════════════════
+        async function genererPDFBase64() {
+            if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
+
+            const container = await buildFullPdfContainer();
+            await ensureImagesBase64(container);
+
+            const opt = {
+                margin: [10, 0, 15, 0], // Top, Left, Bottom, Right
+                filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 1.5, useCORS: true, logging: false },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.levage-diagram-container'] }
+            };
+
+            const worker = html2pdf().set(opt).from(container);
+
+            await worker.toPdf().get('pdf').then(function (pdf) {
+                const totalPages = pdf.internal.getNumberOfPages();
+                for (let i = 1; i <= totalPages; i++) {
+                    pdf.setPage(i);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(9);
+                    pdf.setTextColor(50, 50, 50);
+                    pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
+                }
+            });
+
+            const pdfBlob = await worker.outputPdf('blob');
+
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(pdfBlob);
+            });
+        }
+
+        // ══════════════════════════════════════════════════════════════════
+        // TÉLÉCHARGEMENT PDF BOUTON DIRECT
+        // ══════════════════════════════════════════════════════════════════
+        async function telechargerPDF() {
+            const btn = document.getElementById('btnDownloadPDF');
+            const icon = document.getElementById('btnDownloadPDFIcon');
+            const label = document.getElementById('btnDownloadPDFLabel');
+
+            if (btn) { 
+                btn.disabled = true; 
+                if (label) label.textContent = 'Génération...';
+                if (icon) icon.textContent = '⏳';
+            }
+            try {
+                const container = await buildFullPdfContainer();
+                await ensureImagesBase64(container);
+
+                const opt = {
+                    margin: [10, 0, 15, 0], // Top, Left, Bottom, Right
+                    filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 1.5, useCORS: true, logging: false },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.levage-diagram-container'] }
+                };
+
+                const worker = html2pdf().set(opt).from(container);
+
+                await worker.toPdf().get('pdf').then(function (pdf) {
+                    const totalPages = pdf.internal.getNumberOfPages();
+                    for (let i = 1; i <= totalPages; i++) {
+                        pdf.setPage(i);
+                        pdf.setFont('helvetica', 'normal');
+                        pdf.setFontSize(9);
+                        pdf.setTextColor(50, 50, 50);
+                        pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
+                    }
+                });
+
+                await worker.save();
+            } catch (e) {
+                alert('Erreur génération PDF : ' + e.message);
+            } finally {
+                if (btn) { 
+                    btn.disabled = false; 
+                    if (label) label.textContent = 'Télécharger le PDF';
+                    if (icon) icon.innerHTML = '<img src="/assets/icon_download.svg" style="height: 18px; width: 18px; vertical-align: middle; filter: brightness(0);">';
+                }
+            }
+        }
+
+        // ══════════════════════════════════════════════════════════════════
+        // TOAST UI
+        // ══════════════════════════════════════════════════════════════════
+        function afficherToast(message, type = 'success') {
+            const toast = document.getElementById('emailToast');
+            if (!toast) return;
+            toast.textContent = message;
+            if (type === 'success') {
+                toast.style.background = 'rgba(16,185,129,0.2)';
+                toast.style.border = '1px solid rgba(16,185,129,0.5)';
+                toast.style.color = '#10b981';
+            } else if (type === 'warning') {
+                toast.style.background = 'rgba(245,158,11,0.2)';
+                toast.style.border = '1px solid rgba(245,158,11,0.5)';
+                toast.style.color = '#f59e0b';
+            } else {
+                toast.style.background = 'rgba(244,63,94,0.2)';
+                toast.style.border = '1px solid rgba(244,63,94,0.5)';
+                toast.style.color = '#f43f5e';
+            }
+            toast.style.display = 'block';
+            // Scroll vers le toast
+            toast.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // ══════════════════════════════════════════════════════════════════
+        // FILE D'ATTENTE HORS-LIGNE (IndexedDB)
+        // ══════════════════════════════════════════════════════════════════
+        const DB_NAME = 'LMEmailQueue';
+        const DB_VERSION = 1;
+        const STORE_NAME = 'pendingEmails';
+
+        function ouvrirIDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(DB_NAME, DB_VERSION);
+                req.onupgradeneeded = e => {
+                    e.target.result.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                };
+                req.onsuccess = e => resolve(e.target.result);
+                req.onerror = e => reject(e.target.error);
+            });
+        }
+
+        async function sauvegarderEnFile(payload) {
+            const db = await ouvrirIDB();
+            const tx = db.transaction(STORE_NAME, 'readwrite');
+            const store = tx.objectStore(STORE_NAME);
+            store.add({ ...payload, queued_at: Date.now() });
+            return new Promise((res, rej) => {
+                tx.oncomplete = res;
+                tx.onerror = rej;
+            });
+        }
+
+        async function rejouerFileDAttente() {
+            const db = await ouvrirIDB();
+            const tx = db.transaction(STORE_NAME, 'readwrite');
+            const store = tx.objectStore(STORE_NAME);
+            const req = store.getAll();
+            req.onsuccess = async () => {
+                const items = req.result;
+                for (const item of items) {
+                    try {
+                        const res = await envoyerParAPI(item.intervention_id, item.pdf_data, item.client_email, item.csrf_token);
+                        if (res.success) {
+                            // Supprimer de la file
+                            db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME).delete(item.id);
+                            console.log('[LM] Email rejoué avec succès :', item.client_email);
+                        }
+                    } catch (e) {
+                        console.warn('[LM] Rejouer échoué :', e);
+                    }
+                }
+            };
+        }
+
+        // Écouter la reconnexion réseau
+        window.addEventListener('online', () => {
+            console.log('[LM] Connexion rétablie – rejouer la file d\'attente email');
+            rejouerFileDAttente();
+        });
+
+        // ══════════════════════════════════════════════════════════════════
+        // APPEL API ENVOI EMAIL
+        // ══════════════════════════════════════════════════════════════════
+        async function envoyerParAPI(interventionId, pdfBase64, clientEmail, csrfToken) {
+            const formData = new FormData();
+            formData.append('intervention_id', interventionId);
+            formData.append('pdf_data', pdfBase64);
+            formData.append('client_email', clientEmail);
+            formData.append('csrf_token', csrfToken);
+
+            const resp = await fetch('/envoyer_rapport.php', {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin',
+            });
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            return resp.json();
+        }
+
+        // ══════════════════════════════════════════════════════════════════
+        // FONCTION PRINCIPALE : LANCER L'ENVOI EMAIL
+        // ══════════════════════════════════════════════════════════════════
+        async function lancerEnvoiEmail(auto = false) {
+            if (!window.LM_RAPPORT) return;
+
+            const { interventionId, clientEmail, csrfToken, nomSociete } = window.LM_RAPPORT;
+
+            if (!clientEmail) {
+                afficherToast('⚠️ Aucun email client renseigné. Veuillez reprendre le formulaire.', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('btnSendEmail');
+            const icon = document.getElementById('btnSendEmailIcon');
+            const label = document.getElementById('btnSendEmailLabel');
+
+            if (btn) btn.disabled = true;
+            if (icon) icon.textContent = '⏳';
+            if (label) label.textContent = 'Génération du PDF…';
+
+            let pdfBase64;
+            try {
+                pdfBase64 = await genererPDFBase64();
+            } catch (e) {
+                if (btn) btn.disabled = false;
+                if (icon) icon.textContent = '📧';
+                if (label) label.textContent = 'Envoyer PDF par email';
+                afficherToast('❌ Erreur génération PDF : ' + e.message, 'error');
+                return;
+            }
+
+            if (icon) icon.textContent = '📤';
+            if (label) label.textContent = 'Envoi en cours…';
+
+            // Hors-ligne : mettre en file d'attente
+            if (!navigator.onLine) {
+                try {
+                    await sauvegarderEnFile({
+                        intervention_id: interventionId,
+                        pdf_data: pdfBase64,
+                        client_email: clientEmail,
+                        csrf_token: csrfToken,
+                    });
+                    afficherToast('📶 Hors-ligne – email mis en file d\'attente. Il sera envoyé automatiquement à la reconnexion.', 'warning');
+                } catch (e) {
+                    afficherToast('❌ Impossible de mettre l\'email en file d\'attente.', 'error');
+                }
+                if (btn) btn.disabled = false;
+                if (icon) icon.textContent = '📧';
+                if (label) label.textContent = 'Envoyer PDF par email';
+                return;
+            }
+
+            // En ligne : envoi direct
+            try {
+                const result = await envoyerParAPI(interventionId, pdfBase64, clientEmail, csrfToken);
+                if (result.success) {
+                    afficherToast('✅ Rapport envoyé avec succès à ' + result.email, 'success');
+                    if (btn) btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+                    if (icon) icon.textContent = '✅';
+                    if (label) label.textContent = 'Email envoyé !';
+                    btn.disabled = true; // Ne pas renvoyer
+                } else {
+                    afficherToast('❌ ' + (result.message || 'Erreur envoi email'), 'error');
+                    if (btn) btn.disabled = false;
+                    if (icon) icon.textContent = '🔄';
+                    if (label) label.textContent = 'Réessayer l\'envoi';
+                }
+            } catch (e) {
+                // Réseau coupé pendant l'envoi
+                try {
+                    await sauvegarderEnFile({
+                        intervention_id: interventionId,
+                        pdf_data: pdfBase64,
+                        client_email: clientEmail,
+                        csrf_token: csrfToken,
+                    });
+                    afficherToast('📶 Connexion perdue – email mis en file d\'attente. Il sera envoyé à la reconnexion.', 'warning');
+                } catch (qe) {
+                    afficherToast('❌ Erreur réseau et impossible de mettre en file : ' + e.message, 'error');
+                }
+                if (btn) btn.disabled = false;
+                if (icon) icon.textContent = '🔄';
+                if (label) label.textContent = 'Réessayer l\'envoi';
+            }
+        }
+
+        // ══════════════════════════════════════════════════════════════════
+        // GÉNÉRATION MASSIVE IA (Toutes les fiches)
+        // ══════════════════════════════════════════════════════════════════
+        async function generateAllIA() {
+            const btn = document.getElementById('btnGenerateAllIa');
+            const progressZone = document.getElementById('ai-global-progress');
+            const progressBar = document.getElementById('ai-progress-bar');
+            const progressText = document.getElementById('ai-progress-text');
+            const progressPercent = document.getElementById('ai-progress-percent');
+            
+            if (!containerSuccessBanner()) {
+                if (!confirm("Cette opération va analyser toutes les machines de l'intervention. Les fiches déjà modifiées manuellement seront ignorées. Continuer ?")) return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span>⚙️</span> Analyse en cours...';
+            progressZone.style.display = 'block';
+
+            const machines = window.LM_RAPPORT.machinesData;
+            const total = machines.length;
+            let successCount = 0;
+            let skipCount = 0;
+
+            for (let i = 0; i < total; i++) {
+                const m = machines[i];
+                const pct = Math.round((i / total) * 100);
+                progressBar.style.width = pct + '%';
+                progressPercent.textContent = pct + '%';
+                progressText.textContent = `Analyse de : ${m.designation}...`;
+
+                try {
+                    // On considère qu'une fiche est déjà remplie si Dysfonctionnements OU Conclusion
+                    // contiennent du texte autre que les valeurs par défaut.
+                    const dys = (m.dysfonctionnements || "").trim();
+                    const conc = (m.conclusion || "").trim();
+                    const isManual = (dys.length > 5 && !dys.includes("Aucun dysfonctionnement majeur")) 
+                                  || (conc.length > 5 && !conc.includes("conforme à nos standards"));
+
+                    if (isManual) {
+                        skipCount++;
+                        continue;
+                    }
+
+                    const resIa = await fetch(`generate_ia.php?machine_id=${m.id}&intervention_id=${window.LM_RAPPORT.interventionId}`);
+                    const dataIa = await resIa.json();
+
+                    if (dataIa.success) {
+                        const saveResp = await fetch('save_ia.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                            body: `machine_id=${m.id}&intervention_id=${window.LM_RAPPORT.interventionId}&dysfonctionnements=${encodeURIComponent(dataIa.dysfonctionnements)}&conclusion=${encodeURIComponent(dataIa.conclusion)}&csrf_token=${window.LM_RAPPORT.csrfToken}`
+                        });
+                        const saveResult = await saveResp.json();
+                        if (saveResult.success) {
+                            successCount++;
+                            m.dysfonctionnements = dataIa.dysfonctionnements;
+                            m.conclusion = dataIa.conclusion;
+                        }
+                    }
+                } catch (e) {
+                    console.error("IA Error for machine " + m.id, e);
+                }
+            }
+
+            progressBar.style.width = '100%';
+            progressPercent.textContent = '100%';
+            progressText.textContent = 'Analyse terminée !';
+            
+            setTimeout(() => {
+                alert(`Analyse terminée !\n- ${successCount} fiches générées\n- ${skipCount} fiches ignorées (déjà remplies)\n\nLe rapport va être actualisé.`);
+                location.reload();
+            }, 500);
+        }
+
+        function containerSuccessBanner() {
+            return document.getElementById('successBanner') !== null;
         }
     </script>
 </body>
-</html>
+
+</html>  
+ 
+   
+ 
+ 
