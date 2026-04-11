@@ -952,12 +952,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             .pastille-group label.selected.p-aa { background: #e67e22 !important; }
             .pastille-group label.selected.p-nc { background: #dc3545 !important; }
             .pastille-group label.selected.p-nr { background: #8b0000 !important; }
-            .pastille-group label.selected::after { content: "✓" !important; color: white !important; font-size: 14px; font-weight: bold; position: absolute; }
-            .diagonal-header { height: 110px; vertical-align: bottom; padding: 0 !important; position: relative; background: #e0e0e0 !important; overflow: visible; -webkit-print-color-adjust: exact; border: 1px solid #1e4e6d !important; }
-            .diagonal-wrapper { display: flex; width: 140px; height: 100%; margin: 0 auto; position: relative; }
-            .diag-col { width: 28px; height: 100%; position: relative; border-right: 1px solid #1e4e6d; }
-            .diag-col::before { content: ""; position: absolute; left: 100%; top: 0; bottom: 35px; width: 1px; background: #1e4e6d; transform: skewX(-35deg); transform-origin: bottom left; }
-            .diag-text { position: absolute; bottom: 38px; left: 100%; transform: rotate(-55deg); transform-origin: bottom left; font-size: 8px; font-weight: bold; white-space: nowrap; width: 200px; color: #000; }
+            .pastille-group label.selected::after { content: "✓" !important; color: white !important; font-size: 14px; font-weight: bold; position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); }
+            .diagonal-header { height: 120px; vertical-align: bottom; padding: 0 !important; position: relative; background: #f8f9fa !important; border: 1px solid #1e4e6d !important; -webkit-print-color-adjust: exact; }
+            .diagonal-wrapper { display: flex; width: 100%; height: 100%; position: relative; }
+            .diag-col { flex: 1; height: 100%; position: relative; border-right: 1px solid #1e4e6d; }
+            .diag-col:last-child { border-right: none; }
+            .diag-col::before { content: ""; position: absolute; left: 100%; top: 0; bottom: 30px; width: 1px; background: #1e4e6d; transform: skewX(-32deg); transform-origin: bottom left; }
+            .diag-text { position: absolute; bottom: 35px; left: 105%; transform: rotate(-58deg); transform-origin: bottom left; font-size: 8px; font-weight: bold; white-space: nowrap; width: 150px; color: #1e4e6d; }
             .pdf-footer { position: absolute; bottom: 1cm; left: 1cm; right: 1cm; text-align: center; font-size: 9px; font-weight: bold; border-top: 1px solid #1e4e6d; padding-top: 5px; color: #555; }
             .no-print-pdf, .btn-ia-refresh, .top-bar, .photo-btn, .photo-thumbs, #btnChrono, .photo-del-overlay { display: none !important; }
         `;
@@ -1080,11 +1081,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <div class="pdf-title-box">RAPPORT D'EXPERTISE TECHNIQUE</div>
                         <div class="section-wrapper-pdf">
                             <h2 class="pdf-section-title">CLIENT : ${i.client}</h2>
-                            <p><strong>NÂ° ARC : ${i.numArc}</strong></p>
-                            <p>Expertise Ã  : ${i.ville}</p>
+                            <p><strong>N° ARC : ${i.numArc}</strong></p>
+                            <p>Expertise à : ${i.ville}</p>
                             <p>Date : ${window.LM_RAPPORT.dateInt}</p>
                         </div>
-                        <div style="text-align:center; margin-top:50px;"><img src="/assets/tech_illustration.jpg" style="width:80%; border:2px solid #1e4e6d;"></div>
+                        <div style="text-align:center; margin-top:100px; opacity:0.1;"><img src="/assets/lenoir_logo_doc.png" style="width:40%;"></div>
                     </div>
                 `;
                 coverPage.querySelector('.pdf-page').appendChild(createPdfFooter());
