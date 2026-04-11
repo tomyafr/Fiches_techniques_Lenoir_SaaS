@@ -1965,7 +1965,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             if (btn) { 
                 btn.disabled = true; 
                 if (label) label.textContent = 'Génération...';
-                if (icon) icon.textContent = 'â³';
+                if (icon) icon.textContent = '⏳';
             }
             try {
                 const container = await buildFullPdfContainer();
@@ -2005,9 +2005,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
         }
 
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        // -------------------------------------------------------------------------
         // TOAST UI
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        // -------------------------------------------------------------------------
         function afficherToast(message, type = 'success') {
             const toast = document.getElementById('emailToast');
             if (!toast) return;
@@ -2030,9 +2030,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             toast.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        // -------------------------------------------------------------------------
         // FILE D'ATTENTE HORS-LIGNE (IndexedDB)
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        // -------------------------------------------------------------------------
         const DB_NAME = 'LMEmailQueue';
         const DB_VERSION = 1;
         const STORE_NAME = 'pendingEmails';
@@ -2087,9 +2087,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             rejouerFileDAttente();
         });
 
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        // -------------------------------------------------------------------------
         // APPEL API ENVOI EMAIL
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        // -------------------------------------------------------------------------
         async function envoyerParAPI(interventionId, pdfBase64, clientEmail, csrfToken) {
             const formData = new FormData();
             formData.append('intervention_id', interventionId);
@@ -2106,16 +2106,16 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             return resp.json();
         }
 
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        // -------------------------------------------------------------------------
         // FONCTION PRINCIPALE : LANCER L'ENVOI EMAIL
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        // -------------------------------------------------------------------------
         async function lancerEnvoiEmail(auto = false) {
             if (!window.LM_RAPPORT) return;
 
             const { interventionId, clientEmail, csrfToken, nomSociete } = window.LM_RAPPORT;
 
             if (!clientEmail) {
-                afficherToast('âš ï¸ Aucun email client renseigné. Veuillez reprendre le formulaire.', 'error');
+                afficherToast('⚠️ Aucun email client renseigné. Veuillez reprendre le formulaire.', 'error');
                 return;
             }
 
@@ -2124,7 +2124,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const label = document.getElementById('btnSendEmailLabel');
 
             if (btn) btn.disabled = true;
-            if (icon) icon.textContent = 'â³';
+            if (icon) icon.textContent = '⏳';
             if (label) label.textContent = 'Génération du PDF…';
 
             let pdfBase64;
@@ -2134,7 +2134,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 if (btn) btn.disabled = false;
                 if (icon) icon.textContent = '📧';
                 if (label) label.textContent = 'Envoyer PDF par email';
-                afficherToast('âŒ Erreur génération PDF : ' + e.message, 'error');
+                afficherToast('❌ Erreur génération PDF : ' + e.message, 'error');
                 return;
             }
 
@@ -2152,7 +2152,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     });
                     afficherToast('📶 Hors-ligne – email mis en file d\'attente. Il sera envoyé automatiquement à la reconnexion.', 'warning');
                 } catch (e) {
-                    afficherToast('âŒ Impossible de mettre l\'email en file d\'attente.', 'error');
+                    afficherToast('❌ Impossible de mettre l\'email en file d\'attente.', 'error');
                 }
                 if (btn) btn.disabled = false;
                 if (icon) icon.textContent = '📧';
@@ -2170,7 +2170,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     if (label) label.textContent = 'Email envoyé !';
                     btn.disabled = true; // Ne pas renvoyer
                 } else {
-                    afficherToast('âŒ ' + (result.message || 'Erreur envoi email'), 'error');
+                    afficherToast('❌ ' + (result.message || 'Erreur envoi email'), 'error');
                     if (btn) btn.disabled = false;
                     if (icon) icon.textContent = '🔄';
                     if (label) label.textContent = 'Réessayer l\'envoi';
@@ -2186,7 +2186,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     });
                     afficherToast('📶 Connexion perdue – email mis en file d\'attente. Il sera envoyé à la reconnexion.', 'warning');
                 } catch (qe) {
-                    afficherToast('âŒ Erreur réseau et impossible de mettre en file : ' + e.message, 'error');
+                    afficherToast('❌ Erreur réseau et impossible de mettre en file : ' + e.message, 'error');
                 }
                 if (btn) btn.disabled = false;
                 if (icon) icon.textContent = '🔄';
@@ -2194,9 +2194,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
         }
 
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        // -------------------------------------------------------------------------
         // GÉNÉRATION MASSIVE IA (Toutes les fiches)
-        // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        // -------------------------------------------------------------------------
         async function generateAllIA() {
             const btn = document.getElementById('btnGenerateAllIa');
             const progressZone = document.getElementById('ai-global-progress');
@@ -2209,7 +2209,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
 
             btn.disabled = true;
-            btn.innerHTML = '<span>âš™ï¸</span> Analyse en cours...';
+            btn.innerHTML = '<span>⚙️</span> Analyse en cours...';
             progressZone.style.display = 'block';
 
             const machines = window.LM_RAPPORT.machinesData;
