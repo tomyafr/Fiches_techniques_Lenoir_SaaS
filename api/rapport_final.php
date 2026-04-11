@@ -149,7 +149,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 $stmtU = $db->prepare('SELECT signature_base64, nom, prenom FROM users WHERE id = ?');
 $stmtU->execute([$userId]);
 $user = $stmtU->fetch();
-$sigTechB64 = $user['signature_base64'] ?? '';
+// Priorité à la signature de l'intervention, sinon celle du profil
+$sigTechB64 = !empty($intervention['signature_technicien']) ? $intervention['signature_technicien'] : ($user['signature_base64'] ?? '');
 $techName = ($user['prenom'] ?? '') . ' ' . ($user['nom'] ?? '');
 
 $now = date('d/m/Y') . ' à ' . date('H:i');
