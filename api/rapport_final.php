@@ -537,7 +537,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 <body>
     <div id="pdfDownloadOverlay">
         <div class="loader-lenoir"></div>
-        <div class="download-status-text">Génération de votre rapport premium</div>
+        <div class="download-status-text">génération de votre rapport premium</div>
         <div style="color: var(--text-dim); font-size: 0.9rem;">Veuillez patienter quelques instants...</div>
     </div>
     <style>
@@ -639,7 +639,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             'arc' => $intervention['numero_arc'],
                             'of' => $m['numero_of'] ?? '',
                             'designation' => $m['designation'] ?? '',
-                            'repere' => $mes['repere'] ?? 'ÔÇö',
+                            'repere' => $mes['repere'] ?? '—',
                             'annee' => $m['annee_fabrication'] ?? '',
                             'points_count' => $m['points_count'] ?? 0,
                             'dysfonctionnements' => $m['dysfonctionnements'] ?? '',
@@ -711,7 +711,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         </div>
                         <strong style="color:#fff; font-size:0.85rem;"><?= htmlspecialchars($m['designation']) ?></strong>
                         <?php if (!empty($mm['repere'])): ?>
-                            <small style="opacity:0.6; color:#94a3b8;">ÔÇô <?= htmlspecialchars($mm['repere']) ?></small>
+                            <small style="opacity:0.6; color:#94a3b8;">– <?= htmlspecialchars($mm['repere']) ?></small>
                         <?php endif; ?>
                         <small style="margin-left: 4px; color: <?= $statusColor ?>; font-weight:bold;">(<?= (int)$m['points_count'] ?> pts)</small>
                     </span>
@@ -1394,10 +1394,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             // Generate HTML lines for machines
             const machinesTrs = window.LM_RAPPORT.machinesData.map(m => `
                 <tr style="border-bottom:1px solid #000;">
-                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.arc || 'ÔÇö'}</td>
-                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.of || 'ÔÇö'}</td>
-                    <td style="padding:6px; border-right:1px solid #000;">${m.designation || 'ÔÇö'}</td>
-                    <td style="padding:6px; text-align:center;">${m.annee || 'ÔÇö'}</td>
+                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.arc || '—'}</td>
+                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.of || '—'}</td>
+                    <td style="padding:6px; border-right:1px solid #000;">${m.designation || '—'}</td>
+                    <td style="padding:6px; text-align:center;">${m.annee || '—'}</td>
                 </tr>
             `).join('');
 
@@ -1486,10 +1486,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         ${window.LM_RAPPORT.machinesData.map((m, idx) => `
                             <tr>
                                 <td style="text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000;">${m.poste || (idx + 1)}</td>
-                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.arc || 'ÔÇö'} ${m.of ? ' - ' + m.of : ''}</td>
-                                <td style="padding: 6px; border: 1px solid #000;">${m.designation || 'ÔÇö'}</td>
-                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.repere || 'ÔÇö'}</td>
-                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.annee || 'ÔÇö'}</td>
+                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.arc || '—'} ${m.of ? ' - ' + m.of : ''}</td>
+                                <td style="padding: 6px; border: 1px solid #000;">${m.designation || '—'}</td>
+                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.repere || '—'}</td>
+                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.annee || '—'}</td>
                             </tr>
                         `).join('')}
                     </table>
@@ -1571,7 +1571,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                         <div style="margin-top: 25px; text-align: center;">
                             <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px; text-transform: uppercase;">SCORE DE CONFORMITÉ : ${s.score}%</div>
-                            ${s.nbMachinesEmpty > 0 ? `<div style="font-size: 11px; color: #dc3545; font-weight: bold; margin-bottom: 8px;">⚠️ ${s.nbMachinesEmpty} fiche(s) non remplie(s) ÔÇö score calculé sur ${s.nbMachinesFilled}/${s.nbMachinesFilled + s.nbMachinesEmpty} fiches uniquement</div>` : ''}
+                            ${s.nbMachinesEmpty > 0 ? `<div style="font-size: 11px; color: #dc3545; font-weight: bold; margin-bottom: 8px;">⚠️ ${s.nbMachinesEmpty} fiche(s) non remplie(s) — score calculé sur ${s.nbMachinesFilled}/${s.nbMachinesFilled + s.nbMachinesEmpty} fiches uniquement</div>` : ''}
                             <div style="width: 100%; height: 20px; background: #e2e8f0; border: 1px solid #000; position: relative; overflow: hidden; border-radius: 4px;">
                                 <div style="width: ${s.score}%; height: 100%; background: ${s.score < 33 ? '#dc3545' : (s.score < 66 ? '#f59e0b' : '#22c55e')}; transition: width 0.5s;"></div>
                             </div>
@@ -1911,7 +1911,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         }
 
         // ══════════════════════════════════════════════════════════════════
-        // GÉNÉRATION PDF (html2pdf.js)
+        // génération PDF (html2pdf.js)
         // ══════════════════════════════════════════════════════════════════
         async function genererPDFBase64() {
             if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
@@ -1961,7 +1961,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             if (btn) { 
                 btn.disabled = true; 
-                if (label) label.textContent = 'Génération...';
+                if (label) label.textContent = 'génération...';
                 if (icon) icon.textContent = '⏳';
             }
             try {
@@ -2080,7 +2080,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
         // Écouter la reconnexion réseau
         window.addEventListener('online', () => {
-            console.log('[LM] Connexion rétablie ÔÇô rejouer la file d\'attente email');
+            console.log('[LM] Connexion rétablie – rejouer la file d\'attente email');
             rejouerFileDAttente();
         });
 
@@ -2122,7 +2122,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             if (btn) btn.disabled = true;
             if (icon) icon.textContent = '⏳';
-            if (label) label.textContent = 'Génération du PDF…';
+            if (label) label.textContent = 'génération du PDF…';
 
             let pdfBase64;
             try {
@@ -2147,7 +2147,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         client_email: clientEmail,
                         csrf_token: csrfToken,
                     });
-                    afficherToast('📶 Hors-ligne ÔÇô email mis en file d\'attente. Il sera envoyé automatiquement à la reconnexion.', 'warning');
+                    afficherToast('📶 Hors-ligne – email mis en file d\'attente. Il sera envoyé automatiquement à la reconnexion.', 'warning');
                 } catch (e) {
                     afficherToast('❌ Impossible de mettre l\'email en file d\'attente.', 'error');
                 }
@@ -2181,7 +2181,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         client_email: clientEmail,
                         csrf_token: csrfToken,
                     });
-                    afficherToast('📶 Connexion perdue ÔÇô email mis en file d\'attente. Il sera envoyé à la reconnexion.', 'warning');
+                    afficherToast('📶 Connexion perdue – email mis en file d\'attente. Il sera envoyé à la reconnexion.', 'warning');
                 } catch (qe) {
                     afficherToast('❌ Erreur réseau et impossible de mettre en file : ' + e.message, 'error');
                 }
@@ -2192,7 +2192,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         }
 
         // ══════════════════════════════════════════════════════════════════
-        // GÉNÉRATION MASSIVE IA (Toutes les fiches)
+        // génération MASSIVE IA (Toutes les fiches)
         // ══════════════════════════════════════════════════════════════════
         async function generateAllIA() {
             const btn = document.getElementById('btnGenerateAllIa');
