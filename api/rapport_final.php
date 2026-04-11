@@ -664,7 +664,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <h2 style="color: var(--primary); margin: 0; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;">Analyse Intelligente Globale</h2>
                     </div>
                     <button type="button" onclick="generateAllIA()" id="btnGenerateAllIa" class="btn btn-primary" style="background: var(--primary); color: #000; font-weight: 700; font-size: 0.8rem; padding: 0.5rem 1rem; border-radius: 8px; display: flex; align-items: center; gap: 8px;">
-                        <span>­ƒÜÇ</span> Lancer l'IA sur toutes les fiches
+                        <span>⚙️</span> Lancer l'IA sur toutes les fiches
                     </button>
                 </div>
                 <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">
@@ -682,7 +682,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
             </div>
 
-            <!-- EN-T├èTE -->
+            <!-- EN-TÊTE -->
             <div class="rapport-header">
                 <img src="/assets/lenoir_logo_trans.svg" alt="LENOIR-MEC" 
                     style="height: 60px; width: auto; object-fit: contain; display: block; margin: 0 auto 1.5rem auto;">
