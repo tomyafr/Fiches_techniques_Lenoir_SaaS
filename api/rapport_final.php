@@ -881,7 +881,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             <a href="intervention_edit.php?id=<?= $id ?>"
                 style="display:block; text-align:center; margin-top:1rem; color:var(--text-dim); font-size:0.85rem; text-decoration:none;">
-                â† Retour aux fiches
+                ← Retour aux fiches
             </a>
         </form>
     </div>
