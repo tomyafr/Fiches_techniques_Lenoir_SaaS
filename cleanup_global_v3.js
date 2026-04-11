@@ -5,7 +5,7 @@ const dirToScan = '.';
 
 const corruptions = [
     [/⏳/g, '⏳'],
-    [/☹️/g, '☹️'],
+    [/☐/g, '☐'],
     [/☐/g, '☐'],
     [/☐‘/g, '☑️'],
     [/➤/g, '➤'],
@@ -39,31 +39,37 @@ const corruptions = [
     [/—/g, '—'],
     [/═/g, '═'],
     [/✅/g, '✅'],
-    [/✅/g, '✅'],
-    [/ /g, ' '], // Non-breaking space corruption
-    [/⏳/g, '⏳'], // Added from user screenshot
+    [/✓/g, '✓'], // Re-fixed for checkmark
+    [/✓/g, '✓'], // Re-fixed for checkmark (variant)
+    [/←/g, '←'], // Left arrow
+    [/←/g, '←'], // Left arrow variant seen in user screenshot for Retour
+    [/ /g, ' '],
+    [/⏳/g, '⏳'],
 ];
 
 function processFile(fullPath) {
     let buffer = fs.readFileSync(fullPath);
     
-    // 1. Remove BOM if present
-    let hasBom = false;
+    // Remove BOM
     if (buffer[0] === 0xEF && buffer[1] === 0xBB && buffer[2] === 0xBF) {
         buffer = buffer.slice(3);
-        hasBom = true;
     }
     
     let content = buffer.toString('utf8');
-    let originalContent = content;
+    let original = content;
     
-    // 2. Fix corruptions
     for (const [regex, replacement] of corruptions) {
         content = content.replace(regex, replacement);
     }
     
-    if (content !== originalContent || hasBom) {
-        console.log(`Fixed: ${fullPath} ${hasBom ? '(Removed BOM)' : ''}`);
+    // Additional direct replacements for the specific button and link
+    content = content.replace(/✓/g, '✓');
+    content = content.replace(/←/g, '←');
+    content = content.replace(/←/g, '←');
+    content = content.replace(/✓/g, '✓');
+
+    if (content !== original) {
+        console.log(`Re-Fixed: ${fullPath}`);
         fs.writeFileSync(fullPath, content, 'utf8');
     }
 }
@@ -82,6 +88,6 @@ function walk(dir) {
     }
 }
 
-console.log('--- GLOBAL CLEANUP START ---');
+console.log('--- GLOBAL CLEANUP V3 START ---');
 walk(dirToScan);
-console.log('--- GLOBAL CLEANUP FINISHED ---');
+console.log('--- GLOBAL CLEANUP V3 FINISHED ---');

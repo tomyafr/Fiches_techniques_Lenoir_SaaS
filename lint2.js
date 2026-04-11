@@ -58,7 +58,7 @@
 
             <!-- BOUTON FINAL -->
             <button type="submit" class="btn-final" onclick="return validateAndSubmit()">
-                âœ“ Finaliser le rapport et terminer l'intervention
+                ✓ Finaliser le rapport et terminer l'intervention
             </button>
 
             <a href="intervention_edit.php?id="safe""
