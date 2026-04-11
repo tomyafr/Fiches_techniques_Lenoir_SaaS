@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
 $now = date('d/m/Y') . ' à ' . date('H:i');
 
-// --- CALCUL DES STATISTIQUES POUR LA SYNTHàˆSE ---
+// --- CALCUL DES STATISTIQUES POUR LA SYNTHÈSE ---
 $totalOk = 0;
 $totalAmeliorer = 0;
 $totalNonConforme = 0;
@@ -1513,7 +1513,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             rapportCloneWrapper.appendChild(createPdfFooter());
             container.appendChild(rapportCloneWrapper);
 
-            // --- 1.2 PAGE SYNTHàˆSE + PRÉAMBULE (FUSIONNÉS POUR ÉCONOMISER DES PAGES) ---
+            // --- 1.2 PAGE SYNTHÈSE + PRÉAMBULE (FUSIONNÉS POUR ÉCONOMISER DES PAGES) ---
             const synthPreambulePage = document.createElement('div');
             synthPreambulePage.className = 'pdf-page';
             synthPreambulePage.style.margin = '0';
@@ -1541,7 +1541,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             synthPreambulePage.innerHTML = `
                 <div style="padding-top: 10px;">
                     <div style="padding: 20px; color: #000; background: #fff; margin-bottom: 30px; page-break-inside: avoid;">
-                        <h2 style="font-weight: bold; font-size: 18px; color: #1e4e6d; margin: 0 0 25px 0; padding-bottom: 5px; border-bottom: 2px solid #1e4e6d; text-transform: uppercase; width: 100%;">SYNTHàˆSE DE L'INTERVENTION</h2>
+                        <h2 style="font-weight: bold; font-size: 18px; color: #1e4e6d; margin: 0 0 25px 0; padding-bottom: 5px; border-bottom: 2px solid #1e4e6d; text-transform: uppercase; width: 100%;">SYNTHÈSE DE L'INTERVENTION</h2>
                         
                         <div style="margin-bottom: 15px; font-size: 13px; line-height: 1.6;">
                             <div><strong>Technicien :</strong> ${s.tech}</div>
@@ -1848,10 +1848,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <!-- LE CLIENT SOUHAITE -->
                     <div style="font-weight: bold; font-size: 14px; color: #1e4e6d; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
                     <div style="padding: 8px 0; margin-bottom: 20px;">
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? 'â˜‘' : 'â˜'} Ce Rapport d\'expertise uniquement</div>
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? 'â˜‘' : 'â˜'} Une offre de Pièces de Rechange</div>
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitIntervention ? 'â˜‘' : 'â˜'} Une offre de PR + intervention mise en place</div>
-                        <div style="font-size: 11px;">${souhaitAucune ? 'â˜‘' : 'â˜'} Aucune offre</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? '☐‘' : '☐'} Ce Rapport d\'expertise uniquement</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? '☐‘' : '☐'} Une offre de Pièces de Rechange</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitIntervention ? '☐‘' : '☐'} Une offre de PR + intervention mise en place</div>
+                        <div style="font-size: 11px;">${souhaitAucune ? '☐‘' : '☐'} Aucune offre</div>
                     </div>
 
                     <!-- DATE ET HEURE -->
@@ -1885,12 +1885,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <div style="border: 2px solid #000; padding: 0; text-align: center; margin-bottom: 15px;">
                         <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR TOUTE INFORMATION TECHNIQUE SUR CE RAPPORT</div>
                         <div style="background-color: #fff; padding: 6px; border-bottom: 2px solid #000;">
-                            <div style="font-size: 12px;">âž¤ <strong>Soufyane SALAH</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Chargé d'Affaires</span></div>
+                            <div style="font-size: 12px;">➤ <strong>Soufyane SALAH</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Chargé d'Affaires</span></div>
                         </div>
                         
                         <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR LA PLANIFICATION D'UNE VÉRIFICATION PÉRIODIQUE</div>
                         <div style="background-color: #fff; padding: 6px;">
-                            <div style="font-size: 12px;">âž¤ <strong>Sophie NIAY</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Responsable Service Clients</span></div>
+                            <div style="font-size: 12px;">➤ <strong>Sophie NIAY</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Responsable Service Clients</span></div>
                         </div>
                     </div>
 
@@ -2125,21 +2125,21 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             if (btn) btn.disabled = true;
             if (icon) icon.textContent = 'â³';
-            if (label) label.textContent = 'Génération du PDFâ€¦';
+            if (label) label.textContent = 'Génération du PDF…';
 
             let pdfBase64;
             try {
                 pdfBase64 = await genererPDFBase64();
             } catch (e) {
                 if (btn) btn.disabled = false;
-                if (icon) icon.textContent = 'ðŸ“§';
+                if (icon) icon.textContent = '📧';
                 if (label) label.textContent = 'Envoyer PDF par email';
                 afficherToast('âŒ Erreur génération PDF : ' + e.message, 'error');
                 return;
             }
 
-            if (icon) icon.textContent = 'ðŸ“¤';
-            if (label) label.textContent = 'Envoi en coursâ€¦';
+            if (icon) icon.textContent = '📤';
+            if (label) label.textContent = 'Envoi en cours…';
 
             // Hors-ligne : mettre en file d'attente
             if (!navigator.onLine) {
@@ -2150,12 +2150,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         client_email: clientEmail,
                         csrf_token: csrfToken,
                     });
-                    afficherToast('ðŸ“¶ Hors-ligne – email mis en file d\'attente. Il sera envoyé automatiquement à la reconnexion.', 'warning');
+                    afficherToast('📶 Hors-ligne – email mis en file d\'attente. Il sera envoyé automatiquement à la reconnexion.', 'warning');
                 } catch (e) {
                     afficherToast('âŒ Impossible de mettre l\'email en file d\'attente.', 'error');
                 }
                 if (btn) btn.disabled = false;
-                if (icon) icon.textContent = 'ðŸ“§';
+                if (icon) icon.textContent = '📧';
                 if (label) label.textContent = 'Envoyer PDF par email';
                 return;
             }
@@ -2172,7 +2172,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 } else {
                     afficherToast('âŒ ' + (result.message || 'Erreur envoi email'), 'error');
                     if (btn) btn.disabled = false;
-                    if (icon) icon.textContent = 'ðŸ”„';
+                    if (icon) icon.textContent = '🔄';
                     if (label) label.textContent = 'Réessayer l\'envoi';
                 }
             } catch (e) {
@@ -2184,12 +2184,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         client_email: clientEmail,
                         csrf_token: csrfToken,
                     });
-                    afficherToast('ðŸ“¶ Connexion perdue – email mis en file d\'attente. Il sera envoyé à la reconnexion.', 'warning');
+                    afficherToast('📶 Connexion perdue – email mis en file d\'attente. Il sera envoyé à la reconnexion.', 'warning');
                 } catch (qe) {
                     afficherToast('âŒ Erreur réseau et impossible de mettre en file : ' + e.message, 'error');
                 }
                 if (btn) btn.disabled = false;
-                if (icon) icon.textContent = 'ðŸ”„';
+                if (icon) icon.textContent = '🔄';
                 if (label) label.textContent = 'Réessayer l\'envoi';
             }
         }

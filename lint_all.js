@@ -63,7 +63,7 @@
             context.scale(ratio, ratio);
             
             if (pad) {
-                pad.clear(); // RÃ©initialise pour Ã©viter les distorsions si on redimensionne
+                pad.clear(); // Réinitialise pour éviter les distorsions si on redimensionne
             }
         }
 
@@ -132,11 +132,11 @@
 
         function validateAndSubmit() {
             if (!padClient || !padTech) {
-                alert('Erreur: les zones de signature ne sont pas prÃªtes. Veuillez rafraÃ®chir la page.');
+                alert('Erreur: les zones de signature ne sont pas prêtes. Veuillez rafraîchir la page.');
                 return false;
             }
 
-            // --- BUG-005, BUG-014, BUG-015: ContrÃ´le de qualitÃ© des textes ---
+            // --- BUG-005, BUG-014, BUG-015: Contrôle de qualité des textes ---
             const fieldsToCheck = [
                 { name: 'commentaire_technicien', label: 'Observations du technicien' },
                 { name: 'commentaire_client', label: 'Commentaire du client' },
@@ -162,7 +162,7 @@
                 }
 
                 if (foundMatch) {
-                    if (!confirm("âš ï¸ Le champ '" + f.label + "' contient des donnÃ©es semblant Ãªtre du test ou non-professionnelles (\"" + val.substring(0, 20) + "...\"). Voulez-vous vraiment continuer ?")) {
+                    if (!confirm("âš ï¸ Le champ '" + f.label + "' contient des données semblant être du test ou non-professionnelles (\"" + val.substring(0, 20) + "...\"). Voulez-vous vraiment continuer ?")) {
                         return false;
                     }
                 }
@@ -174,11 +174,11 @@
                 return false;
             }
 
-            // --- BUG-008: ContrÃ´le de complÃ©tude des fiches ---
+            // --- BUG-008: Contrôle de complétude des fiches ---
             const machinesData = window.LM_RAPPORT.machinesData;
             for (let m of machinesData) {
                 if (m.points_count === 0) {
-                    alert('âŒ ComplÃ©tude insuffisante : La fiche machine "' + m.designation + '" est entiÃ¨rement vide (0 point de contrÃ´le rempli). Veuillez la complÃ©ter avant de finaliser.');
+                    alert('âŒ Complétude insuffisante : La fiche machine "' + m.designation + '" est entièrement vide (0 point de contrôle rempli). Veuillez la compléter avant de finaliser.');
                     return false;
                 }
             }
@@ -204,7 +204,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // --- BUG-018: ExclusivitÃ© des checkboxes "Le client souhaite" ---
+            // --- BUG-018: Exclusivité des checkboxes "Le client souhaite" ---
             const chkUnique = document.querySelector('[name="souhait_rapport_unique"]');
             const otherChks = document.querySelectorAll('[name="souhait_offre_pieces"], [name="souhait_pieces_intervention"], [name="souhait_aucune_offre"]');
             
@@ -246,10 +246,10 @@
 
 
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // CRÃ‰ATION DU CONTENEUR COMPLET POUR LE PDF (ASYNCHRONE)
+        // CRÉATION DU CONTENEUR COMPLET POUR LE PDF (ASYNCHRONE)
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-        // Helper : Attendre que toutes les images soient chargÃ©es
+        // Helper : Attendre que toutes les images soient chargées
         async function waitForImages(element) {
             const images = element.querySelectorAll('img');
             const promises = Array.from(images).map(img => {
@@ -287,7 +287,7 @@
             container.style.backgroundColor = 'white';
             container.style.color = 'black';
 
-            // --- 0. STYLES SPÃ‰CIFIQUES ---
+            // --- 0. STYLES SPÉCIFIQUES ---
             const styleNode = document.createElement('style');
             styleNode.textContent = `
                 .pdf-page {
@@ -394,10 +394,10 @@
             // Generate HTML lines for machines
             const machinesTrs = window.LM_RAPPORT.machinesData.map(m => `
                 <tr style="border-bottom:1px solid #000;">
-                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.arc || 'â€”'}</td>
-                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.of || 'â€”'}</td>
-                    <td style="padding:6px; border-right:1px solid #000;">${m.designation || 'â€”'}</td>
-                    <td style="padding:6px; text-align:center;">${m.annee || 'â€”'}</td>
+                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.arc || '—'}</td>
+                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.of || '—'}</td>
+                    <td style="padding:6px; border-right:1px solid #000;">${m.designation || '—'}</td>
+                    <td style="padding:6px; text-align:center;">${m.annee || '—'}</td>
                 </tr>
             `).join('');
 
@@ -414,7 +414,7 @@
                         </td>
                         <td style="width: 60%; vertical-align: bottom; text-align: right; padding-bottom: 5px;">
                             <div style="font-size: 11px; font-weight: normal; color: #e67e22; font-style: italic;">
-                                Le spÃ©cialiste des applications magnÃ©tiques pour la sÃ©paration et le levage industriel
+                                Le spécialiste des applications magnétiques pour la séparation et le levage industriel
                             </div>
                         </td>
                     </tr>
@@ -424,7 +424,7 @@
                 <!-- GRAND CADRE ORANGE -->
                 <div style="border: 3px solid #d35400; padding: 15px; margin-bottom: 30px;">
                     <h1 style="text-align: center; color: #d35400; font-size: 26px; font-weight: bold; margin: 10px 0 20px 0;">RAPPORT D'EXPERTISE SUR SITE</h1>
-                    <div style="text-align: right; font-weight: bold; font-size: 14px; color: black; margin-bottom: 15px;">NÂ°ARC : ${numArc}</div>
+                    <div style="text-align: right; font-weight: bold; font-size: 14px; color: black; margin-bottom: 15px;">N°ARC : ${numArc}</div>
 
                     <!-- TABLEAU CLIENT -->
                     <table style="width:100%; border-collapse:collapse; border: 2px solid #d35400; margin-bottom:20px; font-size:12px; font-family: Arial, sans-serif;">
@@ -446,8 +446,8 @@
                         <tr>
                             <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Adresse</td>
                             <td style="padding: 6px; border: 1px solid #000;">${adresse || '_____'}</td>
-                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">PrÃ©nom</td>
-                            <td style="padding: 6px; border: 1px solid #000;">_____</td> <!-- Backend n'a pas sÃ©parÃ© Nom/PrÃ©nom historiquement, on met un placeholder ou on laisse vide -->
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Prénom</td>
+                            <td style="padding: 6px; border: 1px solid #000;">_____</td> <!-- Backend n'a pas séparé Nom/Prénom historiquement, on met un placeholder ou on laisse vide -->
                         </tr>
                         <tr>
                             <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">CP</td>
@@ -458,7 +458,7 @@
                         <tr>
                             <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Ville</td>
                             <td style="padding: 6px; border: 1px solid #000;">${ville || '_____'}</td>
-                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">TÃ©lÃ©phone</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Téléphone</td>
                             <td style="padding: 6px; border: 1px solid #000;">${contactTel || '_____'}</td>
                         </tr>
                         <tr>
@@ -478,14 +478,14 @@
                         </tr>
                         <tr>
                             <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 10%;">Poste</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 30%;">NÂ° A.R.C (NÂ° de sÃ©rie)</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 60%;">DÃ©signation du Produit</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 30%;">N° A.R.C (N° de série)</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 60%;">Désignation du Produit</td>
                         </tr>
                         ${window.LM_RAPPORT.machinesData.map((m, idx) => `
                             <tr>
                                 <td style="text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000;">${m.poste || (idx + 1)}</td>
-                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.arc || 'â€”'} ${m.of ? ' - ' + m.of : ''}</td>
-                                <td style="padding: 6px; border: 1px solid #000;">${m.designation || 'â€”'}</td>
+                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.arc || '—'} ${m.of ? ' - ' + m.of : ''}</td>
+                                <td style="padding: 6px; border: 1px solid #000;">${m.designation || '—'}</td>
                             </tr>
                         `).join('')}
                     </table>
@@ -511,12 +511,12 @@
             rapportCloneWrapper.appendChild(createPdfFooter());
             container.appendChild(rapportCloneWrapper);
 
-            // --- 1.2 PAGE SYNTHÃˆSE + PRÃ‰AMBULE (FUSIONNÃ‰S POUR Ã‰CONOMISER DES PAGES) ---
+            // --- 1.2 PAGE SYNTHÈSE + PRÉAMBULE (FUSIONNÉS POUR ÉCONOMISER DES PAGES) ---
             const synthPreambulePage = document.createElement('div');
             synthPreambulePage.className = 'pdf-page';
             const s = window.LM_RAPPORT.synth;
             
-            // Calcul mois prochain pour le prÃ©ambule
+            // Calcul mois prochain pour le préambule
             let moisProchainText = "";
             let villePreambule = ville || "[VILLE DU CLIENT]";
             if (dateExp && dateExp.includes('/')) {
@@ -524,7 +524,7 @@
                 if (parts.length === 3) {
                     const mIndex = parseInt(parts[1], 10) - 1;
                     const y = parseInt(parts[2], 10) + 1;
-                    const moisNoms = ['janvier', 'fÃ©vrier', 'mars', 'avril', 'mai', 'juin', 'juillet', 'aoÃ»t', 'septembre', 'octobre', 'novembre', 'dÃ©cembre'];
+                    const moisNoms = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
                     if (mIndex >= 0 && mIndex < 12) {
                         moisProchainText = moisNoms[mIndex] + ' ' + y;
                     }
@@ -535,13 +535,13 @@
             synthPreambulePage.innerHTML = `
                 <div style="padding-top: 10px;">
                     <div style="border: 2px solid #000; padding: 20px; color: #000; background: #fff; margin-bottom: 30px; page-break-inside: avoid;">
-                        <h2 style="text-align: center; margin-top: 0; margin-bottom: 20px; text-decoration: underline; font-size: 16px; text-transform: uppercase;">SYNTHÃˆSE DE L'INTERVENTION</h2>
+                        <h2 style="text-align: center; margin-top: 0; margin-bottom: 20px; text-decoration: underline; font-size: 16px; text-transform: uppercase;">SYNTHÈSE DE L'INTERVENTION</h2>
                         
                         <div style="margin-bottom: 15px; font-size: 13px; line-height: 1.6;">
                             <div><strong>Technicien :</strong> ${s.tech}</div>
                             <div><strong>Date :</strong> ${s.date}</div>
-                            <div><strong>DurÃ©e totale :</strong> ${s.duree}</div>
-                            <div><strong>Ã‰quipements contrÃ´lÃ©s :</strong> ${s.nbMachines}</div>
+                            <div><strong>Durée totale :</strong> ${s.duree}</div>
+                            <div><strong>Équipements contrôlés :</strong> ${s.nbMachines}</div>
                         </div>
 
                         <div style="margin: 20px 0; font-size: 13px;">
@@ -551,7 +551,7 @@
                             </div>
                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
                                 <span style="display: inline-block; width: 12px; height: 12px; background: #e67e22; margin-right: 10px;"></span>
-                                <strong>${s.aa} points Ã  amÃ©liorer</strong>
+                                <strong>${s.aa} points à améliorer</strong>
                             </div>
                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
                                 <span style="display: inline-block; width: 12px; height: 12px; background: #dc3545; margin-right: 10px;"></span>
@@ -559,13 +559,13 @@
                             </div>
                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
                                 <span style="display: inline-block; width: 12px; height: 12px; background: #8b0000; margin-right: 10px;"></span>
-                                <strong>${s.nr} remplacement${s.nr > 1 ? 's' : ''} nÃ©cessaire${s.nr > 1 ? 's' : ''}</strong>
+                                <strong>${s.nr} remplacement${s.nr > 1 ? 's' : ''} nécessaire${s.nr > 1 ? 's' : ''}</strong>
                             </div>
                         </div>
 
                         <div style="margin-top: 25px; text-align: center;">
-                            <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px; text-transform: uppercase;">SCORE DE CONFORMITÃ‰ : ${s.score}%</div>
-                            ${s.nbMachinesEmpty > 0 ? `<div style="font-size: 11px; color: #dc3545; font-weight: bold; margin-bottom: 8px;">âš ï¸ ${s.nbMachinesEmpty} fiche(s) non remplie(s) â€” score calculÃ© sur ${s.nbMachinesFilled}/${s.nbMachinesFilled + s.nbMachinesEmpty} fiches uniquement</div>` : ''}
+                            <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px; text-transform: uppercase;">SCORE DE CONFORMITÉ : ${s.score}%</div>
+                            ${s.nbMachinesEmpty > 0 ? `<div style="font-size: 11px; color: #dc3545; font-weight: bold; margin-bottom: 8px;">âš ï¸ ${s.nbMachinesEmpty} fiche(s) non remplie(s) — score calculé sur ${s.nbMachinesFilled}/${s.nbMachinesFilled + s.nbMachinesEmpty} fiches uniquement</div>` : ''}
                             <div style="width: 100%; height: 20px; background: #e2e8f0; border: 1px solid #000; position: relative; overflow: hidden; border-radius: 4px;">
                                 <div style="width: ${s.score}%; height: 100%; background: ${s.score < 33 ? '#dc3545' : (s.score < 66 ? '#f59e0b' : '#22c55e')}; transition: width 0.5s;"></div>
                             </div>
@@ -573,18 +573,18 @@
                     </div>
 
                     <div style="font-size: 13px; line-height: 1.5; color: black; font-family: Arial, sans-serif; page-break-inside: avoid;">
-                        <h2 style="color: #f97316; text-decoration: underline; font-size: 16px; text-transform: uppercase; margin-bottom: 15px;">PRÃ‰AMBULE :</h2>
+                        <h2 style="color: #f97316; text-decoration: underline; font-size: 16px; text-transform: uppercase; margin-bottom: 15px;">PRÉAMBULE :</h2>
                         
                         <p style="margin-bottom: 12px;">
-                            Ce rapport est Ã©tabli suite Ã  une expertise effectuÃ©e le ${dateExp} sur votre site de ${villePreambule}.
+                            Ce rapport est établi suite à une expertise effectuée le ${dateExp} sur votre site de ${villePreambule}.
                         </p>
                         
                         <p style="margin-bottom: 12px;">
-                            Nos expertises permettent de vous accompagner dans votre dÃ©marche ISO 22000 :2005 et HACCP. Notre analyse est suivie de conclusions ou recommandations que nous vous invitons Ã  suivre pour la pÃ©rennitÃ© et la qualitÃ© de votre production.
+                            Nos expertises permettent de vous accompagner dans votre démarche ISO 22000 :2005 et HACCP. Notre analyse est suivie de conclusions ou recommandations que nous vous invitons à suivre pour la pérennité et la qualité de votre production.
                         </p>
                         
                         <p style="margin-bottom: 12px;">
-                            Dans le cadre de notre prestation annuelle, la prochaine expertise aura lieu en ${moisProchainText}. Nous vous contacterons pour Ã©tablir une date appropriÃ©e Ã  vos impÃ©ratifs de production.
+                            Dans le cadre de notre prestation annuelle, la prochaine expertise aura lieu en ${moisProchainText}. Nous vous contacterons pour établir une date appropriée à vos impératifs de production.
                         </p>
                     </div>
                 </div>
@@ -598,7 +598,7 @@
                 const emptyOption = window.LM_RAPPORT.emptyFichesOption || 'exclude';
                 const emptyIds = window.LM_RAPPORT.emptyMachinesIds || [];
 
-                // Si option = 'exclude', on retire carrÃ©ment les machines vides de la boucle !
+                // Si option = 'exclude', on retire carrément les machines vides de la boucle !
                 if (emptyOption === 'exclude' && emptyIds.length > 0) {
                     reportMachineIds = reportMachineIds.filter(id => !emptyIds.includes(parseInt(id, 10)) && !emptyIds.includes(String(id)));
                 }
@@ -607,10 +607,10 @@
                 for (let mIdx = 0; mIdx < totalMachines; mIdx++) {
                     const mId = reportMachineIds[mIdx];
                     
-                    // Si on a gardÃ© la machine mais qu'elle est vide et qu'on voulait 'condensed'
+                    // Si on a gardé la machine mais qu'elle est vide et qu'on voulait 'condensed'
                     if (emptyOption === 'condensed' && (emptyIds.includes(parseInt(mId, 10)) || emptyIds.includes(String(mId)))) {
                         const mData = window.LM_RAPPORT.machinesData.find(m => parseInt(m.id, 10) === parseInt(mId, 10)) || {};
-                        const mDesignation = mData.designation || 'Ã‰quipement';
+                        const mDesignation = mData.designation || 'Équipement';
                         const mArc = mData.arc || numArc;
                         
                         const p = document.createElement('div');
@@ -623,19 +623,19 @@
                             
                             <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000;">
                                 <tr>
-                                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">NÂ° A.R.C.</td>
+                                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N° A.R.C.</td>
                                     <td style="width:35%; border:1px solid #000; padding:6px; font-weight:bold;">${mArc}</td>
-                                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">DÃ©signation</td>
+                                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Désignation</td>
                                     <td style="width:35%; border:1px solid #000; padding:6px;"><b>${mDesignation}</b></td>
                                 </tr>
                             </table>
 
                             <div style="margin-top: 150px; text-align: center;">
                                 <div style="font-size: 24px; font-weight: bold; color: #dc3545; text-transform: uppercase; border: 4px solid #dc3545; display: inline-block; padding: 20px 40px; transform: rotate(-5deg);">
-                                    Ã‰QUIPEMENT NON CONTRÃ”LÃ‰
+                                    ÉQUIPEMENT NON CONTRÃ”LÉ
                                 </div>
                                 <div style="margin-top: 30px; color: #555; font-size: 14px;">
-                                    Aucune donnÃ©e n'a Ã©tÃ© saisie pour ce matÃ©riel lors de l'intervention.
+                                    Aucune donnée n'a été saisie pour ce matériel lors de l'intervention.
                                 </div>
                             </div>
                         `;
@@ -643,7 +643,7 @@
                         p.style.pageBreakBefore = 'always';
                         container.appendChild(p);
 
-                        continue; // Passe directement Ã  la machine suivante sans fetch html !
+                        continue; // Passe directement à la machine suivante sans fetch html !
                     }
 
                     try {
@@ -721,7 +721,7 @@
                                 // NEW FIX FOR PERFORMANCE / NON REALISE Bug:
                                 const specialKeys = ['aprf_attraction_comment', 'ov_perf_bille', 'ov_perf_ecrou', 'ov_perf_rond50', 'ov_perf_rond100', 'levage_charge_maxi_comment', 'levage_temp_maxi_comment'];
                                 if (specialKeys.some(k => ta.name && ta.name.includes(k))) {
-                                    if (!val.trim()) val = "Non rÃ©alisÃ©";
+                                    if (!val.trim()) val = "Non réalisé";
                                 }
 
                                 if (ta.name === 'commentaires' && (!val || !val.trim())) {
@@ -741,7 +741,7 @@
                                 ta.remove();
                             });
                             
-                            // BUGFIX PDF: SÃ©parateur de table (tbody)
+                            // BUGFIX PDF: Séparateur de table (tbody)
                             // html2pdf coupe en deux les <tr> sauvagement. 
                             // La seule vraie solution est de wrapper chaque ligne logique dans son propre <tbody> !
                             p.querySelectorAll('table.pdf-table').forEach(table => {
@@ -760,7 +760,7 @@
                                     });
                                     if (maxSpan - 1 > pendingSpans) pendingSpans = maxSpan - 1;
                                     
-                                    currentTbody.appendChild(row); // DÃ©place le tr dans le nouveau tbody
+                                    currentTbody.appendChild(row); // Déplace le tr dans le nouveau tbody
                                     
                                     if (pendingSpans > 0) {
                                         pendingSpans--;
@@ -791,8 +791,8 @@
                 }
             }
 
-            // Page de fin : On ne force plus systÃ©matiquement le saut de page
-            // si le contenu prÃ©cÃ©dent est court. On laisse html2pdf gÃ©rer ou on met un petit espacement.
+            // Page de fin : On ne force plus systématiquement le saut de page
+            // si le contenu précédent est court. On laisse html2pdf gérer ou on met un petit espacement.
             const pbFin = document.createElement('div');
             pbFin.style.height = '20px';
             container.appendChild(pbFin);
@@ -829,7 +829,7 @@
             endPage.innerHTML = `
                 <div style="font-family: Arial, sans-serif; font-size: 11px; color: #000;">
                     
-                    <!-- OBSERVATIONS GÃ‰NÃ‰RALES -->
+                    <!-- OBSERVATIONS GÉNÉRALES -->
                     ${titleTech}
                     ${commentaryTech}
 
@@ -839,10 +839,10 @@
                     <!-- LE CLIENT SOUHAITE -->
                     <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
                     <div style="border: 2px solid #000; padding: 8px; margin-bottom: 10px;">
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? 'â˜‘' : 'â˜'} Ce Rapport d\'expertise uniquement</div>
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? 'â˜‘' : 'â˜'} Une offre de PiÃ¨ces de Rechange</div>
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitIntervention ? 'â˜‘' : 'â˜'} Une offre de PR + intervention mise en place</div>
-                        <div style="font-size: 11px;">${souhaitAucune ? 'â˜‘' : 'â˜'} Aucune offre</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? '☐‘' : '☐'} Ce Rapport d\'expertise uniquement</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? '☐‘' : '☐'} Une offre de Pièces de Rechange</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitIntervention ? '☐‘' : '☐'} Une offre de PR + intervention mise en place</div>
+                        <div style="font-size: 11px;">${souhaitAucune ? '☐‘' : '☐'} Aucune offre</div>
                     </div>
 
                     <!-- DATE ET HEURE -->
@@ -856,14 +856,14 @@
                     <table style="width: 100%; border-collapse: collapse; table-layout: fixed; border: 2px solid #000; margin-bottom: 15px;">
                         <tr style="height: 120px;">
                             <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
-                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">ContrÃ´leur (NOM PrÃ©nom) :</div>
+                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Contrôleur (NOM Prénom) :</div>
                                 <div style="margin-bottom: 10px;"><strong>${techNameLabel}</strong></div>
                                 <div style="text-align: center;">
                                     <img src="${sigTechImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
                                 </div>
                             </td>
                             <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
-                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Client (NOM PrÃ©nom) :</div>
+                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Client (NOM Prénom) :</div>
                                 <div style="margin-bottom: 10px;"><strong>${nomSignataireFin}</strong></div>
                                 <div style="text-align: center;">
                                     <img src="${sigClientImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
@@ -876,12 +876,12 @@
                     <div style="border: 2px solid #000; padding: 0; text-align: center; margin-bottom: 15px;">
                         <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR TOUTE INFORMATION TECHNIQUE SUR CE RAPPORT</div>
                         <div style="background-color: #fff; padding: 6px; border-bottom: 2px solid #000;">
-                            <div style="font-size: 12px;">âž¤ <strong>Soufyane SALAH</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">ChargÃ© d'Affaires</span></div>
+                            <div style="font-size: 12px;">➤ <strong>Soufyane SALAH</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Chargé d'Affaires</span></div>
                         </div>
                         
-                        <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR LA PLANIFICATION D'UNE VÃ‰RIFICATION PÃ‰RIODIQUE</div>
+                        <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR LA PLANIFICATION D'UNE VÉRIFICATION PÉRIODIQUE</div>
                         <div style="background-color: #fff; padding: 6px;">
-                            <div style="font-size: 12px;">âž¤ <strong>Sophie NIAY</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Responsable Service Clients</span></div>
+                            <div style="font-size: 12px;">➤ <strong>Sophie NIAY</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Responsable Service Clients</span></div>
                         </div>
                     </div>
 
@@ -905,7 +905,7 @@
         }
 
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // GÃ‰NÃ‰RATION PDF (html2pdf.js)
+        // GÉNÉRATION PDF (html2pdf.js)
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         async function genererPDFBase64() {
             if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
@@ -941,11 +941,11 @@
         }
 
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // TÃ‰LÃ‰CHARGEMENT PDF BOUTON DIRECT
+        // TÉLÉCHARGEMENT PDF BOUTON DIRECT
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         async function telechargerPDF() {
             const btn = document.getElementById('btnDownloadPDF');
-            if (btn) { btn.disabled = true; btn.textContent = 'â³ GÃ©nÃ©ration du rapport complet...'; }
+            if (btn) { btn.disabled = true; btn.textContent = 'â³ Génération du rapport complet...'; }
             try {
                 const container = await buildFullPdfContainer();
 
@@ -969,9 +969,9 @@
                     }
                 }).save();
             } catch (e) {
-                alert('Erreur gÃ©nÃ©ration PDF : ' + e.message);
+                alert('Erreur génération PDF : ' + e.message);
             } finally {
-                if (btn) { btn.disabled = false; btn.textContent = 'â¬‡ï¸ TÃ©lÃ©charger le PDF'; }
+                if (btn) { btn.disabled = false; btn.textContent = 'â¬‡ï¸ Télécharger le PDF'; }
             }
         }
 
@@ -1042,18 +1042,18 @@
                         if (res.success) {
                             // Supprimer de la file
                             db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME).delete(item.id);
-                            console.log('[LM] Email rejouÃ© avec succÃ¨s :', item.client_email);
+                            console.log('[LM] Email rejoué avec succès :', item.client_email);
                         }
                     } catch (e) {
-                        console.warn('[LM] Rejouer Ã©chouÃ© :', e);
+                        console.warn('[LM] Rejouer échoué :', e);
                     }
                 }
             };
         }
 
-        // Ã‰couter la reconnexion rÃ©seau
+        // Écouter la reconnexion réseau
         window.addEventListener('online', () => {
-            console.log('[LM] Connexion rÃ©tablie â€“ rejouer la file d\'attente email');
+            console.log('[LM] Connexion rétablie – rejouer la file d\'attente email');
             rejouerFileDAttente();
         });
 
@@ -1085,7 +1085,7 @@
             const { interventionId, clientEmail, csrfToken, nomSociete } = window.LM_RAPPORT;
 
             if (!clientEmail) {
-                afficherToast('âš ï¸ Aucun email client renseignÃ©. Veuillez reprendre le formulaire.', 'error');
+                afficherToast('âš ï¸ Aucun email client renseigné. Veuillez reprendre le formulaire.', 'error');
                 return;
             }
 
@@ -1095,21 +1095,21 @@
 
             if (btn) btn.disabled = true;
             if (icon) icon.textContent = 'â³';
-            if (label) label.textContent = 'GÃ©nÃ©ration du PDFâ€¦';
+            if (label) label.textContent = 'Génération du PDF…';
 
             let pdfBase64;
             try {
                 pdfBase64 = await genererPDFBase64();
             } catch (e) {
                 if (btn) btn.disabled = false;
-                if (icon) icon.textContent = 'ðŸ“§';
+                if (icon) icon.textContent = '📧';
                 if (label) label.textContent = 'Envoyer PDF par email';
-                afficherToast('âŒ Erreur gÃ©nÃ©ration PDF : ' + e.message, 'error');
+                afficherToast('âŒ Erreur génération PDF : ' + e.message, 'error');
                 return;
             }
 
-            if (icon) icon.textContent = 'ðŸ“¤';
-            if (label) label.textContent = 'Envoi en coursâ€¦';
+            if (icon) icon.textContent = '📤';
+            if (label) label.textContent = 'Envoi en cours…';
 
             // Hors-ligne : mettre en file d'attente
             if (!navigator.onLine) {
@@ -1120,12 +1120,12 @@
                         client_email: clientEmail,
                         csrf_token: csrfToken,
                     });
-                    afficherToast('ðŸ“¶ Hors-ligne â€“ email mis en file d\'attente. Il sera envoyÃ© automatiquement Ã  la reconnexion.', 'warning');
+                    afficherToast('📶 Hors-ligne – email mis en file d\'attente. Il sera envoyé automatiquement à la reconnexion.', 'warning');
                 } catch (e) {
                     afficherToast('âŒ Impossible de mettre l\'email en file d\'attente.', 'error');
                 }
                 if (btn) btn.disabled = false;
-                if (icon) icon.textContent = 'ðŸ“§';
+                if (icon) icon.textContent = '📧';
                 if (label) label.textContent = 'Envoyer PDF par email';
                 return;
             }
@@ -1134,19 +1134,19 @@
             try {
                 const result = await envoyerParAPI(interventionId, pdfBase64, clientEmail, csrfToken);
                 if (result.success) {
-                    afficherToast('âœ… Rapport envoyÃ© avec succÃ¨s Ã  ' + result.email, 'success');
+                    afficherToast('✅ Rapport envoyé avec succès à ' + result.email, 'success');
                     if (btn) btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
-                    if (icon) icon.textContent = 'âœ…';
-                    if (label) label.textContent = 'Email envoyÃ© !';
+                    if (icon) icon.textContent = '✅';
+                    if (label) label.textContent = 'Email envoyé !';
                     btn.disabled = true; // Ne pas renvoyer
                 } else {
                     afficherToast('âŒ ' + (result.message || 'Erreur envoi email'), 'error');
                     if (btn) btn.disabled = false;
-                    if (icon) icon.textContent = 'ðŸ”„';
-                    if (label) label.textContent = 'RÃ©essayer l\'envoi';
+                    if (icon) icon.textContent = '🔄';
+                    if (label) label.textContent = 'Réessayer l\'envoi';
                 }
             } catch (e) {
-                // RÃ©seau coupÃ© pendant l'envoi
+                // Réseau coupé pendant l'envoi
                 try {
                     await sauvegarderEnFile({
                         intervention_id: interventionId,
@@ -1154,13 +1154,13 @@
                         client_email: clientEmail,
                         csrf_token: csrfToken,
                     });
-                    afficherToast('ðŸ“¶ Connexion perdue â€“ email mis en file d\'attente. Il sera envoyÃ© Ã  la reconnexion.', 'warning');
+                    afficherToast('📶 Connexion perdue – email mis en file d\'attente. Il sera envoyé à la reconnexion.', 'warning');
                 } catch (qe) {
-                    afficherToast('âŒ Erreur rÃ©seau et impossible de mettre en file : ' + e.message, 'error');
+                    afficherToast('âŒ Erreur réseau et impossible de mettre en file : ' + e.message, 'error');
                 }
                 if (btn) btn.disabled = false;
-                if (icon) icon.textContent = 'ðŸ”„';
-                if (label) label.textContent = 'RÃ©essayer l\'envoi';
+                if (icon) icon.textContent = '🔄';
+                if (label) label.textContent = 'Réessayer l\'envoi';
             }
         }
 

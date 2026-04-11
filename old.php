@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 require_once __DIR__ . '/../includes/config.php';
 requireAuth(['technicien', 'admin']);
 
@@ -1833,7 +1833,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         client_email: clientEmail,
                         csrf_token: csrfToken,
                     });
-                    afficherToast('­ƒôÂ Hors-ligne ÔÇô email mis en file d\'attente. Il sera envoy├® automatiquement ├á la reconnexion.', 'warning');
+                    afficherToast('­ƒô Hors-ligne ÔÇô email mis en file d\'attente. Il sera envoy├® automatiquement ├á la reconnexion.', 'warning');
                 } catch (e) {
                     afficherToast('ÔØî Impossible de mettre l\'email en file d\'attente.', 'error');
                 }
@@ -1867,7 +1867,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         client_email: clientEmail,
                         csrf_token: csrfToken,
                     });
-                    afficherToast('­ƒôÂ Connexion perdue ÔÇô email mis en file d\'attente. Il sera envoy├® ├á la reconnexion.', 'warning');
+                    afficherToast('­ƒô Connexion perdue ÔÇô email mis en file d\'attente. Il sera envoy├® ├á la reconnexion.', 'warning');
                 } catch (qe) {
                     afficherToast('ÔØî Erreur r├®seau et impossible de mettre en file : ' + e.message, 'error');
                 }
