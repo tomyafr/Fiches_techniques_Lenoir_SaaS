@@ -1194,7 +1194,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             styleNode.textContent = `
                 .pdf-page {
                     width: 21cm;
-                    min-height: 100px;
+                    min-height: 297mm;
                     background: white;
                     color: black;
                     padding: 0 15mm;
@@ -1673,7 +1673,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             </div>
                         `;
 
-                        p.style.pageBreakBefore = 'always';
+                        if (container.children.length > 0) p.style.pageBreakBefore = 'always';
                         container.appendChild(p);
 
                         continue; // Passe directement à la machine suivante sans fetch html !
@@ -1714,7 +1714,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                             // Chaque machine commence obligatoirement sur une nouvelle page
                             if (pIdx === 0) {
-                                p.style.pageBreakBefore = 'always';
+                                if (container.children.length > 0) p.style.pageBreakBefore = 'always';
                                 p.style.marginTop = '0';
                                 p.style.paddingTop = '10mm'; 
                                 
@@ -1832,19 +1832,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
 
             if (includeEnd) {
-                // Page de fin : On ne force plus systématiquement le saut de page
-            // si le contenu précédent est court. On laisse html2pdf gérer ou on met un petit espacement.
-            const pbFin = document.createElement('div');
-            pbFin.style.height = '20px';
-            container.appendChild(pbFin);
+                // Page de fin : saut de page seulement si on a déjà du contenu dans ce container
+                if (container.children.length > 0) {
+                    const pbFin = document.createElement('div');
+                    pbFin.className = 'html2pdf__page-break';
+                    container.appendChild(pbFin);
+                }
 
-            // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC + SIGNATURES + OBSERVATIONS) ---
+                // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC + SIGNATURES + OBSERVATIONS) ---
 
-            const endPage = document.createElement('div');
-            endPage.className = 'pdf-page';
-            endPage.style.padding = '0 15mm';
-            endPage.style.position = 'relative';
-            endPage.style.pageBreakBefore = 'always';
+                const endPage = document.createElement('div');
+                endPage.className = 'pdf-page';
+                endPage.style.padding = '0 15mm';
+                endPage.style.position = 'relative';
 
             const originalRapport = document.getElementById('rapportForm');
             const souhaitRapport = originalRapport.querySelector('[name="souhait_rapport_unique"]').checked;
@@ -2006,7 +2006,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     const text = `Page ${i + 1} / ${pages.length}`;
                     pages[i].drawText(text, {
                         x: width / 2 - font.widthOfTextAtSize(text, 9) / 2,
-                        y: 10,
+                        y: 31, // Points from bottom (~11mm), matches old code perfectly
                         size: 9,
                         font: font,
                         color: rgb(0.2, 0.2, 0.2),
