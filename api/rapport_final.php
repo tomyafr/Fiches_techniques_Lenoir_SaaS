@@ -1924,9 +1924,71 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         }
 
         // ══════════════════════════════════════════════════════════════════
-        // génération PDF (html2pdf.js) avec CHUNKS
+        // GÉNÉRAL ROUTER (Monolithique vs Chunked)
         // ══════════════════════════════════════════════════════════════════
         async function generateUltimatePDF(action = 'download') {
+            const machineIds = window.LM_RAPPORT.machinesIds || [];
+            if (machineIds.length <= 5) {
+                return await generateUltimatePDF_Monolithic(action);
+            } else {
+                return await generateUltimatePDF_Chunked(action);
+            }
+        }
+
+        async function generateUltimatePDF_Monolithic(action = 'download') {
+            if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
+
+            const overlay = document.getElementById('pdfDownloadOverlay');
+            if (overlay) overlay.style.display = 'flex';
+            if (typeof updatePdfProgress === 'function') updatePdfProgress(30, 'task-intro');
+
+            try {
+                const container = await buildFullPdfContainer();
+                await ensureImagesBase64(container);
+
+                const opt = {
+                    margin: [10, 0, 15, 0], 
+                    filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 1.5, useCORS: true, logging: false },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.levage-diagram-container'] }
+                };
+
+                const worker = html2pdf().set(opt).from(container);
+
+                await worker.toPdf().get('pdf').then(function (pdf) {
+                    const totalPages = pdf.internal.getNumberOfPages();
+                    for (let i = 1; i <= totalPages; i++) {
+                        pdf.setPage(i);
+                        pdf.setFont('helvetica', 'normal');
+                        pdf.setFontSize(9);
+                        pdf.setTextColor(50, 50, 50);
+                        pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
+                    }
+                });
+
+                if (action === 'download') {
+                    if (typeof updatePdfProgress === 'function') updatePdfProgress(100, 'task-final');
+                    await worker.save();
+                } else {
+                    const pdfBlob = await worker.outputPdf('blob');
+                    return new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result.split(',')[1]);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(pdfBlob);
+                    });
+                }
+            } catch (e) {
+                console.error("Génération PDF (Monolithique) échouée:", e);
+                alert("Erreur génération PDF : " + e.message);
+            } finally {
+                if (overlay) overlay.style.display = 'none';
+            }
+        }
+
+        async function generateUltimatePDF_Chunked(action = 'download') {
             if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
             if (!window.PDFLib) throw new Error('PDF-Lib non chargé (vérifiez votre connexion)');
 
