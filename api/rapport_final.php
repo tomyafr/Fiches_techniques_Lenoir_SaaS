@@ -1116,14 +1116,16 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         function createPdfFooter() {
             const f = document.createElement('div');
             const leg = window.LM_RAPPORT.legal;
-            f.style.marginTop = '30px';
-            f.style.width = '100%';
+            // FIX: Use absolute positioning to avoid pushing content to new pages
+            f.style.position = 'absolute';
+            f.style.bottom = '10mm';
+            f.style.left = '15mm';
+            f.style.right = '15mm';
             f.style.textAlign = 'center';
             f.style.fontSize = '9px';
             f.style.fontWeight = 'bold';
             f.style.borderTop = '2px solid #000';
             f.style.paddingTop = '5px';
-            f.style.paddingBottom = '5px';
             f.style.pageBreakInside = 'avoid';
             f.innerHTML = `${leg.address}<br>${leg.contact}<br>${leg.siret}`;
             return f;
@@ -1172,6 +1174,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const container = document.createElement('div');
             container.id = 'pdf-full-wrapper';
             container.style.width = '210mm';
+            // FIX: Zero-height container to avoid phantom pages
+            container.style.margin = '0';
+            container.style.padding = '0';
+            container.style.lineHeight = '0'; 
+            container.style.overflow = 'hidden';
             container.style.backgroundColor = 'white';
             container.style.color = 'black';
 
@@ -1414,9 +1421,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             // --- 1. PAGE RAPPORT FINAL (COUVERTURE + INFOS) ---
             if (includeIntro) {
-            const rapportCloneWrapper = document.createElement('div');
-            rapportCloneWrapper.className = 'pdf-page';
-            // Layout exact as requested
+             const rapportCloneWrapper = document.createElement('div');
+             rapportCloneWrapper.className = 'pdf-page';
+             rapportCloneWrapper.style.position = 'relative';
+             rapportCloneWrapper.style.minHeight = '296mm';
             rapportCloneWrapper.innerHTML = `
                 <!-- HEADER (Logo, Slogan) -->
                 <table style="width:100%; border:none; margin-bottom:15px; border-bottom: 2px solid #1e4e6d;">
@@ -1436,7 +1444,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 <!-- GRAND CADRE BLEU -->
                 <div style="border: 3px solid #1e4e6d; padding: 15px; margin-bottom: 30px;">
                     <h1 style="text-align: center; color: #1e4e6d; font-size: 26px; font-weight: bold; margin: 10px 0 20px 0;">RAPPORT DE L'EXPERTISE</h1>
-                    <div style="text-align: right; font-weight: bold; font-size: 14px; color: black; margin-bottom: 15px;">N┬░ARC : ${numArc}</div>
+                    <div style="text-align: right; font-weight: bold; font-size: 14px; color: black; margin-bottom: 15px;">N&deg; ARC : ${numArc}</div>
 
                     <!-- TABLEAU CLIENT -->
                     <table style="width:100%; border-collapse:collapse; border: 2px solid #1e4e6d; margin-bottom:20px; font-size:12px; font-family: Arial, sans-serif;">
@@ -1490,7 +1498,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         </tr>
                         <tr>
                             <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 8%;">Poste</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 25%;">N┬░ A.R.C (N┬░ de série)</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 25%;">N&deg; A.R.C (N&deg; de série)</td>
                             <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 45%;">Désignation du Produit</td>
                             <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 12%;">Repère</td>
                             <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 10%;">Année</td>
@@ -1522,14 +1530,16 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </tr>
                 </table>
             `;
-            rapportCloneWrapper.appendChild(createPdfFooter());
-            container.appendChild(rapportCloneWrapper);
+            coverPage.appendChild(createPdfFooter());
+            container.appendChild(coverPage);
 
             // --- 1.2 PAGE SYNTHÈSE + PRÉAMBULE (FUSIONNÉS POUR ÉCONOMISER DES PAGES) ---
             const synthPreambulePage = document.createElement('div');
             synthPreambulePage.className = 'pdf-page';
             synthPreambulePage.style.margin = '0';
             synthPreambulePage.style.boxShadow = 'none';
+            synthPreambulePage.style.position = 'relative';
+            synthPreambulePage.style.minHeight = '296mm';
             if (container.children.length > 0) synthPreambulePage.style.pageBreakBefore = 'always';
             synthPreambulePage.style.paddingTop = '15mm';
             const s = window.LM_RAPPORT.synth;
@@ -1807,10 +1817,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 });
                             });
 
+                            p.style.minHeight = '296mm'; // Standard A4 height to help html2pdf
                             p.style.position = 'relative';
-                            p.style.paddingBottom = '5mm'; 
-                            p.querySelectorAll('.section-wrapper-pdf').forEach(w => w.style.marginBottom = '0');
-                            p.style.minHeight = '100px'; 
+                            p.style.paddingBottom = '25mm'; // Space for absolute footer
                             p.appendChild(createPdfFooter());
                             container.appendChild(p);
                         });
@@ -1827,6 +1836,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             endPage.className = 'pdf-page';
             endPage.style.padding = '0 15mm';
             endPage.style.position = 'relative';
+            endPage.style.minHeight = '296mm';
             if (container.children.length > 0) endPage.style.pageBreakBefore = 'always';
 
             const originalRapport = document.getElementById('rapportForm');
@@ -1980,6 +1990,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 if (statusText) statusText.textContent = "Assemblage final et numérotation...";
                 const mergedBytes = await mergePdfChunks(chunks);
                 
+                if (!mergedBytes) throw new Error("Échec de la fusion des PDF.");
+
                 const { PDFDocument, rgb, StandardFonts } = window.PDFLib;
                 const pdfDoc = await PDFDocument.load(mergedBytes);
                 const pages = pdfDoc.getPages();
