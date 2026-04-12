@@ -477,7 +477,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #020617;
+            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
             z-index: 10000;
             display: none;
             flex-direction: column;
@@ -485,31 +485,44 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             justify-content: center;
             color: #fff;
             font-family: 'Inter', sans-serif;
+            backdrop-filter: blur(8px);
+        }
+
+        .loader-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
         .loader-lenoir {
-            width: 120px;
-            height: 120px;
+            width: 80px;
+            height: 80px;
             position: relative;
-            margin-bottom: 2rem;
+            margin: 0 auto 1.5rem auto;
         }
 
         .loader-lenoir::before, .loader-lenoir::after {
             content: '';
             position: absolute;
             border-radius: 50%;
-            border: 4px solid transparent;
+            border: 3px solid transparent;
             border-top-color: var(--primary);
             width: 100%;
             height: 100%;
-            animation: spin 1.5s linear infinite;
+            animation: spin 1.5s cubic-bezier(0.5, 0, 0.5, 1) infinite;
         }
 
         .loader-lenoir::after {
-            width: 80%;
-            height: 80%;
-            top: 10%;
-            left: 10%;
+            width: 70%;
+            height: 70%;
+            top: 15%;
+            left: 15%;
             border-top-color: var(--accent-cyan);
             animation-duration: 1s;
             animation-direction: reverse;
@@ -520,12 +533,67 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         }
 
         .download-status-text {
-            font-size: 1.25rem;
-            font-weight: 600;
-            background: linear-gradient(90deg, #fff, var(--primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
             margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent-cyan));
+            border-radius: 10px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .percentage-text {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .task-list {
+            text-align: left;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+        }
+
+        .task-item.active {
+            color: #fff;
+            transform: translateX(5px);
+        }
+
+        .task-item.completed {
+            color: #10b981;
+        }
+
+        .task-dot {
+            width: 6px;
+            height: 6px;
+            background: currentColor;
+            border-radius: 50%;
         }
 
         @media print {
@@ -541,9 +609,30 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
 <body>
     <div id="pdfDownloadOverlay">
-        <div class="loader-lenoir"></div>
-        <div class="download-status-text">génération de votre rapport premium</div>
-        <div style="color: var(--text-dim); font-size: 0.9rem;">Veuillez patienter quelques instants...</div>
+        <div class="loader-card">
+            <div class="loader-lenoir"></div>
+            <div class="download-status-text">Production du Rapport</div>
+            <div class="percentage-text" id="pdfPercentage">0%</div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="pdfProgressBar"></div>
+            </div>
+
+            <div class="task-list">
+                <div class="task-item" id="task-intro">
+                    <div class="task-dot"></div>
+                    <span>Initialisation et Couverture</span>
+                </div>
+                <div class="task-item" id="task-machines">
+                    <div class="task-dot"></div>
+                    <span id="task-machines-text">Traitement des machines</span>
+                </div>
+                <div class="task-item" id="task-final">
+                    <div class="task-dot"></div>
+                    <span>Assemblage et Signatures</span>
+                </div>
+            </div>
+        </div>
     </div>
     <style>
         .mobile-header { display: flex !important; }
@@ -1926,6 +2015,32 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         // ══════════════════════════════════════════════════════════════════
         // génération PDF (html2pdf.js) avec CHUNKS
         // ══════════════════════════════════════════════════════════════════
+        function updatePdfProgress(percent, activeTaskId, machineText = null) {
+            const bar = document.getElementById('pdfProgressBar');
+            const perc = document.getElementById('pdfPercentage');
+            if(bar) bar.style.width = percent + '%';
+            if(perc) perc.textContent = Math.round(percent) + '%';
+            
+            document.querySelectorAll('.task-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            const currentTask = document.getElementById(activeTaskId);
+            if(currentTask) {
+                currentTask.classList.add('active');
+                // Marquer les précédents comme complétés
+                let prev = currentTask.previousElementSibling;
+                while(prev) {
+                    if (prev.classList.contains('task-item')) prev.classList.add('completed');
+                    prev = prev.previousElementSibling;
+                }
+            }
+            if(machineText && activeTaskId === 'task-machines') {
+                const mt = document.getElementById('task-machines-text');
+                if(mt) mt.textContent = machineText;
+            }
+        }
+
         async function generateUltimatePDF(action = 'download') {
             if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
             if (!window.PDFLib) throw new Error('PDF-Lib non chargé (vérifiez votre connexion)');
@@ -1933,10 +2048,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const PDFLib = window.PDFLib;
             const overlay = document.getElementById('pdfDownloadOverlay');
             if (overlay) overlay.style.display = 'flex';
-            const statusText = overlay ? overlay.querySelector('.download-status-text') : null;
             
             try {
                 const machineIds = window.LM_RAPPORT.machinesIds || [];
+                const totalSteps = 2 + Math.ceil(machineIds.length / PDF_CHUNK_SIZE) + 1; // Intro + Chunks + Merge
+                let currentStep = 0;
                 const chunks = [];
                 const pdfOptions = {
                     margin: [10, 0, 15, 0],
@@ -1946,17 +2062,26 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.levage-diagram-container'] }
                 };
 
+                // reset UI
+                document.querySelectorAll('.task-item').forEach(i => i.classList.remove('active', 'completed'));
+                updatePdfProgress(0, 'task-intro');
+
                 // 1. CHUNK INTRO
-                if (statusText) statusText.textContent = "Initialisation du rapport...";
+                currentStep++;
+                updatePdfProgress((currentStep / totalSteps) * 100, 'task-intro');
+                
                 const introContainer = await buildFullPdfContainer({ includeIntro: true, includeMachines: false, includeEnd: false });
                 await ensureImagesBase64(introContainer);
-                await new Promise(r => setTimeout(r, 100)); // Safety
+                await new Promise(r => setTimeout(r, 100));
                 chunks.push(await html2pdf().set(pdfOptions).from(introContainer).outputPdf('arraybuffer'));
 
                 // 2. CHUNKS MACHINES
                 for (let i = 0; i < machineIds.length; i += PDF_CHUNK_SIZE) {
+                    currentStep++;
                     const group = machineIds.slice(i, i + PDF_CHUNK_SIZE);
-                    if (statusText) statusText.textContent = `Traitement des machines ${i + 1} à ${Math.min(i + PDF_CHUNK_SIZE, machineIds.length)}...`;
+                    const machineText = `Machines ${i + 1} à ${Math.min(i + PDF_CHUNK_SIZE, machineIds.length)}`;
+                    updatePdfProgress((currentStep / totalSteps) * 100, 'task-machines', machineText);
+
                     const mContainer = await buildFullPdfContainer({ 
                         includeIntro: false, 
                         includeMachines: true, 
@@ -1965,21 +2090,24 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         startIndex: i
                     });
                     await ensureImagesBase64(mContainer);
-                    await new Promise(r => setTimeout(r, 100)); // Safety for渲染
+                    await new Promise(r => setTimeout(r, 100));
                     chunks.push(await html2pdf().set(pdfOptions).from(mContainer).outputPdf('arraybuffer'));
                 }
 
                 // 3. CHUNK END
-                if (statusText) statusText.textContent = "Finalisation des signatures...";
+                currentStep++;
+                updatePdfProgress((currentStep / totalSteps) * 100, 'task-final');
+                
                 const endContainer = await buildFullPdfContainer({ includeIntro: false, includeMachines: false, includeEnd: true });
                 await ensureImagesBase64(endContainer);
-                await new Promise(r => setTimeout(r, 100)); // Safety
+                await new Promise(r => setTimeout(r, 100));
                 chunks.push(await html2pdf().set(pdfOptions).from(endContainer).outputPdf('arraybuffer'));
 
                 // 4. MERGE & PAGINATION
-                if (statusText) statusText.textContent = "Assemblage final et numérotation...";
-                const mergedBytes = await mergePdfChunks(chunks);
+                currentStep++;
+                updatePdfProgress(95, 'task-final'); // Presque fini
                 
+                const mergedBytes = await mergePdfChunks(chunks);
                 const { PDFDocument, rgb, StandardFonts } = window.PDFLib;
                 const pdfDoc = await PDFDocument.load(mergedBytes);
                 const pages = pdfDoc.getPages();
@@ -1990,13 +2118,17 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     const text = `Page ${i + 1} / ${pages.length}`;
                     pages[i].drawText(text, {
                         x: width / 2 - font.widthOfTextAtSize(text, 9) / 2,
-                        y: 31, // exact 286mm position as in 91ca0be
+                        y: 31,
                         size: 9,
                         font: font,
                         color: rgb(0.2, 0.2, 0.2),
                     });
                 }
                 const finalPdfBytes = await pdfDoc.save();
+                updatePdfProgress(100, 'task-final');
+                
+                // Final success state
+                document.getElementById('task-final').classList.add('completed');
 
                 if (action === 'download') {
                     const blob = new Blob([finalPdfBytes], { type: 'application/pdf' });
