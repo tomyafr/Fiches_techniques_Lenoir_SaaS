@@ -1233,7 +1233,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     clear: both;
                 }
                 .pdf-table-container, .card, .sig-zone, .photo-annexe-item {
-                    page-break-inside: auto !important;
+                    page-break-inside: avoid !important;
                 }
                 .pdf-table, table.controles { 
                     page-break-inside: auto !important; 
@@ -1673,7 +1673,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             </div>
                         `;
 
-                        if (container.children.length > 0) p.style.pageBreakBefore = 'always';
+                        p.style.pageBreakBefore = 'always';
                         container.appendChild(p);
 
                         continue; // Passe directement à la machine suivante sans fetch html !
@@ -1714,7 +1714,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                             // Chaque machine commence obligatoirement sur une nouvelle page
                             if (pIdx === 0) {
-                                if (container.children.length > 0) p.style.pageBreakBefore = 'always';
+                                p.style.pageBreakBefore = 'always';
                                 p.style.marginTop = '0';
                                 p.style.paddingTop = '10mm'; 
                                 
@@ -1809,7 +1809,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                         table.appendChild(currentTbody);
                                     }
                                 });
-                        // Supprimer les tbody/thead originaux devenus vides
+
+                                // Supprimer les tbody/thead originaux devenus vides
                                 Array.from(table.children).forEach(child => {
                                     if ((child.tagName === 'TBODY' || child.tagName === 'THEAD') && child.children.length === 0) {
                                         child.remove();
@@ -1818,9 +1819,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             });
 
                             p.style.position = 'relative';
-                            p.style.margin = '0';
-                            p.style.boxShadow = 'none';
-                            p.querySelectorAll('.section-wrapper-pdf').forEach(w => w.style.marginBottom = '25px');
+                            p.style.paddingBottom = '5mm'; 
+                            p.querySelectorAll('.section-wrapper-pdf').forEach(w => w.style.marginBottom = '0');
+                            p.style.minHeight = 'auto'; // Help chaining
                             p.appendChild(createPdfFooter());
                             container.appendChild(p);
                         });
@@ -1831,19 +1832,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
 
             if (includeEnd) {
-                // Page de fin : saut de page si besoin
-                if (container.children.length > 0) {
-                    const pbFin = document.createElement('div');
-                    pbFin.className = 'html2pdf__page-break';
-                    container.appendChild(pbFin);
-                }
+                // Page de fin : On ne force plus systématiquement le saut de page
+            // si le contenu précédent est court. On laisse html2pdf gérer ou on met un petit espacement.
+            const pbFin = document.createElement('div');
+            pbFin.style.height = '20px';
+            container.appendChild(pbFin);
 
-                // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC + SIGNATURES + OBSERVATIONS) ---
+            // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC + SIGNATURES + OBSERVATIONS) ---
 
-                const endPage = document.createElement('div');
-                endPage.className = 'pdf-page';
-                endPage.style.padding = '0 15mm';
-                endPage.style.position = 'relative';
+            const endPage = document.createElement('div');
+            endPage.className = 'pdf-page';
+            endPage.style.padding = '0 15mm';
+            endPage.style.position = 'relative';
+            endPage.style.pageBreakBefore = 'always';
 
             const originalRapport = document.getElementById('rapportForm');
             const souhaitRapport = originalRapport.querySelector('[name="souhait_rapport_unique"]').checked;
@@ -1958,7 +1959,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 const pdfOptions = {
                     margin: [10, 0, 15, 0],
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true, logging: false },
+                    html2canvas: { scale: 1.5, useCORS: true, logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                     pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.levage-diagram-container'] }
                 };
@@ -2005,7 +2006,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     const text = `Page ${i + 1} / ${pages.length}`;
                     pages[i].drawText(text, {
                         x: width / 2 - font.widthOfTextAtSize(text, 9) / 2,
-                        y: 10, // Points from bottom (slightly lower to avoid overlap)
+                        y: 10,
                         size: 9,
                         font: font,
                         color: rgb(0.2, 0.2, 0.2),
