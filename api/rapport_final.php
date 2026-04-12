@@ -1421,7 +1421,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
              const rapportCloneWrapper = document.createElement('div');
              rapportCloneWrapper.className = 'pdf-page';
              rapportCloneWrapper.style.position = 'relative';
-             rapportCloneWrapper.style.minHeight = '296mm';
+             rapportCloneWrapper.style.minHeight = '100px';
             rapportCloneWrapper.innerHTML = `
                 <!-- HEADER (Logo, Slogan) -->
                 <table style="width:100%; border:none; margin-bottom:15px; border-bottom: 2px solid #1e4e6d;">
@@ -1536,7 +1536,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             synthPreambulePage.style.margin = '0';
             synthPreambulePage.style.boxShadow = 'none';
             synthPreambulePage.style.position = 'relative';
-            synthPreambulePage.style.minHeight = '296mm';
+            synthPreambulePage.style.minHeight = '100px';
             if (container.children.length > 0) synthPreambulePage.style.pageBreakBefore = 'always';
             synthPreambulePage.style.paddingTop = '15mm';
             const s = window.LM_RAPPORT.synth;
@@ -1814,7 +1814,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 });
                             });
 
-                            p.style.minHeight = '296mm'; // Standard A4 height to help html2pdf
+                            p.style.minHeight = '100px'; 
                             p.style.position = 'relative';
                             p.style.paddingBottom = '25mm'; // Space for absolute footer
                             p.appendChild(createPdfFooter());
@@ -1833,7 +1833,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             endPage.className = 'pdf-page';
             endPage.style.padding = '0 15mm';
             endPage.style.position = 'relative';
-            endPage.style.minHeight = '296mm';
+            endPage.style.minHeight = '100px';
             if (container.children.length > 0) endPage.style.pageBreakBefore = 'always';
 
             const originalRapport = document.getElementById('rapportForm');
