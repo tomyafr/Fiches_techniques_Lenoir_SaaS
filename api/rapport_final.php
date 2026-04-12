@@ -1927,7 +1927,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         // ══════════════════════════════════════════════════════════════════
         async function generateUltimatePDF(action = 'download') {
             if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
+            if (!window.PDFLib) throw new Error('PDF-Lib non chargé (vérifiez votre connexion)');
 
+            const PDFLib = window.PDFLib;
             const overlay = document.getElementById('pdfDownloadOverlay');
             if (overlay) overlay.style.display = 'flex';
             const statusText = overlay ? overlay.querySelector('.download-status-text') : null;
@@ -2018,7 +2020,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         }
 
         async function mergePdfChunks(chunks) {
-            const { PDFDocument } = PDFLib;
+            const { PDFDocument } = window.PDFLib;
             const mergedPdf = await PDFDocument.create();
             for (const chunkBuffer of chunks) {
                 const chunkPdf = await PDFDocument.load(chunkBuffer);
