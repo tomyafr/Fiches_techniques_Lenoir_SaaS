@@ -1525,7 +1525,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 <!-- GRAND CADRE BLEU -->
                 <div style="border: 3px solid #1e4e6d; padding: 15px; margin-bottom: 30px;">
                     <h1 style="text-align: center; color: #1e4e6d; font-size: 26px; font-weight: bold; margin: 10px 0 20px 0;">RAPPORT DE L'EXPERTISE</h1>
-                    <div style="text-align: right; font-weight: bold; font-size: 14px; color: black; margin-bottom: 15px;">N┬░ARC : ${numArc}</div>
+                    <div style="text-align: right; font-weight: bold; font-size: 14px; color: black; margin-bottom: 15px;">N&deg;ARC : ${numArc}</div>
 
                     <!-- TABLEAU CLIENT -->
                     <table style="width:100%; border-collapse:collapse; border: 2px solid #1e4e6d; margin-bottom:20px; font-size:12px; font-family: Arial, sans-serif;">
@@ -1579,7 +1579,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         </tr>
                         <tr>
                             <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 8%;">Poste</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 25%;">N┬░ A.R.C (N┬░ de série)</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 25%;">N&deg; A.R.C (N&deg; de série)</td>
                             <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 45%;">Désignation du Produit</td>
                             <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 12%;">Repère</td>
                             <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 10%;">Année</td>
