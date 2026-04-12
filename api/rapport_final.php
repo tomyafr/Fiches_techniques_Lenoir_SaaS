@@ -240,6 +240,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     <link rel="stylesheet" href="/assets/style.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#020617">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script>
         const PDF_CHUNK_SIZE = 5;
@@ -894,7 +895,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- html2pdf.js pour génération PDF côté client -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- html2pdf moved to head -->
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     <script>
         let padClient, padTech;
@@ -1979,7 +1980,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 if (statusText) statusText.textContent = "Assemblage final et numérotation...";
                 const mergedBytes = await mergePdfChunks(chunks);
                 
-                const { PDFDocument, rgb, StandardFonts } = PDFLib;
+                const { PDFDocument, rgb, StandardFonts } = window.PDFLib;
                 const pdfDoc = await PDFDocument.load(mergedBytes);
                 const pages = pdfDoc.getPages();
                 const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
