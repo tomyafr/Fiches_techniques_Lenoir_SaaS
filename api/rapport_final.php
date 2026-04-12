@@ -1530,8 +1530,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </tr>
                 </table>
             `;
-            coverPage.appendChild(createPdfFooter());
-            container.appendChild(coverPage);
+            rapportCloneWrapper.appendChild(createPdfFooter());
+            container.appendChild(rapportCloneWrapper);
 
             // --- 1.2 PAGE SYNTHÈSE + PRÉAMBULE (FUSIONNÉS POUR ÉCONOMISER DES PAGES) ---
             const synthPreambulePage = document.createElement('div');
