@@ -241,7 +241,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#020617">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script>
         const PDF_CHUNK_SIZE = 5;
     </script>
