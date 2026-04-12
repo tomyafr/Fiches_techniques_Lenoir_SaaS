@@ -891,8 +891,26 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- html2pdf.js pour génération PDF côté client -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     <script>
+        // ══════════════════════════════════════════════════════════════════
+        // NOUVELLE STRATÉGIE DE GÉNÉRATION PAR CHUNKS (FUSION PDF-LIB)
+        // ══════════════════════════════════════════════════════════════════
+        const PDF_CHUNK_SIZE = 5;
+
+        async function mergePdfChunks(pdfChunksBuffers) {
+            if (!window.PDFLib) throw new Error('pdf-lib.js non disponible');
+            const { PDFDocument } = PDFLib;
+            const finalPdf = await PDFDocument.create();
+            for (const buffer of pdfChunksBuffers) {
+                const chunkDoc = await PDFDocument.load(buffer);
+                const pages = await finalPdf.copyPages(chunkDoc, chunkDoc.getPageIndices());
+                pages.forEach(p => finalPdf.addPage(p));
+            }
+            return await finalPdf.save();
+        }
+
         let padClient, padTech;
 
         function resizeCanvas(canvas, pad = null) {
@@ -1157,7 +1175,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             await Promise.all(promises);
         }
 
-        async function buildFullPdfContainer() {
+        async function buildFullPdfContainer(opts = {}) {
+            const includeIntro = opts.includeIntro !== false;
+            const includeMachines = opts.includeMachines !== false;
+            const includeEnd = opts.includeEnd !== false;
+            const targetMachineIds = opts.targetMachineIds || null;
+            const startIndex = opts.startIndex || 0;
+            const totalReports = window.LM_RAPPORT.machinesIds ? window.LM_RAPPORT.machinesIds.length : 0;
+            
             const container = document.createElement('div');
             container.id = 'pdf-full-wrapper';
             container.style.width = '210mm';
@@ -1368,57 +1393,58 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             `;
             container.appendChild(styleNode);
 
-            // Fetch data from form for Page 1
-            const numArc = window.LM_RAPPORT.arc;
-            const nomSociete = document.querySelector('[name="nom_societe_display"]')?.value || window.LM_RAPPORT.nomSociete;
-            const adresse = document.querySelector('[name="adresse"]')?.value || '';
-            const cp = document.querySelector('[name="code_postal"]')?.value || '';
-            const ville = document.querySelector('[name="ville"]')?.value || '';
-            const pays = document.querySelector('[name="pays"]')?.value || '';
-
-            const contactPrenom = document.querySelector('[name="contact_prenom"]')?.value || '';
-            const contactNom = document.querySelector('[name="contact_nom"]')?.value || '';
-            const contactFonction = document.querySelector('[name="contact_fonction"]')?.value || '';
-            const contactTel = document.querySelector('[name="contact_telephone"]')?.value || '';
-            const contactEmail = document.querySelector('[name="contact_email"]')?.value || '';
-
-            const nomSignataire = document.querySelector('[name="nom_signataire"]')?.value || '_____';
-
-            const commentaire = document.querySelector('[name="commentaire_technicien"]')?.value || '';
-
-            const techName = "<?= htmlspecialchars($techName) ?>";
-            const dateExp = window.LM_RAPPORT.dateInt;
-            const sigTechData = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
-            const sigClientData = window.LM_RAPPORT.sigClient || document.getElementById('canvasClient')?.toDataURL() || '';
-
-            // Generate HTML lines for machines
-            const machinesTrs = window.LM_RAPPORT.machinesData.map(m => `
-                <tr style="border-bottom:1px solid #000;">
-                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.arc || '—'}</td>
-                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.of || '—'}</td>
-                    <td style="padding:6px; border-right:1px solid #000;">${m.designation || '—'}</td>
-                    <td style="padding:6px; text-align:center;">${m.annee || '—'}</td>
-                </tr>
-            `).join('');
-
-            // --- 1. PAGE RAPPORT FINAL (COUVERTURE + INFOS) ---
-            const rapportCloneWrapper = document.createElement('div');
-            rapportCloneWrapper.className = 'pdf-page';
-            // Layout exact as requested
-            rapportCloneWrapper.innerHTML = `
-                <!-- HEADER (Logo, Slogan) -->
-                <table style="width:100%; border:none; margin-bottom:15px; border-bottom: 2px solid #1e4e6d;">
-                    <tr>
-                        <td style="width: 40%; vertical-align: bottom; padding-bottom: 10px;">
-                            <img src="/assets/lenoir_logo_doc.png" style="height:60px;">
-                        </td>
-                        <td style="width: 60%; vertical-align: bottom; text-align: right; padding-bottom: 5px;">
-                            <div style="font-size: 11px; font-weight: normal; color: #1e4e6d; font-style: italic;">
-                                Le spécialiste des applications magnétiques pour la séparation et le levage industriel
-                            </div>
-                        </td>
+            if (includeIntro) {
+                // Fetch data from form for Page 1
+                const numArc = window.LM_RAPPORT.arc;
+                const nomSociete = document.querySelector('[name="nom_societe_display"]')?.value || window.LM_RAPPORT.nomSociete;
+                const adresse = document.querySelector('[name="adresse"]')?.value || '';
+                const cp = document.querySelector('[name="code_postal"]')?.value || '';
+                const ville = document.querySelector('[name="ville"]')?.value || '';
+                const pays = document.querySelector('[name="pays"]')?.value || '';
+    
+                const contactPrenom = document.querySelector('[name="contact_prenom"]')?.value || '';
+                const contactNom = document.querySelector('[name="contact_nom"]')?.value || '';
+                const contactFonction = document.querySelector('[name="contact_fonction"]')?.value || '';
+                const contactTel = document.querySelector('[name="contact_telephone"]')?.value || '';
+                const contactEmail = document.querySelector('[name="contact_email"]')?.value || '';
+    
+                const nomSignataire = document.querySelector('[name="nom_signataire"]')?.value || '_____';
+    
+                const commentaire = document.querySelector('[name="commentaire_technicien"]')?.value || '';
+    
+                const techName = "<?= htmlspecialchars($techName) ?>";
+                const dateExp = window.LM_RAPPORT.dateInt;
+                const sigTechData = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
+                const sigClientData = window.LM_RAPPORT.sigClient || document.getElementById('canvasClient')?.toDataURL() || '';
+    
+                // Generate HTML lines for machines
+                const machinesTrs = window.LM_RAPPORT.machinesData.map(m => `
+                    <tr style="border-bottom:1px solid #000;">
+                        <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.arc || '—'}</td>
+                        <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.of || '—'}</td>
+                        <td style="padding:6px; border-right:1px solid #000;">${m.designation || '—'}</td>
+                        <td style="padding:6px; text-align:center;">${m.annee || '—'}</td>
                     </tr>
-                </table>
+                `).join('');
+    
+                // --- 1. PAGE RAPPORT FINAL (COUVERTURE + INFOS) ---
+                const rapportCloneWrapper = document.createElement('div');
+                rapportCloneWrapper.className = 'pdf-page';
+                // Layout exact as requested
+                rapportCloneWrapper.innerHTML = `
+                    <!-- HEADER (Logo, Slogan) -->
+                    <table style="width:100%; border:none; margin-bottom:15px; border-bottom: 2px solid #1e4e6d;">
+                        <tr>
+                            <td style="width: 40%; vertical-align: bottom; padding-bottom: 10px;">
+                                <img src="/assets/lenoir_logo_doc.png" style="height:60px;">
+                            </td>
+                            <td style="width: 60%; vertical-align: bottom; text-align: right; padding-bottom: 5px;">
+                                <div style="font-size: 11px; font-weight: normal; color: #1e4e6d; font-style: italic;">
+                                    Le spécialiste des applications magnétiques pour la séparation et le levage industriel
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
                 <div style="text-align: right; color: #555; font-weight: bold; font-size: 11px; margin-top: 5px; margin-bottom: 15px;">RAPPORT D'EXPERTISE</div>
 
                 <!-- GRAND CADRE BLEU -->
@@ -1595,12 +1621,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
                 </div>
             `;
-            synthPreambulePage.appendChild(createPdfFooter());
-            container.appendChild(synthPreambulePage);
+                synthPreambulePage.appendChild(createPdfFooter());
+                container.appendChild(synthPreambulePage);
+            }
 
             // --- 2. FETCH & APPEND MACHINES ---
-            if (window.LM_RAPPORT && window.LM_RAPPORT.machinesIds) {
-                let reportMachineIds = [...window.LM_RAPPORT.machinesIds];
+            if (includeMachines && window.LM_RAPPORT && window.LM_RAPPORT.machinesIds) {
+                let reportMachineIds = targetMachineIds || [...window.LM_RAPPORT.machinesIds];
                 const emptyOption = 'include';
                 const emptyIds = window.LM_RAPPORT.emptyMachinesIds || [];
 
@@ -1623,7 +1650,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         p.className = 'pdf-page';
                         p.innerHTML = `
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 3px solid #5B9BD5; padding-bottom: 5px;">
-                                <div style="font-size: 14px; font-weight: bold; color: #1B4F72;">FICHE ${mIdx + 1} / ${totalMachines}</div>
+                                <div class="FICHE_INDEX" style="font-size: 14px; font-weight: bold; color: #1B4F72;">FICHE ${startIndex + mIdx + 1} / ${totalReports}</div>
                                 <img src="/assets/lenoir_logo_doc.png" style="height: 45px;">
                             </div>
                             
@@ -1698,7 +1725,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 hDiv.style.fontWeight = 'bold';
                                 hDiv.style.color = '#1B4F72';
                                 hDiv.style.marginBottom = '5px';
-                                hDiv.innerHTML = `FICHE ${mIdx + 1} / ${totalMachines}`;
+                                hDiv.className = 'FICHE_INDEX';
+                                hDiv.innerHTML = `FICHE ${startIndex + mIdx + 1} / ${totalReports}`;
                                 p.insertBefore(hDiv, p.firstChild);
                             }
 
@@ -1803,7 +1831,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 }
             }
 
-            // Page de fin : On ne force plus systématiquement le saut de page
+            if (includeEnd) {
+                // Page de fin : On ne force plus systématiquement le saut de page
             // si le contenu précédent est court. On laisse html2pdf gérer ou on met un petit espacement.
             const pbFin = document.createElement('div');
             pbFin.style.height = '20px';
@@ -1903,8 +1932,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
                 </div>
             `;
-            endPage.appendChild(createPdfFooter());
-            container.appendChild(endPage);
+                endPage.appendChild(createPdfFooter());
+                container.appendChild(endPage);
+            }
 
             await waitForImages(container);
             return container;
@@ -1913,93 +1943,106 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         // ══════════════════════════════════════════════════════════════════
         // génération PDF (html2pdf.js)
         // ══════════════════════════════════════════════════════════════════
-        async function genererPDFBase64() {
+        // ══════════════════════════════════════════════════════════════════
+        // FONCTION MAITRE : GÉNÉRATION ULTIMATE (PAR CHUNKS)
+        // ══════════════════════════════════════════════════════════════════
+        async function generateUltimatePDF(action = 'download') {
             if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
 
-            const container = await buildFullPdfContainer();
-            await ensureImagesBase64(container);
-
-            const opt = {
-                margin: [10, 0, 15, 0], // Top, Left, Bottom, Right
-                filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 1.5, useCORS: true, logging: false },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.levage-diagram-container'] }
-            };
-
-            const worker = html2pdf().set(opt).from(container);
-
-            await worker.toPdf().get('pdf').then(function (pdf) {
-                const totalPages = pdf.internal.getNumberOfPages();
-                for (let i = 1; i <= totalPages; i++) {
-                    pdf.setPage(i);
-                    pdf.setFont('helvetica', 'normal');
-                    pdf.setFontSize(9);
-                    pdf.setTextColor(50, 50, 50);
-                    pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
-                }
-            });
-
-            const pdfBlob = await worker.outputPdf('blob');
-
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result.split(',')[1]);
-                reader.onerror = reject;
-                reader.readAsDataURL(pdfBlob);
-            });
-        }
-
-        // ══════════════════════════════════════════════════════════════════
-        // TÉLÉCHARGEMENT PDF BOUTON DIRECT
-        // ══════════════════════════════════════════════════════════════════
-        async function telechargerPDF() {
-            const btn = document.getElementById('btnDownloadPDF');
-            const icon = document.getElementById('btnDownloadPDFIcon');
-            const label = document.getElementById('btnDownloadPDFLabel');
-
-            if (btn) { 
-                btn.disabled = true; 
-                if (label) label.textContent = 'génération...';
-                if (icon) icon.textContent = '⏳';
-            }
+            const overlay = document.getElementById('pdfDownloadOverlay');
+            const statusText = overlay ? overlay.querySelector('.download-status-text') : null;
+            if (overlay) overlay.style.display = 'flex';
+            
             try {
-                const container = await buildFullPdfContainer();
-                await ensureImagesBase64(container);
-
-                const opt = {
-                    margin: [10, 0, 15, 0], // Top, Left, Bottom, Right
-                    filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
+                const machineIds = window.LM_RAPPORT.machinesIds || [];
+                const chunks = [];
+                const pdfOptions = {
+                    margin: [10, 0, 15, 0],
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 1.5, useCORS: true, logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                     pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.levage-diagram-container'] }
                 };
 
-                const worker = html2pdf().set(opt).from(container);
+                // 1. CHUNK INTRO
+                if (statusText) statusText.textContent = "Initialisation du rapport...";
+                const introContainer = await buildFullPdfContainer({ includeIntro: true, includeMachines: false, includeEnd: false });
+                await ensureImagesBase64(introContainer);
+                chunks.push(await html2pdf().set(pdfOptions).from(introContainer).outputPdf('arraybuffer'));
 
-                await worker.toPdf().get('pdf').then(function (pdf) {
-                    const totalPages = pdf.internal.getNumberOfPages();
-                    for (let i = 1; i <= totalPages; i++) {
-                        pdf.setPage(i);
-                        pdf.setFont('helvetica', 'normal');
-                        pdf.setFontSize(9);
-                        pdf.setTextColor(50, 50, 50);
-                        pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
-                    }
-                });
-
-                await worker.save();
-            } catch (e) {
-                alert('Erreur génération PDF : ' + e.message);
-            } finally {
-                if (btn) { 
-                    btn.disabled = false; 
-                    if (label) label.textContent = 'Télécharger le PDF';
-                    if (icon) icon.innerHTML = '<img src="/assets/icon_download.svg" style="height: 18px; width: 18px; vertical-align: middle; filter: brightness(0);">';
+                // 2. CHUNKS MACHINES
+                for (let i = 0; i < machineIds.length; i += PDF_CHUNK_SIZE) {
+                    const group = machineIds.slice(i, i + PDF_CHUNK_SIZE);
+                    if (statusText) statusText.textContent = `Traitement des machines ${i + 1} à ${Math.min(i + PDF_CHUNK_SIZE, machineIds.length)}...`;
+                    const mContainer = await buildFullPdfContainer({ 
+                        includeIntro: false, 
+                        includeMachines: true, 
+                        includeEnd: false, 
+                        targetMachineIds: group,
+                        startIndex: i
+                    });
+                    await ensureImagesBase64(mContainer);
+                    chunks.push(await html2pdf().set(pdfOptions).from(mContainer).outputPdf('arraybuffer'));
                 }
+
+                // 3. CHUNK END
+                if (statusText) statusText.textContent = "Finalisation des signatures...";
+                const endContainer = await buildFullPdfContainer({ includeIntro: false, includeMachines: false, includeEnd: true });
+                await ensureImagesBase64(endContainer);
+                chunks.push(await html2pdf().set(pdfOptions).from(endContainer).outputPdf('arraybuffer'));
+
+                // 4. MERGE & PAGINATION
+                if (statusText) statusText.textContent = "Assemblage final et numérotation...";
+                const mergedBytes = await mergePdfChunks(chunks);
+                
+                // Add page numbers using pdf-lib
+                const { PDFDocument, rgb, StandardFonts } = PDFLib;
+                const pdfDoc = await PDFDocument.load(mergedBytes);
+                const pages = pdfDoc.getPages();
+                const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+                
+                for (let i = 0; i < pages.length; i++) {
+                    const { width } = pages[i].getSize();
+                    const text = `Page ${i + 1} / ${pages.length}`;
+                    pages[i].drawText(text, {
+                        x: width / 2 - font.widthOfTextAtSize(text, 9) / 2,
+                        y: 10,
+                        size: 9,
+                        font: font,
+                        color: rgb(0.2, 0.2, 0.2),
+                    });
+                }
+                const finalPdfBytes = await pdfDoc.save();
+
+                if (action === 'download') {
+                    const blob = new Blob([finalPdfBytes], { type: 'application/pdf' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = window.LM_RAPPORT.pdfFilename || 'rapport.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                } else {
+                    // Return Base64
+                    const binary = String.fromCharCode(...new Uint8Array(finalPdfBytes));
+                    return btoa(binary);
+                }
+            } catch (e) {
+                console.error("Génération PDF échouée:", e);
+                alert("Erreur génération PDF : " + e.message);
+            } finally {
+                if (overlay) overlay.style.display = 'none';
             }
+        }
+
+        async function genererPDFBase64() {
+            return await generateUltimatePDF('base64');
+        }
+
+        async function telechargerPDF() {
+            await generateUltimatePDF('download');
         }
 
         // ══════════════════════════════════════════════════════════════════
