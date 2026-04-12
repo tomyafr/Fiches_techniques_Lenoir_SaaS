@@ -1845,10 +1845,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <!-- LE CLIENT SOUHAITE -->
                     <div style="font-weight: bold; font-size: 14px; color: #1e4e6d; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
                     <div style="padding: 8px 0; margin-bottom: 20px;">
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? 'Ôÿæ' : 'ÔÿÉ'} Ce Rapport d\'expertise uniquement</div>
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? 'Ôÿæ' : 'ÔÿÉ'} Une offre de Pièces de Rechange</div>
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitIntervention ? 'Ôÿæ' : 'ÔÿÉ'} Une offre de PR + intervention mise en place</div>
-                        <div style="font-size: 11px;">${souhaitAucune ? 'Ôÿæ' : 'ÔÿÉ'} Aucune offre</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? '☑' : '☐'} Ce Rapport d\'expertise uniquement</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? '☑' : '☐'} Une offre de Pièces de Rechange</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitIntervention ? '☑' : '☐'} Une offre de PR + intervention mise en place</div>
+                        <div style="font-size: 11px;">${souhaitAucune ? '☑' : '☐'} Aucune offre</div>
                     </div>
 
                     <!-- DATE ET HEURE -->
@@ -1882,12 +1882,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <div style="border: 2px solid #000; padding: 0; text-align: center; margin-bottom: 15px;">
                         <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR TOUTE INFORMATION TECHNIQUE SUR CE RAPPORT</div>
                         <div style="background-color: #fff; padding: 6px; border-bottom: 2px solid #000;">
-                            <div style="font-size: 12px;">Ô×ñ <strong>Soufyane SALAH</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Chargé d'Affaires</span></div>
+                            <div style="font-size: 12px;">📞 <strong>Soufyane SALAH</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Chargé d'Affaires</span></div>
                         </div>
                         
                         <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR LA PLANIFICATION D'UNE VÉRIFICATION PÉRIODIQUE</div>
                         <div style="background-color: #fff; padding: 6px;">
-                            <div style="font-size: 12px;">Ô×ñ <strong>Sophie NIAY</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Responsable Service Clients</span></div>
+                            <div style="font-size: 12px;">📞 <strong>Sophie NIAY</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Responsable Service Clients</span></div>
                         </div>
                     </div>
 
@@ -2206,7 +2206,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
 
             btn.disabled = true;
-            btn.innerHTML = '<span>ÔÜÖ´©Å</span> Analyse en cours...';
+            btn.innerHTML = '<span>⚙️</span> Analyse en cours...';
             progressZone.style.display = 'block';
 
             const machines = window.LM_RAPPORT.machinesData;
