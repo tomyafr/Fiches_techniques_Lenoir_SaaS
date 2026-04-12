@@ -240,6 +240,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     <link rel="stylesheet" href="/assets/style.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#020617">
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        const PDF_CHUNK_SIZE = 5;
+    </script>
     <style>
         .rapport-page {
             max-width: 720px;
@@ -891,26 +895,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- html2pdf.js pour génération PDF côté client -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     <script>
-        // ══════════════════════════════════════════════════════════════════
-        // NOUVELLE STRATÉGIE DE GÉNÉRATION PAR CHUNKS (FUSION PDF-LIB)
-        // ══════════════════════════════════════════════════════════════════
-        const PDF_CHUNK_SIZE = 5;
-
-        async function mergePdfChunks(pdfChunksBuffers) {
-            if (!window.PDFLib) throw new Error('pdf-lib.js non disponible');
-            const { PDFDocument } = PDFLib;
-            const finalPdf = await PDFDocument.create();
-            for (const buffer of pdfChunksBuffers) {
-                const chunkDoc = await PDFDocument.load(buffer);
-                const pages = await finalPdf.copyPages(chunkDoc, chunkDoc.getPageIndices());
-                pages.forEach(p => finalPdf.addPage(p));
-            }
-            return await finalPdf.save();
-        }
-
         let padClient, padTech;
 
         function resizeCanvas(canvas, pad = null) {
@@ -1181,8 +1167,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const includeEnd = opts.includeEnd !== false;
             const targetMachineIds = opts.targetMachineIds || null;
             const startIndex = opts.startIndex || 0;
-            const totalReports = window.LM_RAPPORT.machinesIds ? window.LM_RAPPORT.machinesIds.length : 0;
-            
+
             const container = document.createElement('div');
             container.id = 'pdf-full-wrapper';
             container.style.width = '210mm';
@@ -1194,7 +1179,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             styleNode.textContent = `
                 .pdf-page {
                     width: 21cm;
-                    min-height: 297mm;
+                    min-height: 100px;
                     background: white;
                     color: black;
                     padding: 0 15mm;
@@ -1393,58 +1378,58 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             `;
             container.appendChild(styleNode);
 
+            // Fetch data from form for Page 1
+            const numArc = window.LM_RAPPORT.arc;
+            const nomSociete = document.querySelector('[name="nom_societe_display"]')?.value || window.LM_RAPPORT.nomSociete;
+            const adresse = document.querySelector('[name="adresse"]')?.value || '';
+            const cp = document.querySelector('[name="code_postal"]')?.value || '';
+            const ville = document.querySelector('[name="ville"]')?.value || '';
+            const pays = document.querySelector('[name="pays"]')?.value || '';
+
+            const contactPrenom = document.querySelector('[name="contact_prenom"]')?.value || '';
+            const contactNom = document.querySelector('[name="contact_nom"]')?.value || '';
+            const contactFonction = document.querySelector('[name="contact_fonction"]')?.value || '';
+            const contactTel = document.querySelector('[name="contact_telephone"]')?.value || '';
+            const contactEmail = document.querySelector('[name="contact_email"]')?.value || '';
+
+            const nomSignataire = document.querySelector('[name="nom_signataire"]')?.value || '_____';
+
+            const commentaire = document.querySelector('[name="commentaire_technicien"]')?.value || '';
+
+            const techName = "<?= htmlspecialchars($techName) ?>";
+            const dateExp = window.LM_RAPPORT.dateInt;
+            const sigTechData = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
+            const sigClientData = window.LM_RAPPORT.sigClient || document.getElementById('canvasClient')?.toDataURL() || '';
+
+            // Generate HTML lines for machines
+            const machinesTrs = window.LM_RAPPORT.machinesData.map(m => `
+                <tr style="border-bottom:1px solid #000;">
+                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.arc || '—'}</td>
+                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.of || '—'}</td>
+                    <td style="padding:6px; border-right:1px solid #000;">${m.designation || '—'}</td>
+                    <td style="padding:6px; text-align:center;">${m.annee || '—'}</td>
+                </tr>
+            `).join('');
+
+            // --- 1. PAGE RAPPORT FINAL (COUVERTURE + INFOS) ---
             if (includeIntro) {
-                // Fetch data from form for Page 1
-                const numArc = window.LM_RAPPORT.arc;
-                const nomSociete = document.querySelector('[name="nom_societe_display"]')?.value || window.LM_RAPPORT.nomSociete;
-                const adresse = document.querySelector('[name="adresse"]')?.value || '';
-                const cp = document.querySelector('[name="code_postal"]')?.value || '';
-                const ville = document.querySelector('[name="ville"]')?.value || '';
-                const pays = document.querySelector('[name="pays"]')?.value || '';
-    
-                const contactPrenom = document.querySelector('[name="contact_prenom"]')?.value || '';
-                const contactNom = document.querySelector('[name="contact_nom"]')?.value || '';
-                const contactFonction = document.querySelector('[name="contact_fonction"]')?.value || '';
-                const contactTel = document.querySelector('[name="contact_telephone"]')?.value || '';
-                const contactEmail = document.querySelector('[name="contact_email"]')?.value || '';
-    
-                const nomSignataire = document.querySelector('[name="nom_signataire"]')?.value || '_____';
-    
-                const commentaire = document.querySelector('[name="commentaire_technicien"]')?.value || '';
-    
-                const techName = "<?= htmlspecialchars($techName) ?>";
-                const dateExp = window.LM_RAPPORT.dateInt;
-                const sigTechData = window.LM_RAPPORT.sigTech || document.getElementById('canvasTech')?.toDataURL() || '';
-                const sigClientData = window.LM_RAPPORT.sigClient || document.getElementById('canvasClient')?.toDataURL() || '';
-    
-                // Generate HTML lines for machines
-                const machinesTrs = window.LM_RAPPORT.machinesData.map(m => `
-                    <tr style="border-bottom:1px solid #000;">
-                        <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.arc || '—'}</td>
-                        <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.of || '—'}</td>
-                        <td style="padding:6px; border-right:1px solid #000;">${m.designation || '—'}</td>
-                        <td style="padding:6px; text-align:center;">${m.annee || '—'}</td>
+            const rapportCloneWrapper = document.createElement('div');
+            rapportCloneWrapper.className = 'pdf-page';
+            // Layout exact as requested
+            rapportCloneWrapper.innerHTML = `
+                <!-- HEADER (Logo, Slogan) -->
+                <table style="width:100%; border:none; margin-bottom:15px; border-bottom: 2px solid #1e4e6d;">
+                    <tr>
+                        <td style="width: 40%; vertical-align: bottom; padding-bottom: 10px;">
+                            <img src="/assets/lenoir_logo_doc.png" style="height:60px;">
+                        </td>
+                        <td style="width: 60%; vertical-align: bottom; text-align: right; padding-bottom: 5px;">
+                            <div style="font-size: 11px; font-weight: normal; color: #1e4e6d; font-style: italic;">
+                                Le spécialiste des applications magnétiques pour la séparation et le levage industriel
+                            </div>
+                        </td>
                     </tr>
-                `).join('');
-    
-                // --- 1. PAGE RAPPORT FINAL (COUVERTURE + INFOS) ---
-                const rapportCloneWrapper = document.createElement('div');
-                rapportCloneWrapper.className = 'pdf-page';
-                // Layout exact as requested
-                rapportCloneWrapper.innerHTML = `
-                    <!-- HEADER (Logo, Slogan) -->
-                    <table style="width:100%; border:none; margin-bottom:15px; border-bottom: 2px solid #1e4e6d;">
-                        <tr>
-                            <td style="width: 40%; vertical-align: bottom; padding-bottom: 10px;">
-                                <img src="/assets/lenoir_logo_doc.png" style="height:60px;">
-                            </td>
-                            <td style="width: 60%; vertical-align: bottom; text-align: right; padding-bottom: 5px;">
-                                <div style="font-size: 11px; font-weight: normal; color: #1e4e6d; font-style: italic;">
-                                    Le spécialiste des applications magnétiques pour la séparation et le levage industriel
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
+                </table>
                 <div style="text-align: right; color: #555; font-weight: bold; font-size: 11px; margin-top: 5px; margin-bottom: 15px;">RAPPORT D'EXPERTISE</div>
 
                 <!-- GRAND CADRE BLEU -->
@@ -1544,7 +1529,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             synthPreambulePage.className = 'pdf-page';
             synthPreambulePage.style.margin = '0';
             synthPreambulePage.style.boxShadow = 'none';
-            synthPreambulePage.style.pageBreakBefore = 'always';
+            if (container.children.length > 0) synthPreambulePage.style.pageBreakBefore = 'always';
             synthPreambulePage.style.paddingTop = '15mm';
             const s = window.LM_RAPPORT.synth;
 
@@ -1621,24 +1606,25 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
                 </div>
             `;
-                synthPreambulePage.appendChild(createPdfFooter());
-                container.appendChild(synthPreambulePage);
+            synthPreambulePage.appendChild(createPdfFooter());
+            container.appendChild(synthPreambulePage);
             }
 
             // --- 2. FETCH & APPEND MACHINES ---
             if (includeMachines && window.LM_RAPPORT && window.LM_RAPPORT.machinesIds) {
-                let reportMachineIds = targetMachineIds || [...window.LM_RAPPORT.machinesIds];
+                let reportMachineIds = targetMachineIds ? targetMachineIds : [...window.LM_RAPPORT.machinesIds];
                 const emptyOption = 'include';
                 const emptyIds = window.LM_RAPPORT.emptyMachinesIds || [];
 
                 // Si option = 'exclude', on retire carrément les machines vides de la boucle !
-                if (emptyOption === 'exclude' && emptyIds.length > 0) {
+                if (!targetMachineIds && emptyOption === 'exclude' && emptyIds.length > 0) {
                     reportMachineIds = reportMachineIds.filter(id => !emptyIds.includes(parseInt(id, 10)) && !emptyIds.includes(String(id)));
                 }
 
-                const totalMachines = reportMachineIds.length;
-                for (let mIdx = 0; mIdx < totalMachines; mIdx++) {
-                    const mId = reportMachineIds[mIdx];
+                const totalMachinesReal = window.LM_RAPPORT.machinesIds.length;
+                for (let localIdx = 0; localIdx < reportMachineIds.length; localIdx++) {
+                    const mId = reportMachineIds[localIdx];
+                    const globalIdx = startIndex + localIdx;
 
                     // Si on a gardé la machine mais qu'elle est vide et qu'on voulait 'condensed'
                     if (emptyOption === 'condensed' && (emptyIds.includes(parseInt(mId, 10)) || emptyIds.includes(String(mId)))) {
@@ -1650,7 +1636,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         p.className = 'pdf-page';
                         p.innerHTML = `
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 3px solid #5B9BD5; padding-bottom: 5px;">
-                                <div class="FICHE_INDEX" style="font-size: 14px; font-weight: bold; color: #1B4F72;">FICHE ${startIndex + mIdx + 1} / ${totalReports}</div>
+                                <div style="font-size: 14px; font-weight: bold; color: #1B4F72;">FICHE ${globalIdx + 1} / ${totalMachinesReal}</div>
                                 <img src="/assets/lenoir_logo_doc.png" style="height: 45px;">
                             </div>
                             
@@ -1673,6 +1659,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             </div>
                         `;
 
+                        p.style.minHeight = '100px';
                         if (container.children.length > 0) p.style.pageBreakBefore = 'always';
                         container.appendChild(p);
 
@@ -1714,7 +1701,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                             // Chaque machine commence obligatoirement sur une nouvelle page
                             if (pIdx === 0) {
-                                if (container.children.length > 0) p.style.pageBreakBefore = 'always';
+                                if (container.children.length > 0) {
+                                    p.style.pageBreakBefore = 'always';
+                                }
                                 p.style.marginTop = '0';
                                 p.style.paddingTop = '10mm'; 
                                 
@@ -1725,8 +1714,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 hDiv.style.fontWeight = 'bold';
                                 hDiv.style.color = '#1B4F72';
                                 hDiv.style.marginBottom = '5px';
-                                hDiv.className = 'FICHE_INDEX';
-                                hDiv.innerHTML = `FICHE ${startIndex + mIdx + 1} / ${totalReports}`;
+                                hDiv.innerHTML = `FICHE ${globalIdx + 1} / ${totalMachinesReal}`;
                                 p.insertBefore(hDiv, p.firstChild);
                             }
 
@@ -1738,7 +1726,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             p.querySelectorAll('input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"]):not([type="file"])').forEach(inp => {
                                 let val = (inp.value || '').trim();
                                 if (inp.name === 'mesures[poste]') {
-                                    val = val ? val : (mIdx + 1);
+                                    val = val ? val : (globalIdx + 1);
                                 } else if (!val) {
                                     val = '';
                                 }
@@ -1821,7 +1809,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             p.style.position = 'relative';
                             p.style.paddingBottom = '5mm'; 
                             p.querySelectorAll('.section-wrapper-pdf').forEach(w => w.style.marginBottom = '0');
-                            p.style.minHeight = 'auto'; // Help chaining
+                            p.style.minHeight = '100px'; 
                             p.appendChild(createPdfFooter());
                             container.appendChild(p);
                         });
@@ -1832,19 +1820,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
 
             if (includeEnd) {
-                // Page de fin : saut de page seulement si on a déjà du contenu dans ce container
-                if (container.children.length > 0) {
-                    const pbFin = document.createElement('div');
-                    pbFin.className = 'html2pdf__page-break';
-                    container.appendChild(pbFin);
-                }
-
                 // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC + SIGNATURES + OBSERVATIONS) ---
 
-                const endPage = document.createElement('div');
-                endPage.className = 'pdf-page';
-                endPage.style.padding = '0 15mm';
-                endPage.style.position = 'relative';
+            const endPage = document.createElement('div');
+            endPage.className = 'pdf-page';
+            endPage.style.padding = '0 15mm';
+            endPage.style.position = 'relative';
+            if (container.children.length > 0) endPage.style.pageBreakBefore = 'always';
 
             const originalRapport = document.getElementById('rapportForm');
             const souhaitRapport = originalRapport.querySelector('[name="souhait_rapport_unique"]').checked;
@@ -1932,8 +1914,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
                 </div>
             `;
-                endPage.appendChild(createPdfFooter());
-                container.appendChild(endPage);
+            endPage.appendChild(createPdfFooter());
+            container.appendChild(endPage);
             }
 
             await waitForImages(container);
@@ -1941,17 +1923,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         }
 
         // ══════════════════════════════════════════════════════════════════
-        // génération PDF (html2pdf.js)
-        // ══════════════════════════════════════════════════════════════════
-        // ══════════════════════════════════════════════════════════════════
-        // FONCTION MAITRE : GÉNÉRATION ULTIMATE (PAR CHUNKS)
+        // génération PDF (html2pdf.js) avec CHUNKS
         // ══════════════════════════════════════════════════════════════════
         async function generateUltimatePDF(action = 'download') {
             if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
 
             const overlay = document.getElementById('pdfDownloadOverlay');
-            const statusText = overlay ? overlay.querySelector('.download-status-text') : null;
             if (overlay) overlay.style.display = 'flex';
+            const statusText = overlay ? overlay.querySelector('.download-status-text') : null;
             
             try {
                 const machineIds = window.LM_RAPPORT.machinesIds || [];
@@ -1968,6 +1947,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 if (statusText) statusText.textContent = "Initialisation du rapport...";
                 const introContainer = await buildFullPdfContainer({ includeIntro: true, includeMachines: false, includeEnd: false });
                 await ensureImagesBase64(introContainer);
+                await new Promise(r => setTimeout(r, 100)); // Safety
                 chunks.push(await html2pdf().set(pdfOptions).from(introContainer).outputPdf('arraybuffer'));
 
                 // 2. CHUNKS MACHINES
@@ -1982,6 +1962,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         startIndex: i
                     });
                     await ensureImagesBase64(mContainer);
+                    await new Promise(r => setTimeout(r, 100)); // Safety for渲染
                     chunks.push(await html2pdf().set(pdfOptions).from(mContainer).outputPdf('arraybuffer'));
                 }
 
@@ -1989,13 +1970,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 if (statusText) statusText.textContent = "Finalisation des signatures...";
                 const endContainer = await buildFullPdfContainer({ includeIntro: false, includeMachines: false, includeEnd: true });
                 await ensureImagesBase64(endContainer);
+                await new Promise(r => setTimeout(r, 100)); // Safety
                 chunks.push(await html2pdf().set(pdfOptions).from(endContainer).outputPdf('arraybuffer'));
 
                 // 4. MERGE & PAGINATION
                 if (statusText) statusText.textContent = "Assemblage final et numérotation...";
                 const mergedBytes = await mergePdfChunks(chunks);
                 
-                // Add page numbers using pdf-lib
                 const { PDFDocument, rgb, StandardFonts } = PDFLib;
                 const pdfDoc = await PDFDocument.load(mergedBytes);
                 const pages = pdfDoc.getPages();
@@ -2006,7 +1987,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     const text = `Page ${i + 1} / ${pages.length}`;
                     pages[i].drawText(text, {
                         x: width / 2 - font.widthOfTextAtSize(text, 9) / 2,
-                        y: 31, // Points from bottom (~11mm), matches old code perfectly
+                        y: 31, // exact 286mm position as in 91ca0be
                         size: 9,
                         font: font,
                         color: rgb(0.2, 0.2, 0.2),
@@ -2025,7 +2006,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     document.body.removeChild(a);
                     URL.revokeObjectURL(url);
                 } else {
-                    // Return Base64
                     const binary = String.fromCharCode(...new Uint8Array(finalPdfBytes));
                     return btoa(binary);
                 }
@@ -2037,12 +2017,29 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
         }
 
+        async function mergePdfChunks(chunks) {
+            const { PDFDocument } = PDFLib;
+            const mergedPdf = await PDFDocument.create();
+            for (const chunkBuffer of chunks) {
+                const chunkPdf = await PDFDocument.load(chunkBuffer);
+                const copiedPages = await mergedPdf.copyPages(chunkPdf, chunkPdf.getPageIndices());
+                copiedPages.forEach((page) => mergedPdf.addPage(page));
+            }
+            return await mergedPdf.save();
+        }
+
         async function genererPDFBase64() {
             return await generateUltimatePDF('base64');
         }
 
         async function telechargerPDF() {
-            await generateUltimatePDF('download');
+            const btn = document.getElementById('btnDownloadPDF');
+            if (btn) btn.disabled = true;
+            try {
+                await generateUltimatePDF('download');
+            } finally {
+                if (btn) btn.disabled = false;
+            }
         }
 
         // ══════════════════════════════════════════════════════════════════
