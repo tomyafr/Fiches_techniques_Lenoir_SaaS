@@ -1174,11 +1174,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const container = document.createElement('div');
             container.id = 'pdf-full-wrapper';
             container.style.width = '210mm';
-            // FIX: Zero-height container to avoid phantom pages
             container.style.margin = '0';
             container.style.padding = '0';
-            container.style.lineHeight = '0'; 
-            container.style.overflow = 'hidden';
             container.style.backgroundColor = 'white';
             container.style.color = 'black';
 
