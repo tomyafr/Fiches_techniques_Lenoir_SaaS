@@ -1773,6 +1773,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?php endfor; ?>
                         </tbody>
                     </table>
+                    
+                    <div style="text-align:center; margin-top:20px;">
+                        <img src="/assets/machines/sgsa_diagram.png" 
+                             style="max-width:100%; height:auto; display:block; margin:0 auto;" 
+                             alt="Schéma Séparateur à Grilles SGSA"
+                             onerror="this.style.display='none'">
+                    </div>
 
                 <?php elseif ($isSGA): ?>
     
