@@ -470,62 +470,189 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             color: var(--primary);
         }
 
-        /* Premium Downloader Overlay */
+        /* Ultra-Premium Downloader Overlay */
         #pdfDownloadOverlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #020617;
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(20px);
             z-index: 10000;
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             color: #fff;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Outfit', 'Inter', sans-serif;
         }
 
-        .loader-lenoir {
-            width: 120px;
-            height: 120px;
+        .premium-loader-card {
             position: relative;
-            margin-bottom: 2rem;
+            width: 90%;
+            max-width: 480px;
+            padding: 3rem 2.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            text-align: center;
         }
 
-        .loader-lenoir::before, .loader-lenoir::after {
+        /* Animated Glowing Border */
+        .premium-loader-card::before {
             content: '';
             position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(255, 179, 0, 0.2), transparent 40%, #ffb300, transparent 60%);
+            animation: rotateBorder 4s linear infinite;
+            z-index: -1;
+        }
+
+        .premium-loader-card::after {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            background: #020617;
+            border-radius: 30px;
+            z-index: -1;
+        }
+
+        @keyframes rotateBorder {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Abstract compilation visual */
+        .loader-visual {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 2rem;
+        }
+
+        .visual-circle {
+            position: absolute;
+            inset: 0;
+            border: 2px solid rgba(255, 255, 255, 0.05);
             border-radius: 50%;
-            border: 4px solid transparent;
-            border-top-color: var(--primary);
+        }
+
+        .visual-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, var(--primary), #e67e22);
+            border-radius: 50%;
+            box-shadow: 0 0 30px var(--primary);
+            animation: pulse-core 2s ease-in-out infinite;
+        }
+
+        .visual-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
             width: 100%;
             height: 100%;
-            animation: spin 1.5s linear infinite;
-        }
-
-        .loader-lenoir::after {
-            width: 80%;
-            height: 80%;
-            top: 10%;
-            left: 10%;
+            margin-top: -50%;
+            margin-left: -50%;
+            border: 2px solid transparent;
             border-top-color: var(--accent-cyan);
-            animation-duration: 1s;
-            animation-direction: reverse;
+            border-radius: 50%;
+            animation: rotate-orbit 3s linear infinite;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        @keyframes pulse-core {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+        }
+
+        @keyframes rotate-orbit {
+            100% { transform: rotate(360deg); }
         }
 
         .download-status-text {
-            font-size: 1.25rem;
-            font-weight: 600;
-            background: linear-gradient(90deg, #fff, var(--primary));
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to right, #fff, #fbd38d);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
+        }
+
+        .loader-subtext {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Modern Progress Bar */
+        .progress-box {
+            position: relative;
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 100px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ffb300, #fbd38d);
+            border-radius: 100px;
+            box-shadow: 0 0 15px rgba(255, 179, 0, 0.5);
+            transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .percent-label { color: var(--primary); }
+        .stage-label { color: rgba(255, 255, 255, 0.5); }
+
+        /* Task Indicators */
+        .premium-tasks {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 2.5rem;
+        }
+
+        .task-step {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.4s;
+        }
+
+        .task-step.active {
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+            transform: scale(1.3);
+        }
+
+        .task-step.completed {
+            background: #10b981;
         }
 
         @media print {
@@ -541,9 +668,31 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
 <body>
     <div id="pdfDownloadOverlay">
-        <div class="loader-lenoir"></div>
-        <div class="download-status-text">génération de votre rapport premium</div>
-        <div style="color: var(--text-dim); font-size: 0.9rem;">Veuillez patienter quelques instants...</div>
+        <div class="premium-loader-card">
+            <div class="loader-visual">
+                <div class="visual-circle"></div>
+                <div class="visual-orbit"></div>
+                <div class="visual-core"></div>
+            </div>
+            
+            <div class="download-status-text">Production du Rapport</div>
+            <div class="loader-subtext" id="pdfLoaderSubtext">Optimisation et rendu...</div>
+
+            <div class="progress-box">
+                <div class="progress-fill" id="pdfProgressBarFill"></div>
+            </div>
+
+            <div class="progress-info">
+                <div class="stage-label" id="pdfStageLabel">Phase d'initialisation</div>
+                <div class="percent-label" id="pdfPercentLabel">0%</div>
+            </div>
+
+            <div class="premium-tasks">
+                <div class="task-step" id="step-1"></div>
+                <div class="task-step" id="step-2"></div>
+                <div class="task-step" id="step-3"></div>
+            </div>
+        </div>
     </div>
     <style>
         .mobile-header { display: flex !important; }
@@ -1924,6 +2073,32 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         }
 
         // ══════════════════════════════════════════════════════════════════
+        // UI PROGRESS HELPER (Advanced)
+        // ══════════════════════════════════════════════════════════════════
+        function updatePdfProgress(percent, stepIndex, subtext = null) {
+            const fill = document.getElementById('pdfProgressBarFill');
+            const perc = document.getElementById('pdfPercentLabel');
+            const stage = document.getElementById('pdfStageLabel');
+            const sub = document.getElementById('pdfLoaderSubtext');
+
+            if(fill) fill.style.width = percent + '%';
+            if(perc) perc.textContent = Math.round(percent) + '%';
+            
+            if(subtext && sub) sub.textContent = subtext;
+
+            // Manage steps
+            document.querySelectorAll('.task-step').forEach((s, idx) => {
+                s.classList.remove('active');
+                if((idx + 1) < stepIndex) s.classList.add('completed');
+                if((idx + 1) === stepIndex) s.classList.add('active');
+            });
+
+            if(stepIndex === 1 && stage) stage.textContent = "Initialisation";
+            if(stepIndex === 2 && stage) stage.textContent = "Expertise Machines";
+            if(stepIndex === 3 && stage) stage.textContent = "Finalisation";
+        }
+
+        // ══════════════════════════════════════════════════════════════════
         // GÉNÉRAL ROUTER (Monolithique vs Chunked)
         // ══════════════════════════════════════════════════════════════════
         async function generateUltimatePDF(action = 'download') {
@@ -1940,11 +2115,17 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             const overlay = document.getElementById('pdfDownloadOverlay');
             if (overlay) overlay.style.display = 'flex';
-            if (typeof updatePdfProgress === 'function') updatePdfProgress(30, 'task-intro');
+            
+            // reset UI
+            document.querySelectorAll('.task-step').forEach(s => s.classList.remove('active', 'completed'));
+            updatePdfProgress(0, 1, "Construction du document...");
 
             try {
+                updatePdfProgress(20, 1);
                 const container = await buildFullPdfContainer();
+                updatePdfProgress(50, 2, "Préparation des visuels...");
                 await ensureImagesBase64(container);
+                updatePdfProgress(80, 3, "Numérotation des pages...");
 
                 const opt = {
                     margin: [10, 0, 15, 0], 
@@ -1969,7 +2150,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 });
 
                 if (action === 'download') {
-                    if (typeof updatePdfProgress === 'function') updatePdfProgress(100, 'task-final');
+                    updatePdfProgress(100, 3, "Téléchargement...");
                     await worker.save();
                 } else {
                     const pdfBlob = await worker.outputPdf('blob');
@@ -1995,10 +2176,15 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const PDFLib = window.PDFLib;
             const overlay = document.getElementById('pdfDownloadOverlay');
             if (overlay) overlay.style.display = 'flex';
-            const statusText = overlay ? overlay.querySelector('.download-status-text') : null;
             
+            // reset UI
+            document.querySelectorAll('.task-step').forEach(s => s.classList.remove('active', 'completed'));
+            updatePdfProgress(0, 1, "Démarrage du découpage...");
+
             try {
                 const machineIds = window.LM_RAPPORT.machinesIds || [];
+                const totalSteps = 2 + Math.ceil(machineIds.length / PDF_CHUNK_SIZE) + 1;
+                let currentProg = 0;
                 const chunks = [];
                 const pdfOptions = {
                     margin: [10, 0, 15, 0],
@@ -2009,7 +2195,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 };
 
                 // 1. CHUNK INTRO
-                if (statusText) statusText.textContent = "Initialisation du rapport...";
+                updatePdfProgress(10, 1, "Initialisation...");
                 const introContainer = await buildFullPdfContainer({ includeIntro: true, includeMachines: false, includeEnd: false });
                 await ensureImagesBase64(introContainer);
                 await new Promise(r => setTimeout(r, 100)); // Safety
@@ -2018,7 +2204,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 // 2. CHUNKS MACHINES
                 for (let i = 0; i < machineIds.length; i += PDF_CHUNK_SIZE) {
                     const group = machineIds.slice(i, i + PDF_CHUNK_SIZE);
-                    if (statusText) statusText.textContent = `Traitement des machines ${i + 1} à ${Math.min(i + PDF_CHUNK_SIZE, machineIds.length)}...`;
+                    const machineText = `Machines ${i + 1} à ${Math.min(i + PDF_CHUNK_SIZE, machineIds.length)}`;
+                    let prog = 10 + ((i + PDF_CHUNK_SIZE) / machineIds.length) * 70;
+                    updatePdfProgress(Math.min(prog, 80), 2, machineText);
+
                     const mContainer = await buildFullPdfContainer({ 
                         includeIntro: false, 
                         includeMachines: true, 
@@ -2032,14 +2221,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 }
 
                 // 3. CHUNK END
-                if (statusText) statusText.textContent = "Finalisation des signatures...";
+                updatePdfProgress(85, 3, "Finalisation des signatures...");
                 const endContainer = await buildFullPdfContainer({ includeIntro: false, includeMachines: false, includeEnd: true });
                 await ensureImagesBase64(endContainer);
                 await new Promise(r => setTimeout(r, 100)); // Safety
                 chunks.push(await html2pdf().set(pdfOptions).from(endContainer).outputPdf('arraybuffer'));
 
                 // 4. MERGE & PAGINATION
-                if (statusText) statusText.textContent = "Assemblage final et numérotation...";
+                updatePdfProgress(95, 3, "Assemblage et pagination...");
                 const mergedBytes = await mergePdfChunks(chunks);
                 
                 const { PDFDocument, rgb, StandardFonts } = window.PDFLib;
@@ -2059,6 +2248,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     });
                 }
                 const finalPdfBytes = await pdfDoc.save();
+                updatePdfProgress(100, 3, "Terminé !");
 
                 if (action === 'download') {
                     const blob = new Blob([finalPdfBytes], { type: 'application/pdf' });
