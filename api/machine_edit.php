@@ -980,6 +980,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     Tambour ou Poulie à Aimants Permanents<br>TAP/PAP
                                 <?php elseif ($isLevage): ?>
                                     Electroaimants de Levage
+                                <?php elseif ($isSPM): ?>
+                                    Séparateur à Plaques Magnétiques SPM
                                 <?php else: ?>
                                     <?= htmlspecialchars(strtoupper(str_replace(['RDE', '*'], ['RD', ''], $machine['designation']))) ?>
                                 <?php endif; ?>
