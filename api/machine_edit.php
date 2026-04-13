@@ -81,6 +81,7 @@ $isPM = strpos($designation, 'PM') !== false && strpos($designation, 'PLAQUE') !
 $isSGCP = strpos($designation, 'SGCP') !== false || strpos($designation, 'SGCM') !== false;
 $isSGA = (strpos($designation, 'SGA') !== false || strpos($designation, 'GRILLE') !== false) && !$isSGCP;
 $isSGSA = strpos($designation, 'SGSA') !== false;
+$isSLT = strpos($designation, 'SLT') !== false;
 
 // Temps prévisionnel par type
 if ($isEDX)
@@ -101,6 +102,8 @@ elseif ($isSGSA)
     $tempsPrev = '3h00';
 elseif ($isSGA)
     $tempsPrev = '3h30';
+elseif ($isSLT)
+    $tempsPrev = '2h00';
 else
     $tempsPrev = '1h00';
 
@@ -169,6 +172,7 @@ TYPES D'ÉQUIPEMENTS LENOIR-MEC :
 - ED-X : Séparateur à courants de Foucault
 - TAP / PAP : Tambour ou Poulie à Aimants Permanents
 - Levage : Électroaimants de levage industriel
+- SLT : Séparateur à Haute Intensité
 
 RÈGLE DE PRIORITÉ :
 - Si N.R > 0 → Priorité : URGENT (remplacement de pièce nécessaire)
@@ -1920,6 +1924,153 @@ foreach ($recoFreq as $rfk => $rfv) {
                              style="max-width:100%; height:auto; display:block; margin:0 auto;" 
                              alt="Schéma Séparateur à Grilles SGA"
                              onerror="this.style.display='none'">
+                    </div>
+
+                <?php elseif ($isSLT): ?>
+
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
+                        <thead>
+                            <?= renderDiagonalHeader(3) ?>
+                        </thead>
+                        <tbody>
+                            <?= renderSectionHeader("Séparateur haute intensité type SLT", 3) ?>
+                            <?= renderAprfRow("Satisfaction de fonctionnement", "slt_satisfaction", $donnees) ?>
+                            <?= renderAprfRow("Aspect général", "slt_aspect", $donnees) ?>
+
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Goulotte alimentation (Ouverture + Usure) : 
+                                    <input type="text" name="mesures[slt_goulotte_mm]" value="<?= htmlspecialchars($mesures['slt_goulotte_mm'] ?? '') ?>" style="width:50px; border:none; border-bottom:1px solid #000; text-align:center;"> mm
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("slt_goulotte", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[slt_goulotte_comment]" class="pdf-textarea" style="height:35px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees['slt_goulotte_comment'] ?? '') ?></textarea></td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Saupoudreur 1 (Silent Bloc) Amplitude : 
+                                    <input type="text" name="mesures[slt_saupoudreur1_mm]" value="<?= htmlspecialchars($mesures['slt_saupoudreur1_mm'] ?? '') ?>" style="width:50px; border:none; border-bottom:1px solid #000; text-align:center;"> mm
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("slt_saupoudreur1", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[slt_saupoudreur1_comment]" class="pdf-textarea" style="height:35px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees['slt_saupoudreur1_comment'] ?? '') ?></textarea></td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Saupoudreur 2 (Silent Bloc) Amplitude : 
+                                    <input type="text" name="mesures[slt_saupoudreur2_mm]" value="<?= htmlspecialchars($mesures['slt_saupoudreur2_mm'] ?? '') ?>" style="width:50px; border:none; border-bottom:1px solid #000; text-align:center;"> mm
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("slt_saupoudreur2", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[slt_saupoudreur2_comment]" class="pdf-textarea" style="height:35px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees['slt_saupoudreur2_comment'] ?? '') ?></textarea></td>
+                            </tr>
+
+                            <?= renderAprfRow("Niveau d'huile du Motoréducteur TAPN", "slt_huile_tapn", $donnees) ?>
+                            <?= renderAprfRow("Niveau d'huile du Motoréducteur SLT", "slt_huile_slt", $donnees) ?>
+                            <?= renderAprfRow("Courroie Tête SLT (Etat et Tension)", "slt_courroie", $donnees) ?>
+                            <?= renderAprfRow("Poulies", "slt_poulies", $donnees) ?>
+                            <?= renderAprfRow("Palier TAPN", "slt_palier_tapn", $donnees) ?>
+                            <?= renderAprfRow("Position du circuit magnétique du TAPN", "slt_circuit_tapn", $donnees) ?>
+                            <?= renderAprfRow("Position du circuit magnétique de la Tête SLT", "slt_circuit_slt", $donnees) ?>
+                            <?= renderAprfRow("Virole INOX", "slt_virole_inox", $donnees) ?>
+                            <?= renderAprfRow("Virole Fibre", "slt_virole_fibre", $donnees) ?>
+                            <?= renderAprfRow("Volet de séparation", "slt_volet", $donnees) ?>
+
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Relever induction TAP : 
+                                    <input type="text" name="mesures[slt_induction_tap_val]" value="<?= htmlspecialchars($mesures['slt_induction_tap_val'] ?? '') ?>" style="width:70px; border:none; border-bottom:1px solid #000; text-align:center;"> gauss
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("slt_induction_tap", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[slt_induction_tap_comment]" class="pdf-textarea" style="height:35px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees['slt_induction_tap_comment'] ?? '') ?></textarea></td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Relever induction SLT : 
+                                    <input type="text" name="mesures[slt_induction_slt_val]" value="<?= htmlspecialchars($mesures['slt_induction_slt_val'] ?? '') ?>" style="width:70px; border:none; border-bottom:1px solid #000; text-align:center;"> gauss
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("slt_induction_slt", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[slt_induction_slt_comment]" class="pdf-textarea" style="height:35px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees['slt_induction_slt_comment'] ?? '') ?></textarea></td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Relever réglage fréquence variateur : 
+                                    <input type="text" name="mesures[slt_variateur_hz]" value="<?= htmlspecialchars($mesures['slt_variateur_hz'] ?? '') ?>" style="width:40px; border:none; border-bottom:1px solid #000; text-align:center;"> Hz, 
+                                    <input type="text" name="mesures[slt_variateur_a]" value="<?= htmlspecialchars($mesures['slt_variateur_a'] ?? '') ?>" style="width:40px; border:none; border-bottom:1px solid #000; text-align:center;"> A
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("slt_variateur", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[slt_variateur_comment]" class="pdf-textarea" style="height:35px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees['slt_variateur_comment'] ?? '') ?></textarea></td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Relever Ampérage moteur TAPN : 
+                                    <input type="text" name="mesures[slt_amperage_tapn_val]" value="<?= htmlspecialchars($mesures['slt_amperage_tapn_val'] ?? '') ?>" style="width:70px; border:none; border-bottom:1px solid #000; text-align:center;">
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("slt_amperage_tapn", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[slt_amperage_tapn_comment]" class="pdf-textarea" style="height:35px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees['slt_amperage_tapn_comment'] ?? '') ?></textarea></td>
+                            </tr>
+
+                            <?= renderAprfRow("Position du commutateur vibrant 1", "slt_commutateur1", $donnees) ?>
+                            <?= renderAprfRow("Position du commutateur vibrant 2", "slt_commutateur2", $donnees) ?>
+                            <?= renderAprfRow("Relever réglage volet 1. Gauche", "slt_volet1_gauche", $donnees) ?>
+                            <?= renderAprfRow("Relever réglage volet 3. Droite", "slt_volet3_droite", $donnees) ?>
+
+                            <?= renderSectionHeader("APPLICATION CLIENT", 3) ?>
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">Type de produit :</td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("slt_produit_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="mesures[slt_produit]" class="pdf-textarea" style="height:35px; border:none; width:100%; box-sizing:border-box; padding:4px; font-weight:bold;"><?= htmlspecialchars($mesures['slt_produit'] ?? '') ?></textarea></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Granulométrie : 
+                                    <input type="text" name="mesures[slt_granulo]" value="<?= htmlspecialchars($mesures['slt_granulo'] ?? '') ?>" style="width:100px; border:none; border-bottom:1px solid #000; text-align:center;"> mm
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("slt_granulo_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[slt_granulo_comment]" class="pdf-textarea" style="height:35px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees['slt_granulo_comment'] ?? '') ?></textarea></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Débit : 
+                                    <input type="text" name="mesures[slt_debit]" value="<?= htmlspecialchars($mesures['slt_debit'] ?? '') ?>" style="width:70px; border:none; border-bottom:1px solid #000; text-align:center;"> t/h
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("slt_debit_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:8px; font-size:10px; color:#555;">
+                                    Avec densité de <input type="text" name="mesures[slt_densite]" value="<?= htmlspecialchars($mesures['slt_densite'] ?? '') ?>" style="width:60px; border:none; border-bottom:1px dashed #000; text-align:center;">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="display: flex; justify-content: space-around; align-items: flex-start; margin-top: 20px; gap: 10px;">
+                        <div style="width: 48%; text-align: center;">
+                            <img src="/assets/machines/slt_photo.png" style="max-width: 100%; height: auto; border: 1px solid #ccc;" alt="Photo SLT" onerror="this.style.display='none'">
+                        </div>
+                        <div style="width: 48%; text-align: center;">
+                            <img src="/assets/machines/slt_diagram.png" style="max-width: 100%; height: auto;" alt="Schéma SLT" onerror="this.style.display='none'">
+                        </div>
                     </div>
 
                 <?php elseif ($isEDX): ?>

@@ -131,7 +131,31 @@ function extractIssuesFromDonnees($donnees) {
         'sgsa_e2_stat' => 'Étage 2 - barreaux',
         'sgsa_e3_coulissement' => 'Étage 3 - Coulissement tiroirs',
         'sgsa_e3_etancheite' => 'Étage 3 - Étanchéité tiroir',
-        'sgsa_e3_stat' => 'Étage 3 - barreaux'
+        'sgsa_e3_stat' => 'Étage 3 - barreaux',
+        // SEPARATEUR HAUTE INTENSITE SLT
+        'slt_satisfaction' => 'Satisfaction de fonctionnement',
+        'slt_aspect' => 'Aspect général',
+        'slt_goulotte' => 'Goulotte alimentation (ouverture/usure)',
+        'slt_saupoudreur1' => 'Saupoudreur 1 (Silent Bloc)',
+        'slt_saupoudreur2' => 'Saupoudreur 2 (Silent Bloc)',
+        'slt_huile_tapn' => 'Niveau huile motoréducteur TAPN',
+        'slt_huile_slt' => 'Niveau huile motoréducteur SLT',
+        'slt_courroie' => 'Courroie tête SLT (état/tension)',
+        'slt_poulies' => 'Poulies',
+        'slt_palier_tapn' => 'Palier TAPN',
+        'slt_circuit_tapn' => 'Position circuit magnétique TAPN',
+        'slt_circuit_slt' => 'Position circuit magnétique tête SLT',
+        'slt_virole_inox' => 'Virole INOX',
+        'slt_virole_fibre' => 'Virole Fibre',
+        'slt_volet' => 'Volet de séparation',
+        'slt_induction_tap' => 'Induction TAP',
+        'slt_induction_slt' => 'Induction SLT',
+        'slt_variateur' => 'Réglage fréquence variateur',
+        'slt_amperage_tapn' => 'Ampérage moteur TAPN',
+        'slt_commutateur1' => 'Position commutateur vibrant 1',
+        'slt_commutateur2' => 'Position commutateur vibrant 2',
+        'slt_volet1_gauche' => 'Réglage volet 1 Gauche',
+        'slt_volet3_droite' => 'Réglage volet 3 Droite'
     ];
 
     $issues = ['aa' => [], 'nc' => [], 'nr' => []];

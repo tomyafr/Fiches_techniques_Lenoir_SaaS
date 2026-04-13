@@ -351,6 +351,7 @@ $machines = $stmtMach->fetchAll();
                         <option value="SÉPARATEUR À GRILLE SGCP/SGCM">SÉPARATEUR À GRILLE SGCP/SGCM</option>
                         <option value="SÉPARATEUR À GRILLE SEMI-AUTOMATIQUE SGSA">SÉPARATEUR À GRILLE SEMI-AUTOMATIQUE SGSA</option>
                         <option value="PLAQUES MAGNÉTIQUES PM">PLAQUES MAGNÉTIQUES PM</option>
+                        <option value="Séparateur haute intensité SLT">Séparateur haute intensité SLT</option>
                     </select>
                 </div>
 

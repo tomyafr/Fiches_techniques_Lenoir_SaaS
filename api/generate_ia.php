@@ -121,6 +121,7 @@ TYPES D'ÉQUIPEMENTS LENOIR-MEC :
 - TAP / PAP : Tambour ou Poulie à Aimants Permanents
 - Levage : Électroaimants de levage industriel
 - PM / PML / PMN / PMNL : Plaques Magnétiques (séparation manuelle)
+- SLT : Séparateur à Haute Intensité
 
 RÈGLE DE PRIORITÉ :
 - Si N.R > 0 → Priorité : URGENT (remplacement de pièce nécessaire)
