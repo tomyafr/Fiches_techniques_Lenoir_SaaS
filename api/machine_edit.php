@@ -70,7 +70,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-$designation = mb_strtoupper(trim($machine['designation']), 'UTF-8');
+// Robust uppercase for French accents
+function str_to_upper_fr($str) {
+    if (!$str) return '';
+    $from = ['é', 'è', 'ê', 'ë', 'à', 'â', 'î', 'ï', 'ô', 'û', 'ù', 'ç', 'ô'];
+    $to   = ['É', 'È', 'Ê', 'Ë', 'À', 'Â', 'Î', 'Ï', 'Ô', 'Û', 'Ù', 'Ç', 'Ô'];
+    $str = str_replace($from, $to, $str);
+    return strtoupper($str);
+}
+
+$designation = str_to_upper_fr(trim($machine['designation'] ?? ''));
 $isAPRF = strpos($designation, 'APRF') !== false || strpos($designation, 'RD') !== false;
 $isEDX = strpos($designation, 'ED-X') !== false || strpos($designation, 'FOUCAULT') !== false;
 $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') === false;
@@ -972,20 +981,20 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <span style="font-size:26px; font-weight:bold; color:#000;">
                                 <?php if ($isAPRF): ?>
                                     <?php if (strpos($designation, 'RD') !== false): ?>
-                                        <?= mb_strtoupper("ELECTROAIMANT DE TRIAGE FIXE RD", 'UTF-8') ?>
+                                        ELECTROAIMANT DE TRIAGE FIXE RD
                                     <?php else: ?>
-                                        <?= mb_strtoupper("AIMANT PERMANENT RECTANGULAIRE FIXE APRF", 'UTF-8') ?>
+                                        AIMANT PERMANENT RECTANGULAIRE FIXE APRF
                                     <?php endif; ?>
                                 <?php elseif ($isPAP): ?>
-                                    <?= mb_strtoupper("TAMBOUR OU POULIE À AIMANTS PERMANENTS TAP/PAP", 'UTF-8') ?>
+                                    TAMBOUR OU POULIE À AIMANTS PERMANENTS TAP/PAP
                                 <?php elseif ($isLevage): ?>
-                                    <?= mb_strtoupper("ELECTROAIMANTS DE LEVAGE", 'UTF-8') ?>
+                                    ELECTROAIMANTS DE LEVAGE
                                 <?php elseif ($isSPM): ?>
-                                    <?= mb_strtoupper("SÉPARATEUR À PLAQUES MAGNÉTIQUES SPM", 'UTF-8') ?>
+                                    SÉPARATEUR À PLAQUES MAGNÉTIQUES SPM
                                 <?php elseif ($isSLT): ?>
-                                    <?= mb_strtoupper("SÉPARATEUR HAUTE INTENSITÉ SLT", 'UTF-8') ?>
+                                    SÉPARATEUR HAUTE INTENSITÉ SLT
                                 <?php else: ?>
-                                    <?= mb_strtoupper(str_replace(['RDE', '*'], ['RD', ''], $machine['designation'] ?? ''), 'UTF-8') ?>
+                                    <?= str_to_upper_fr(str_replace(['RDE', '*'], ['RD', ''], $machine['designation'] ?? '')) ?>
                                 <?php endif; ?>
                             </span>
                         </td>
@@ -993,7 +1002,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 </table>
 
                 <div class="section-wrapper-pdf">
-                    <div class="pdf-section-title"><?= mb_strtoupper("A) FICHE DE CONTRÔLE :", 'UTF-8') ?></div>
+                    <div class="pdf-section-title">A) FICHE DE CONTRÔLE :</div>
                 
                 <div style="font-weight:bold; color:#1B4F72; margin-bottom:5px; font-size:14px; page-break-after: avoid;">
                     Poste : <input type="text" name="mesures[poste]" value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>" style="border:none; border-bottom:1px dashed #000; font-weight:bold; width:30px; background:transparent;" autocomplete="off">
@@ -1230,7 +1239,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         $tds .= '<div style="width:'.$w.'; border-right:1px solid #000; height:100%; box-sizing:border-box;"></div>';
                     }
                     return '<tr class="section-header-row" style="background:#5b9bd5 !important; page-break-before: avoid; break-before: avoid;">
-                        <td style="width:35%; font-weight:bold; color:white; padding:4px 10px; font-size:11px; page-break-before: avoid; break-before: avoid; border-top:1px solid #000;">' . mb_strtoupper(htmlspecialchars($title), 'UTF-8') . '</td>
+                        <td style="width:35%; font-weight:bold; color:white; padding:4px 10px; font-size:11px; page-break-before: avoid; break-before: avoid; border-top:1px solid #000;">' . str_to_upper_fr(htmlspecialchars($title)) . '</td>
                         <td style="width:140px; padding:0; vertical-align:middle; height:30px; border-top:1px solid #000;">
                             <div style="display:flex; width:140px; height:100%; margin: 0 auto; border:none; border-left: 1px solid #000;">' . $tds . '</div>
                         </td>
@@ -2231,7 +2240,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <div style="text-align:center; margin-top:30px;">
                         <div style="margin-bottom:10px;">
-                            <h3 style="font-size:16px; border-bottom:2px solid #000; display:inline-block; padding-bottom:5px;"><?= mb_strtoupper("SÉPARATEUR À PLAQUES MAGNÉTIQUES SPM", 'UTF-8') ?></h3>
+                            <h3 style="font-size:16px; border-bottom:2px solid #000; display:inline-block; padding-bottom:5px;">SÉPARATEUR À PLAQUES MAGNÉTIQUES SPM</h3>
                         </div>
                         
                         <div style="margin-bottom:25px;">
@@ -2240,7 +2249,6 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <div>
                             <img src="/assets/machines/spm_photo.png" style="max-width:90%; height:auto; border:1px solid #ccc; display:block; margin:0 auto;" alt="Photo SPM" onerror="this.style.display='none'">
                         </div>
-                    </div>
                     </div>
 
                 <?php elseif ($isEDX): ?>
