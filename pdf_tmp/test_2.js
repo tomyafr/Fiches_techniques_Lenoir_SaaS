@@ -728,7 +728,7 @@
         }
 
         // ══════════════════════════════════════════════════════════════════
-        // GÉNÉRATION PDF (html2pdf.js)
+        // génération PDF (html2pdf.js)
         // ══════════════════════════════════════════════════════════════════
         async function genererPDFBase64() {
             if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
@@ -759,7 +759,7 @@
         // ══════════════════════════════════════════════════════════════════
         async function telechargerPDF() {
             const btn = document.getElementById('btnDownloadPDF');
-            if (btn) { btn.disabled = true; btn.textContent = '⏳ Génération du rapport complet...'; }
+            if (btn) { btn.disabled = true; btn.textContent = '⏳ génération du rapport complet...'; }
             try {
                 const container = await buildFullPdfContainer();
 
@@ -899,7 +899,7 @@
 
             if (btn) btn.disabled = true;
             if (icon) icon.textContent = '⏳';
-            if (label) label.textContent = 'Génération du PDF…';
+            if (label) label.textContent = 'génération du PDF…';
 
             let pdfBase64;
             try {

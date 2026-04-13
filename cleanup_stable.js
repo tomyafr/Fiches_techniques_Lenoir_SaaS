@@ -7,7 +7,7 @@ const corruptions = [
     [/⏳/g, '⏳'],
     [/☐/g, '☐'],
     [/☐/g, '☐'],
-    [/☐‘/g, '☑️'],
+    [/☑️/g, '☑️'],
     [/➤/g, '➤'],
     [/⚙️/g, '⚙️'],
     [/⚠️/g, '⚠️'],
@@ -39,12 +39,16 @@ const corruptions = [
     [/—/g, '—'],
     [/═/g, '═'],
     [/✅/g, '✅'],
-    [/✓/g, '✓'], // Re-fixed for checkmark
-    [/✓/g, '✓'], // Re-fixed for checkmark (variant)
-    [/←/g, '←'], // Left arrow
-    [/←/g, '←'], // Left arrow variant seen in user screenshot for Retour
+    [/✓/g, '✓'],
+    [/✓/g, '✓'],
+    [/←/g, '←'],
+    [/←/g, '←'],
     [/ /g, ' '],
     [/⏳/g, '⏳'],
+    // Added for the specific mojibake seen in the STABLE version
+    [/prénom/g, 'prénom'],
+    [/dépasser/g, 'dépasser'],
+    [/caractères/g, 'caractères'],
 ];
 
 function processFile(fullPath) {
@@ -62,14 +66,8 @@ function processFile(fullPath) {
         content = content.replace(regex, replacement);
     }
     
-    // Additional direct replacements for the specific button and link
-    content = content.replace(/✓/g, '✓');
-    content = content.replace(/←/g, '←');
-    content = content.replace(/←/g, '←');
-    content = content.replace(/✓/g, '✓');
-
     if (content !== original) {
-        console.log(`Re-Fixed: ${fullPath}`);
+        console.log(`Cleaned: ${fullPath}`);
         fs.writeFileSync(fullPath, content, 'utf8');
     }
 }
@@ -88,6 +86,6 @@ function walk(dir) {
     }
 }
 
-console.log('--- GLOBAL CLEANUP V3 START ---');
+console.log('--- FINAL STABLE CLEANUP START ---');
 walk(dirToScan);
-console.log('--- GLOBAL CLEANUP V3 FINISHED ---');
+console.log('--- FINAL STABLE CLEANUP FINISHED ---');

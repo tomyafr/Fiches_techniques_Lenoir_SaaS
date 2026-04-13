@@ -28,8 +28,8 @@ ServerSignature Off
 # HEADERS DE SÉCURITÉ HTTP
 # ============================================
 <IfModule mod_headers.c>
-    # Empêcher l'affichage dans une iframe (clickjacking)
-    Header always set X-Frame-Options "DENY"
+    # Autoriser l'affichage dans une iframe du même domaine (simulation)
+    Header always set X-Frame-Options "SAMEORIGIN"
 
     # Empêcher le MIME-sniffing
     Header always set X-Content-Type-Options "nosniff"
@@ -60,11 +60,11 @@ ServerSignature Off
 # ============================================
 # FORCER HTTPS
 # ============================================
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteCond %{HTTPS} !=on
-    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-</IfModule>
+# <IfModule mod_rewrite.c>
+#     RewriteEngine On
+#     RewriteCond %{HTTPS} !=on
+#     RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# </IfModule>
 
 # ============================================
 # COMPRESSION GZIP

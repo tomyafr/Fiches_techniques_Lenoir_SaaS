@@ -537,7 +537,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 <body>
     <div id="pdfDownloadOverlay">
         <div class="loader-lenoir"></div>
-        <div class="download-status-text">Génération de votre rapport premium</div>
+        <div class="download-status-text">génération de votre rapport premium</div>
         <div style="color: var(--text-dim); font-size: 0.9rem;">Veuillez patienter quelques instants...</div>
     </div>
     <header class="mobile-header">
@@ -832,7 +832,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
                     <div style="line-height:0;"><img src="/assets/ai_expert.jpg" style="height:3rem; width:3rem; border-radius:50%; object-fit:cover; border: 2px solid #d35400;"></div>
                     <div>
-                        <h4 style="margin:0; color:#d35400; font-size:1.1rem;">Génération automatique intelligente</h4>
+                        <h4 style="margin:0; color:#d35400; font-size:1.1rem;">génération automatique intelligente</h4>
                         <p style="margin:4px 0 0 0; font-size:0.8rem; color:var(--text-dim);">L'Expert IA va parcourir toutes vos machines pour rédiger les conclusions et dysfonctionnements (Section E & F) en fonction de vos contrôles.</p>
                     </div>
                 </div>
@@ -1859,7 +1859,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         }
 
         // ══════════════════════════════════════════════════════════════════
-        // GÉNÉRATION PDF (html2pdf.js)
+        // génération PDF (html2pdf.js)
         // ══════════════════════════════════════════════════════════════════
         async function genererPDFBase64() {
             if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
@@ -1922,7 +1922,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 
                 if (nbPagesAssemblees <= 2 && window.LM_RAPPORT.machinesIds.length > 0) {
                     if (!confirm("Attention : Le rapport semble ne contenir aucune fiche machine (3 pages seulement). Voulez-vous quand même continuer ?")) {
-                        throw new Error("Génération annulée par l'utilisateur car le rapport était incomplet.");
+                        throw new Error("génération annulée par l'utilisateur car le rapport était incomplet.");
                     }
                 }
 
@@ -2083,7 +2083,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             if (btn) btn.disabled = true;
             if (icon) icon.innerHTML = '<img src="/assets/icons/loading.png" class="fa-spin premium-icon" style="height: 18px; width: 18px; vertical-align: middle;">';
-            if (label) label.textContent = 'Génération du PDF…';
+            if (label) label.textContent = 'génération du PDF…';
 
             let pdfBase64;
             try {
@@ -2153,7 +2153,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         }
 
         // ══════════════════════════════════════════════════════════════════
-        // GÉNÉRATION IA PAR LOT (BATCH)
+        // génération IA PAR LOT (BATCH)
         // ══════════════════════════════════════════════════════════════════
         async function generateAllIA() {
             if (!confirm("L'Expert IA va parcourir toutes les machines du rapport.\n\nNOTE : Les conclusions et causes déjà saisies seront PRÉSERVÉES. Seules les fiches vides seront complétées.\n\nContinuer ?")) return;

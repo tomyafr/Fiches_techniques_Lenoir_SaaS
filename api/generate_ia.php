@@ -40,7 +40,7 @@ $issues = extractIssuesFromDonnees($donnees);
 $response = ['success' => true];
 
 if ($type === 'E' || $type === 'ALL') {
-    // Génération Section E (Dysfonctionnements)
+    // génération Section E (Dysfonctionnements)
     $allIssues = [];
     $systemPromptE = "Tu es le rédacteur technique officiel des rapports d'expertise Lenoir-Mec (séparation magnétique et levage industriel, groupe Delachaux).
 

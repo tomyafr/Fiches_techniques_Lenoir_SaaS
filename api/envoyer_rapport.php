@@ -116,23 +116,91 @@ Lenoir-Mec | Service Après-Vente
 Email : {$expediteur}
 TXT;
 
-// Corps HTML
+// Corps HTML Premium
 $bodyHtml = "
-<html>
-<body style=\"font-family: Arial, sans-serif; font-size: 14px; color: #333; line-height: 1.6;\">
-  <p>Madame, Monsieur,</p>
-  <p>Veuillez trouver ci-joint le rapport d'expertise réalisé par notre technicien
-     <strong>{$techFullName}</strong> le <strong>{$dateSignature}</strong>
-     sur votre site de <strong>{$ville}</strong>.</p>
-  <p>N'hésitez pas à nous contacter pour toute question.</p>
-  <br>
-  <p>Cordialement,<br>
-  <strong>L'équipe Lenoir-Mec</strong></p>
-  <hr style=\"border:none; border-top:1px solid #eee; margin:24px 0;\">
-  <p style=\"font-size:12px; color:#999;\">
-    Lenoir-Mec | Service Après-Vente<br>
-    Email&nbsp;: <a href=\"mailto:{$expediteur}\">{$expediteur}</a>
-  </p>
+<!DOCTYPE html>
+<html lang='fr'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Rapport d'expertise Lenoir-Mec</title>
+</head>
+<body style='margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc;'>
+    <table border='0' cellpadding='0' cellspacing='0' width='100%'>
+        <tr>
+            <td align='center' style='padding: 40px 0;'>
+                <table border='0' cellpadding='0' cellspacing='0' width='600' style='background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05);'>
+                    <!-- Header -->
+                    <tr>
+                        <td align='center' style='padding: 40px 40px 30px 40px; background-color: #020617;'>
+                            <h1 style='color: #ffffff; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px;'>L<span style='color: #ffb300;'>M</span> EXPERT</h1>
+                            <p style='color: rgba(255,255,255,0.6); margin: 5px 0 0 0; font-size: 14px;'>Rapport d'Expertise Technique</p>
+                        </td>
+                    </tr>
+                    <!-- Content -->
+                    <tr>
+                        <td style='padding: 40px;'>
+                            <h2 style='color: #0f172a; margin: 0 0 20px 0; font-size: 20px; font-weight: 700;'>Bonjour,</h2>
+                            <p style='color: #475569; margin: 0 0 30px 0; font-size: 16px; line-height: 24px;'>
+                                Nous avons le plaisir de vous adresser le rapport technique relatif à l'expertise réalisée sur vos équipements. Ce document détaille l'état de vos machines et nos recommandations de maintenance.
+                            </p>
+                            
+                            <!-- Intervention Details Card -->
+                            <div style='background-color: #f1f5f9; border-radius: 12px; padding: 25px; margin-bottom: 30px;'>
+                                <table border='0' cellpadding='0' cellspacing='0' width='100%'>
+                                    <tr>
+                                        <td style='width: 50%; padding-bottom: 15px;'>
+                                            <p style='margin: 0; color: #64748b; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;'>Technicien</p>
+                                            <p style='margin: 4px 0 0 0; color: #0f172a; font-size: 15px; font-weight: 600;'>{$techFullName}</p>
+                                        </td>
+                                        <td style='width: 50%; padding-bottom: 15px;'>
+                                            <p style='margin: 0; color: #64748b; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;'>Date</p>
+                                            <p style='margin: 4px 0 0 0; color: #0f172a; font-size: 15px; font-weight: 600;'>{$dateSignature}</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan='2'>
+                                            <p style='margin: 0; color: #64748b; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;'>Site d'intervention</p>
+                                            <p style='margin: 4px 0 0 0; color: #0f172a; font-size: 15px; font-weight: 600;'>{$nomSociete} - {$ville}</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <p style='color: #475569; margin: 0 0 30px 0; font-size: 15px; line-height: 22px;'>
+                                Vous trouverez le rapport complet en pièce jointe de cet email (format PDF).
+                            </p>
+                            
+                            <p style='color: #475569; margin: 0; font-size: 15px;'>
+                                Nos équipes restent à votre entière disposition pour toute information complémentaire.
+                                <br><br>
+                                Cordialement,<br>
+                                <strong>L'équipe SAV Lenoir-Mec</strong>
+                            </p>
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td style='padding: 30px 40px; background-color: #f8fafc; border-top: 1px solid #e2e8f0;'>
+                            <table border='0' cellpadding='0' cellspacing='0' width='100%'>
+                                <tr>
+                                    <td style='color: #94a3b8; font-size: 12px; line-height: 18px;'>
+                                        <p style='margin: 0 0 10px 0;'>
+                                            <strong>Lenoir-Mec | Maintenance Industrielle</strong><br>
+                                            ZI du Béarn, 54400 Cosnes-et-Romain, France<br>
+                                            <a href='mailto:{$expediteur}' style='color: #ffb300; text-decoration: none;'>{$expediteur}</a> | <a href='https://www.raoul-lenoir.com' style='color: #ffb300; text-decoration: none;'>www.raoul-lenoir.com</a>
+                                        </p>
+                                        <p style='margin: 0;'>Ce message automatique vous a été envoyé après signature du rapport d'expertise.</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <p style='color: #cbd5e1; font-size: 11px; margin-top: 20px;'>&copy; " . date('Y') . " Lenoir-Mec. Tous droits réservés.</p>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
 ";
@@ -142,11 +210,21 @@ $pdfFilename = "Rapport_Lenoir_Mec_{$numeroARC}_{$dateSignature}.pdf";
 $pdfFilename = preg_replace('/[^A-Za-z0-9_\-.]/', '_', $pdfFilename);
 
 // ── Sélection du service d'envoi ─────────────────────────────────────────────
-// Priorité : MailerSend > SendGrid > PHPMailer/SMTP > mail() natif
+// Priorité : Simulation (si demandée) > MailerSend > SendGrid > PHPMailer/SMTP > mail() natif
 $mailersendKey = getenv('MAILERSEND_API_KEY');
 $sendgridKey = getenv('SENDGRID_API_KEY');
+$simulationRequested = (isset($_POST['simulation']) && $_POST['simulation'] === '1');
 
-if (!empty($mailersendKey)) {
+if ($simulationRequested || (empty($mailersendKey) && empty($sendgridKey) && empty(getenv('SMTP_HOST')))) {
+    // 🛡️ MODE SIMULATION / PREVIEW
+    $result = saveToSimulation(
+        $nomSociete,
+        $subject,
+        $bodyHtml,
+        $pdfData,
+        $pdfFilename
+    );
+} elseif (!empty($mailersendKey)) {
     $result = sendViaMailerSend(
         $mailersendKey,
         $expediteur,
@@ -459,4 +537,67 @@ function sendViaPHPMailerOrNative(
         return ['success' => true, 'message' => "Rapport envoyé avec succès à {$toEmail}", 'email' => $toEmail];
     }
     return ['success' => false, 'message' => 'Échec envoi email (mail()). Vérifiez la config SMTP serveur.', 'email' => $toEmail];
+}
+
+/**
+ * SIMULATION : Sauvegarde l'email dans un fichier HTML pour prévisualisation.
+ */
+function saveToSimulation($clientName, $subject, $html, $pdfBase64, $pdfFilename): array {
+    $tmpDir = __DIR__ . '/../tmp/simulations';
+    if (!is_dir($tmpDir)) {
+        @mkdir($tmpDir, 0777, true);
+    }
+
+    $simId = time() . '_' . bin2hex(random_bytes(4));
+    $filePath = "{$tmpDir}/sim_{$simId}.html";
+
+    // On crée une petite page pour voir à la fois le mail et un lien vers le PDF
+    $previewHtml = "
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>LM Expert - Simulation Envoi Email</title>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <style>
+            body { font-family: -apple-system, sans-serif; background: #020617; color: white; padding: 20px; margin: 0; }
+            .meta-box { background: rgba(255,179,0,0.1); border: 1px solid rgba(255,179,0,0.3); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem; max-width: 800px; margin-left: auto; margin-right: auto; }
+            .email-container { display: flex; justify-content: center; padding-bottom: 50px; }
+            .email-frame { background: white; border: none; width: 100%; max-width: 700px; height: 1000px; border-radius: 12px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+            .btn-pdf { display: inline-flex; align-items: center; gap: 8px; background: #ffb300; color: #020617; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; margin-top: 15px; font-size: 14px; transition: 0.3s; }
+            .btn-pdf:hover { background: #ffc433; transform: translateY(-2px); }
+        </style>
+    </head>
+    <body>
+        <div class='meta-box'>
+            <h2 style='margin-top:0; color: #ffb300; display: flex; align-items: center; gap: 10px;'>
+                <span>🧪</span> Mode Simulation / Preview
+            </h2>
+            <p style='margin: 10px 0; font-size: 14px; color: #94a3b8;'>
+                Cet écran simule l'email qui sera envoyé au client. Utilisez ceci pour valider le design premium et la pièce jointe.
+            </p>
+            <hr style='border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 1.5rem 0;'>
+            <p style='margin: 5px 0;'><strong>Sujet :</strong> " . htmlspecialchars($subject) . "</p>
+            <p style='margin: 5px 0;'><strong>Destinataire :</strong> Simulation pour {$clientName}</p>
+            <a href='data:application/pdf;base64,{$pdfBase64}' download='{$pdfFilename}' class='btn-pdf'>
+                📥 Télécharger le Rapport PDF (Attachement)
+            </a>
+        </div>
+        <div class='email-container'>
+            <iframe class='email-frame' srcdoc=\"" . htmlspecialchars($html, ENT_QUOTES) . "\"></iframe>
+        </div>
+    </body>
+    </html>
+    ";
+
+    @file_put_contents($filePath, $previewHtml);
+    
+    // URL relative pour le retour
+    $url = "/tmp/simulations/sim_{$simId}.html";
+
+    return [
+        'success' => true, 
+        'message' => '🧪 Mode Simulation : Le mail n\'a pas été envoyé réellement (aucun service configuré), mais vous pouvez voir le rendu ci-dessous.',
+        'simulation_url' => $url,
+        'email' => 'Simulation @ ' . ($clientName ?: 'Client')
+    ];
 }

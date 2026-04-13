@@ -839,10 +839,10 @@
                     <!-- LE CLIENT SOUHAITE -->
                     <div style="background-color: #1B4F72; color: white; border: 2px solid #000; border-bottom: none; padding: 4px 15px; font-weight: bold; font-size: 11px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
                     <div style="border: 2px solid #000; padding: 8px; margin-bottom: 10px;">
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? '☐‘' : '☐'} Ce Rapport d\'expertise uniquement</div>
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? '☐‘' : '☐'} Une offre de Pièces de Rechange</div>
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitIntervention ? '☐‘' : '☐'} Une offre de PR + intervention mise en place</div>
-                        <div style="font-size: 11px;">${souhaitAucune ? '☐‘' : '☐'} Aucune offre</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? '☑️' : '☐'} Ce Rapport d\'expertise uniquement</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? '☑️' : '☐'} Une offre de Pièces de Rechange</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitIntervention ? '☑️' : '☐'} Une offre de PR + intervention mise en place</div>
+                        <div style="font-size: 11px;">${souhaitAucune ? '☑️' : '☐'} Aucune offre</div>
                     </div>
 
                     <!-- DATE ET HEURE -->
@@ -905,7 +905,7 @@
         }
 
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-        // GÉNÉRATION PDF (html2pdf.js)
+        // génération PDF (html2pdf.js)
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         async function genererPDFBase64() {
             if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
@@ -945,7 +945,7 @@
         // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
         async function telechargerPDF() {
             const btn = document.getElementById('btnDownloadPDF');
-            if (btn) { btn.disabled = true; btn.textContent = 'â³ Génération du rapport complet...'; }
+            if (btn) { btn.disabled = true; btn.textContent = 'â³ génération du rapport complet...'; }
             try {
                 const container = await buildFullPdfContainer();
 
@@ -1095,7 +1095,7 @@
 
             if (btn) btn.disabled = true;
             if (icon) icon.textContent = 'â³';
-            if (label) label.textContent = 'Génération du PDF…';
+            if (label) label.textContent = 'génération du PDF…';
 
             let pdfBase64;
             try {

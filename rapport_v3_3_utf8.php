@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 header('Content-Type: text/html; charset=utf-8');
 require_once __DIR__ . '/../includes/config.php';
 requireAuth(['technicien', 'admin']);
@@ -75,10 +75,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $contactTel = trim($_POST['contact_telephone'] ?? '');
             $nomSignataire = trim($_POST['nom_signataire'] ?? '');
 
-            if (empty($contactPrenom)) { $error = "Le prénom du contact est obligatoire."; }
+            if (empty($contactPrenom)) { $error = "Le pr├®nom du contact est obligatoire."; }
             elseif (empty($contactNom)) { $error = "Le nom du contact est obligatoire."; }
-            elseif (strlen($contactPrenom) > 50) { $error = "Le prénom du contact ne doit pas dépasser 50 caractères."; }
-            elseif (strlen($contactNom) > 50) { $error = "Le nom du contact ne doit pas dépasser 50 caractères."; }
+            elseif (strlen($contactPrenom) > 50) { $error = "Le pr├®nom du contact ne doit pas d├®passer 50 caract├¿res."; }
+            elseif (strlen($contactNom) > 50) { $error = "Le nom du contact ne doit pas d├®passer 50 caract├¿res."; }
             elseif (empty($nomSignataire)) { $error = "Le nom du signataire est obligatoire."; }
 
             if (isset($error)) { throw new Exception($error); }
@@ -145,9 +145,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-$now = date('d/m/Y') . ' à ' . date('H:i');
+$now = date('d/m/Y') . ' ├á ' . date('H:i');
 
-// --- CALCUL DES STATISTIQUES POUR LA SYNTHÈSE ---
+// --- CALCUL DES STATISTIQUES POUR LA SYNTH├êSE ---
 $totalOk = 0;
 $totalAmeliorer = 0;
 $totalNonConforme = 0;
@@ -162,7 +162,7 @@ foreach ($machines as &$m) {
     $donnees = json_decode($m['donnees_controle'] ?? '{}', true);
     $mesures = json_decode($m['mesures'] ?? '{}', true);
 
-    // Durée réalisée par machine
+    // Dur├®e r├®alis├®e par machine
     $t = $mesures['temps_realise'] ?? '';
     if (preg_match('/(\d+)\s*h\s*(\d*)/i', $t, $mt)) {
         $totalMinutes += (int) $mt[1] * 60 + (int) ($mt[2] ?: 0);
@@ -181,7 +181,7 @@ foreach ($machines as &$m) {
         }
     }
 
-    // États de contrôle
+    // ├ëtats de contr├┤le
     $pointsCount = 0;
     foreach ($donnees as $k => $v) {
         if (
@@ -193,7 +193,7 @@ foreach ($machines as &$m) {
                 $pointsCount++;
                 if ($v === 'c' || $v === 'bon' || $v === 'OK')
                     $totalOk++;
-                elseif ($v === 'aa' || $v === 'r' || $v === 'A améliorer')
+                elseif ($v === 'aa' || $v === 'r' || $v === 'A am├®liorer')
                     $totalAmeliorer++;
                 elseif ($v === 'nc' || $v === 'hs' || $v === 'Non conforme')
                     $totalNonConforme++;
@@ -216,7 +216,7 @@ $h_synth = floor($totalMinutes / 60);
 $m_synth = $totalMinutes % 60;
 
 if ($totalMinutes == 0) {
-    $dureeSynth = "Non renseigné";
+    $dureeSynth = "Non renseign├®";
 } else {
     $dureeSynth = "";
     if ($h_synth > 0) {
@@ -240,11 +240,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     <link rel="stylesheet" href="/assets/style.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#020617">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <script>
-        const PDF_CHUNK_SIZE = 5;
-    </script>
     <style>
         .rapport-page {
             max-width: 720px;
@@ -470,189 +465,62 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             color: var(--primary);
         }
 
-        /* Ultra-Premium Downloader Overlay */
+        /* Premium Downloader Overlay */
         #pdfDownloadOverlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(2, 6, 23, 0.85);
-            backdrop-filter: blur(20px);
+            background: #020617;
             z-index: 10000;
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             color: #fff;
-            font-family: 'Outfit', 'Inter', sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
-        .premium-loader-card {
+        .loader-lenoir {
+            width: 120px;
+            height: 120px;
             position: relative;
-            width: 90%;
-            max-width: 480px;
-            padding: 3rem 2.5rem;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 32px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7);
-            overflow: hidden;
-            text-align: center;
-        }
-
-        /* Animated Glowing Border */
-        .premium-loader-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(from 0deg, transparent, rgba(255, 179, 0, 0.2), transparent 40%, #ffb300, transparent 60%);
-            animation: rotateBorder 4s linear infinite;
-            z-index: -1;
-        }
-
-        .premium-loader-card::after {
-            content: '';
-            position: absolute;
-            inset: 2px;
-            background: #020617;
-            border-radius: 30px;
-            z-index: -1;
-        }
-
-        @keyframes rotateBorder {
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Abstract compilation visual */
-        .loader-visual {
-            position: relative;
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 2rem;
-        }
-
-        .visual-circle {
-            position: absolute;
-            inset: 0;
-            border: 2px solid rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-        }
-
-        .visual-core {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
-            background: radial-gradient(circle, var(--primary), #e67e22);
-            border-radius: 50%;
-            box-shadow: 0 0 30px var(--primary);
-            animation: pulse-core 2s ease-in-out infinite;
-        }
-
-        .visual-orbit {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            margin-top: -50%;
-            margin-left: -50%;
-            border: 2px solid transparent;
-            border-top-color: var(--accent-cyan);
-            border-radius: 50%;
-            animation: rotate-orbit 3s linear infinite;
-        }
-
-        @keyframes pulse-core {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-        }
-
-        @keyframes rotate-orbit {
-            100% { transform: rotate(360deg); }
-        }
-
-        .download-status-text {
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
-            background: linear-gradient(to right, #fff, #fbd38d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .loader-subtext {
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 0.95rem;
             margin-bottom: 2rem;
         }
 
-        /* Modern Progress Bar */
-        .progress-box {
-            position: relative;
-            width: 100%;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 100px;
-            margin-bottom: 1.5rem;
-            overflow: hidden;
-        }
-
-        .progress-fill {
+        .loader-lenoir::before, .loader-lenoir::after {
+            content: '';
             position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #ffb300, #fbd38d);
-            border-radius: 100px;
-            box-shadow: 0 0 15px rgba(255, 179, 0, 0.5);
-            transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .percent-label { color: var(--primary); }
-        .stage-label { color: rgba(255, 255, 255, 0.5); }
-
-        /* Task Indicators */
-        .premium-tasks {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 2.5rem;
-        }
-
-        .task-step {
-            width: 10px;
-            height: 10px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            transition: all 0.4s;
+            border: 4px solid transparent;
+            border-top-color: var(--primary);
+            width: 100%;
+            height: 100%;
+            animation: spin 1.5s linear infinite;
         }
 
-        .task-step.active {
-            background: var(--primary);
-            box-shadow: 0 0 10px var(--primary);
-            transform: scale(1.3);
+        .loader-lenoir::after {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            border-top-color: var(--accent-cyan);
+            animation-duration: 1s;
+            animation-direction: reverse;
         }
 
-        .task-step.completed {
-            background: #10b981;
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .download-status-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
         }
 
         @media print {
@@ -668,31 +536,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
 <body>
     <div id="pdfDownloadOverlay">
-        <div class="premium-loader-card">
-            <div class="loader-visual">
-                <div class="visual-circle"></div>
-                <div class="visual-orbit"></div>
-                <div class="visual-core"></div>
-            </div>
-            
-            <div class="download-status-text">Production du Rapport</div>
-            <div class="loader-subtext" id="pdfLoaderSubtext">Optimisation et rendu...</div>
-
-            <div class="progress-box">
-                <div class="progress-fill" id="pdfProgressBarFill"></div>
-            </div>
-
-            <div class="progress-info">
-                <div class="stage-label" id="pdfStageLabel">Phase d'initialisation</div>
-                <div class="percent-label" id="pdfPercentLabel">0%</div>
-            </div>
-
-            <div class="premium-tasks">
-                <div class="task-step" id="step-1"></div>
-                <div class="task-step" id="step-2"></div>
-                <div class="task-step" id="step-3"></div>
-            </div>
-        </div>
+        <div class="loader-lenoir"></div>
+        <div class="download-status-text">g├®n├®ration de votre rapport premium</div>
+        <div style="color: var(--text-dim); font-size: 0.9rem;">Veuillez patienter quelques instants...</div>
     </div>
     <style>
         .mobile-header { display: flex !important; }
@@ -719,12 +565,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <div style="margin-bottom:1rem; text-align:center;">
                         <img src="/assets/check_success.svg" style="height: 80px; width: 80px;">
                     </div>
-                    <h3 style="margin:0 0 0.5rem 0; color:#10b981;">Rapport finalisé avec succès !</h3>
+                    <h3 style="margin:0 0 0.5rem 0; color:#10b981;">Rapport finalis├® avec succ├¿s !</h3>
                     <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1rem;">L'intervention ARC
-                        <?= htmlspecialchars($intervention['numero_arc']) ?> a été clôturée.
+                        <?= htmlspecialchars($intervention['numero_arc']) ?> a ├®t├® cl├┤tur├®e.
                     </p>
 
-                    <!-- Toast email (injecté par JS) -->
+                    <!-- Toast email (inject├® par JS) -->
                     <div id="emailToast"
                         style="display:none; margin-bottom:1rem; padding:0.75rem 1rem; border-radius:8px; font-size:0.85rem; font-weight:600;">
                     </div>
@@ -736,11 +582,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             <span id="btnSendEmailIcon"><img src="/assets/icon_email_send.svg" style="height: 18px; width: 18px; vertical-align: middle;"></span>
                             <span id="btnSendEmailLabel">Envoyer PDF par email</span>
                         </button>
-                        <!-- Bouton Télécharger PDF -->
+                        <!-- Bouton T├®l├®charger PDF -->
                         <button type="button" id="btnDownloadPDF" onclick="telechargerPDF()"
                             style="padding:0.7rem 1.5rem; background:var(--primary); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem;">
                             <span id="btnDownloadPDFIcon"><img src="/assets/icon_download.svg" style="height: 18px; width: 18px; vertical-align: middle; filter: brightness(0);"></span> 
-                            <span id="btnDownloadPDFLabel">Télécharger le PDF</span>
+                            <span id="btnDownloadPDFLabel">T├®l├®charger le PDF</span>
                         </button>
                         <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>"
                             style="padding:0.7rem 1.5rem; background:rgba(255,255,255,0.1); color:var(--text); border:1px solid var(--glass-border); border-radius:8px; font-weight:600; text-decoration:none; font-size:0.9rem; display:flex; align-items:center; gap:8px;">
@@ -751,7 +597,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
             <?php endif; ?>
 
-            <!-- Données PHP exposées pour le JS -->
+            <!-- Donn├®es PHP expos├®es pour le JS -->
             <script>
                 window.LM_RAPPORT = {
                     interventionId: <?= (int) $id ?>,
@@ -793,7 +639,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             'arc' => $intervention['numero_arc'],
                             'of' => $m['numero_of'] ?? '',
                             'designation' => $m['designation'] ?? '',
-                            'repere' => $mes['repere'] ?? '—',
+                            'repere' => $mes['repere'] ?? 'ÔÇö',
                             'annee' => $m['annee_fabrication'] ?? '',
                             'points_count' => $m['points_count'] ?? 0,
                             'dysfonctionnements' => $m['dysfonctionnements'] ?? '',
@@ -810,7 +656,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
             <?php endif; ?>
 
-            <!-- ANALYSE IA GÉNÉRALE (Rectangle Orange) -->
+            <!-- ANALYSE IA G├ëN├ëRALE (Rectangle Orange) -->
             <div id="ai-synthesis-block" class="card" style="background: rgba(255, 179, 0, 0.1); border: 2px solid var(--primary); padding: 1.5rem; margin-bottom: 2rem; border-radius: 12px; position: relative;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                     <div style="display: flex; align-items: center; gap: 10px;">
@@ -818,12 +664,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <h2 style="color: var(--primary); margin: 0; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;">Analyse Intelligente Globale</h2>
                     </div>
                     <button type="button" onclick="generateAllIA()" id="btnGenerateAllIa" class="btn btn-primary" style="background: var(--primary); color: #000; font-weight: 700; font-size: 0.8rem; padding: 0.5rem 1rem; border-radius: 8px; display: flex; align-items: center; gap: 8px;">
-                        <span>⚙️</span> Lancer l'IA sur toutes les fiches
+                        <span>ÔÜÖ´©Å</span> Lancer l'IA sur toutes les fiches
                     </button>
                 </div>
                 <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem;">
-                    Cette fonction analyse automatiquement chaque fiche pour générer les sections "Dysfonctionnements" et "Conclusions" en se basant sur vos relevés. 
-                    <strong>Les fiches déjà modifiées manuellement ne seront pas écrasées sans confirmation.</strong>
+                    Cette fonction analyse automatiquement chaque fiche pour g├®n├®rer les sections "Dysfonctionnements" et "Conclusions" en se basant sur vos relev├®s. 
+                    <strong>Les fiches d├®j├á modifi├®es manuellement ne seront pas ├®cras├®es sans confirmation.</strong>
                 </p>
                 <div id="ai-global-progress" style="display: none; margin-top: 1rem;">
                     <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 5px; color: var(--accent-cyan);">
@@ -836,7 +682,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
             </div>
 
-            <!-- EN-TÊTE -->
+            <!-- EN-T├èTE -->
             <div class="rapport-header">
                 <img src="/assets/lenoir_logo_trans.svg" alt="LENOIR-MEC" 
                     style="height: 60px; width: auto; object-fit: contain; display: block; margin: 0 auto 1.5rem auto;">
@@ -846,14 +692,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
             </div>
 
-            <!-- RÉCAP MACHINES -->
-            <div class="section-title">Équipements contrôlés (<?= count($machines) ?>)</div>
+            <!-- R├ëCAP MACHINES -->
+            <div class="section-title">├ëquipements contr├┤l├®s (<?= count($machines) ?>)</div>
             <div class="machines-recap">
                 <?php foreach ($machines as $m): 
                     $mStatus = $m['conclusion'] ?? '';
-                    $statusColor = '#94a3b8'; // défaut
+                    $statusColor = '#94a3b8'; // d├®faut
                     if (stripos($mStatus, 'conforme') !== false && stripos($mStatus, 'non') === false) $statusColor = '#10b981';
-                    if (stripos($mStatus, 'amélioration') !== false) $statusColor = '#f59e0b';
+                    if (stripos($mStatus, 'am├®lioration') !== false) $statusColor = '#f59e0b';
                     if (stripos($mStatus, 'non conforme') !== false) $statusColor = '#f43f5e';
                     if (stripos($mStatus, 'remplacer') !== false) $statusColor = '#8b0000';
                     
@@ -865,7 +711,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         </div>
                         <strong style="color:#fff; font-size:0.85rem;"><?= htmlspecialchars($m['designation']) ?></strong>
                         <?php if (!empty($mm['repere'])): ?>
-                            <small style="opacity:0.6; color:#94a3b8;">– <?= htmlspecialchars($mm['repere']) ?></small>
+                            <small style="opacity:0.6; color:#94a3b8;">ÔÇô <?= htmlspecialchars($mm['repere']) ?></small>
                         <?php endif; ?>
                         <small style="margin-left: 4px; color: <?= $statusColor ?>; font-weight:bold;">(<?= (int)$m['points_count'] ?> pts)</small>
                     </span>
@@ -876,15 +722,15 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <div class="section-title">Informations client</div>
             <div class="card glass" style="padding: 1.5rem;">
                 <div class="form-group">
-                    <label class="label">Société <span style="color:var(--error);">*</span></label>
+                    <label class="label">Soci├®t├® <span style="color:var(--error);">*</span></label>
                     <input type="text" name="nom_societe_display" class="input"
                         value="<?= htmlspecialchars($intervention['nom_societe']) ?>" disabled style="opacity:0.7;">
                 </div>
 
                 <div class="field-row">
                     <div class="form-group">
-                        <label class="label">Prénom du contact <span style="color:var(--error);">*</span></label>
-                        <input type="text" name="contact_prenom" id="contact_prenom" class="input" placeholder="Prénom..."
+                        <label class="label">Pr├®nom du contact <span style="color:var(--error);">*</span></label>
+                        <input type="text" name="contact_prenom" id="contact_prenom" class="input" placeholder="Pr├®nom..."
                             value="<?= htmlspecialchars($intervention['contact_prenom'] ?? '') ?>" required maxlength="50">
                     </div>
                     <div class="form-group">
@@ -896,7 +742,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                 <div class="field-row">
                     <div class="form-group">
-                        <label class="label">Fonction / Rôle</label>
+                        <label class="label">Fonction / R├┤le</label>
                         <input type="text" name="contact_fonction" class="input" placeholder="Resp. maintenance..."
                             value="<?= htmlspecialchars($intervention['contact_fonction'] ?? $intervention['c_fonction'] ?? '') ?>">
                     </div>
@@ -910,13 +756,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                 <div class="field-row">
                     <div class="form-group">
-                        <label class="label">Téléphone</label>
+                        <label class="label">T├®l├®phone</label>
                         <input type="tel" name="contact_telephone" class="input" placeholder="06 12 34 56 78"
                             value="<?= htmlspecialchars($intervention['contact_telephone'] ?? $intervention['c_tel'] ?? '') ?>">
                     </div>
                     <div class="form-group">
                         <label class="label">Adresse</label>
-                        <input type="text" name="adresse" class="input" placeholder="Rue, numéro..."
+                        <input type="text" name="adresse" class="input" placeholder="Rue, num├®ro..."
                             value="<?= htmlspecialchars($intervention['adresse'] ?? '') ?>">
                     </div>
                 </div>
@@ -943,7 +789,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <!-- COMMENTAIRE TECHNICIEN -->
             <div class="section-title">Commentaire / Observations du technicien</div>
             <textarea name="commentaire_technicien" class="rapport-textarea large"
-                placeholder="Saisissez vos observations générales sur l'état des équipements, les anomalies relevées, les recommandations..."><?= htmlspecialchars($intervention['commentaire_technicien'] ?? '') ?></textarea>
+                placeholder="Saisissez vos observations g├®n├®rales sur l'├®tat des ├®quipements, les anomalies relev├®es, les recommandations..."><?= htmlspecialchars($intervention['commentaire_technicien'] ?? '') ?></textarea>
 
             <!-- LE CLIENT SOUHAITE -->
             <div class="section-title">Le client souhaite</div>
@@ -956,12 +802,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 <label class="checkbox-item">
                     <input type="checkbox" name="souhait_offre_pieces" value="1" class="chk-souhait"
                         <?= ($intervention['souhait_offre_pieces'] ?? false) ? 'checked' : '' ?>>
-                    <span>Une offre de pièces de rechange</span>
+                    <span>Une offre de pi├¿ces de rechange</span>
                 </label>
                 <label class="checkbox-item">
                     <input type="checkbox" name="souhait_pieces_intervention" value="1" class="chk-souhait"
                         <?= ($intervention['souhait_pieces_intervention'] ?? false) ? 'checked' : '' ?>>
-                    <span>Pièces de rechange + intervention mise en place</span>
+                    <span>Pi├¿ces de rechange + intervention mise en place</span>
                 </label>
                 <label class="checkbox-item">
                     <input type="checkbox" name="souhait_aucune_offre" value="1" class="chk-souhait"
@@ -986,7 +832,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <!-- COMMENTAIRE CLIENT -->
             <div class="section-title">Commentaire du client</div>
             <textarea name="commentaire_client" class="rapport-textarea small"
-                placeholder="Remarques ou demandes spécifiques du client..."><?= htmlspecialchars($intervention['commentaire_client'] ?? '') ?></textarea>
+                placeholder="Remarques ou demandes sp├®cifiques du client..."><?= htmlspecialchars($intervention['commentaire_client'] ?? '') ?></textarea>
 
             <!-- DATE & HEURE -->
             <div class="section-title">Date et heure</div>
@@ -1020,7 +866,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
                     <div class="form-group" style="margin-bottom: 0.5rem;">
                         <input type="text" name="nom_signataire" class="input"
-                            placeholder="NOM Prénom du signataire (ex: DUPONT Jean)"
+                            placeholder="NOM Pr├®nom du signataire (ex: DUPONT Jean)"
                             value="<?= htmlspecialchars($intervention['nom_signataire_client'] ?? '') ?>" required>
                     </div>
                     <canvas id="canvasClient" width="600" height="200"></canvas>
@@ -1030,12 +876,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             <!-- BOUTON FINAL -->
             <button type="submit" class="btn-final" onclick="return validateAndSubmit()">
-                ✓ Finaliser le rapport et terminer l'intervention
+                Ô£ô Finaliser le rapport et terminer l'intervention
             </button>
 
             <a href="intervention_edit.php?id=<?= $id ?>"
                 style="display:block; text-align:center; margin-top:1rem; color:var(--text-dim); font-size:0.85rem; text-decoration:none;">
-                ← Retour aux fiches
+                ÔåÉ Retour aux fiches
             </a>
         </form>
     </div>
@@ -1043,8 +889,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     <!-- Libs PDF : jsPDF + html2canvas exposes comme globals -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- html2pdf.js pour génération PDF côté client -->
-    <!-- html2pdf moved to head -->
+    <!-- html2pdf.js pour g├®n├®ration PDF c├┤t├® client -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
     <script>
         let padClient, padTech;
@@ -1061,7 +907,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             context.scale(ratio, ratio);
 
             if (pad) {
-                pad.clear(); // Réinitialise pour éviter les distorsions si on redimensionne
+                pad.clear(); // R├®initialise pour ├®viter les distorsions si on redimensionne
             }
         }
 
@@ -1130,11 +976,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
         function validateAndSubmit() {
             if (!padClient || !padTech) {
-                alert('Erreur: les zones de signature ne sont pas prêtes. Veuillez rafraîchir la page.');
+                alert('Erreur: les zones de signature ne sont pas pr├¬tes. Veuillez rafra├«chir la page.');
                 return false;
             }
 
-            // --- BUG-005, BUG-014, BUG-015: Contrôle de qualité des textes ---
+            // --- BUG-005, BUG-014, BUG-015: Contr├┤le de qualit├® des textes ---
             const fieldsToCheck = [
                 { name: 'commentaire_technicien', label: 'Observations du technicien' },
                 { name: 'commentaire_client', label: 'Commentaire du client' },
@@ -1160,7 +1006,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 }
 
                 if (foundMatch) {
-                    if (!confirm("⚠️ Le champ '" + f.label + "' contient des données semblant être du test ou non-professionnelles (\"" + val.substring(0, 20) + "...\"). Voulez-vous vraiment continuer ?")) {
+                    if (!confirm("ÔÜá´©Å Le champ '" + f.label + "' contient des donn├®es semblant ├¬tre du test ou non-professionnelles (\"" + val.substring(0, 20) + "...\"). Voulez-vous vraiment continuer ?")) {
                         return false;
                     }
                 }
@@ -1172,11 +1018,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 return false;
             }
 
-            // --- BUG-008: Contrôle de complétude des fiches ---
+            // --- BUG-008: Contr├┤le de compl├®tude des fiches ---
             const machinesData = window.LM_RAPPORT.machinesData;
             for (let m of machinesData) {
                 if (m.points_count === 0) {
-                    alert('❌ Complétude insuffisante : La fiche machine "' + m.designation + '" est entièrement vide (0 point de contrôle rempli). Veuillez la compléter avant de finaliser.');
+                    alert('ÔØî Compl├®tude insuffisante : La fiche machine "' + m.designation + '" est enti├¿rement vide (0 point de contr├┤le rempli). Veuillez la compl├®ter avant de finaliser.');
                     return false;
                 }
             }
@@ -1202,7 +1048,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            // --- BUG-018: Exclusivité des checkboxes "Le client souhaite" ---
+            // --- BUG-018: Exclusivit├® des checkboxes "Le client souhaite" ---
             const chkUnique = document.querySelector('[name="souhait_rapport_unique"]');
             const otherChks = document.querySelectorAll('[name="souhait_offre_pieces"], [name="souhait_pieces_intervention"], [name="souhait_aucune_offre"]');
 
@@ -1243,11 +1089,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         });
 
 
-        // ══════════════════════════════════════════════════════════════════
-        // CRÉATION DU CONTENEUR COMPLET POUR LE PDF (ASYNCHRONE)
-        // ══════════════════════════════════════════════════════════════════
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+        // CR├ëATION DU CONTENEUR COMPLET POUR LE PDF (ASYNCHRONE)
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
 
-        // Helper : Attendre que toutes les images soient chargées
+        // Helper : Attendre que toutes les images soient charg├®es
         async function waitForImages(element) {
             const images = element.querySelectorAll('img');
             const promises = Array.from(images).map(img => {
@@ -1311,20 +1157,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             await Promise.all(promises);
         }
 
-        async function buildFullPdfContainer(opts = {}) {
-            const includeIntro = opts.includeIntro !== false;
-            const includeMachines = opts.includeMachines !== false;
-            const includeEnd = opts.includeEnd !== false;
-            const targetMachineIds = opts.targetMachineIds || null;
-            const startIndex = opts.startIndex || 0;
-
+        async function buildFullPdfContainer() {
             const container = document.createElement('div');
             container.id = 'pdf-full-wrapper';
             container.style.width = '210mm';
             container.style.backgroundColor = 'white';
             container.style.color = 'black';
 
-            // --- 0. STYLES SPÉCIFIQUES ---
+            // --- 0. STYLES SP├ëCIFIQUES ---
             const styleNode = document.createElement('style');
             styleNode.textContent = `
                 .pdf-page {
@@ -1407,7 +1247,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .pastille-group label.p-nr { background-color: #d1d1d1 !important; }
                 .pastille-group label.p-na { background-color: #d1d1d1 !important; }
 
-                /* État sélectionné : On retrouve les vraies couleurs du SaaS */
+                /* ├ëtat s├®lectionn├® : On retrouve les vraies couleurs du SaaS */
                 .pastille-group label.selected.p-ok { background-color: #28a745 !important; border-color: #1e7e34 !important; }
                 .pastille-group label.selected.p-aa { background-color: #f39c12 !important; border-color: #d35400 !important; }
                 .pastille-group label.selected.p-nc { background-color: #dc3545 !important; border-color: #bd2130 !important; }
@@ -1448,7 +1288,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     border: none !important;
                     position: relative;
                 }
-                /* La barre verticale courte à droite de la zone grise */
+                /* La barre verticale courte ├á droite de la zone grise */
                 .diagonal-wrapper::after {
                     content: "";
                     position: absolute;
@@ -1554,15 +1394,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             // Generate HTML lines for machines
             const machinesTrs = window.LM_RAPPORT.machinesData.map(m => `
                 <tr style="border-bottom:1px solid #000;">
-                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.arc || '—'}</td>
-                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.of || '—'}</td>
-                    <td style="padding:6px; border-right:1px solid #000;">${m.designation || '—'}</td>
-                    <td style="padding:6px; text-align:center;">${m.annee || '—'}</td>
+                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.arc || 'ÔÇö'}</td>
+                    <td style="padding:6px; border-right:1px solid #000; text-align:center;">${m.of || 'ÔÇö'}</td>
+                    <td style="padding:6px; border-right:1px solid #000;">${m.designation || 'ÔÇö'}</td>
+                    <td style="padding:6px; text-align:center;">${m.annee || 'ÔÇö'}</td>
                 </tr>
             `).join('');
 
             // --- 1. PAGE RAPPORT FINAL (COUVERTURE + INFOS) ---
-            if (includeIntro) {
             const rapportCloneWrapper = document.createElement('div');
             rapportCloneWrapper.className = 'pdf-page';
             // Layout exact as requested
@@ -1575,7 +1414,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         </td>
                         <td style="width: 60%; vertical-align: bottom; text-align: right; padding-bottom: 5px;">
                             <div style="font-size: 11px; font-weight: normal; color: #1e4e6d; font-style: italic;">
-                                Le spécialiste des applications magnétiques pour la séparation et le levage industriel
+                                Le sp├®cialiste des applications magn├®tiques pour la s├®paration et le levage industriel
                             </div>
                         </td>
                     </tr>
@@ -1585,7 +1424,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 <!-- GRAND CADRE BLEU -->
                 <div style="border: 3px solid #1e4e6d; padding: 15px; margin-bottom: 30px;">
                     <h1 style="text-align: center; color: #1e4e6d; font-size: 26px; font-weight: bold; margin: 10px 0 20px 0;">RAPPORT DE L'EXPERTISE</h1>
-                    <div style="text-align: right; font-weight: bold; font-size: 14px; color: black; margin-bottom: 15px;">N&deg;ARC : ${numArc}</div>
+                    <div style="text-align: right; font-weight: bold; font-size: 14px; color: black; margin-bottom: 15px;">NÔö¼ÔûæARC : ${numArc}</div>
 
                     <!-- TABLEAU CLIENT -->
                     <table style="width:100%; border-collapse:collapse; border: 2px solid #1e4e6d; margin-bottom:20px; font-size:12px; font-family: Arial, sans-serif;">
@@ -1607,7 +1446,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <tr>
                             <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Adresse</td>
                             <td style="padding: 6px; border: 1px solid #000;">${adresse || '_____'}</td>
-                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Prénom</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Pr├®nom</td>
                             <td style="padding: 6px; border: 1px solid #000;">${contactPrenom || '_____'}</td>
                         </tr>
                         <tr>
@@ -1619,7 +1458,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         <tr>
                             <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Ville</td>
                             <td style="padding: 6px; border: 1px solid #000;">${ville || '_____'}</td>
-                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">Téléphone</td>
+                            <td style="font-weight: bold; padding: 6px; border: 1px solid #000;">T├®l├®phone</td>
                             <td style="padding: 6px; border: 1px solid #000;">${contactTel || '_____'}</td>
                         </tr>
                         <tr>
@@ -1639,18 +1478,18 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         </tr>
                         <tr>
                             <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 8%;">Poste</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 25%;">N&deg; A.R.C (N&deg; de série)</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 45%;">Désignation du Produit</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 12%;">Repère</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 10%;">Année</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 25%;">NÔö¼Ôûæ A.R.C (NÔö¼Ôûæ de s├®rie)</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 45%;">D├®signation du Produit</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 12%;">Rep├¿re</td>
+                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 10%;">Ann├®e</td>
                         </tr>
                         ${window.LM_RAPPORT.machinesData.map((m, idx) => `
                             <tr>
                                 <td style="text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000;">${m.poste || (idx + 1)}</td>
-                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.arc || '—'} ${m.of ? ' - ' + m.of : ''}</td>
-                                <td style="padding: 6px; border: 1px solid #000;">${m.designation || '—'}</td>
-                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.repere || '—'}</td>
-                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.annee || '—'}</td>
+                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.arc || 'ÔÇö'} ${m.of ? ' - ' + m.of : ''}</td>
+                                <td style="padding: 6px; border: 1px solid #000;">${m.designation || 'ÔÇö'}</td>
+                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.repere || 'ÔÇö'}</td>
+                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.annee || 'ÔÇö'}</td>
                             </tr>
                         `).join('')}
                     </table>
@@ -1674,16 +1513,16 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             rapportCloneWrapper.appendChild(createPdfFooter());
             container.appendChild(rapportCloneWrapper);
 
-            // --- 1.2 PAGE SYNTHÈSE + PRÉAMBULE (FUSIONNÉS POUR ÉCONOMISER DES PAGES) ---
+            // --- 1.2 PAGE SYNTH├êSE + PR├ëAMBULE (FUSIONN├ëS POUR ├ëCONOMISER DES PAGES) ---
             const synthPreambulePage = document.createElement('div');
             synthPreambulePage.className = 'pdf-page';
             synthPreambulePage.style.margin = '0';
             synthPreambulePage.style.boxShadow = 'none';
-            if (container.children.length > 0) synthPreambulePage.style.pageBreakBefore = 'always';
+            synthPreambulePage.style.pageBreakBefore = 'always';
             synthPreambulePage.style.paddingTop = '15mm';
             const s = window.LM_RAPPORT.synth;
 
-            // Calcul mois prochain pour le préambule
+            // Calcul mois prochain pour le pr├®ambule
             let moisProchainText = "";
             let villePreambule = ville || "[VILLE DU CLIENT]";
             if (dateExp && dateExp.includes('/')) {
@@ -1691,7 +1530,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 if (parts.length === 3) {
                     const mIndex = parseInt(parts[1], 10) - 1;
                     const y = parseInt(parts[2], 10) + 1;
-                    const moisNoms = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+                    const moisNoms = ['janvier', 'f├®vrier', 'mars', 'avril', 'mai', 'juin', 'juillet', 'ao├╗t', 'septembre', 'octobre', 'novembre', 'd├®cembre'];
                     if (mIndex >= 0 && mIndex < 12) {
                         moisProchainText = moisNoms[mIndex] + ' ' + y;
                     }
@@ -1702,13 +1541,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             synthPreambulePage.innerHTML = `
                 <div style="padding-top: 10px;">
                     <div style="padding: 20px; color: #000; background: #fff; margin-bottom: 30px; page-break-inside: avoid;">
-                        <h2 style="font-weight: bold; font-size: 18px; color: #1e4e6d; margin: 0 0 25px 0; padding-bottom: 5px; border-bottom: 2px solid #1e4e6d; text-transform: uppercase; width: 100%;">SYNTHÈSE DE L'INTERVENTION</h2>
+                        <h2 style="font-weight: bold; font-size: 18px; color: #1e4e6d; margin: 0 0 25px 0; padding-bottom: 5px; border-bottom: 2px solid #1e4e6d; text-transform: uppercase; width: 100%;">SYNTH├êSE DE L'INTERVENTION</h2>
                         
                         <div style="margin-bottom: 15px; font-size: 13px; line-height: 1.6;">
                             <div><strong>Technicien :</strong> ${s.tech}</div>
                             <div><strong>Date :</strong> ${s.date}</div>
-                            <div><strong>Durée totale :</strong> ${s.duree}</div>
-                            <div><strong>Équipements contrôlés :</strong> ${s.nbMachines}</div>
+                            <div><strong>Dur├®e totale :</strong> ${s.duree}</div>
+                            <div><strong>├ëquipements contr├┤l├®s :</strong> ${s.nbMachines}</div>
                         </div>
 
                         <div style="margin: 20px 0; font-size: 13px;">
@@ -1718,7 +1557,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             </div>
                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
                                 <span style="display: inline-block; width: 12px; height: 12px; background: #1e4e6d; margin-right: 10px;"></span>
-                                <strong>${s.aa} points à améliorer</strong>
+                                <strong>${s.aa} points ├á am├®liorer</strong>
                             </div>
                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
                                 <span style="display: inline-block; width: 12px; height: 12px; background: #dc3545; margin-right: 10px;"></span>
@@ -1726,13 +1565,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             </div>
                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
                                 <span style="display: inline-block; width: 12px; height: 12px; background: #8b0000; margin-right: 10px;"></span>
-                                <strong>${s.nr} remplacement${s.nr > 1 ? 's' : ''} nécessaire${s.nr > 1 ? 's' : ''}</strong>
+                                <strong>${s.nr} remplacement${s.nr > 1 ? 's' : ''} n├®cessaire${s.nr > 1 ? 's' : ''}</strong>
                             </div>
                         </div>
 
                         <div style="margin-top: 25px; text-align: center;">
-                            <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px; text-transform: uppercase;">SCORE DE CONFORMITÉ : ${s.score}%</div>
-                            ${s.nbMachinesEmpty > 0 ? `<div style="font-size: 11px; color: #dc3545; font-weight: bold; margin-bottom: 8px;">⚠️ ${s.nbMachinesEmpty} fiche(s) non remplie(s) — score calculé sur ${s.nbMachinesFilled}/${s.nbMachinesFilled + s.nbMachinesEmpty} fiches uniquement</div>` : ''}
+                            <div style="font-weight: bold; font-size: 14px; margin-bottom: 5px; text-transform: uppercase;">SCORE DE CONFORMIT├ë : ${s.score}%</div>
+                            ${s.nbMachinesEmpty > 0 ? `<div style="font-size: 11px; color: #dc3545; font-weight: bold; margin-bottom: 8px;">ÔÜá´©Å ${s.nbMachinesEmpty} fiche(s) non remplie(s) ÔÇö score calcul├® sur ${s.nbMachinesFilled}/${s.nbMachinesFilled + s.nbMachinesEmpty} fiches uniquement</div>` : ''}
                             <div style="width: 100%; height: 20px; background: #e2e8f0; border: 1px solid #000; position: relative; overflow: hidden; border-radius: 4px;">
                                 <div style="width: ${s.score}%; height: 100%; background: ${s.score < 33 ? '#dc3545' : (s.score < 66 ? '#f59e0b' : '#22c55e')}; transition: width 0.5s;"></div>
                             </div>
@@ -1740,80 +1579,77 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
 
                     <div style="font-size: 13px; line-height: 1.5; color: black; font-family: Arial, sans-serif; page-break-inside: avoid;">
-                        <h2 style="color: #1e4e6d; font-size: 16px; text-transform: uppercase; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px;">PRÉAMBULE :</h2>
+                        <h2 style="color: #1e4e6d; font-size: 16px; text-transform: uppercase; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px;">PR├ëAMBULE :</h2>
                         
                         <p style="margin-bottom: 12px;">
-                            Ce rapport est établi suite à une expertise effectuée le ${dateExp} sur votre site de ${villePreambule}.
+                            Ce rapport est ├®tabli suite ├á une expertise effectu├®e le ${dateExp} sur votre site de ${villePreambule}.
                         </p>
                         
                         <p style="margin-bottom: 12px;">
-                            Nos expertises permettent de vous accompagner dans votre démarche ISO 22000 :2005 et HACCP. Notre analyse est suivie de conclusions ou recommandations que nous vous invitons à suivre pour la pérennité et la qualité de votre production.
+                            Nos expertises permettent de vous accompagner dans votre d├®marche ISO 22000 :2005 et HACCP. Notre analyse est suivie de conclusions ou recommandations que nous vous invitons ├á suivre pour la p├®rennit├® et la qualit├® de votre production.
                         </p>
                         
                         <p style="margin-bottom: 12px;">
-                            Dans le cadre de notre prestation annuelle, la prochaine expertise aura lieu en ${moisProchainText}. Nous vous contacterons pour établir une date appropriée à vos impératifs de production.
+                            Dans le cadre de notre prestation annuelle, la prochaine expertise aura lieu en ${moisProchainText}. Nous vous contacterons pour ├®tablir une date appropri├®e ├á vos imp├®ratifs de production.
                         </p>
                     </div>
                 </div>
             `;
             synthPreambulePage.appendChild(createPdfFooter());
             container.appendChild(synthPreambulePage);
-            }
 
             // --- 2. FETCH & APPEND MACHINES ---
-            if (includeMachines && window.LM_RAPPORT && window.LM_RAPPORT.machinesIds) {
-                let reportMachineIds = targetMachineIds ? targetMachineIds : [...window.LM_RAPPORT.machinesIds];
+            if (window.LM_RAPPORT && window.LM_RAPPORT.machinesIds) {
+                let reportMachineIds = [...window.LM_RAPPORT.machinesIds];
                 const emptyOption = 'include';
                 const emptyIds = window.LM_RAPPORT.emptyMachinesIds || [];
 
-                // Si option = 'exclude', on retire carrément les machines vides de la boucle !
-                if (!targetMachineIds && emptyOption === 'exclude' && emptyIds.length > 0) {
+                // Si option = 'exclude', on retire carr├®ment les machines vides de la boucle !
+                if (emptyOption === 'exclude' && emptyIds.length > 0) {
                     reportMachineIds = reportMachineIds.filter(id => !emptyIds.includes(parseInt(id, 10)) && !emptyIds.includes(String(id)));
                 }
 
-                const totalMachinesReal = window.LM_RAPPORT.machinesIds.length;
-                for (let localIdx = 0; localIdx < reportMachineIds.length; localIdx++) {
-                    const mId = reportMachineIds[localIdx];
-                    const globalIdx = startIndex + localIdx;
+                const totalMachines = reportMachineIds.length;
+                for (let mIdx = 0; mIdx < totalMachines; mIdx++) {
+                    const mId = reportMachineIds[mIdx];
 
-                    // Si on a gardé la machine mais qu'elle est vide et qu'on voulait 'condensed'
+                    // Si on a gard├® la machine mais qu'elle est vide et qu'on voulait 'condensed'
                     if (emptyOption === 'condensed' && (emptyIds.includes(parseInt(mId, 10)) || emptyIds.includes(String(mId)))) {
                         const mData = window.LM_RAPPORT.machinesData.find(m => parseInt(m.id, 10) === parseInt(mId, 10)) || {};
-                        const mDesignation = mData.designation || 'Équipement';
+                        const mDesignation = mData.designation || '├ëquipement';
                         const mArc = mData.arc || numArc;
 
                         const p = document.createElement('div');
                         p.className = 'pdf-page';
                         p.innerHTML = `
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 3px solid #5B9BD5; padding-bottom: 5px;">
-                                <div style="font-size: 14px; font-weight: bold; color: #1B4F72;">FICHE ${globalIdx + 1} / ${totalMachinesReal}</div>
+                                <div style="font-size: 14px; font-weight: bold; color: #1B4F72;">FICHE ${mIdx + 1} / ${totalMachines}</div>
                                 <img src="/assets/lenoir_logo_doc.png" style="height: 45px;">
                             </div>
                             
                             <table style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000;">
                                 <tr>
-                                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N┬░ A.R.C.</td>
+                                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">NÔö¼Ôûæ A.R.C.</td>
                                     <td style="width:35%; border:1px solid #000; padding:6px; font-weight:bold;">${mArc}</td>
-                                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Désignation</td>
+                                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">D├®signation</td>
                                     <td style="width:35%; border:1px solid #000; padding:6px;"><b>${mDesignation}</b></td>
                                 </tr>
                             </table>
 
                             <div style="margin-top: 150px; text-align: center;">
                                 <div style="font-size: 24px; font-weight: bold; color: #dc3545; text-transform: uppercase; border: 4px solid #dc3545; display: inline-block; padding: 20px 40px; transform: rotate(-5deg);">
-                                    ÉQUIPEMENT NON CONTRöLÉ
+                                    ├ëQUIPEMENT NON CONTR├ÂL├ë
                                 </div>
                                 <div style="margin-top: 30px; color: #555; font-size: 14px;">
-                                    Aucune donnée n'a été saisie pour ce matériel lors de l'intervention.
+                                    Aucune donn├®e n'a ├®t├® saisie pour ce mat├®riel lors de l'intervention.
                                 </div>
                             </div>
                         `;
 
-                        p.style.minHeight = '100px';
-                        if (container.children.length > 0) p.style.pageBreakBefore = 'always';
+                        p.style.pageBreakBefore = 'always';
                         container.appendChild(p);
 
-                        continue; // Passe directement à la machine suivante sans fetch html !
+                        continue; // Passe directement ├á la machine suivante sans fetch html !
                     }
 
                     try {
@@ -1836,7 +1672,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 }
                             });
 
-                            // --- NETTOYAGE RADICAL DES ÉLÉMENTS D'INTERFACE ---
+                            // --- NETTOYAGE RADICAL DES ├ëL├ëMENTS D'INTERFACE ---
                             p.querySelectorAll('.photo-btn, .btn-ia-refresh, .top-bar, .photo-thumbs, #btnChrono, .no-print-pdf, .photo-del-overlay').forEach(el => el.remove());
 
                             // FIX: Blank pages. Strip default screen margins and shadows so they don't push into invisible overflowing pages
@@ -1851,20 +1687,18 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                             // Chaque machine commence obligatoirement sur une nouvelle page
                             if (pIdx === 0) {
-                                if (container.children.length > 0) {
-                                    p.style.pageBreakBefore = 'always';
-                                }
+                                p.style.pageBreakBefore = 'always';
                                 p.style.marginTop = '0';
                                 p.style.paddingTop = '10mm'; 
                                 
-                                // On ajoute discretement le numéro de fiche AU DESSUS du header officiel LENOIR
+                                // On ajoute discretement le num├®ro de fiche AU DESSUS du header officiel LENOIR
                                 const hDiv = document.createElement('div');
                                 hDiv.style.textAlign = 'right';
                                 hDiv.style.fontSize = '12px';
                                 hDiv.style.fontWeight = 'bold';
                                 hDiv.style.color = '#1B4F72';
                                 hDiv.style.marginBottom = '5px';
-                                hDiv.innerHTML = `FICHE ${globalIdx + 1} / ${totalMachinesReal}`;
+                                hDiv.innerHTML = `FICHE ${mIdx + 1} / ${totalMachines}`;
                                 p.insertBefore(hDiv, p.firstChild);
                             }
 
@@ -1876,7 +1710,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             p.querySelectorAll('input:not([type="radio"]):not([type="checkbox"]):not([type="hidden"]):not([type="file"])').forEach(inp => {
                                 let val = (inp.value || '').trim();
                                 if (inp.name === 'mesures[poste]') {
-                                    val = val ? val : (globalIdx + 1);
+                                    val = val ? val : (mIdx + 1);
                                 } else if (!val) {
                                     val = '';
                                 }
@@ -1905,7 +1739,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 // NEW FIX FOR PERFORMANCE / NON REALISE Bug:
                                 const specialKeys = ['aprf_attraction_comment', 'ov_perf_bille', 'ov_perf_ecrou', 'ov_perf_rond50', 'ov_perf_rond100', 'levage_charge_maxi_comment', 'levage_temp_maxi_comment'];
                                 if (specialKeys.some(k => ta.name && ta.name.includes(k))) {
-                                    if (!val.trim()) val = "Non réalisé";
+                                    if (!val.trim()) val = "Non r├®alis├®";
                                 }
 
                                 if (val.trim()) {
@@ -1918,7 +1752,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 ta.remove();
                             });
 
-                            // BUGFIX PDF: Séparateur de table (tbody)
+                            // BUGFIX PDF: S├®parateur de table (tbody)
                             // html2pdf coupe en deux les <tr> sauvagement. 
                             // La seule vraie solution est de wrapper chaque ligne logique dans son propre <tbody> !
                             p.querySelectorAll('table.pdf-table').forEach(table => {
@@ -1937,7 +1771,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                     });
                                     if (maxSpan - 1 > pendingSpans) pendingSpans = maxSpan - 1;
 
-                                    currentTbody.appendChild(row); // Déplace le tr dans le nouveau tbody
+                                    currentTbody.appendChild(row); // D├®place le tr dans le nouveau tbody
 
                                     if (pendingSpans > 0) {
                                         pendingSpans--;
@@ -1959,7 +1793,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             p.style.position = 'relative';
                             p.style.paddingBottom = '5mm'; 
                             p.querySelectorAll('.section-wrapper-pdf').forEach(w => w.style.marginBottom = '0');
-                            p.style.minHeight = '100px'; 
+                            p.style.minHeight = 'auto'; // Help chaining
                             p.appendChild(createPdfFooter());
                             container.appendChild(p);
                         });
@@ -1969,14 +1803,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 }
             }
 
-            if (includeEnd) {
-                // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC + SIGNATURES + OBSERVATIONS) ---
+            // Page de fin : On ne force plus syst├®matiquement le saut de page
+            // si le contenu pr├®c├®dent est court. On laisse html2pdf g├®rer ou on met un petit espacement.
+            const pbFin = document.createElement('div');
+            pbFin.style.height = '20px';
+            container.appendChild(pbFin);
+
+            // --- 4. PAGE DE FIN (STRUCTURE LENOIR-MEC + SIGNATURES + OBSERVATIONS) ---
 
             const endPage = document.createElement('div');
             endPage.className = 'pdf-page';
             endPage.style.padding = '0 15mm';
             endPage.style.position = 'relative';
-            if (container.children.length > 0) endPage.style.pageBreakBefore = 'always';
+            endPage.style.pageBreakBefore = 'always';
 
             const originalRapport = document.getElementById('rapportForm');
             const souhaitRapport = originalRapport.querySelector('[name="souhait_rapport_unique"]').checked;
@@ -1996,7 +1835,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             endPage.innerHTML = `
                 <div style="font-family: Arial, sans-serif; font-size: 11px; color: #000;">
                     
-                    <!-- OBSERVATIONS GÉNÉRALES -->
+                    <!-- OBSERVATIONS G├ëN├ëRALES -->
                     <div style="font-weight: bold; font-size: 14px; color: #1e4e6d; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px; text-transform: uppercase;">OBSERVATIONS DU TECHNICIEN</div>
                     <div style="padding: 8px 0; min-height: 40px; font-size: 12px; white-space: pre-wrap; margin-bottom: 20px;">${commentaryTech}</div>
 
@@ -2006,10 +1845,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <!-- LE CLIENT SOUHAITE -->
                     <div style="font-weight: bold; font-size: 14px; color: #1e4e6d; margin-bottom: 10px; border-bottom: 2px solid #1e4e6d; padding-bottom: 5px; text-transform: uppercase;">LE CLIENT SOUHAITE</div>
                     <div style="padding: 8px 0; margin-bottom: 20px;">
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? '☑' : '☐'} Ce Rapport d\'expertise uniquement</div>
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? '☑' : '☐'} Une offre de Pièces de Rechange</div>
-                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitIntervention ? '☑' : '☐'} Une offre de PR + intervention mise en place</div>
-                        <div style="font-size: 11px;">${souhaitAucune ? '☑' : '☐'} Aucune offre</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitRapport ? 'Ôÿæ' : 'ÔÿÉ'} Ce Rapport d\'expertise uniquement</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitPieces ? 'Ôÿæ' : 'ÔÿÉ'} Une offre de Pi├¿ces de Rechange</div>
+                        <div style="margin-bottom: 3px; font-size: 11px;">${souhaitIntervention ? 'Ôÿæ' : 'ÔÿÉ'} Une offre de PR + intervention mise en place</div>
+                        <div style="font-size: 11px;">${souhaitAucune ? 'Ôÿæ' : 'ÔÿÉ'} Aucune offre</div>
                     </div>
 
                     <!-- DATE ET HEURE -->
@@ -2023,14 +1862,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <table style="width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 15px;">
                         <tr style="height: 120px;">
                             <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
-                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Contrôleur (NOM Prénom) :</div>
+                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Contr├┤leur (NOM Pr├®nom) :</div>
                                 <div style="margin-bottom: 10px;"><strong>${techNameLabel}</strong></div>
                                 <div style="text-align: center;">
                                     <img src="${sigTechImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
                                 </div>
                             </td>
                             <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
-                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Client (NOM Prénom) :</div>
+                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Client (NOM Pr├®nom) :</div>
                                 <div style="margin-bottom: 10px;"><strong>${nomSignataireFin}</strong></div>
                                 <div style="text-align: center;">
                                     <img src="${sigClientImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
@@ -2043,12 +1882,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <div style="border: 2px solid #000; padding: 0; text-align: center; margin-bottom: 15px;">
                         <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR TOUTE INFORMATION TECHNIQUE SUR CE RAPPORT</div>
                         <div style="background-color: #fff; padding: 6px; border-bottom: 2px solid #000;">
-                            <div style="font-size: 12px;">📞 <strong>Soufyane SALAH</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Chargé d'Affaires</span></div>
+                            <div style="font-size: 12px;">­ƒô× <strong>Soufyane SALAH</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Charg├® d'Affaires</span></div>
                         </div>
                         
-                        <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR LA PLANIFICATION D'UNE VÉRIFICATION PÉRIODIQUE</div>
+                        <div style="background-color: #E67E22; color: white; padding: 4px 15px; font-weight: bold; border-bottom: 2px solid #000; font-size: 10px;">POUR LA PLANIFICATION D'UNE V├ëRIFICATION P├ëRIODIQUE</div>
                         <div style="background-color: #fff; padding: 6px;">
-                            <div style="font-size: 12px;">📞 <strong>Sophie NIAY</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Responsable Service Clients</span></div>
+                            <div style="font-size: 12px;">­ƒô× <strong>Sophie NIAY</strong> &nbsp;&nbsp;&nbsp; <span style="font-style: italic;">Responsable Service Clients</span></div>
                         </div>
                     </div>
 
@@ -2066,69 +1905,71 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             `;
             endPage.appendChild(createPdfFooter());
             container.appendChild(endPage);
-            }
 
             await waitForImages(container);
             return container;
         }
 
-        // ══════════════════════════════════════════════════════════════════
-        // UI PROGRESS HELPER (Advanced)
-        // ══════════════════════════════════════════════════════════════════
-        function updatePdfProgress(percent, stepIndex, subtext = null) {
-            const fill = document.getElementById('pdfProgressBarFill');
-            const perc = document.getElementById('pdfPercentLabel');
-            const stage = document.getElementById('pdfStageLabel');
-            const sub = document.getElementById('pdfLoaderSubtext');
-
-            if(fill) fill.style.width = percent + '%';
-            if(perc) perc.textContent = Math.round(percent) + '%';
-            
-            if(subtext && sub) sub.textContent = subtext;
-
-            // Manage steps
-            document.querySelectorAll('.task-step').forEach((s, idx) => {
-                s.classList.remove('active');
-                if((idx + 1) < stepIndex) s.classList.add('completed');
-                if((idx + 1) === stepIndex) s.classList.add('active');
-            });
-
-            if(stepIndex === 1 && stage) stage.textContent = "Initialisation";
-            if(stepIndex === 2 && stage) stage.textContent = "Expertise Machines";
-            if(stepIndex === 3 && stage) stage.textContent = "Finalisation";
-        }
-
-        // ══════════════════════════════════════════════════════════════════
-        // GÉNÉRAL ROUTER (Monolithique vs Chunked)
-        // ══════════════════════════════════════════════════════════════════
-        async function generateUltimatePDF(action = 'download') {
-            const machineIds = window.LM_RAPPORT.machinesIds || [];
-            if (machineIds.length <= 5) {
-                return await generateUltimatePDF_Monolithic(action);
-            } else {
-                return await generateUltimatePDF_Chunked(action);
-            }
-        }
-
-        async function generateUltimatePDF_Monolithic(action = 'download') {
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+        // g├®n├®ration PDF (html2pdf.js)
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+        async function genererPDFBase64() {
             if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
 
-            const overlay = document.getElementById('pdfDownloadOverlay');
-            if (overlay) overlay.style.display = 'flex';
-            
-            // reset UI
-            document.querySelectorAll('.task-step').forEach(s => s.classList.remove('active', 'completed'));
-            updatePdfProgress(0, 1, "Construction du document...");
+            const container = await buildFullPdfContainer();
+            await ensureImagesBase64(container);
 
+            const opt = {
+                margin: [10, 0, 15, 0], // Top, Left, Bottom, Right
+                filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 1.5, useCORS: true, logging: false },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.levage-diagram-container'] }
+            };
+
+            const worker = html2pdf().set(opt).from(container);
+
+            await worker.toPdf().get('pdf').then(function (pdf) {
+                const totalPages = pdf.internal.getNumberOfPages();
+                for (let i = 1; i <= totalPages; i++) {
+                    pdf.setPage(i);
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(9);
+                    pdf.setTextColor(50, 50, 50);
+                    pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
+                }
+            });
+
+            const pdfBlob = await worker.outputPdf('blob');
+
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(pdfBlob);
+            });
+        }
+
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+        // T├ëL├ëCHARGEMENT PDF BOUTON DIRECT
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+        async function telechargerPDF() {
+            const btn = document.getElementById('btnDownloadPDF');
+            const icon = document.getElementById('btnDownloadPDFIcon');
+            const label = document.getElementById('btnDownloadPDFLabel');
+
+            if (btn) { 
+                btn.disabled = true; 
+                if (label) label.textContent = 'g├®n├®ration...';
+                if (icon) icon.textContent = 'ÔÅ│';
+            }
             try {
-                updatePdfProgress(20, 1);
                 const container = await buildFullPdfContainer();
-                updatePdfProgress(50, 2, "Préparation des visuels...");
                 await ensureImagesBase64(container);
-                updatePdfProgress(80, 3, "Numérotation des pages...");
 
                 const opt = {
-                    margin: [10, 0, 15, 0], 
+                    margin: [10, 0, 15, 0], // Top, Left, Bottom, Right
                     filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 1.5, useCORS: true, logging: false },
@@ -2149,157 +1990,21 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     }
                 });
 
-                if (action === 'download') {
-                    updatePdfProgress(100, 3, "Téléchargement...");
-                    await worker.save();
-                } else {
-                    const pdfBlob = await worker.outputPdf('blob');
-                    return new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result.split(',')[1]);
-                        reader.onerror = reject;
-                        reader.readAsDataURL(pdfBlob);
-                    });
-                }
+                await worker.save();
             } catch (e) {
-                console.error("Génération PDF (Monolithique) échouée:", e);
-                alert("Erreur génération PDF : " + e.message);
+                alert('Erreur g├®n├®ration PDF : ' + e.message);
             } finally {
-                if (overlay) overlay.style.display = 'none';
-            }
-        }
-
-        async function generateUltimatePDF_Chunked(action = 'download') {
-            if (!window.html2pdf) throw new Error('html2pdf.js non disponible');
-            if (!window.PDFLib) throw new Error('PDF-Lib non chargé (vérifiez votre connexion)');
-
-            const PDFLib = window.PDFLib;
-            const overlay = document.getElementById('pdfDownloadOverlay');
-            if (overlay) overlay.style.display = 'flex';
-            
-            // reset UI
-            document.querySelectorAll('.task-step').forEach(s => s.classList.remove('active', 'completed'));
-            updatePdfProgress(0, 1, "Démarrage du découpage...");
-
-            try {
-                const machineIds = window.LM_RAPPORT.machinesIds || [];
-                const totalSteps = 2 + Math.ceil(machineIds.length / PDF_CHUNK_SIZE) + 1;
-                let currentProg = 0;
-                const chunks = [];
-                const pdfOptions = {
-                    margin: [10, 0, 15, 0],
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 1.5, useCORS: true, logging: false },
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tbody', 'img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.levage-diagram-container'] }
-                };
-
-                // 1. CHUNK INTRO
-                updatePdfProgress(10, 1, "Initialisation...");
-                const introContainer = await buildFullPdfContainer({ includeIntro: true, includeMachines: false, includeEnd: false });
-                await ensureImagesBase64(introContainer);
-                await new Promise(r => setTimeout(r, 100)); // Safety
-                chunks.push(await html2pdf().set(pdfOptions).from(introContainer).outputPdf('arraybuffer'));
-
-                // 2. CHUNKS MACHINES
-                for (let i = 0; i < machineIds.length; i += PDF_CHUNK_SIZE) {
-                    const group = machineIds.slice(i, i + PDF_CHUNK_SIZE);
-                    const machineText = `Machines ${i + 1} à ${Math.min(i + PDF_CHUNK_SIZE, machineIds.length)}`;
-                    let prog = 10 + ((i + PDF_CHUNK_SIZE) / machineIds.length) * 70;
-                    updatePdfProgress(Math.min(prog, 80), 2, machineText);
-
-                    const mContainer = await buildFullPdfContainer({ 
-                        includeIntro: false, 
-                        includeMachines: true, 
-                        includeEnd: false, 
-                        targetMachineIds: group,
-                        startIndex: i
-                    });
-                    await ensureImagesBase64(mContainer);
-                    await new Promise(r => setTimeout(r, 100)); // Safety for渲染
-                    chunks.push(await html2pdf().set(pdfOptions).from(mContainer).outputPdf('arraybuffer'));
+                if (btn) { 
+                    btn.disabled = false; 
+                    if (label) label.textContent = 'T├®l├®charger le PDF';
+                    if (icon) icon.innerHTML = '<img src="/assets/icon_download.svg" style="height: 18px; width: 18px; vertical-align: middle; filter: brightness(0);">';
                 }
-
-                // 3. CHUNK END
-                updatePdfProgress(85, 3, "Finalisation des signatures...");
-                const endContainer = await buildFullPdfContainer({ includeIntro: false, includeMachines: false, includeEnd: true });
-                await ensureImagesBase64(endContainer);
-                await new Promise(r => setTimeout(r, 100)); // Safety
-                chunks.push(await html2pdf().set(pdfOptions).from(endContainer).outputPdf('arraybuffer'));
-
-                // 4. MERGE & PAGINATION
-                updatePdfProgress(95, 3, "Assemblage et pagination...");
-                const mergedBytes = await mergePdfChunks(chunks);
-                
-                const { PDFDocument, rgb, StandardFonts } = window.PDFLib;
-                const pdfDoc = await PDFDocument.load(mergedBytes);
-                const pages = pdfDoc.getPages();
-                const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-                
-                for (let i = 0; i < pages.length; i++) {
-                    const { width } = pages[i].getSize();
-                    const text = `Page ${i + 1} / ${pages.length}`;
-                    pages[i].drawText(text, {
-                        x: width / 2 - font.widthOfTextAtSize(text, 9) / 2,
-                        y: 31, // exact 286mm position as in 91ca0be
-                        size: 9,
-                        font: font,
-                        color: rgb(0.2, 0.2, 0.2),
-                    });
-                }
-                const finalPdfBytes = await pdfDoc.save();
-                updatePdfProgress(100, 3, "Terminé !");
-
-                if (action === 'download') {
-                    const blob = new Blob([finalPdfBytes], { type: 'application/pdf' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = window.LM_RAPPORT.pdfFilename || 'rapport.pdf';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                } else {
-                    const binary = String.fromCharCode(...new Uint8Array(finalPdfBytes));
-                    return btoa(binary);
-                }
-            } catch (e) {
-                console.error("Génération PDF échouée:", e);
-                alert("Erreur génération PDF : " + e.message);
-            } finally {
-                if (overlay) overlay.style.display = 'none';
             }
         }
 
-        async function mergePdfChunks(chunks) {
-            const { PDFDocument } = window.PDFLib;
-            const mergedPdf = await PDFDocument.create();
-            for (const chunkBuffer of chunks) {
-                const chunkPdf = await PDFDocument.load(chunkBuffer);
-                const copiedPages = await mergedPdf.copyPages(chunkPdf, chunkPdf.getPageIndices());
-                copiedPages.forEach((page) => mergedPdf.addPage(page));
-            }
-            return await mergedPdf.save();
-        }
-
-        async function genererPDFBase64() {
-            return await generateUltimatePDF('base64');
-        }
-
-        async function telechargerPDF() {
-            const btn = document.getElementById('btnDownloadPDF');
-            if (btn) btn.disabled = true;
-            try {
-                await generateUltimatePDF('download');
-            } finally {
-                if (btn) btn.disabled = false;
-            }
-        }
-
-        // ══════════════════════════════════════════════════════════════════
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         // TOAST UI
-        // ══════════════════════════════════════════════════════════════════
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         function afficherToast(message, type = 'success') {
             const toast = document.getElementById('emailToast');
             if (!toast) return;
@@ -2322,9 +2027,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             toast.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        // ══════════════════════════════════════════════════════════════════
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         // FILE D'ATTENTE HORS-LIGNE (IndexedDB)
-        // ══════════════════════════════════════════════════════════════════
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         const DB_NAME = 'LMEmailQueue';
         const DB_VERSION = 1;
         const STORE_NAME = 'pendingEmails';
@@ -2364,24 +2069,24 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         if (res.success) {
                             // Supprimer de la file
                             db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME).delete(item.id);
-                            console.log('[LM] Email rejoué avec succès :', item.client_email);
+                            console.log('[LM] Email rejou├® avec succ├¿s :', item.client_email);
                         }
                     } catch (e) {
-                        console.warn('[LM] Rejouer échoué :', e);
+                        console.warn('[LM] Rejouer ├®chou├® :', e);
                     }
                 }
             };
         }
 
-        // Écouter la reconnexion réseau
+        // ├ëcouter la reconnexion r├®seau
         window.addEventListener('online', () => {
-            console.log('[LM] Connexion rétablie – rejouer la file d\'attente email');
+            console.log('[LM] Connexion r├®tablie ÔÇô rejouer la file d\'attente email');
             rejouerFileDAttente();
         });
 
-        // ══════════════════════════════════════════════════════════════════
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         // APPEL API ENVOI EMAIL
-        // ══════════════════════════════════════════════════════════════════
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         async function envoyerParAPI(interventionId, pdfBase64, clientEmail, csrfToken) {
             const formData = new FormData();
             formData.append('intervention_id', interventionId);
@@ -2398,16 +2103,16 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             return resp.json();
         }
 
-        // ══════════════════════════════════════════════════════════════════
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         // FONCTION PRINCIPALE : LANCER L'ENVOI EMAIL
-        // ══════════════════════════════════════════════════════════════════
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         async function lancerEnvoiEmail(auto = false) {
             if (!window.LM_RAPPORT) return;
 
             const { interventionId, clientEmail, csrfToken, nomSociete } = window.LM_RAPPORT;
 
             if (!clientEmail) {
-                afficherToast('⚠️ Aucun email client renseigné. Veuillez reprendre le formulaire.', 'error');
+                afficherToast('ÔÜá´©Å Aucun email client renseign├®. Veuillez reprendre le formulaire.', 'error');
                 return;
             }
 
@@ -2416,22 +2121,22 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const label = document.getElementById('btnSendEmailLabel');
 
             if (btn) btn.disabled = true;
-            if (icon) icon.textContent = '⏳';
-            if (label) label.textContent = 'génération du PDF…';
+            if (icon) icon.textContent = 'ÔÅ│';
+            if (label) label.textContent = 'g├®n├®ration du PDFÔÇª';
 
             let pdfBase64;
             try {
                 pdfBase64 = await genererPDFBase64();
             } catch (e) {
                 if (btn) btn.disabled = false;
-                if (icon) icon.textContent = '📧';
+                if (icon) icon.textContent = '­ƒôº';
                 if (label) label.textContent = 'Envoyer PDF par email';
-                afficherToast('❌ Erreur génération PDF : ' + e.message, 'error');
+                afficherToast('ÔØî Erreur g├®n├®ration PDF : ' + e.message, 'error');
                 return;
             }
 
-            if (icon) icon.textContent = '📤';
-            if (label) label.textContent = 'Envoi en cours…';
+            if (icon) icon.textContent = '­ƒôñ';
+            if (label) label.textContent = 'Envoi en coursÔÇª';
 
             // Hors-ligne : mettre en file d'attente
             if (!navigator.onLine) {
@@ -2442,12 +2147,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         client_email: clientEmail,
                         csrf_token: csrfToken,
                     });
-                    afficherToast('📶 Hors-ligne – email mis en file d\'attente. Il sera envoyé automatiquement à la reconnexion.', 'warning');
+                    afficherToast('­ƒôÂ Hors-ligne ÔÇô email mis en file d\'attente. Il sera envoy├® automatiquement ├á la reconnexion.', 'warning');
                 } catch (e) {
-                    afficherToast('❌ Impossible de mettre l\'email en file d\'attente.', 'error');
+                    afficherToast('ÔØî Impossible de mettre l\'email en file d\'attente.', 'error');
                 }
                 if (btn) btn.disabled = false;
-                if (icon) icon.textContent = '📧';
+                if (icon) icon.textContent = '­ƒôº';
                 if (label) label.textContent = 'Envoyer PDF par email';
                 return;
             }
@@ -2456,29 +2161,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             try {
                 const result = await envoyerParAPI(interventionId, pdfBase64, clientEmail, csrfToken);
                 if (result.success) {
-                    if (result.simulation_url) {
-                        afficherToast('🧪 ' + result.message, 'warning');
-                        if (btn) {
-                            btn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
-                            btn.innerHTML = '<span>👁️</span> Voir la Simulation';
-                            btn.onclick = () => window.open(result.simulation_url, '_blank');
-                            btn.disabled = false;
-                        }
-                    } else {
-                        afficherToast('✅ Rapport envoyé avec succès à ' + result.email, 'success');
-                        if (btn) btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
-                        if (icon) icon.textContent = '✅';
-                        if (label) label.textContent = 'Email envoyé !';
-                        btn.disabled = true; // Ne pas renvoyer
-                    }
+                    afficherToast('Ô£à Rapport envoy├® avec succ├¿s ├á ' + result.email, 'success');
+                    if (btn) btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
+                    if (icon) icon.textContent = 'Ô£à';
+                    if (label) label.textContent = 'Email envoy├® !';
+                    btn.disabled = true; // Ne pas renvoyer
                 } else {
-                    afficherToast('❌ ' + (result.message || 'Erreur envoi email'), 'error');
+                    afficherToast('ÔØî ' + (result.message || 'Erreur envoi email'), 'error');
                     if (btn) btn.disabled = false;
-                    if (icon) icon.textContent = '🔄';
-                    if (label) label.textContent = 'Réessayer l\'envoi';
+                    if (icon) icon.textContent = '­ƒöä';
+                    if (label) label.textContent = 'R├®essayer l\'envoi';
                 }
             } catch (e) {
-                // Réseau coupé pendant l'envoi
+                // R├®seau coup├® pendant l'envoi
                 try {
                     await sauvegarderEnFile({
                         intervention_id: interventionId,
@@ -2486,19 +2181,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         client_email: clientEmail,
                         csrf_token: csrfToken,
                     });
-                    afficherToast('📶 Connexion perdue – email mis en file d\'attente. Il sera envoyé à la reconnexion.', 'warning');
+                    afficherToast('­ƒôÂ Connexion perdue ÔÇô email mis en file d\'attente. Il sera envoy├® ├á la reconnexion.', 'warning');
                 } catch (qe) {
-                    afficherToast('❌ Erreur réseau et impossible de mettre en file : ' + e.message, 'error');
+                    afficherToast('ÔØî Erreur r├®seau et impossible de mettre en file : ' + e.message, 'error');
                 }
                 if (btn) btn.disabled = false;
-                if (icon) icon.textContent = '🔄';
-                if (label) label.textContent = 'Réessayer l\'envoi';
+                if (icon) icon.textContent = '­ƒöä';
+                if (label) label.textContent = 'R├®essayer l\'envoi';
             }
         }
 
-        // ══════════════════════════════════════════════════════════════════
-        // génération MASSIVE IA (Toutes les fiches)
-        // ══════════════════════════════════════════════════════════════════
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+        // g├®n├®ration MASSIVE IA (Toutes les fiches)
+        // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
         async function generateAllIA() {
             const btn = document.getElementById('btnGenerateAllIa');
             const progressZone = document.getElementById('ai-global-progress');
@@ -2507,11 +2202,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const progressPercent = document.getElementById('ai-progress-percent');
             
             if (!containerSuccessBanner()) {
-                if (!confirm("Cette opération va analyser toutes les machines de l'intervention. Les fiches déjà modifiées manuellement seront ignorées. Continuer ?")) return;
+                if (!confirm("Cette op├®ration va analyser toutes les machines de l'intervention. Les fiches d├®j├á modifi├®es manuellement seront ignor├®es. Continuer ?")) return;
             }
 
             btn.disabled = true;
-            btn.innerHTML = '<span>⚙️</span> Analyse en cours...';
+            btn.innerHTML = '<span>ÔÜÖ´©Å</span> Analyse en cours...';
             progressZone.style.display = 'block';
 
             const machines = window.LM_RAPPORT.machinesData;
@@ -2527,12 +2222,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 progressText.textContent = `Analyse de : ${m.designation}...`;
 
                 try {
-                    // On considère qu'une fiche est déjà remplie si Dysfonctionnements OU Conclusion
-                    // contiennent du texte autre que les valeurs par défaut.
+                    // On consid├¿re qu'une fiche est d├®j├á remplie si Dysfonctionnements OU Conclusion
+                    // contiennent du texte autre que les valeurs par d├®faut.
                     const dys = (m.dysfonctionnements || "").trim();
                     const conc = (m.conclusion || "").trim();
                     const isManual = (dys.length > 5 && !dys.includes("Aucun dysfonctionnement majeur")) 
-                                  || (conc.length > 5 && !conc.includes("conforme à nos standards"));
+                                  || (conc.length > 5 && !conc.includes("conforme ├á nos standards"));
 
                     if (isManual) {
                         skipCount++;
@@ -2562,10 +2257,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             progressBar.style.width = '100%';
             progressPercent.textContent = '100%';
-            progressText.textContent = 'Analyse terminée !';
+            progressText.textContent = 'Analyse termin├®e !';
             
             setTimeout(() => {
-                alert(`Analyse terminée !\n- ${successCount} fiches générées\n- ${skipCount} fiches ignorées (déjà remplies)\n\nLe rapport va être actualisé.`);
+                alert(`Analyse termin├®e !\n- ${successCount} fiches g├®n├®r├®es\n- ${skipCount} fiches ignor├®es (d├®j├á remplies)\n\nLe rapport va ├¬tre actualis├®.`);
                 location.reload();
             }, 500);
         }

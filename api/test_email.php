@@ -7,7 +7,7 @@
  * ⚠️ SUPPRIMER CE FICHIER après validation en production !
  */
 require_once __DIR__ . '/../includes/config.php';
-requireAuth(['admin']);
+requireAuth(['admin', 'technicien']);
 
 $result = null;
 $testMode = false;
@@ -79,14 +79,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_test'])) {
         } else {
             $decoded = json_decode($response, true);
             $errMsg = $decoded['message'] ?? "Code HTTP $httpCode";
-            if (!empty($decoded['errors'])) {
-                $details = [];
-                foreach ($decoded['errors'] as $field => $msgs) {
-                    $details[] = "$field : " . (is_array($msgs) ? implode(', ', $msgs) : $msgs);
+            
+            // Check if it returned a simulation URL (handled by our new backend logic)
+            if (isset($decoded['simulation_url'])) {
+                $result = [
+                    'ok' => true, 
+                    'msg' => "🧪 <strong>SIMULATION :</strong> " . $decoded['message'] . " <br><br><a href='{$decoded['simulation_url']}' target='_blank' class='btn' style='display:inline-block; margin-top:10px; background:#ffb300; color:#020617;'>👁️ Voir la simulation</a>",
+                    'sim_url' => $decoded['simulation_url']
+                ];
+            } else {
+                if (!empty($decoded['errors'])) {
+                    $details = [];
+                    foreach ($decoded['errors'] as $field => $msgs) {
+                        $details[] = "$field : " . (is_array($msgs) ? implode(', ', $msgs) : $msgs);
+                    }
+                    $errMsg .= '<br>Détails : ' . implode('<br>', $details);
                 }
-                $errMsg .= '<br>Détails : ' . implode('<br>', $details);
+                $result = ['ok' => false, 'msg' => "❌ Erreur MailerSend (HTTP $httpCode) : $errMsg"];
             }
-            $result = ['ok' => false, 'msg' => "❌ Erreur MailerSend (HTTP $httpCode) : $errMsg"];
         }
     }
 }
