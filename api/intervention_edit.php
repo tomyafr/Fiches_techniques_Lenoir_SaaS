@@ -215,23 +215,8 @@ $machines = $stmtMach->fetchAll();
                                     <?= htmlspecialchars($intervention['numero_arc']) ?></td>
                                 <td style="padding:0.6rem 0.8rem; white-space:nowrap;">
                                     <?= htmlspecialchars($m['numero_of'] ?: '—') ?></td>
-                                <td style="padding:0.6rem 0.8rem; font-weight:600; <?php 
-                                    $mDesignation = $m['designation'];
-                                    $isValidated = (strpos($mDesignation, 'OVAP') !== false || strpos($mDesignation, 'APRF') !== false 
-                                        || strpos($mDesignation, 'TAP/PAP') !== false || strpos($mDesignation, 'ED-X') !== false
-                                        || strpos($mDesignation, 'LEVAGE') !== false || strpos($mDesignation, 'PM') !== false);
-                                    $isMissingDoc = (strpos($mDesignation, 'OV (Electromagnétique)') !== false || strpos($mDesignation, 'RD') !== false);
-
-                                    if ($isValidated) {
-                                        echo '';
-                                    } else {
-                                        echo 'color: #ff9800;';
-                                    }
-                                ?>">
-                                    <?= htmlspecialchars(str_replace('RDE', 'RD', $m['designation'])) ?>
-                                    <?php if ($isMissingDoc): ?>
-                                        <span style="color:red; font-weight:bold; margin-left:4px;" title="Pas de fiche officielle">*</span>
-                                    <?php endif; ?>
+                                <td style="padding:0.6rem 0.8rem; font-weight:600; <?= (stripos($m['designation'], 'RD') !== false) ? 'color: #ffb300;' : 'color: #fff;' ?>">
+                                    <?= htmlspecialchars(strtoupper($m['designation'])) ?>
                                 </td>
                                 <td style="padding:0.6rem 0.8rem;"><?= htmlspecialchars($mMesures['repere'] ?? '—') ?></td>
                                 <td style="padding:0.6rem 0.8rem; text-align:center;">
@@ -302,15 +287,16 @@ $machines = $stmtMach->fetchAll();
                     <label class="label">Type de Fiche / Désignation <span style="color:var(--error);">*</span></label>
                     <select name="designation" class="input" required style="background: rgba(15, 23, 42, 0.6);">
                         <option value="">— Choisir le type —</option>
-                        <option value="OVERBAND OVAP (Permanent)">OVERBAND OVAP (Permanent)</option>
-                        <option value="OVERBAND OV (Electromagnétique)" style="color:white;">OVERBAND OV (Electromagnétique) *</option>
-                        <option value="AIMANT FIXE APRF (Permanent)">AIMANT FIXE APRF (Permanent)</option>
-                        <option value="Séparateur à courants de foucault ED-X">Séparateur à courants de foucault ED-X</option>
-                        <option value="ELECTROAIMANT FIXE RD" style="color:white;">ELECTROAIMANT FIXE RD *</option>
-                        <option value="Tambour ou Poulie à Aimants Permanents TAP/PAP">Tambour ou Poulie à Aimants Permanents TAP/PAP</option>
-                        <option value="ELECTROAIMANTS DE LEVAGE" style="color:white;">ELECTROAIMANTS DE LEVAGE *</option>
-                        <option value="Séparateur à grilles automatique SGA" style="color:white;">Séparateur à grilles automatique SGA</option>
-                        <option value="Séparateur à grille SGCP/SGCM">Séparateur à grille SGCP/SGCM</option>
+                        <option value="OVERBAND OVAP (PERMANENT)">OVERBAND OVAP (PERMANENT)</option>
+                        <option value="OVERBAND OV (ELECTROMAGNÉTIQUE)">OVERBAND OV (ELECTROMAGNÉTIQUE)</option>
+                        <option value="AIMANT FIXE APRF (PERMANENT)">AIMANT FIXE APRF (PERMANENT)</option>
+                        <option value="SÉPARATEUR À COURANTS DE FOUCAULT ED-X">SÉPARATEUR À COURANTS DE FOUCAULT ED-X</option>
+                        <option value="ELECTROAIMANT FIXE RD">ELECTROAIMANT FIXE RD</option>
+                        <option value="TAMBOUR OU POULIE (TAP/PAP)">TAMBOUR OU POULIE (TAP/PAP)</option>
+                        <option value="ÉLECTROAIMANTS DE LEVAGE">ÉLECTROAIMANTS DE LEVAGE</option>
+                        <option value="SÉPARATEUR À GRILLES AUTOMATIQUE SGA">SÉPARATEUR À GRILLES AUTOMATIQUE SGA</option>
+                        <option value="SÉPARATEUR À GRILLE SGCP/SGCM">SÉPARATEUR À GRILLE SGCP/SGCM</option>
+                        <option value="PLAQUES MAGNÉTIQUES PM">PLAQUES MAGNÉTIQUES PM</option>
                     </select>
                 </div>
 
