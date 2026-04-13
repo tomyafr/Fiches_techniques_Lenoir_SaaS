@@ -79,6 +79,7 @@ $isLevage = (strpos($designation, 'LEVAGE') !== false || strpos($designation, 'A
 $isPAP = strpos($designation, 'À AIMANTS PERMANENTS') !== false || strpos($designation, 'TAP/PAP') !== false || strpos($designation, 'PAP') !== false || strpos($designation, 'TAP') !== false;
 $isPM = strpos($designation, 'PM') !== false && strpos($designation, 'PLAQUE') !== false;
 $isSGA = strpos($designation, 'SGA') !== false || strpos($designation, 'GRILLE') !== false;
+$isSGCP = strpos($designation, 'SGCP') !== false || strpos($designation, 'SGCM') !== false;
 
 // Temps prévisionnel par type
 if ($isEDX)
@@ -95,6 +96,8 @@ elseif ($isPM)
     $tempsPrev = '0h20';
 elseif ($isSGA)
     $tempsPrev = '3h30';
+elseif ($isSGCP)
+    $tempsPrev = '3h00';
 else
     $tempsPrev = '1h00';
 
@@ -1674,6 +1677,131 @@ foreach ($recoFreq as $rfk => $rfv) {
                              style="max-width:100%; height:auto; display:block; margin:0 auto;" 
                              alt="Schéma Séparateur à Grilles SGA"
                              onerror="this.style.display='none'">
+                    </div>
+
+                <?php elseif ($isSGCP): ?>
+
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
+                        <thead>
+                            <?= renderDiagonalHeader(3) ?>
+                        </thead>
+                        <tbody>
+                            <?= renderSectionHeader("Séparateur à grilles à commande pneumatique ou manuelle", 3) ?>
+                            <?= renderAprfRow("Satisfaction de fonctionnement", "sgcp_satisfaction", $donnees) ?>
+                            <?= renderAprfRow("Aspect général", "sgcp_aspect", $donnees) ?>
+                            <?= renderAprfRow("Fréquence de nettoyage", "sgcp_f", $donnees) ?>
+
+                            <?= renderSectionHeader("APPLICATION CLIENT", 3) ?>
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Type de produit : 
+                                    <input type="text" name="mesures[sgcp_produit]" value="<?= htmlspecialchars($mesures['sgcp_produit'] ?? '') ?>" class="pdf-input" style="width:140px; margin-left:5px;">
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("sgcp_produit_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:8px; font-size:10px; color:#555;">
+                                    <textarea name="donnees[sgcp_produit_comment]" class="pdf-textarea" style="height:35px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees['sgcp_produit_comment'] ?? '') ?></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Granulométrie : 
+                                    <input type="text" name="mesures[sgcp_granulo_min]" value="<?= htmlspecialchars($mesures['sgcp_granulo_min'] ?? '') ?>" style="width:40px; border:none; border-bottom:1px solid #000; text-align:center;"> à <input type="text" name="mesures[sgcp_granulo_max]" value="<?= htmlspecialchars($mesures['sgcp_granulo_max'] ?? '') ?>" style="width:40px; border:none; border-bottom:1px solid #000; text-align:center;"> mm
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("sgcp_granulo_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:8px; font-size:10px; color:#555;">
+                                    Aciers de <input type="text" name="mesures[sgcp_acier_min]" value="<?= htmlspecialchars($mesures['sgcp_acier_min'] ?? '') ?>" style="width:30px; border:none; border-bottom:1px dashed #000; text-align:center;"> à <input type="text" name="mesures[sgcp_acier_max]" value="<?= htmlspecialchars($mesures['sgcp_acier_max'] ?? '') ?>" style="width:30px; border:none; border-bottom:1px dashed #000; text-align:center;"> mm
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Débit : 
+                                    <input type="text" name="mesures[sgcp_debit]" value="<?= htmlspecialchars($mesures['sgcp_debit'] ?? '') ?>" style="width:60px; border:none; border-bottom:1px solid #000; text-align:center; margin-left:5px;"> t/h
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("sgcp_debit_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:8px; font-size:10px; color:#555;">
+                                    Avec densité de <input type="text" name="mesures[sgcp_densite]" value="<?= htmlspecialchars($mesures['sgcp_densite'] ?? '') ?>" style="width:60px; border:none; border-bottom:1px dashed #000; text-align:center;">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Environnement Atex ? Non – Oui :
+                                    <input type="text" name="mesures[sgcp_atex]" value="<?= htmlspecialchars($mesures['sgcp_atex'] ?? '') ?>" style="width:100px; border:none; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("sgcp_atex_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[sgcp_atex_comment]" class="pdf-textarea" style="height:35px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees['sgcp_atex_comment'] ?? '') ?></textarea></td>
+                            </tr>
+
+                            <?php for($e=1; $e<=2; $e++): ?>
+                                <?= renderSectionHeader("ETAGE ".($e==1 ? '1 (Supérieur)' : $e), 3) ?>
+                                <tr>
+                                    <td style="padding:8px; vertical-align:top;">
+                                        <div style="margin-bottom:8px; font-weight:bold;">
+                                            Nombre de barreaux : 
+                                            <input type="text" name="mesures[sgcp_e<?= $e ?>_nb]" value="<?= htmlspecialchars($mesures['sgcp_e'.$e.'_nb'] ?? '') ?>" style="width:40px; border:none; border-bottom:1px solid #000; text-align:center; font-weight:bold;" autocomplete="off">
+                                        </div>
+                                        
+                                        <div style="background:#fcfcfc; border:1px solid #eee; padding:5px;">
+                                            <div style="font-size:9px; color:#888; margin-bottom:5px; font-weight:bold;">Barreaux (Gauss Max) :</div>
+                                            <table style="width:100%; border-collapse:collapse; border:none; font-size:10px;">
+                                                <tr>
+                                                    <td style="width:50%; border:none; padding-right:5px; vertical-align:top;">
+                                                        <?php for($b=1; $b<=6; $b++): ?>
+                                                            <div style="display:flex; justify-content:space-between; margin-bottom:3px; border-bottom:1px solid #f0f0f0;">
+                                                                <span style="font-weight:600;"><?= $b ?> :</span>
+                                                                <span><input type="text" name="mesures[sgcp_e<?= $e ?>_b<?= $b ?>]" value="<?= htmlspecialchars($mesures['sgcp_e'.$e.'_b'.$b] ?? '') ?>" style="width:35px; border:none; text-align:center; font-size:10px;"> <span style="font-size:8px; color:#aaa;">G</span></span>
+                                                            </div>
+                                                        <?php endfor; ?>
+                                                    </td>
+                                                    <td style="width:50%; border:none; padding-left:5px; vertical-align:top; border-left:1px solid #eee;">
+                                                        <?php for($b=7; $b<=11; $b++): ?>
+                                                            <div style="display:flex; justify-content:space-between; margin-bottom:3px; border-bottom:1px solid #f0f0f0;">
+                                                                <span style="font-weight:600;"><?= $b ?> :</span>
+                                                                <span><input type="text" name="mesures[sgcp_e<?= $e ?>_b<?= $b ?>]" value="<?= htmlspecialchars($mesures['sgcp_e'.$e.'_b'.$b] ?? '') ?>" style="width:35px; border:none; text-align:center; font-size:10px;"> <span style="font-size:8px; color:#aaa;">G</span></span>
+                                                            </div>
+                                                        <?php endfor; ?>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </td>
+                                    <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                        <div style="margin-bottom:8px; font-size:9px; color:#888; font-weight:bold; letter-spacing:0.5px;">ÉTAT GLOBAL ÉTAGE</div>
+                                        <?= renderEtatRadios("sgcp_e".$e."_stat", $donnees, 3) ?>
+                                    </td>
+                                    <td style="padding:0; vertical-align:top; width:30%;">
+                                        <textarea name="donnees[sgcp_e<?= $e ?>_comment]" class="pdf-textarea" style="height:100%; min-height:140px; border:none; width:100%; box-sizing:border-box; padding:8px;" placeholder="Observation étage <?= $e ?>..."><?= htmlspecialchars($donnees["sgcp_e".$e."_comment"] ?? '') ?></textarea>
+                                    </td>
+                                </tr>
+                                <?= renderAprfRow("Coulissement des barreaux", "sgcp_e".$e."_coulissement", $donnees) ?>
+                                <?= renderAprfRow("Etanchéité du tiroir à la fermeture", "sgcp_e".$e."_etancheite", $donnees) ?>
+                            <?php endfor; ?>
+
+                        </tbody>
+                    </table>
+
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:20px; margin-top:30px;">
+                        <div style="text-align:center; width:100%;">
+                            <p style="font-weight:bold; margin-bottom:5px; color:#d35400; text-align:left; border-bottom:1px solid #ed7d31; padding-bottom:5px;">SGCP :</p>
+                            <img src="/assets/machines/sgcp_diagram.png" 
+                                 style="max-width:100%; height:auto; display:block; margin:0 auto; border:1px solid #eee; border-radius:8px;" 
+                                 alt="Schéma SGCP"
+                                 onerror="this.style.display='none'">
+                        </div>
+                        <div style="text-align:center; width:100%;">
+                            <p style="font-weight:bold; margin-bottom:5px; color:#d35400; text-align:left; border-bottom:1px solid #ed7d31; padding-bottom:5px;">SGCM :</p>
+                            <img src="/assets/machines/sgcm_diagram.png" 
+                                 style="max-width:100%; height:auto; display:block; margin:0 auto; border:1px solid #eee; border-radius:8px;" 
+                                 alt="Schéma SGCM"
+                                 onerror="this.style.display='none'">
+                        </div>
                     </div>
 
                 <?php elseif ($isEDX): ?>

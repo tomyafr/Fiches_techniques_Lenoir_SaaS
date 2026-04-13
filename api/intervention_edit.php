@@ -310,6 +310,7 @@ $machines = $stmtMach->fetchAll();
                         <option value="Tambour ou Poulie à Aimants Permanents TAP/PAP">Tambour ou Poulie à Aimants Permanents TAP/PAP</option>
                         <option value="ELECTROAIMANTS DE LEVAGE" style="color:red;">ELECTROAIMANTS DE LEVAGE *</option>
                         <option value="Séparateur à grilles automatique SGA">Séparateur à grilles automatique SGA</option>
+                        <option value="Séparateur à grille SGCP/SGCM">Séparateur à grille SGCP/SGCM</option>
                     </select>
                 </div>
 
