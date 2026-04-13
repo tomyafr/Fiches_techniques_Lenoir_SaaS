@@ -972,18 +972,18 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <span style="font-size:26px; font-weight:bold; color:#000;">
                                 <?php if ($isAPRF): ?>
                                     <?php if (strpos($designation, 'RD') !== false): ?>
-                                        <?= mb_strtoupper("Electroaimant de triage fixe RD", 'UTF-8') ?>
+                                        <?= mb_strtoupper("ELECTROAIMANT DE TRIAGE FIXE RD", 'UTF-8') ?>
                                     <?php else: ?>
-                                        <?= mb_strtoupper("Aimant permanent rectangulaire fixe APRF", 'UTF-8') ?>
+                                        <?= mb_strtoupper("AIMANT PERMANENT RECTANGULAIRE FIXE APRF", 'UTF-8') ?>
                                     <?php endif; ?>
                                 <?php elseif ($isPAP): ?>
-                                    <?= mb_strtoupper("Tambour ou Poulie à Aimants Permanents TAP/PAP", 'UTF-8') ?>
+                                    <?= mb_strtoupper("TAMBOUR OU POULIE À AIMANTS PERMANENTS TAP/PAP", 'UTF-8') ?>
                                 <?php elseif ($isLevage): ?>
-                                    <?= mb_strtoupper("Electroaimants de Levage", 'UTF-8') ?>
+                                    <?= mb_strtoupper("ELECTROAIMANTS DE LEVAGE", 'UTF-8') ?>
                                 <?php elseif ($isSPM): ?>
-                                    <?= mb_strtoupper("Séparateur à plaques magnétiques SPM", 'UTF-8') ?>
+                                    <?= mb_strtoupper("SÉPARATEUR À PLAQUES MAGNÉTIQUES SPM", 'UTF-8') ?>
                                 <?php elseif ($isSLT): ?>
-                                    <?= mb_strtoupper("Séparateur haute intensité SLT", 'UTF-8') ?>
+                                    <?= mb_strtoupper("SÉPARATEUR HAUTE INTENSITÉ SLT", 'UTF-8') ?>
                                 <?php else: ?>
                                     <?= mb_strtoupper(str_replace(['RDE', '*'], ['RD', ''], $machine['designation'] ?? ''), 'UTF-8') ?>
                                 <?php endif; ?>
@@ -2231,7 +2231,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <div style="text-align:center; margin-top:30px;">
                         <div style="margin-bottom:10px;">
-                            <h3 style="font-size:16px; border-bottom:2px solid #000; display:inline-block; padding-bottom:5px;"><?= mb_strtoupper("Séparateur à Plaques Magnétiques SPM", 'UTF-8') ?></h3>
+                            <h3 style="font-size:16px; border-bottom:2px solid #000; display:inline-block; padding-bottom:5px;"><?= mb_strtoupper("SÉPARATEUR À PLAQUES MAGNÉTIQUES SPM", 'UTF-8') ?></h3>
                         </div>
                         
                         <div style="margin-bottom:25px;">
