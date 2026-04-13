@@ -369,7 +369,7 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
             }
 
             debounceTimer = setTimeout(() => {
-                fetch(`api/search_clients.php?q=${encodeURIComponent(q)}`)
+                fetch(`search_clients.php?q=${encodeURIComponent(q)}`)
                     .then(r => r.json())
                     .then(data => {
                         if (data.length > 0) {
