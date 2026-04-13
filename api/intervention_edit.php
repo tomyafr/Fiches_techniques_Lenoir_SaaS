@@ -500,27 +500,37 @@ $machines = $stmtMach->fetchAll();
         function deleteMachine(machineId, btn) {
             if (!confirm('Supprimer cet équipement ?')) return;
 
-            // CSRF protection included in URL
             const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+            
+            // On ajoute une classe visuelle pour montrer qu'on travaille
+            var row = document.getElementById('machine-card-' + machineId);
+            if (row) row.style.opacity = '0.5';
+
             fetch('delete_machine.php?id=' + machineId + '&csrf_token=' + encodeURIComponent(csrfToken), {
                 method: 'GET',
                 credentials: 'same-origin'
-            }).then(function () {
-                var row = document.getElementById('machine-card-' + machineId);
+            }).then(function (response) {
+                // Si la réponse n'est pas OK ou si on a été redirigé (souvent signe d'erreur CSRF ou session)
+                if (!response.ok || response.redirected) {
+                    throw new Error('La suppression a échoué côté serveur.');
+                }
+                
                 if (row) {
                     row.style.opacity = '0';
                     row.style.transition = 'opacity 0.3s ease';
                     setTimeout(function () {
                         row.remove();
-                        // If no machines remain in tbody, reload to show empty state
                         var tbody = document.querySelector('#machinesList tbody');
                         if (tbody && tbody.children.length === 0) {
                             location.reload();
                         }
                     }, 350);
                 }
-            }).catch(function () {
-                alert('Erreur lors de la suppression.');
+                showToast('Équipement supprimé avec succès', 'success');
+            }).catch(function (error) {
+                if (row) row.style.opacity = '1';
+                alert('Erreur : La machine n\'a pas pu être supprimée. Vérifiez votre connexion ou reconnectez-vous.');
+                console.error(error);
             });
         }
     </script>
