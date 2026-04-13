@@ -510,8 +510,7 @@ $machines = $stmtMach->fetchAll();
                 method: 'GET',
                 credentials: 'same-origin'
             }).then(function (response) {
-                // Si la réponse n'est pas OK ou si on a été redirigé (souvent signe d'erreur CSRF ou session)
-                if (!response.ok || response.redirected) {
+                if (!response.ok) {
                     throw new Error('La suppression a échoué côté serveur.');
                 }
                 

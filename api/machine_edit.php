@@ -1774,15 +1774,6 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
 
-                    <div style="display:flex; flex-direction:column; align-items:center; gap:20px; margin-top:30px;">
-                        <div style="text-align:center;">
-                            <img src="/assets/machines/sgsa_photo.jpg" style="max-width:450px; border:1px solid #ccc; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-                        </div>
-                        <div style="text-align:center;">
-                            <img src="/assets/machines/sgsa_diagram.png" style="max-width:550px; border:1px solid #eee; border-radius:8px;">
-                        </div>
-                    </div>
-
                 <?php elseif ($isSGA): ?>
     
 
