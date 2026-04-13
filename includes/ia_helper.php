@@ -118,7 +118,20 @@ function extractIssuesFromDonnees($donnees) {
         'sga_produit_stat' => 'Type de produit',
         'sga_granulo_stat' => 'Granulométrie',
         'sga_debit_stat' => 'Débit',
-        'sga_pression_stat' => 'Pression de service'
+        'sga_pression_stat' => 'Pression de service',
+        // SEPARATEUR A GRILLE SEMI-AUTOMATIQUE SGSA
+        'sgsa_satisfaction' => 'Satisfaction de fonctionnement',
+        'sgsa_aspect' => 'Aspect général',
+        'sgsa_freq_nettoyage' => 'Fréquence de nettoyage',
+        'sgsa_e1_coulissement' => 'Étage 1 - Coulissement tiroirs',
+        'sgsa_e1_etancheite' => 'Étage 1 - Étanchéité tiroir',
+        'sgsa_e1_stat' => 'Étage 1 - barreaux',
+        'sgsa_e2_coulissement' => 'Étage 2 - Coulissement tiroirs',
+        'sgsa_e2_etancheite' => 'Étage 2 - Étanchéité tiroir',
+        'sgsa_e2_stat' => 'Étage 2 - barreaux',
+        'sgsa_e3_coulissement' => 'Étage 3 - Coulissement tiroirs',
+        'sgsa_e3_etancheite' => 'Étage 3 - Étanchéité tiroir',
+        'sgsa_e3_stat' => 'Étage 3 - barreaux'
     ];
 
     $issues = ['aa' => [], 'nc' => [], 'nr' => []];

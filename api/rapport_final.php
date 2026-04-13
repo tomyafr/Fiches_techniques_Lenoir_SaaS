@@ -898,12 +898,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <div class="form-group">
                         <label class="label">Fonction / Rôle</label>
                         <input type="text" name="contact_fonction" class="input" placeholder="Resp. maintenance..."
-                            value="<?= htmlspecialchars($intervention['contact_fonction'] ?? $intervention['c_fonction'] ?? '') ?>">
+                            value="<?= htmlspecialchars(!empty($intervention['contact_fonction']) ? $intervention['contact_fonction'] : ($intervention['c_fonction'] ?? '')) ?>">
                     </div>
                     <div class="form-group">
                         <label class="label">Email <span style="color:var(--error);">*</span></label>
                         <input type="email" name="contact_email" class="input" placeholder="client@societe.com"
-                            value="<?= htmlspecialchars($intervention['contact_email'] ?? $intervention['c_email'] ?? '') ?>"
+                            value="<?= htmlspecialchars(!empty($intervention['contact_email']) ? $intervention['contact_email'] : ($intervention['c_email'] ?? '')) ?>"
                             required>
                     </div>
                 </div>
@@ -912,7 +912,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <div class="form-group">
                         <label class="label">Téléphone</label>
                         <input type="tel" name="contact_telephone" class="input" placeholder="06 12 34 56 78"
-                            value="<?= htmlspecialchars($intervention['contact_telephone'] ?? $intervention['c_tel'] ?? '') ?>">
+                            value="<?= htmlspecialchars(!empty($intervention['contact_telephone']) ? $intervention['contact_telephone'] : ($intervention['c_tel'] ?? '')) ?>">
                     </div>
                     <div class="form-group">
                         <label class="label">Adresse</label>
@@ -1009,7 +1009,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             style="opacity:0.7; font-size:0.85rem;">
                     </div>
                     <canvas id="canvasTech" width="600" height="200"></canvas>
-                    <input type="hidden" name="sigTech" id="sigTechInput">
+                    <input type="hidden" name="sigTech" id="sigTechInput" value="<?= htmlspecialchars($intervention['signature_technicien'] ?: $techSignatureBase64) ?>">
                 </div>
 
                 <!-- Signature Client -->
@@ -1060,7 +1060,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const context = canvas.getContext('2d');
             context.scale(ratio, ratio);
 
-            if (pad) {
+            if (pad && pad.isEmpty()) {
                 pad.clear(); // Réinitialise pour éviter les distorsions si on redimensionne
             }
         }
@@ -1089,11 +1089,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 minWidth: 1.5,
                 maxWidth: 4.5
             });
-            if (window.LM_RAPPORT && window.LM_RAPPORT.sigTech) {
-                try {
-                    padTech.fromDataURL(window.LM_RAPPORT.sigTech, { ratio: dpr, width: canvasT.width / dpr, height: canvasT.height / dpr });
-                } catch (e) { console.error("Error loading tech sig:", e); }
-            }
 
             // Client Pad
             resizeCanvas(canvasC);
@@ -1104,10 +1099,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 minWidth: 1.5,
                 maxWidth: 4.5
             });
-            if (window.LM_RAPPORT && window.LM_RAPPORT.sigClient) {
-                try {
-                    padClient.fromDataURL(window.LM_RAPPORT.sigClient, { ratio: dpr, width: canvasC.width / dpr, height: canvasC.height / dpr });
-                } catch (e) { console.error("Error loading client sig:", e); }
+
+            // Load initial signatures after pads are created
+            if (window.LM_RAPPORT) {
+                if (window.LM_RAPPORT.sigTech) {
+                    try {
+                        padTech.fromDataURL(window.LM_RAPPORT.sigTech, { ratio: dpr, width: canvasT.width / dpr, height: canvasT.height / dpr });
+                    } catch (e) { console.error("Error loading tech sig:", e); }
+                }
+                if (window.LM_RAPPORT.sigClient) {
+                    try {
+                        padClient.fromDataURL(window.LM_RAPPORT.sigClient, { ratio: dpr, width: canvasC.width / dpr, height: canvasC.height / dpr });
+                    } catch (e) { console.error("Error loading client sig:", e); }
+                }
             }
         }
 

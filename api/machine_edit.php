@@ -80,6 +80,7 @@ $isPAP = strpos($designation, 'À AIMANTS PERMANENTS') !== false || strpos($desi
 $isPM = strpos($designation, 'PM') !== false && strpos($designation, 'PLAQUE') !== false;
 $isSGCP = strpos($designation, 'SGCP') !== false || strpos($designation, 'SGCM') !== false;
 $isSGA = (strpos($designation, 'SGA') !== false || strpos($designation, 'GRILLE') !== false) && !$isSGCP;
+$isSGSA = strpos($designation, 'SGSA') !== false;
 
 // Temps prévisionnel par type
 if ($isEDX)
@@ -95,6 +96,8 @@ elseif ($isLevage)
 elseif ($isPM)
     $tempsPrev = '0h20';
 elseif ($isSGCP)
+    $tempsPrev = '3h00';
+elseif ($isSGSA)
     $tempsPrev = '3h00';
 elseif ($isSGA)
     $tempsPrev = '3h30';
@@ -931,7 +934,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 RETOUR
             </button>
             <span class="mobile-header-title" style="color: var(--primary); font-size: 0.9rem; font-weight: 700; position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap;">
-                <?= htmlspecialchars($machine['designation']) ?>
+                <?= htmlspecialchars(strtoupper(str_replace('*', '', $machine['designation']))) ?>
             </span>
             <div style="display:flex; gap:10px; align-items:center;">
                 <label style="color:white; font-size:0.8rem; display:flex; align-items:center; gap:5px; cursor:pointer; background:rgba(255,255,255,0.1); padding:5px 10px; border-radius:5px;">
@@ -969,7 +972,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <?php elseif ($isLevage): ?>
                                     Electroaimants de Levage
                                 <?php else: ?>
-                                    <?= htmlspecialchars(str_replace('RDE', 'RD', $machine['designation'])) ?>
+                                    <?= htmlspecialchars(strtoupper(str_replace(['RDE', '*'], ['RD', ''], $machine['designation']))) ?>
                                 <?php endif; ?>
                             </span>
                         </td>
@@ -1664,7 +1667,124 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </div>
                     </div>
 
+                <?php elseif ($isSGSA): ?>
+
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
+                        <thead>
+                            <?= renderDiagonalHeader(3) ?>
+                        </thead>
+                        <tbody>
+                            <?= renderSectionHeader("Séparateur à grilles magnétiques à nettoyage semi-automatique type SGSA", 3) ?>
+                            <?= renderAprfRow("Satisfaction de fonctionnement", "sgsa_satisfaction", $donnees) ?>
+                            <?= renderAprfRow("Aspect général", "sgsa_aspect", $donnees) ?>
+                            <?= renderAprfRow("Fréquence de nettoyage", "sgsa_freq_nettoyage", $donnees) ?>
+
+                            <?= renderSectionHeader("APPLICATION CLIENT", 3) ?>
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Type de produit : 
+                                    <input type="text" name="mesures[sgsa_produit]" value="<?= htmlspecialchars($mesures['sgsa_produit'] ?? '') ?>" class="pdf-input" style="width:140px; margin-left:5px;">
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("sgsa_produit_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:8px; font-size:10px; color:#555;">
+                                    <textarea name="donnees[sgsa_produit_comment]" class="pdf-textarea" style="height:35px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees['sgsa_produit_comment'] ?? '') ?></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Granulométrie : 
+                                    <input type="text" name="mesures[sgsa_granulo_min]" value="<?= htmlspecialchars($mesures['sgsa_granulo_min'] ?? '') ?>" style="width:40px; border:none; border-bottom:1px solid #000; text-align:center;"> à <input type="text" name="mesures[sgsa_granulo_max]" value="<?= htmlspecialchars($mesures['sgsa_granulo_max'] ?? '') ?>" style="width:40px; border:none; border-bottom:1px solid #000; text-align:center;"> mm
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("sgsa_granulo_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:8px; font-size:10px; color:#555;">
+                                    Aciers de <input type="text" name="mesures[sgsa_acier_min]" value="<?= htmlspecialchars($mesures['sgsa_acier_min'] ?? '') ?>" style="width:30px; border:none; border-bottom:1px dashed #000; text-align:center;"> à <input type="text" name="mesures[sgsa_acier_max]" value="<?= htmlspecialchars($mesures['sgsa_acier_max'] ?? '') ?>" style="width:30px; border:none; border-bottom:1px dashed #000; text-align:center;"> mm
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Débit : 
+                                    <input type="text" name="mesures[sgsa_debit]" value="<?= htmlspecialchars($mesures['sgsa_debit'] ?? '') ?>" style="width:60px; border:none; border-bottom:1px solid #000; text-align:center; margin-left:5px;"> t/h
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("sgsa_debit_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:8px; font-size:10px; color:#555;">
+                                    Avec densité de <input type="text" name="mesures[sgsa_densite]" value="<?= htmlspecialchars($mesures['sgsa_densite'] ?? '') ?>" style="width:60px; border:none; border-bottom:1px dashed #000; text-align:center;">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Environnement Atex ? Non – Oui :
+                                    <input type="text" name="mesures[sgsa_atex]" value="<?= htmlspecialchars($mesures['sgsa_atex'] ?? '') ?>" style="width:100px; border:none; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("sgsa_atex_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[sgsa_atex_comment]" class="pdf-textarea" style="height:35px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees['sgsa_atex_comment'] ?? '') ?></textarea></td>
+                            </tr>
+
+                            <?php for($e=1; $e<=3; $e++): ?>
+                                <?= renderSectionHeader("ETAGE ".($e==1 ? '1 (Supérieur)' : $e), 3) ?>
+                                <tr>
+                                    <td style="padding:8px; vertical-align:top;">
+                                        <div style="margin-bottom:8px; font-weight:bold;">
+                                            Nombre de barreaux : 
+                                            <input type="text" name="mesures[sgsa_e<?= $e ?>_nb]" value="<?= htmlspecialchars($mesures['sgsa_e'.$e.'_nb'] ?? '') ?>" style="width:40px; border:none; border-bottom:1px solid #000; text-align:center; font-weight:bold;" autocomplete="off">
+                                        </div>
+                                        
+                                        <div style="background:#fcfcfc; border:1px solid #eee; padding:5px;">
+                                            <div style="font-size:9px; color:#888; margin-bottom:5px; font-weight:bold;">Barreaux (Gauss Max) :</div>
+                                            <table style="width:100%; border-collapse:collapse; border:none; font-size:10px;">
+                                                <tr>
+                                                    <td style="width:50%; border:none; padding-right:5px; vertical-align:top;">
+                                                        <?php for($b=1; $b<=6; $b++): ?>
+                                                            <div style="display:flex; justify-content:space-between; margin-bottom:3px; border-bottom:1px solid #f0f0f0;">
+                                                                <span style="font-weight:600;"><?= $b ?> :</span>
+                                                                <span><input type="text" name="mesures[sgsa_e<?= $e ?>_b<?= $b ?>]" value="<?= htmlspecialchars($mesures['sgsa_e'.$e.'_b'.$b] ?? '') ?>" style="width:35px; border:none; text-align:center; font-size:10px;"> <span style="font-size:8px; color:#aaa;">G</span></span>
+                                                            </div>
+                                                        <?php endfor; ?>
+                                                    </td>
+                                                    <td style="width:50%; border:none; padding-left:5px; vertical-align:top; border-left:1px solid #eee;">
+                                                        <?php for($b=7; $b<=11; $b++): ?>
+                                                            <div style="display:flex; justify-content:space-between; margin-bottom:3px; border-bottom:1px solid #f0f0f0;">
+                                                                <span style="font-weight:600;"><?= $b ?> :</span>
+                                                                <span><input type="text" name="mesures[sgsa_e<?= $e ?>_b<?= $b ?>]" value="<?= htmlspecialchars($mesures['sgsa_e'.$e.'_b'.$b] ?? '') ?>" style="width:35px; border:none; text-align:center; font-size:10px;"> <span style="font-size:8px; color:#aaa;">G</span></span>
+                                                            </div>
+                                                        <?php endfor; ?>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </td>
+                                    <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                        <div style="margin-bottom:8px; font-size:9px; color:#888; font-weight:bold; letter-spacing:0.5px;">ÉTAT GLOBAL ÉTAGE</div>
+                                        <?= renderEtatRadios("sgsa_e".$e."_stat", $donnees, 3) ?>
+                                    </td>
+                                    <td style="padding:0; vertical-align:top; width:30%;">
+                                        <textarea name="donnees[sgsa_e<?= $e ?>_comment]" class="pdf-textarea" style="height:100%; min-height:140px; border:none; width:100%; box-sizing:border-box; padding:8px;" placeholder="Observation étage <?= $e ?>..."><?= htmlspecialchars($donnees["sgsa_e".$e."_comment"] ?? '') ?></textarea>
+                                    </td>
+                                </tr>
+                                <?= renderAprfRow("Coulissement des tiroirs", "sgsa_e".$e."_coulissement", $donnees) ?>
+                                <?= renderAprfRow("Etanchéité du tiroir à la fermeture", "sgsa_e".$e."_etancheite", $donnees) ?>
+                            <?php endfor; ?>
+                        </tbody>
+                    </table>
+
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:20px; margin-top:30px;">
+                        <div style="text-align:center;">
+                            <img src="/assets/machines/sgsa_photo.jpg" style="max-width:450px; border:1px solid #ccc; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+                        </div>
+                        <div style="text-align:center;">
+                            <img src="/assets/machines/sgsa_diagram.png" style="max-width:550px; border:1px solid #eee; border-radius:8px;">
+                        </div>
+                    </div>
+
                 <?php elseif ($isSGA): ?>
+    
 
                     <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
                         <thead>

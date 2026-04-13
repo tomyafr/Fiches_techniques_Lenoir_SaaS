@@ -35,17 +35,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     $stmtClient->execute([$clientNom]);
                     $clientId = $stmtClient->fetchColumn();
                     $lastInt = null;
+                    $clientData = null;
                 } else {
-                    // Fetch data from last intervention for this client to pre-fill
-                    $stmtLast = $db->prepare('SELECT contact_fonction, contact_email, contact_telephone FROM interventions WHERE client_id = ? ORDER BY date_intervention DESC, id DESC LIMIT 1');
+                    // Fetch data from last intervention for this client
+                    $stmtLast = $db->prepare('SELECT contact_fonction, contact_email, contact_telephone FROM interventions WHERE client_id = ? AND (contact_fonction != \'\' OR contact_email != \'\' OR contact_telephone != \'\') ORDER BY date_intervention DESC, id DESC LIMIT 1');
                     $stmtLast->execute([$clientId]);
                     $lastInt = $stmtLast->fetch(PDO::FETCH_ASSOC);
+
+                    // Fetch base client data as fallback
+                    $stmtClientData = $db->prepare('SELECT contact_fonction, contact_email, contact_telephone FROM clients WHERE id = ?');
+                    $stmtClientData->execute([$clientId]);
+                    $clientData = $stmtClientData->fetch(PDO::FETCH_ASSOC);
                 }
 
-                // Create intervention with inherited data if available
-                $cFonction = $lastInt['contact_fonction'] ?? '';
-                $cEmail = $lastInt['contact_email'] ?? '';
-                $cTel = $lastInt['contact_telephone'] ?? '';
+                // Create intervention with inherited data (Prioritize last intervention, then client master data)
+                $cFonction = !empty($lastInt['contact_fonction']) ? $lastInt['contact_fonction'] : ($clientData['contact_fonction'] ?? '');
+                $cEmail = !empty($lastInt['contact_email']) ? $lastInt['contact_email'] : ($clientData['contact_email'] ?? '');
+                $cTel = !empty($lastInt['contact_telephone']) ? $lastInt['contact_telephone'] : ($clientData['contact_telephone'] ?? '');
 
                 $stmtInt = $db->prepare('INSERT INTO interventions (numero_arc, client_id, technicien_id, contact_prenom, contact_nom, contact_fonction, contact_email, contact_telephone, date_intervention) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
                 $stmtInt->execute([$arc, $clientId, $userId, $contactPrenom, $contactNom, $cFonction, $cEmail, $cTel, $dateInt]);

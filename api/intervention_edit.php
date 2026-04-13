@@ -35,6 +35,11 @@ if (!$intervention) {
     die("Intervention introuvable ou vous n'avez pas les droits.");
 }
 
+// Fetch Tech Sign for Fallback
+$stmtT = $db->prepare('SELECT signature_base64 FROM users WHERE id = ?');
+$stmtT->execute([$intervention['technicien_id']]);
+$techSignatureBase64 = $stmtT->fetchColumn() ?: '';
+
 // Actions Make/Edit Machine
 $message = '';
 
@@ -261,8 +266,11 @@ $machines = $stmtMach->fetchAll();
                                     <?= htmlspecialchars($intervention['numero_arc']) ?></td>
                                 <td style="padding:0.6rem 0.8rem; white-space:nowrap;">
                                     <?= htmlspecialchars($m['numero_of'] ?: '—') ?></td>
-                                <td style="padding:0.6rem 0.8rem; font-weight:600; <?= (stripos($m['designation'], 'RD') !== false) ? 'color: #ffb300;' : 'color: #fff;' ?>">
-                                    <?= htmlspecialchars(strtoupper($m['designation'])) ?>
+                                <td style="padding:0.6rem 0.8rem; font-weight:600; <?php 
+                                    $cleanDesig = strtoupper(str_replace('*', '', $m['designation']));
+                                    echo (stripos($cleanDesig, 'FIXE RD') !== false) ? 'color: #ffb300;' : 'color: #fff;'; 
+                                ?>">
+                                    <?= htmlspecialchars($cleanDesig) ?>
                                 </td>
                                 <td style="padding:0.6rem 0.8rem;"><?= htmlspecialchars($mMesures['repere'] ?? '—') ?></td>
                                 <td style="padding:0.6rem 0.8rem; text-align:center;">
@@ -342,6 +350,7 @@ $machines = $stmtMach->fetchAll();
                         <option value="ÉLECTROAIMANTS DE LEVAGE">ÉLECTROAIMANTS DE LEVAGE</option>
                         <option value="SÉPARATEUR À GRILLES AUTOMATIQUE SGA">SÉPARATEUR À GRILLES AUTOMATIQUE SGA</option>
                         <option value="SÉPARATEUR À GRILLE SGCP/SGCM">SÉPARATEUR À GRILLE SGCP/SGCM</option>
+                        <option value="SÉPARATEUR À GRILLE SEMI-AUTOMATIQUE SGSA">SÉPARATEUR À GRILLE SEMI-AUTOMATIQUE SGSA</option>
                         <option value="PLAQUES MAGNÉTIQUES PM">PLAQUES MAGNÉTIQUES PM</option>
                     </select>
                 </div>
@@ -404,7 +413,7 @@ $machines = $stmtMach->fetchAll();
                     </label>
                     <canvas id="canvasTech" width="400" height="200"
                         style="background:#fff; border-radius:8px; width:100%; cursor:crosshair; touch-action:none;"></canvas>
-                    <input type="hidden" name="sigTech" id="sigTechInput" required>
+                    <input type="hidden" name="sigTech" id="sigTechInput" value="<?= htmlspecialchars($intervention['signature_technicien'] ?: $techSignatureBase64) ?>" required>
                 </div>
 
                 <button type="submit" onclick="savePads()" class="btn btn-primary"
@@ -469,9 +478,10 @@ $machines = $stmtMach->fetchAll();
                     if (!padTech) {
                         resizeCanvas(canvasT);
                         padTech = new SignaturePad(canvasT, { penColor: "black" });
-                        <?php if (!empty($intervention['signature_technicien'])): ?>
-                            padTech.fromDataURL('<?= $intervention['signature_technicien'] ?>', { ratio: dpr, width: canvasT.width / dpr, height: canvasT.height / dpr });
-                        <?php endif; ?>
+                        const sigTechVal = document.getElementById('sigTechInput').value;
+                        if (sigTechVal) {
+                            padTech.fromDataURL(sigTechVal, { ratio: dpr, width: canvasT.width / dpr, height: canvasT.height / dpr });
+                        }
                     }
                 }
             }, 50); // Petit délai pour laisser le navigateur dessiner la modale
