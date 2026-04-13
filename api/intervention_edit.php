@@ -345,7 +345,6 @@ $machines = $stmtMach->fetchAll();
                         <option value="OVERBAND OV (ELECTROMAGNÉTIQUE)">OVERBAND OV (ELECTROMAGNÉTIQUE)</option>
                         <option value="AIMANT FIXE APRF (PERMANENT)">AIMANT FIXE APRF (PERMANENT)</option>
                         <option value="SÉPARATEUR À COURANTS DE FOUCAULT ED-X">SÉPARATEUR À COURANTS DE FOUCAULT ED-X</option>
-                        <option value="ELECTROAIMANT FIXE RD">ELECTROAIMANT FIXE RD</option>
                         <option value="TAMBOUR OU POULIE (TAP/PAP)">TAMBOUR OU POULIE (TAP/PAP)</option>
                         <option value="ÉLECTROAIMANTS DE LEVAGE">ÉLECTROAIMANTS DE LEVAGE</option>
                         <option value="SÉPARATEUR À GRILLES AUTOMATIQUE SGA">SÉPARATEUR À GRILLES AUTOMATIQUE SGA</option>
