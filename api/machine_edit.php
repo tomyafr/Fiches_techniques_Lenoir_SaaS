@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-$designation = strtoupper(trim($machine['designation']));
+$designation = mb_strtoupper(trim($machine['designation']), 'UTF-8');
 $isAPRF = strpos($designation, 'APRF') !== false || strpos($designation, 'RD') !== false;
 $isEDX = strpos($designation, 'ED-X') !== false || strpos($designation, 'FOUCAULT') !== false;
 $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') === false;
@@ -943,7 +943,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 RETOUR
             </button>
             <span class="mobile-header-title" style="color: var(--primary); font-size: 0.9rem; font-weight: 700; position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap;">
-                <?= htmlspecialchars(strtoupper(str_replace('*', '', $machine['designation']))) ?>
+                <?= htmlspecialchars(mb_strtoupper(str_replace('*', '', $machine['designation']), 'UTF-8')) ?>
             </span>
             <div style="display:flex; gap:10px; align-items:center;">
                 <label style="color:white; font-size:0.8rem; display:flex; align-items:center; gap:5px; cursor:pointer; background:rgba(255,255,255,0.1); padding:5px 10px; border-radius:5px;">
@@ -972,20 +972,20 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <span style="font-size:26px; font-weight:bold; color:#000;">
                                 <?php if ($isAPRF): ?>
                                     <?php if (strpos($designation, 'RD') !== false): ?>
-                                        Electroaimant de triage fixe RD
+                                        <?= mb_strtoupper("Electroaimant de triage fixe RD", 'UTF-8') ?>
                                     <?php else: ?>
-                                        Aimant permanent rectangulaire fixe<br>APRF
+                                        <?= mb_strtoupper("Aimant permanent rectangulaire fixe APRF", 'UTF-8') ?>
                                     <?php endif; ?>
                                 <?php elseif ($isPAP): ?>
-                                    Tambour ou Poulie à Aimants Permanents<br>TAP/PAP
+                                    <?= mb_strtoupper("Tambour ou Poulie à Aimants Permanents TAP/PAP", 'UTF-8') ?>
                                 <?php elseif ($isLevage): ?>
-                                    Electroaimants de Levage
+                                    <?= mb_strtoupper("Electroaimants de Levage", 'UTF-8') ?>
                                 <?php elseif ($isSPM): ?>
-                                    Séparateur à Plaques Magnétiques SPM
+                                    <?= mb_strtoupper("Séparateur à plaques magnétiques SPM", 'UTF-8') ?>
                                 <?php elseif ($isSLT): ?>
-                                    Séparateur haute intensité SLT
+                                    <?= mb_strtoupper("Séparateur haute intensité SLT", 'UTF-8') ?>
                                 <?php else: ?>
-                                    <?= htmlspecialchars(strtoupper(str_replace(['RDE', '*'], ['RD', ''], $machine['designation']))) ?>
+                                    <?= mb_strtoupper(str_replace(['RDE', '*'], ['RD', ''], $machine['designation'] ?? ''), 'UTF-8') ?>
                                 <?php endif; ?>
                             </span>
                         </td>
@@ -993,7 +993,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 </table>
 
                 <div class="section-wrapper-pdf">
-                    <div class="pdf-section-title">A) FICHE DE CONTRÔLE :</div>
+                    <div class="pdf-section-title"><?= mb_strtoupper("A) FICHE DE CONTRÔLE :", 'UTF-8') ?></div>
                 
                 <div style="font-weight:bold; color:#1B4F72; margin-bottom:5px; font-size:14px; page-break-after: avoid;">
                     Poste : <input type="text" name="mesures[poste]" value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>" style="border:none; border-bottom:1px dashed #000; font-weight:bold; width:30px; background:transparent;" autocomplete="off">
@@ -1020,10 +1020,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <input type="text" name="numero_of" value="<?= htmlspecialchars($machine['numero_of']) ?>"
                                 class="pdf-input" required placeholder="ex: 123456" autocomplete="off">
                         </td>
-                        <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Désignation</td>
+                        <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Année <span style="color:var(--error);">*</span></td>
                         <td style="border:1px solid #000; padding:6px;">
-                            <input type="text" value="<?= htmlspecialchars($machine['designation']) ?>"
-                                class="pdf-input" readonly style="background:#f9f9f9;">
+                            <input type="number" name="annee_fabrication" value="<?= htmlspecialchars($machine['annee_fabrication']) ?>"
+                                class="pdf-input" required min="1900" max="<?= date('Y') + 1 ?>" placeholder="AAAA" autocomplete="off">
                         </td>
                     </tr>
                     <tr>
@@ -1082,7 +1082,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     
                     $html = '
                     <div class="section-wrapper-pdf">
-                        <div class="pdf-section-title">B) DESCRIPTION DU MATERIEL :</div>
+                        <div class="pdf-section-title"><?= mb_strtoupper("B) DESCRIPTION DU MATERIEL :", 'UTF-8') ?></div>
                         <div id="description_materiel_montage">';
                     
                     // Si aucune photo et mode édition, on affiche le placeholder avec bouton
@@ -1193,7 +1193,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 function renderSectionC($isEDX, $isOV) {
                     ?>
                     <div class="section-wrapper-pdf">
-                        <div class="pdf-section-title">C) RAPPEL DES FRÉQUENCES DE NETTOYAGE ET DES DIFFÉRENTS POINTS DE CONTRÔLE :</div>
+                        <div class="pdf-section-title"><?= mb_strtoupper("C) RAPPEL DES FRÉQUENCES DE NETTOYAGE ET DES DIFFÉRENTS POINTS DE CONTRÔLE :", 'UTF-8') ?></div>
                         <img src="/assets/machines/frequences_tableau.png" style="width:100%; height:auto; border:2px solid #ed7d31;">
                     </div>
                     <?php
@@ -1205,7 +1205,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     $maxi = $mesures['edx_releve_maxi'] ?? '....';
                     ?>
                     <div class="section-wrapper-pdf">
-                        <div class="pdf-section-title">D) RELEVES D’INDUCTION MAGNETIQUE :</div>
+                        <div class="pdf-section-title"><?= mb_strtoupper("D) RELEVES D’INDUCTION MAGNETIQUE :", 'UTF-8') ?></div>
                         <div style="border:1px solid #ed7d31; padding:10px; font-size:13px; background:#fff;">
                             <p style="margin:5px 0;"><strong>Roue polaire :</strong></p>
                             <p style="margin:5px 0 5px 20px;">• Relevé mini : <strong><?= htmlspecialchars($mini) ?></strong> Gauss</p>
@@ -1230,7 +1230,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         $tds .= '<div style="width:'.$w.'; border-right:1px solid #000; height:100%; box-sizing:border-box;"></div>';
                     }
                     return '<tr class="section-header-row" style="background:#5b9bd5 !important; page-break-before: avoid; break-before: avoid;">
-                        <td style="width:35%; font-weight:bold; color:white; padding:4px 10px; font-size:11px; page-break-before: avoid; break-before: avoid; border-top:1px solid #000;">' . htmlspecialchars($title) . '</td>
+                        <td style="width:35%; font-weight:bold; color:white; padding:4px 10px; font-size:11px; page-break-before: avoid; break-before: avoid; border-top:1px solid #000;">' . mb_strtoupper(htmlspecialchars($title), 'UTF-8') . '</td>
                         <td style="width:140px; padding:0; vertical-align:middle; height:30px; border-top:1px solid #000;">
                             <div style="display:flex; width:140px; height:100%; margin: 0 auto; border:none; border-left: 1px solid #000;">' . $tds . '</div>
                         </td>
@@ -2080,6 +2080,27 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <div>
                             <img src="/assets/machines/slt_diagram.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma SLT" onerror="this.style.display='none'">
                         </div>
+                        
+                        <!-- TABLEAU LEGENDE SLT -->
+                        <div style="margin: 20px auto; width: 60%;">
+                            <table style="width:100%; border-collapse:collapse; font-size:10px; border:1px solid #000; text-align:center;">
+                                <tr style="background:#d9d9d9;">
+                                    <th style="border:1px solid #000; padding:4px; width:30%;">Rep.</th>
+                                    <th style="border:1px solid #000; padding:4px;">DESIGNATION</th>
+                                </tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">A</td><td style="border:1px solid #000; padding:2px; text-align:left; padding-left:10px;">Tambour TAPN</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">B</td><td style="border:1px solid #000; padding:2px; text-align:left; padding-left:10px;">Tambour SLT</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">1</td><td style="border:1px solid #000; padding:2px; text-align:left; padding-left:10px;">Motoreducteur tambour TAPN</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">2</td><td style="border:1px solid #000; padding:2px; text-align:left; padding-left:10px;">Motoreducteur tambour SLT</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">3</td><td style="border:1px solid #000; padding:2px; text-align:left; padding-left:10px;">Poulie motoreducteur</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">4</td><td style="border:1px solid #000; padding:2px; text-align:left; padding-left:10px;">Courroie</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">5</td><td style="border:1px solid #000; padding:2px; text-align:left; padding-left:10px;">Contrôleur de rotation</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">6</td><td style="border:1px solid #000; padding:2px; text-align:left; padding-left:10px;">Palier axe volet</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">7</td><td style="border:1px solid #000; padding:2px; text-align:left; padding-left:10px;">Grand volet</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">8</td><td style="border:1px solid #000; padding:2px; text-align:left; padding-left:10px;">Petit volet</td></tr>
+                                <tr><td style="border:1px solid #000; padding:2px;">9</td><td style="border:1px solid #000; padding:2px; text-align:left; padding-left:10px;">Saupoudreur</td></tr>
+                            </table>
+                        </div>
                     </div>
 
                 <?php elseif ($isSPM): ?>
@@ -2210,17 +2231,16 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <div style="text-align:center; margin-top:30px;">
                         <div style="margin-bottom:10px;">
-                            <h3 style="font-size:16px; text-transform:uppercase; border-bottom:2px solid #000; display:inline-block; padding-bottom:5px;">Séparateur à Plaques Magnétiques</h3>
+                            <h3 style="font-size:16px; border-bottom:2px solid #000; display:inline-block; padding-bottom:5px;"><?= mb_strtoupper("Séparateur à Plaques Magnétiques SPM", 'UTF-8') ?></h3>
                         </div>
+                        
                         <div style="margin-bottom:25px;">
-                            <img src="/assets/machines/spm_schema1.png" style="max-width:100%; height:auto;" alt="Schéma vue technique SPM" onerror="this.style.display='none'">
-                        </div>
-                        <div style="margin-bottom:25px;">
-                            <img src="/assets/machines/spm_schema2.png" style="max-width:100%; height:auto;" alt="Schéma assemblage SPM" onerror="this.style.display='none'">
+                            <img src="/assets/machines/spm_diagram.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma SPM" onerror="this.style.display='none'">
                         </div>
                         <div>
                             <img src="/assets/machines/spm_photo.png" style="max-width:90%; height:auto; border:1px solid #ccc; display:block; margin:0 auto;" alt="Photo SPM" onerror="this.style.display='none'">
                         </div>
+                    </div>
                     </div>
 
                 <?php elseif ($isEDX): ?>

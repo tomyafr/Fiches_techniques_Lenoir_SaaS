@@ -1798,8 +1798,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 <tr>
                                     <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N┬░ A.R.C.</td>
                                     <td style="width:35%; border:1px solid #000; padding:6px; font-weight:bold;">${mArc}</td>
-                                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Désignation</td>
-                                    <td style="width:35%; border:1px solid #000; padding:6px;"><b>${mDesignation}</b></td>
+                                    <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Année</td>
+                                    <td style="width:35%; border:1px solid #000; padding:6px;"><b>${mData.annee || '—'}</b></td>
                                 </tr>
                             </table>
 
