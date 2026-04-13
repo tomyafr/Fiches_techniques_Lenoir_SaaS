@@ -70,7 +70,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             header("Location: technicien.php?msg=saved");
         }
         exit;
+    } elseif ($_POST['action'] === 'import_machines') {
+        $lastIntId = $_POST['last_intervention_id'] ?? null;
+        if ($lastIntId) {
+            $stmtPrev = $db->prepare('SELECT designation, numero_of, annee_fabrication, mesures FROM machines WHERE intervention_id = ?');
+            $stmtPrev->execute([$lastIntId]);
+            $prevMachines = $stmtPrev->fetchAll();
+
+            foreach ($prevMachines as $pm) {
+                $mes = json_decode($pm['mesures'] ?? '{}', true);
+                $initMesures = json_encode(['repere' => $mes['repere'] ?? '']);
+                $stmtIns = $db->prepare('INSERT INTO machines (intervention_id, numero_of, designation, annee_fabrication, commentaires, mesures, donnees_controle, dysfonctionnements, conclusion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+                $stmtIns->execute([$id, $pm['numero_of'], $pm['designation'], $pm['annee_fabrication'], '', $initMesures, '{}', '', '']);
+            }
+            $message = count($prevMachines) . " machines importées.";
+            header("Location: intervention_edit.php?id=$id&msg=imported");
+            exit;
+        }
     }
+}
+
+// Fetch Pre-existing machines for this client (for suggestions)
+$stmtLastInt = $db->prepare('SELECT id, date_intervention FROM interventions WHERE client_id = ? AND id != ? ORDER BY date_intervention DESC, id DESC LIMIT 1');
+$stmtLastInt->execute([$intervention['client_id'], $id]);
+$lastIntervention = $stmtLastInt->fetch();
+$lastMachines = [];
+if ($lastIntervention) {
+    $stmtLM = $db->prepare('SELECT designation, numero_of FROM machines WHERE intervention_id = ?');
+    $stmtLM->execute([$lastIntervention['id']]);
+    $lastMachines = $stmtLM->fetchAll();
 }
 
 // Fetch Machines
@@ -170,10 +198,28 @@ $machines = $stmtMach->fetchAll();
             <div class="card glass"
                 style="text-align: center; padding: 2.5rem 1rem; border: 1px dashed var(--glass-border); background: transparent;">
                 <div style="margin-bottom: 1.5rem; text-align:center; opacity:0.1;"><img src="/assets/icon_gear_orange.svg" style="height: 80px; width: 80px;"></div>
-                <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Aucune machine n'a encore été ajoutée à cette
-                    fiche.</p>
-                <button onclick="document.getElementById('modalNewMachine').style.display='flex'"
-                    class="btn btn-primary">Ajouter la première machine</button>
+                <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Aucune machine n'a encore été ajoutée à cette fiche.</p>
+                
+                <div style="display:flex; flex-direction:column; gap:1rem; max-width:320px; margin:0 auto;">
+                    <button onclick="document.getElementById('modalNewMachine').style.display='flex'" class="btn btn-primary">Ajouter manuellement</button>
+                    
+                    <?php if (!empty($lastMachines)): ?>
+                        <div style="margin-top:1rem; padding-top:1rem; border-top: 1px solid var(--glass-border);">
+                            <p style="font-size:0.75rem; color:var(--primary); margin-bottom:0.75rem; font-weight:600;">
+                                <img src="/assets/icon_history_white.svg" style="height:14px; vertical-align:middle; margin-right:4px;"> 
+                                Suggestion : <?= count($lastMachines) ?> machines trouvées le <?= date('d/m/Y', strtotime($lastIntervention['date_intervention'])) ?>
+                            </p>
+                            <form method="POST">
+                                <?= csrfField() ?>
+                                <input type="hidden" name="action" value="import_machines">
+                                <input type="hidden" name="last_intervention_id" value="<?= $lastIntervention['id'] ?>">
+                                <button type="submit" class="btn btn-ghost" style="width:100%; font-size:0.8rem; border-color:var(--primary-glow);">
+                                    Ré-importer le parc machine
+                                </button>
+                            </form>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
         <?php else: ?>
             <!-- PARC MACHINE TABLE -->

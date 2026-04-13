@@ -1453,4 +1453,38 @@ html.light-mode .active-status {
 
 .btn-ghost:hover .premium-icon {
     transform: scale(1.15);
-}
+}
+/* ----------- AUTOCOMPLETE DROPDOWN ----------- */
+.autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: var(--bg-elevated);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    z-index: 2000;
+    max-height: 250px;
+    overflow-y: auto;
+    margin-top: 5px;
+    box-shadow: var(--shadow-premium);
+    backdrop-filter: blur(20px);
+}
+
+.autocomplete-item {
+    padding: 0.8rem 1.25rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    border-bottom: 1px solid var(--glass-border);
+    font-size: 0.9rem;
+}
+
+.autocomplete-item:last-child {
+    border-bottom: none;
+}
+
+.autocomplete-item:hover {
+    background: var(--primary-subtle);
+    color: var(--primary);
+}
+

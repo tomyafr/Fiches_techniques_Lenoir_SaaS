@@ -34,12 +34,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                     $stmtClient = $db->prepare('INSERT INTO clients (nom_societe) VALUES (?) RETURNING id');
                     $stmtClient->execute([$clientNom]);
                     $clientId = $stmtClient->fetchColumn();
+                    $lastInt = null;
+                } else {
+                    // Fetch data from last intervention for this client to pre-fill
+                    $stmtLast = $db->prepare('SELECT contact_fonction, contact_email, contact_telephone FROM interventions WHERE client_id = ? ORDER BY date_intervention DESC, id DESC LIMIT 1');
+                    $stmtLast->execute([$clientId]);
+                    $lastInt = $stmtLast->fetch(PDO::FETCH_ASSOC);
                 }
 
-                // Create intervention
-                $stmtInt = $db->prepare('INSERT INTO interventions (numero_arc, client_id, technicien_id, contact_prenom, contact_nom, date_intervention) VALUES (?, ?, ?, ?, ?, NOW()) RETURNING id');
-                $stmtInt->execute([$arc, $clientId, $userId, $contactPrenom, $contactNom]);
-                $newId = $stmtInt->fetchColumn();
+                // Create intervention with inherited data if available
+                $cFonction = $lastInt['contact_fonction'] ?? '';
+                $cEmail = $lastInt['contact_email'] ?? '';
+                $cTel = $lastInt['contact_telephone'] ?? '';
+
+                $stmtInt = $db->prepare('INSERT INTO interventions (numero_arc, client_id, technicien_id, contact_prenom, contact_nom, contact_fonction, contact_email, contact_telephone, date_intervention) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+                $stmtInt->execute([$arc, $clientId, $userId, $contactPrenom, $contactNom, $cFonction, $cEmail, $cTel, $dateInt]);
+                $newId = $db->lastInsertId();
 
                 $db->commit();
                 logAudit('INTERVENTION_CREATED', "ARC: $arc");
@@ -267,10 +277,11 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
                             required autofocus maxlength="50">
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" style="position:relative;">
                         <label class="label">Client (Société) <span style="color: var(--error);">*</span></label>
-                        <input type="text" name="nom_societe" class="input" placeholder="Nom de l'entreprise..."
-                            required>
+                        <input type="text" name="nom_societe" id="client_search" class="input" placeholder="Commencez à taper..."
+                            required autocomplete="off">
+                        <div id="autocomplete_results" class="autocomplete-dropdown" style="display:none;"></div>
                     </div>
 
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom: 1.5rem;">
@@ -343,6 +354,49 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+
+        // Client Autocomplete Logic
+        const clientInput = document.getElementById('client_search');
+        const resultsDiv = document.getElementById('autocomplete_results');
+        let debounceTimer;
+
+        clientInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            const q = this.value.trim();
+            if (q.length < 2) {
+                resultsDiv.style.display = 'none';
+                return;
+            }
+
+            debounceTimer = setTimeout(() => {
+                fetch(`api/search_clients.php?q=${encodeURIComponent(q)}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            resultsDiv.innerHTML = data.map(c => `
+                                <div class="autocomplete-item" onclick="selectClient('${c.nom_societe.replace(/'/g, "\\'")}')">
+                                    ${c.nom_societe}
+                                </div>
+                            `).join('');
+                            resultsDiv.style.display = 'block';
+                        } else {
+                            resultsDiv.style.display = 'none';
+                        }
+                    });
+            }, 300);
+        });
+
+        function selectClient(name) {
+            clientInput.value = name;
+            resultsDiv.style.display = 'none';
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!clientInput.contains(e.target) && !resultsDiv.contains(e.target)) {
+                resultsDiv.style.display = 'none';
+            }
+        });
+
         function setActiveNav(el) {
             document.querySelectorAll('.mobile-nav-item').forEach(i => i.classList.remove('active'));
             el.classList.add('active');
