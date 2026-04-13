@@ -2154,12 +2154,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     await worker.save();
                 } else {
                     const pdfBlob = await worker.outputPdf('blob');
-                    return new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result.split(',')[1]);
-                        reader.onerror = reject;
-                        reader.readAsDataURL(pdfBlob);
-                    });
+                    return await blobToBase64(pdfBlob);
                 }
             } catch (e) {
                 console.error("Génération PDF (Monolithique) échouée:", e);
@@ -2261,8 +2256,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     document.body.removeChild(a);
                     URL.revokeObjectURL(url);
                 } else {
-                    const binary = String.fromCharCode(...new Uint8Array(finalPdfBytes));
-                    return btoa(binary);
+                    return uint8ArrayToBase64(finalPdfBytes);
                 }
             } catch (e) {
                 console.error("Génération PDF échouée:", e);
@@ -2281,6 +2275,26 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 copiedPages.forEach((page) => mergedPdf.addPage(page));
             }
             return await mergedPdf.save();
+        }
+
+        // Utilitaires robustes pour Base64 (évite Maximum call stack size exceeded)
+        function uint8ArrayToBase64(uint8) {
+            let binary = '';
+            const len = uint8.byteLength;
+            const chunk = 8192; // Traiter par blocs de 8Ko
+            for (let i = 0; i < len; i += chunk) {
+                binary += String.fromCharCode.apply(null, uint8.subarray(i, i + chunk));
+            }
+            return btoa(binary);
+        }
+
+        function blobToBase64(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
         }
 
         async function genererPDFBase64() {
