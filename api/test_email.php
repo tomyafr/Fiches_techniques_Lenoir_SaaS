@@ -80,12 +80,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_test'])) {
             $decoded = json_decode($response, true);
             $errMsg = $decoded['message'] ?? "Code HTTP $httpCode";
             
-            // Check if it returned a simulation URL (handled by our new backend logic)
-            if (isset($decoded['simulation_url'])) {
+            // Check if it returned a simulation HTML (handled by our new backend logic)
+            if (isset($decoded['simulation_html'])) {
+                $jsHtml = json_encode($decoded['simulation_html']);
                 $result = [
                     'ok' => true, 
-                    'msg' => "🧪 <strong>SIMULATION :</strong> " . $decoded['message'] . " <br><br><a href='{$decoded['simulation_url']}' target='_blank' class='btn' style='display:inline-block; margin-top:10px; background:#ffb300; color:#020617;'>👁️ Voir la simulation</a>",
-                    'sim_url' => $decoded['simulation_url']
+                    'msg' => "🧪 <strong>SIMULATION :</strong> " . $decoded['message'] . " <br><br><button onclick='showSim()' class='btn' style='display:inline-block; margin-top:10px; background:#ffb300; color:#020617; border:none; cursor:pointer;'>👁️ Voir la simulation</button><script>function showSim(){ const sw=window.open(\"\",\"_blank\"); sw.document.write($jsHtml); sw.document.close(); }</script>",
+                    'sim_html' => $decoded['simulation_html']
                 ];
             } else {
                 if (!empty($decoded['errors'])) {

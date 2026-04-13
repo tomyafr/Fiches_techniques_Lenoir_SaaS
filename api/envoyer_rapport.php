@@ -540,18 +540,11 @@ function sendViaPHPMailerOrNative(
 }
 
 /**
- * SIMULATION : Sauvegarde l'email dans un fichier HTML pour prévisualisation.
+ * SIMULATION : Retourne l'email dans la réponse pour prévisualisation.
  */
 function saveToSimulation($clientName, $subject, $html, $pdfBase64, $pdfFilename): array {
-    $tmpDir = __DIR__ . '/../tmp/simulations';
-    if (!is_dir($tmpDir)) {
-        @mkdir($tmpDir, 0777, true);
-    }
-
-    $simId = time() . '_' . bin2hex(random_bytes(4));
-    $filePath = "{$tmpDir}/sim_{$simId}.html";
-
     // On crée une petite page pour voir à la fois le mail et un lien vers le PDF
+    // On l'envoie directement en string car le FS Vercel est read-only
     $previewHtml = "
     <!DOCTYPE html>
     <html>
@@ -589,15 +582,10 @@ function saveToSimulation($clientName, $subject, $html, $pdfBase64, $pdfFilename
     </html>
     ";
 
-    @file_put_contents($filePath, $previewHtml);
-    
-    // URL relative pour le retour
-    $url = "/tmp/simulations/sim_{$simId}.html";
-
     return [
         'success' => true, 
         'message' => '🧪 Mode Simulation : Le mail n\'a pas été envoyé réellement (aucun service configuré), mais vous pouvez voir le rendu ci-dessous.',
-        'simulation_url' => $url,
+        'simulation_html' => $previewHtml,
         'email' => 'Simulation @ ' . ($clientName ?: 'Client')
     ];
 }

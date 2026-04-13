@@ -2317,22 +2317,42 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         function afficherToast(message, type = 'success') {
             const toast = document.getElementById('emailToast');
             if (!toast) return;
-            toast.textContent = message;
+            
+            let icon = '🔔';
+            let bg = 'rgba(16,185,129,0.1)';
+            let border = 'rgba(16,185,129,0.3)';
+            let color = '#10b981';
+
             if (type === 'success') {
-                toast.style.background = 'rgba(16,185,129,0.2)';
-                toast.style.border = '1px solid rgba(16,185,129,0.5)';
-                toast.style.color = '#10b981';
+                icon = '✅';
+                bg = 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15))';
+                border = 'rgba(16, 185, 129, 0.4)';
+                color = '#10b981';
             } else if (type === 'warning') {
-                toast.style.background = 'rgba(245,158,11,0.2)';
-                toast.style.border = '1px solid rgba(245,158,11,0.5)';
-                toast.style.color = '#f59e0b';
+                icon = '📶';
+                bg = 'linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.15))';
+                border = 'rgba(245, 158, 11, 0.4)';
+                color = '#f59e0b';
             } else {
-                toast.style.background = 'rgba(244,63,94,0.2)';
-                toast.style.border = '1px solid rgba(244,63,94,0.5)';
-                toast.style.color = '#f43f5e';
+                icon = '❌';
+                bg = 'linear-gradient(135deg, rgba(244, 63, 94, 0.15), rgba(225, 29, 72, 0.15))';
+                border = 'rgba(244, 63, 94, 0.4)';
+                color = '#f43f5e';
             }
+
+            toast.innerHTML = `<div style="display:flex; align-items:center; gap:12px; text-align:left;">
+                <span style="font-size:1.4rem;">${icon}</span>
+                <span style="flex:1;">${message}</span>
+            </div>`;
+            
             toast.style.display = 'block';
-            // Scroll vers le toast
+            toast.style.background = bg;
+            toast.style.border = `1px solid ${border}`;
+            toast.style.color = color;
+            toast.style.padding = '1.25rem';
+            toast.style.backdropFilter = 'blur(10px)';
+            toast.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+            
             toast.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
@@ -2456,7 +2476,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         client_email: clientEmail,
                         csrf_token: csrfToken,
                     });
-                    afficherToast('📶 Hors-ligne – email mis en file d\'attente. Il sera envoyé automatiquement à la reconnexion.', 'warning');
+                    afficherToast('Connexion hors-ligne – email mis en file d\'attente. Il sera envoyé automatiquement à la reconnexion.', 'warning');
                 } catch (e) {
                     afficherToast('❌ Impossible de mettre l\'email en file d\'attente.', 'error');
                 }
@@ -2470,12 +2490,16 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             try {
                 const result = await envoyerParAPI(interventionId, pdfBase64, clientEmail, csrfToken);
                 if (result.success) {
-                    if (result.simulation_url) {
+                    if (result.simulation_html) {
                         afficherToast('🧪 ' + result.message, 'warning');
                         if (btn) {
                             btn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
                             btn.innerHTML = '<span>👁️</span> Voir la Simulation';
-                            btn.onclick = () => window.open(result.simulation_url, '_blank');
+                            btn.onclick = () => {
+                                const sw = window.open('', '_blank');
+                                sw.document.write(result.simulation_html);
+                                sw.document.close();
+                            };
                             btn.disabled = false;
                         }
                     } else {
@@ -2500,7 +2524,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         client_email: clientEmail,
                         csrf_token: csrfToken,
                     });
-                    afficherToast('📶 Connexion perdue – email mis en file d\'attente. Il sera envoyé à la reconnexion.', 'warning');
+                    afficherToast('Connexion affaiblie – email mis en file d\'attente. Il sera envoyé automatiquement dès que possible.', 'warning');
                 } catch (qe) {
                     afficherToast('❌ Erreur réseau et impossible de mettre en file : ' + e.message, 'error');
                 }
