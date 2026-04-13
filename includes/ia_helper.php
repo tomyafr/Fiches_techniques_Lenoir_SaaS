@@ -155,7 +155,25 @@ function extractIssuesFromDonnees($donnees) {
         'slt_commutateur1' => 'Position commutateur vibrant 1',
         'slt_commutateur2' => 'Position commutateur vibrant 2',
         'slt_volet1_gauche' => 'Réglage volet 1 Gauche',
-        'slt_volet3_droite' => 'Réglage volet 3 Droite'
+        'slt_volet3_droite' => 'Réglage volet 3 Droite',
+        // SEPARATEUR A PLAQUES MAGNETIQUES SPM
+        'spm_satisfaction' => 'Satisfaction de fonctionnement',
+        'spm_aspect' => 'Aspect général',
+        'spm_etanch_plaques' => 'Étanchéité des plaques',
+        'spm_etanch_brides' => 'Étanchéité des brides',
+        'spm_charnieres' => 'Charnières et verrouillage',
+        'spm_nettoyage' => 'Nettoyage (manuel/vérin)',
+        'spm_induction_p1_stat' => 'Contrôle induction P1 (centre)',
+        'spm_induction_p2_stat' => 'Contrôle induction P2 (bord largeur)',
+        'spm_induction_p3_stat' => 'Contrôle induction P3 (bord longueur)',
+        'spm_dist_ecrou_stat' => 'Distance attraction Ecrou M4',
+        'spm_dist_rond50_stat' => 'Distance attraction Rond Ø6 Lg50',
+        'spm_dist_rond100_stat' => 'Distance attraction Rond Ø6 Lg100',
+        'spm_dist_bille_stat' => 'Distance attraction Bille Ø20',
+        'spm_aimants' => 'Type d\'aimants (Ferrite/Néodyme)',
+        'spm_temperature' => 'Température d\'utilisation',
+        'spm_v_separation' => 'V de séparation',
+        'spm_ressauts' => 'Ressauts'
     ];
 
     $issues = ['aa' => [], 'nc' => [], 'nr' => []];

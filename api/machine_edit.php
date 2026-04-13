@@ -82,6 +82,7 @@ $isSGCP = strpos($designation, 'SGCP') !== false || strpos($designation, 'SGCM')
 $isSGA = (strpos($designation, 'SGA') !== false || strpos($designation, 'GRILLE') !== false) && !$isSGCP;
 $isSGSA = strpos($designation, 'SGSA') !== false;
 $isSLT = strpos($designation, 'SLT') !== false;
+$isSPM = strpos($designation, 'SPM') !== false;
 
 // Temps prévisionnel par type
 if ($isEDX)
@@ -104,6 +105,8 @@ elseif ($isSGA)
     $tempsPrev = '3h30';
 elseif ($isSLT)
     $tempsPrev = '2h00';
+elseif ($isSPM)
+    $tempsPrev = '0h20';
 else
     $tempsPrev = '1h00';
 
@@ -173,6 +176,8 @@ TYPES D'ÉQUIPEMENTS LENOIR-MEC :
 - TAP / PAP : Tambour ou Poulie à Aimants Permanents
 - Levage : Électroaimants de levage industriel
 - SLT : Séparateur à Haute Intensité
+- PM / PML / PMN / PMNL : Plaques Magnétiques (séparation manuelle)
+- SPM : Séparateur à Plaques Magnétiques
 
 RÈGLE DE PRIORITÉ :
 - Si N.R > 0 → Priorité : URGENT (remplacement de pièce nécessaire)
@@ -1011,10 +1016,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <input type="text" name="numero_of" value="<?= htmlspecialchars($machine['numero_of']) ?>"
                                 class="pdf-input" required placeholder="ex: 123456" autocomplete="off">
                         </td>
-                        <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Année <span style="color:var(--error);">*</span></td>
+                        <td style="font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">Désignation</td>
                         <td style="border:1px solid #000; padding:6px;">
-                            <input type="number" name="annee_fabrication" value="<?= htmlspecialchars($machine['annee_fabrication']) ?>"
-                                class="pdf-input" required min="1900" max="<?= date('Y') + 1 ?>" placeholder="AAAA" autocomplete="off">
+                            <input type="text" value="<?= htmlspecialchars($machine['designation']) ?>"
+                                class="pdf-input" readonly style="background:#f9f9f9;">
                         </td>
                     </tr>
                     <tr>
@@ -2064,12 +2069,153 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
 
-                    <div style="display: flex; justify-content: space-around; align-items: flex-start; margin-top: 20px; gap: 10px;">
-                        <div style="width: 48%; text-align: center;">
-                            <img src="/assets/machines/slt_photo.png" style="max-width: 100%; height: auto; border: 1px solid #ccc;" alt="Photo SLT" onerror="this.style.display='none'">
+                    <div style="text-align:center; margin-top:30px;">
+                        <div style="margin-bottom:25px;">
+                            <img src="/assets/machines/slt_photo.png" style="max-width:90%; height:auto; border:1px solid #ccc; display:block; margin:0 auto;" alt="Photo SLT" onerror="this.style.display='none'">
                         </div>
-                        <div style="width: 48%; text-align: center;">
-                            <img src="/assets/machines/slt_diagram.png" style="max-width: 100%; height: auto;" alt="Schéma SLT" onerror="this.style.display='none'">
+                        <div>
+                            <img src="/assets/machines/slt_diagram.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma SLT" onerror="this.style.display='none'">
+                        </div>
+                    </div>
+
+                <?php elseif ($isSPM): ?>
+
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
+                        <thead>
+                            <?= renderDiagonalHeader(3) ?>
+                        </thead>
+                        <tbody>
+                            <?= renderSectionHeader("Plaques Magnétiques type PM/PML/PMN/PMNL", 3) ?>
+                            <?= renderAprfRow("Satisfaction de fonctionnement", "spm_satisfaction", $donnees) ?>
+                            <?= renderAprfRow("Aspect général", "spm_aspect", $donnees) ?>
+                            <?= renderAprfRow("Etanchéité des plaques", "spm_etanch_plaques", $donnees) ?>
+                            <?= renderAprfRow("Etanchéité des brides", "spm_etanch_brides", $donnees) ?>
+                            <?= renderAprfRow("Etat des charnières et du verrouillage", "spm_charnieres", $donnees) ?>
+                            <?= renderAprfRow("Nettoyage manuel ou avec vérin", "spm_nettoyage", $donnees) ?>
+
+                            <tr>
+                                <th colspan="3" style="background:#e0e0e0; font-weight:bold; font-size:11px; border-top: 1px solid #000; border-bottom: 1px solid #000; padding:4px;">Contrôle d’induction :</th>
+                            </tr>
+                            <?php 
+                            $inductions = [
+                                'p1' => ['label' => 'P1 =', 'suffix' => 'Gauss (centre)'],
+                                'p2' => ['label' => 'P2 =', 'suffix' => 'Gauss (bord largeur)'],
+                                'p3' => ['label' => 'P3 =', 'suffix' => 'Gauss (bord longueur)']
+                            ];
+                            foreach($inductions as $ikey => $idata): ?>
+                            <tr>
+                                <td style="padding:4px; padding-left:25px; font-size:11px; width:35%;">
+                                    <span style="font-weight:bold; margin-right:5px;">➤</span> <?= $idata['label'] ?> 
+                                    <input type="text" name="mesures[spm_induction_<?= $ikey ?>]" value="<?= htmlspecialchars($mesures['spm_induction_' . $ikey] ?? '') ?>" style="width:50px; border:none; border-bottom:1px dashed #000; text-align:center; font-weight:bold; font-size:11px;" autocomplete="off"> 
+                                    <?= $idata['suffix'] ?>
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("spm_induction_" . $ikey . "_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0; width:35%;"><textarea name="donnees[spm_induction_<?= $ikey ?>_stat_comment]" class="pdf-textarea" style="height:25px; border:none; width:100%; box-sizing:border-box; padding:4px;" placeholder="Commentaires..."><?= htmlspecialchars($donnees["spm_induction_" . $ikey . "_stat_comment"] ?? '') ?></textarea></td>
+                            </tr>
+                            <?php endforeach; ?>
+
+                            <tr>
+                                <th colspan="3" style="background:#e0e0e0; font-weight:bold; font-size:11px; border-top: 1px solid #000; border-bottom: 1px solid #000; padding:4px;">Distance d'attraction :</th>
+                            </tr>
+                            <?php 
+                            $distances = [
+                                'ecrou' => 'Ecrou M4 =',
+                                'rond50' => 'Rond Ø6 Lg50 =',
+                                'rond100' => 'Rond Ø6 Lg100 =',
+                                'bille' => 'Bille Ø20 ='
+                            ];
+                            foreach($distances as $dkey => $dlabel): ?>
+                            <tr>
+                                <td style="padding:4px; padding-left:25px; font-size:11px;">
+                                    <span style="font-weight:bold; margin-right:5px;">➤</span> <?= $dlabel ?> 
+                                    <input type="text" name="mesures[spm_dist_<?= $dkey ?>]" value="<?= htmlspecialchars($mesures['spm_dist_' . $dkey] ?? '') ?>" style="width:50px; border:none; border-bottom:1px dashed #000; text-align:center; font-weight:bold; font-size:11px;" autocomplete="off"> mm
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
+                                    <?= renderEtatRadios("spm_dist_" . $dkey . "_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[spm_dist_<?= $dkey ?>_stat_comment]" class="pdf-textarea" style="height:25px; border:none; width:100%; box-sizing:border-box; padding:4px;" placeholder="Commentaires..."><?= htmlspecialchars($donnees["spm_dist_" . $dkey . "_stat_comment"] ?? '') ?></textarea></td>
+                            </tr>
+                            <?php endforeach; ?>
+
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">Type d'aimants : Ferrite / Néodyme</td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
+                                    <?= renderEtatRadios("spm_aimants", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[spm_aimants_comment]" class="pdf-textarea" style="height:35px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees['spm_aimants_comment'] ?? '') ?></textarea></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Température d'utilisation : Ambiante / Haute : 
+                                    <input type="text" name="mesures[spm_temp_valeur]" value="<?= htmlspecialchars($mesures['spm_temp_valeur'] ?? '') ?>" style="width:50px; border:none; border-bottom:1px solid #000; text-align:center;"> °C
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
+                                    <?= renderEtatRadios("spm_temperature", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[spm_temperature_comment]" class="pdf-textarea" style="height:35px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees['spm_temperature_comment'] ?? '') ?></textarea></td>
+                            </tr>
+                            <?= renderAprfRow("Etat du V de séparation", "spm_v_separation", $donnees) ?>
+                            <?= renderAprfRow("Etat des ressauts (option)", "spm_ressauts", $donnees) ?>
+
+                            <?= renderSectionHeader("APPLICATION CLIENT", 3) ?>
+                            <tr>
+                                <td style="padding:8px; font-weight:bold; font-size:11px;">
+                                    Type de produit : 
+                                    <input type="text" name="mesures[spm_produit]" value="<?= htmlspecialchars($mesures['spm_produit'] ?? '') ?>" class="pdf-input" style="width:120px; font-weight:bold;">
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("spm_produit_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:8px; font-size:10px; color:#555;">
+                                    Aciers de <input type="text" name="mesures[spm_acier_min]" value="<?= htmlspecialchars($mesures['spm_acier_min'] ?? '') ?>" style="width:30px; border:none; border-bottom:1px dashed #333; text-align:center;"> à <input type="text" name="mesures[spm_acier_max]" value="<?= htmlspecialchars($mesures['spm_acier_max'] ?? '') ?>" style="width:30px; border:none; border-bottom:1px dashed #333; text-align:center;"> mm
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Granulométrie : 
+                                    <input type="text" name="mesures[spm_granulo]" value="<?= htmlspecialchars($mesures['spm_granulo'] ?? '') ?>" style="width:70px; border:none; border-bottom:1px solid #000; text-align:center;"> mm
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("spm_granulo_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[spm_granulo_comment]" class="pdf-textarea" style="height:35px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees['spm_granulo_comment'] ?? '') ?></textarea></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">
+                                    Débit : 
+                                    <input type="text" name="mesures[spm_debit]" value="<?= htmlspecialchars($mesures['spm_debit'] ?? '') ?>" style="width:70px; border:none; border-bottom:1px solid #000; text-align:center;"> t/h
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("spm_debit_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:8px; font-size:10px; color:#555;">
+                                    Avec densité de <input type="text" name="mesures[spm_densite]" value="<?= htmlspecialchars($mesures['spm_densite'] ?? '') ?>" style="width:60px; border:none; border-bottom:1px dashed #000; text-align:center;">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px; font-weight:bold;">Environnement Atex ?</td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("spm_atex_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="mesures[spm_atex]" class="pdf-textarea" style="height:35px; border:none; width:100%; box-sizing:border-box; padding:4px;" placeholder="Non - Oui (Préciser)"><?= htmlspecialchars($mesures['spm_atex'] ?? '') ?></textarea></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="text-align:center; margin-top:30px;">
+                        <div style="margin-bottom:10px;">
+                            <h3 style="font-size:16px; text-transform:uppercase; border-bottom:2px solid #000; display:inline-block; padding-bottom:5px;">Séparateur à Plaques Magnétiques</h3>
+                        </div>
+                        <div style="margin-bottom:25px;">
+                            <img src="/assets/machines/spm_schema1.png" style="max-width:100%; height:auto;" alt="Schéma vue technique SPM" onerror="this.style.display='none'">
+                        </div>
+                        <div style="margin-bottom:25px;">
+                            <img src="/assets/machines/spm_schema2.png" style="max-width:100%; height:auto;" alt="Schéma assemblage SPM" onerror="this.style.display='none'">
+                        </div>
+                        <div>
+                            <img src="/assets/machines/spm_photo.png" style="max-width:90%; height:auto; border:1px solid #ccc; display:block; margin:0 auto;" alt="Photo SPM" onerror="this.style.display='none'">
                         </div>
                     </div>
 

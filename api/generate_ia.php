@@ -122,6 +122,7 @@ TYPES D'ÉQUIPEMENTS LENOIR-MEC :
 - Levage : Électroaimants de levage industriel
 - PM / PML / PMN / PMNL : Plaques Magnétiques (séparation manuelle)
 - SLT : Séparateur à Haute Intensité
+- SPM : Séparateur à Plaques Magnétiques
 
 RÈGLE DE PRIORITÉ :
 - Si N.R > 0 → Priorité : URGENT (remplacement de pièce nécessaire)
