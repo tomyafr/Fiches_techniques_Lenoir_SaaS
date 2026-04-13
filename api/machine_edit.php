@@ -982,6 +982,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     Electroaimants de Levage
                                 <?php elseif ($isSPM): ?>
                                     Séparateur à Plaques Magnétiques SPM
+                                <?php elseif ($isSLT): ?>
+                                    Séparateur haute intensité SLT
                                 <?php else: ?>
                                     <?= htmlspecialchars(strtoupper(str_replace(['RDE', '*'], ['RD', ''], $machine['designation']))) ?>
                                 <?php endif; ?>
