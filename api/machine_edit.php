@@ -2234,11 +2234,11 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </table>
 
                     <div style="text-align:center; margin-top:30px;">
-                        <div style="margin-bottom:25px;">
+                        <div style="margin-bottom:25px; border:2px solid #ff6600; padding:15px; display:inline-block; background-color:#fff; box-shadow:0 4px 8px rgba(0,0,0,0.1);">
                             <img src="/assets/machines/spm_diagram_composite.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma Composite SPM" onerror="this.src='/assets/machines/spm_diagram.png'">
                         </div>
-                        <div>
-                            <img src="/assets/machines/spm_photo.png" style="max-width:90%; height:auto; border:1px solid #ccc; display:block; margin:0 auto;" alt="Photo SPM" onerror="this.style.display='none'">
+                        <div style="margin-top:20px; border:2px solid #ff6600; padding:15px; display:inline-block; background-color:#fff; box-shadow:0 4px 8px rgba(0,0,0,0.1);">
+                            <img src="/assets/machines/spm_photo.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Photo SPM" onerror="this.style.display='none'">
                         </div>
                     </div>
 
