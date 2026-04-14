@@ -1377,9 +1377,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .pdf-table, table.controles { 
                     page-break-inside: auto !important; 
                 }
-                .pdf-table tr, table.controles tr { 
+                .pdf-table tr, table.controles tr, .can-split tr { 
                     page-break-inside: avoid !important; 
                     page-break-after: auto !important;
+                }
+                .can-split {
+                    page-break-inside: auto !important;
                 }
                 .pdf-section {
                     margin-bottom: 15px;
@@ -1636,8 +1639,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
 
                 <!-- TABLEAU PARC MACHINE -->
-                <div style="margin-top: 20px;">
-                    <table style="width:100%; border-collapse:collapse; border: 2px solid #1e4e6d; font-size:12px; font-family: Arial, sans-serif; page-break-inside: auto;">
+                <div style="margin-top: 10px;">
+                    <table class="can-split" style="width:100%; border-collapse:collapse; border: 2px solid #1e4e6d; font-size:12px; font-family: Arial, sans-serif;">
                         <tr style="page-break-inside: avoid; page-break-after: avoid;">
                             <td colspan="5" style="background-color: #5b9bd5; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 6px; border: 1px solid #000;">
                                 PARC MACHINE
@@ -1651,7 +1654,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 10%;">Année</td>
                         </tr>
                         ${window.LM_RAPPORT.machinesData.map((m, idx) => `
-                            <tr style="page-break-inside: avoid;">
+                            <tr style="page-break-inside: avoid; break-inside: avoid;">
                                 <td style="text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000;">${m.poste || (idx + 1)}</td>
                                 <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.arc || '—'} ${m.of ? ' - ' + m.of : ''}</td>
                                 <td style="padding: 6px; border: 1px solid #000;">${m.designation || '—'}</td>
@@ -2139,7 +2142,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 1.5, useCORS: true, logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.levage-diagram-container'] }
+                    pagebreak: { mode: 'css', avoid: ['img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.levage-diagram-container'] }
                 };
 
                 const worker = html2pdf().set(opt).from(container);
@@ -2192,7 +2195,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 1.5, useCORS: true, logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.levage-diagram-container'] }
+                    pagebreak: { mode: 'css', avoid: ['img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.levage-diagram-container'] }
                 };
 
                 // 1. CHUNK INTRO
