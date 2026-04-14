@@ -353,6 +353,7 @@ $machines = $stmtMach->fetchAll();
                         <option value="PLAQUES MAGNÉTIQUES PM">PLAQUES MAGNÉTIQUES PM</option>
                         <option value="Séparateur haute intensité SLT">Séparateur haute intensité SLT</option>
                         <option value="Séparateur à plaques magnétiques SPM">Séparateur à plaques magnétiques SPM</option>
+                        <option value="Séparateur à cône magnétique SRM">Séparateur à cône magnétique SRM</option>
                     </select>
                 </div>
 

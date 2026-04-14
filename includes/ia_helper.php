@@ -156,6 +156,8 @@ function extractIssuesFromDonnees($donnees) {
         'slt_commutateur2' => 'Position commutateur vibrant 2',
         'slt_volet1_gauche' => 'Réglage volet 1 Gauche',
         'slt_volet3_droite' => 'Réglage volet 3 Droite',
+        'slt_etabli_p3_stat' => 'Induction P3 après nettoyage',
+        'slt_temp_stat' => 'Température d\'utilisation',
         // SEPARATEUR A PLAQUES MAGNETIQUES SPM
         'spm_satisfaction' => 'Satisfaction de fonctionnement',
         'spm_aspect' => 'Aspect général',
@@ -173,7 +175,20 @@ function extractIssuesFromDonnees($donnees) {
         'spm_aimants' => 'Type d\'aimants (Ferrite/Néodyme)',
         'spm_temperature' => 'Température d\'utilisation',
         'spm_v_separation' => 'V de séparation',
-        'spm_ressauts' => 'Ressauts'
+        'spm_ressauts' => 'Ressauts',
+        // SRM
+        'srm_satisfaction' => 'Satisfaction de fonctionnement',
+        'srm_aspect' => 'Aspect général',
+        'srm_etanch_porte' => 'Étanchéité de la porte',
+        'srm_detecteur' => 'Détecteur d\'ouverture',
+        'srm_etanch_brides' => 'Étanchéité des brides',
+        'srm_charnieres' => 'Charnières et verrouillage',
+        'srm_induction_p1_stat' => 'Contrôle induction P1',
+        'srm_induction_p2_stat' => 'Contrôle induction P2',
+        'srm_induction_p3_stat' => 'Contrôle induction P3',
+        'srm_aimants' => 'Type d\'aimants (Ferrite/Néodyme)',
+        'srm_temperature' => 'Température d\'utilisation',
+        'srm_cone_separation' => 'Cône de séparation',
     ];
 
     $issues = ['aa' => [], 'nc' => [], 'nr' => []];

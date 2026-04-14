@@ -76,14 +76,15 @@ $isAPRF = strpos($designation, 'APRF') !== false || strpos($designation, 'RD') !
 $isEDX = strpos($designation, 'ED-X') !== false || strpos($designation, 'FOUCAULT') !== false;
 $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') === false;
 $isOVAP = $isOV && strpos($designation, 'OVAP') !== false;
-$isLevage = (strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AIMANT') !== false) && !$isAPRF && !$isPAP;
 $isPAP = strpos($designation, 'À AIMANTS PERMANENTS') !== false || strpos($designation, 'TAP/PAP') !== false || strpos($designation, 'PAP') !== false || strpos($designation, 'TAP') !== false;
+$isLevage = (strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AIMANT') !== false) && !$isAPRF && !$isPAP;
 $isSPM = strpos($designation, 'SPM') !== false;
 $isPM = strpos($designation, 'PM') !== false && strpos($designation, 'PLAQUE') !== false && !$isSPM;
 $isSGCP = strpos($designation, 'SGCP') !== false || strpos($designation, 'SGCM') !== false;
 $isSGA = (strpos($designation, 'SGA') !== false || strpos($designation, 'GRILLE') !== false) && !$isSGCP;
 $isSGSA = strpos($designation, 'SGSA') !== false;
 $isSLT = strpos($designation, 'SLT') !== false;
+$isSRM = strpos($designation, 'SRM') !== false || strpos($designation, 'CÔNE') !== false || strpos($designation, 'CONE') !== false;
 
 // Temps prévisionnel par type
 if ($isEDX)
@@ -98,15 +99,17 @@ elseif ($isLevage)
     $tempsPrev = '1h30';
 elseif ($isPM)
     $tempsPrev = '0h20';
+elseif ($isSPM)
+    $tempsPrev = '0h20';
 elseif ($isSGCP)
-    $tempsPrev = '3h00';
-elseif ($isSGSA)
     $tempsPrev = '3h00';
 elseif ($isSGA)
     $tempsPrev = '3h30';
+elseif ($isSGSA)
+    $tempsPrev = '3h00';
 elseif ($isSLT)
     $tempsPrev = '2h00';
-elseif ($isSPM)
+elseif ($isSRM)
     $tempsPrev = '0h20';
 else
     $tempsPrev = '1h00';
@@ -2236,6 +2239,141 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </div>
                         <div>
                             <img src="/assets/machines/spm_photo.png" style="max-width:90%; height:auto; border:1px solid #ccc; display:block; margin:0 auto;" alt="Photo SPM" onerror="this.style.display='none'">
+                        </div>
+                    </div>
+
+                <?php elseif ($isSRM): ?>
+                    <table class="pdf-table controles" style="font-size:11px; margin-top:0;">
+                        <thead>
+                            <?= renderDiagonalHeader(3) ?>
+                        </thead>
+                        <tbody>
+                            <?= renderSectionHeader("Cône magnétique", 3) ?>
+                            <?= renderAprfRow("Satisfaction de fonctionnement", "srm_satisfaction", $donnees) ?>
+                            <?= renderAprfRow("Aspect général", "srm_aspect", $donnees) ?>
+                            <?= renderAprfRow("Étanchéité de la porte", "srm_etanch_porte", $donnees) ?>
+                            <tr>
+                                <td style="padding:4px; font-weight:bold;">Présence d'un détecteur d'ouverture OUI / NON</td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                    <div style="display:flex; justify-content:center; gap:10px; font-size:10px;">
+                                        <label><input type="radio" name="mesures[srm_detecteur]" value="non" <?= ($mesures['srm_detecteur'] ?? '') === 'non' ? 'checked' : '' ?>> Non</label>
+                                        <label><input type="radio" name="mesures[srm_detecteur]" value="oui" <?= ($mesures['srm_detecteur'] ?? '') === 'oui' ? 'checked' : '' ?>> Oui</label>
+                                    </div>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[srm_detecteur_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($donnees["srm_detecteur_comment"] ?? '') ?></textarea></td>
+                            </tr>
+                            <?= renderAprfRow("Étanchéité des brides Sup + Inf", "srm_etanch_brides", $donnees) ?>
+                            <?= renderAprfRow("Etat des charnières et du verrouillage", "srm_charnieres", $donnees) ?>
+
+                            <?= renderSectionHeader("Contrôle d'induction :", 3) ?>
+                            <tr>
+                                <td style="padding:4px; font-weight:bold;">➤ P1 = <input type="text" name="mesures[srm_induction_p1]" value="<?= htmlspecialchars($mesures['srm_induction_p1'] ?? '') ?>" class="pdf-input" style="width:100px; text-align:center;" autocomplete="off"> Gauss</td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                    <?= renderEtatRadios("srm_induction_p1_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[srm_induction_p1_stat_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($donnees["srm_induction_p1_stat_comment"] ?? '') ?></textarea></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px; font-weight:bold;">➤ P2 = <input type="text" name="mesures[srm_induction_p2]" value="<?= htmlspecialchars($mesures['srm_induction_p2'] ?? '') ?>" class="pdf-input" style="width:100px; text-align:center;" autocomplete="off"> Gauss</td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                    <?= renderEtatRadios("srm_induction_p2_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[srm_induction_p2_stat_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($donnees["srm_induction_p2_stat_comment"] ?? '') ?></textarea></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px; font-weight:bold;">➤ P3 = <input type="text" name="mesures[srm_induction_p3]" value="<?= htmlspecialchars($mesures['srm_induction_p3'] ?? '') ?>" class="pdf-input" style="width:100px; text-align:center;" autocomplete="off"> Gauss</td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                    <?= renderEtatRadios("srm_induction_p3_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[srm_induction_p3_stat_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($donnees["srm_induction_p3_stat_comment"] ?? '') ?></textarea></td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding:4px; font-weight:bold;">Type d'aimants : Ferrite / Néodyme</td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                    <div style="display:flex; justify-content:center; gap:10px; font-size:10px;">
+                                        <label><input type="radio" name="mesures[srm_aimants]" value="ferrite" <?= ($mesures['srm_aimants'] ?? '') === 'ferrite' ? 'checked' : '' ?>> Ferrite</label>
+                                        <label><input type="radio" name="mesures[srm_aimants]" value="neodyme" <?= ($mesures['srm_aimants'] ?? '') === 'neodyme' ? 'checked' : '' ?>> Néodyme</label>
+                                    </div>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[srm_aimants_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($donnees["srm_aimants_comment"] ?? '') ?></textarea></td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding:4px; font-weight:bold;">Température d'utilisation : Ambiante / Haute : <input type="text" name="mesures[srm_temp_valeur]" value="<?= htmlspecialchars($mesures['srm_temp_valeur'] ?? '') ?>" style="width:30px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off"> °C</td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                    <div style="display:flex; justify-content:center; gap:10px; font-size:10px;">
+                                        <label><input type="radio" name="mesures[srm_temperature]" value="ambiante" <?= ($mesures['srm_temperature'] ?? '') === 'ambiante' ? 'checked' : '' ?>> Amb.</label>
+                                        <label><input type="radio" name="mesures[srm_temperature]" value="haute" <?= ($mesures['srm_temperature'] ?? '') === 'haute' ? 'checked' : '' ?>> Haute</label>
+                                    </div>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[srm_temperature_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($donnees["srm_temperature_comment"] ?? '') ?></textarea></td>
+                            </tr>
+
+                            <?= renderAprfRow("Etat du cône de séparation", "srm_cone_separation", $donnees) ?>
+
+                            <?= renderSectionHeader("APPLICATION CLIENT", 3) ?>
+                            <tr>
+                                <td style="padding:4px; font-weight:bold; width:35%;">
+                                    Type de produit : 
+                                    <input type="text" name="mesures[srm_produit]" value="<?= htmlspecialchars($mesures['srm_produit'] ?? '') ?>" class="pdf-input" style="width:150px;" autocomplete="off">
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
+                                    <?= renderEtatRadios("srm_produit_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:4px; font-size:11px; color:#555;">
+                                    Aciers de <input type="text" name="mesures[srm_prod_min]" value="<?= htmlspecialchars($mesures['srm_prod_min'] ?? '') ?>" style="width:25px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off"> à <input type="text" name="mesures[srm_prod_max]" value="<?= htmlspecialchars($mesures['srm_prod_max'] ?? '') ?>" style="width:25px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off"> mm
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px; font-weight:bold;">
+                                    Granulométrie : 
+                                    <input type="text" name="mesures[srm_granulo]" value="<?= htmlspecialchars($mesures['srm_granulo'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;" autocomplete="off"> mm
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                    <?= renderEtatRadios("srm_granulo_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:0;"><textarea name="donnees[srm_granulo_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($donnees["srm_granulo_comment"] ?? '') ?></textarea></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px; font-weight:bold;">
+                                    Débit : 
+                                    <input type="text" name="mesures[srm_debit]" value="<?= htmlspecialchars($mesures['srm_debit'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;" autocomplete="off"> t/h
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                    <?= renderEtatRadios("srm_debit_stat", $donnees, 3) ?>
+                                </td>
+                                <td style="padding:4px; font-size:11px; color:#555;">
+                                    Avec densité de <input type="text" name="mesures[srm_densite]" value="<?= htmlspecialchars($mesures['srm_densite'] ?? '') ?>" style="width:50px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding:4px; font-weight:bold;">
+                                    Environnement Atex ?
+                                </td>
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                    <div style="display:flex; justify-content:center; gap:10px; font-size:10px;">
+                                        <label><input type="radio" name="mesures[srm_atex]" value="non" <?= ($mesures['srm_atex'] ?? '') === 'non' ? 'checked' : '' ?>> Non</label>
+                                        <label><input type="radio" name="mesures[srm_atex]" value="oui" <?= ($mesures['srm_atex'] ?? '') === 'oui' ? 'checked' : '' ?>> Oui</label>
+                                    </div>
+                                </td>
+                                <td style="padding:4px;"><input type="text" name="mesures[srm_atex_precision]" value="<?= htmlspecialchars($mesures['srm_atex_precision'] ?? '') ?>" placeholder="Préciser..." style="width:100%; border:none; border-bottom:1px dashed #000; font-size:11px;" autocomplete="off"></td>
+                            </tr>
+
+                            <tr>
+                                <td style="padding:4px; font-weight:bold;">Commentaire général :</td>
+                                <td colspan="2" style="padding:0;">
+                                    <textarea name="mesures[srm_commentaire_general]" class="pdf-textarea" style="height:60px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($mesures["srm_commentaire_general"] ?? '') ?></textarea>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                    <div style="text-align:center; margin-top:30px;">
+                        <h3 style="font-size:16px; border-bottom:2px solid #000; display:inline-block; padding-bottom:5px;">SÉPARATEUR À CÔNE MAGNÉTIQUE SRM</h3>
+                        <div style="margin-top:20px;">
+                            <img src="/assets/machines/srm_photo.png" style="max-width:90%; height:auto; border:1px solid #ccc; display:block; margin:0 auto;" alt="Photo SRM" onerror="this.src='/assets/machines/srm_diagram.png'">
                         </div>
                     </div>
 
