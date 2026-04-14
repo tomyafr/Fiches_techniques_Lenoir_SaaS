@@ -2231,10 +2231,6 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </table>
 
                     <div style="text-align:center; margin-top:30px;">
-                        <div style="margin-bottom:10px;">
-                            <h3 style="font-size:16px; border-bottom:2px solid #000; display:inline-block; padding-bottom:5px;">SÉPARATEUR À PLAQUES MAGNÉTIQUES SPM</h3>
-                        </div>
-                        
                         <div style="margin-bottom:25px;">
                             <img src="/assets/machines/spm_diagram_composite.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma Composite SPM" onerror="this.src='/assets/machines/spm_diagram.png'">
                         </div>
