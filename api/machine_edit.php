@@ -70,14 +70,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// Robust uppercase for French accents
-function str_to_upper_fr($str) {
-    if (!$str) return '';
-    $from = ['é', 'è', 'ê', 'ë', 'à', 'â', 'î', 'ï', 'ô', 'û', 'ù', 'ç', 'ô'];
-    $to   = ['É', 'È', 'Ê', 'Ë', 'À', 'Â', 'Î', 'Ï', 'Ô', 'Û', 'Ù', 'Ç', 'Ô'];
-    $str = str_replace($from, $to, $str);
-    return strtoupper($str);
-}
 
 $designation = str_to_upper_fr(trim($machine['designation'] ?? ''));
 $isAPRF = strpos($designation, 'APRF') !== false || strpos($designation, 'RD') !== false;
@@ -952,7 +944,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 RETOUR
             </button>
             <span class="mobile-header-title" style="color: var(--primary); font-size: 0.9rem; font-weight: 700; position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap;">
-                <?= htmlspecialchars(mb_strtoupper(str_replace('*', '', $machine['designation']), 'UTF-8')) ?>
+                <?= htmlspecialchars(str_to_upper_fr(str_replace('*', '', $machine['designation'] ?? ''))) ?>
             </span>
             <div style="display:flex; gap:10px; align-items:center;">
                 <label style="color:white; font-size:0.8rem; display:flex; align-items:center; gap:5px; cursor:pointer; background:rgba(255,255,255,0.1); padding:5px 10px; border-radius:5px;">
@@ -1091,7 +1083,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     
                     $html = '
                     <div class="section-wrapper-pdf">
-                        <div class="pdf-section-title"><?= mb_strtoupper("B) DESCRIPTION DU MATERIEL :", 'UTF-8') ?></div>
+                        <div class="pdf-section-title">B) DESCRIPTION DU MATÉRIEL :</div>
                         <div id="description_materiel_montage">';
                     
                     // Si aucune photo et mode édition, on affiche le placeholder avec bouton
@@ -1202,7 +1194,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 function renderSectionC($isEDX, $isOV) {
                     ?>
                     <div class="section-wrapper-pdf">
-                        <div class="pdf-section-title"><?= mb_strtoupper("C) RAPPEL DES FRÉQUENCES DE NETTOYAGE ET DES DIFFÉRENTS POINTS DE CONTRÔLE :", 'UTF-8') ?></div>
+                        <div class="pdf-section-title"><?= str_to_upper_fr("C) RAPPEL DES FRÉQUENCES DE NETTOYAGE ET DES DIFFÉRENTS POINTS DE CONTRÔLE :") ?></div>
                         <img src="/assets/machines/frequences_tableau.png" style="width:100%; height:auto; border:2px solid #ed7d31;">
                     </div>
                     <?php
@@ -1214,7 +1206,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     $maxi = $mesures['edx_releve_maxi'] ?? '....';
                     ?>
                     <div class="section-wrapper-pdf">
-                        <div class="pdf-section-title"><?= mb_strtoupper("D) RELEVES D’INDUCTION MAGNETIQUE :", 'UTF-8') ?></div>
+                        <div class="pdf-section-title"><?= str_to_upper_fr("D) RELEVÉS D’INDUCTION MAGNÉTIQUE :") ?></div>
                         <div style="border:1px solid #ed7d31; padding:10px; font-size:13px; background:#fff;">
                             <p style="margin:5px 0;"><strong>Roue polaire :</strong></p>
                             <p style="margin:5px 0 5px 20px;">• Relevé mini : <strong><?= htmlspecialchars($mini) ?></strong> Gauss</p>
@@ -3092,7 +3084,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 </div> <!-- fin .pdf-page -->
             </div> <!-- fin .mobile-wrapper -->
-    </form>
+            </form>
 
     <!-- Hidden file input for camera capture -->
     <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none">

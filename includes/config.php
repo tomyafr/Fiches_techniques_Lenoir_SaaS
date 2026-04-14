@@ -366,3 +366,17 @@ function logAudit($action, $details = '')
         // On ne bloque pas l'app si le log échoue
     }
 }
+
+/**
+ * Robust uppercase for French accents (with mbstring fallback)
+ */
+function str_to_upper_fr($str) {
+    if (!$str) return '';
+    if (function_exists('mb_strtoupper')) {
+        return mb_strtoupper($str, 'UTF-8');
+    }
+    $from = ['é', 'è', 'ê', 'ë', 'à', 'â', 'î', 'ï', 'ô', 'û', 'ù', 'ç', 'ô'];
+    $to   = ['É', 'È', 'Ê', 'Ë', 'À', 'Â', 'Î', 'Ï', 'Ô', 'Û', 'Ù', 'Ç', 'Ô'];
+    $str = str_replace($from, $to, $str);
+    return strtoupper($str);
+}
