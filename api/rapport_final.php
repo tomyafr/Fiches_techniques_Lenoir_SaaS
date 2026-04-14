@@ -1633,30 +1633,36 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             <td style="padding: 6px; border: 1px solid #000; color: blue; text-decoration: underline;">${contactEmail || '_____'}</td>
                         </tr>
                     </table>
+                </div>
 
-                    <!-- TABLEAU PARC MACHINE -->
-                    <table style="width:100%; border-collapse:collapse; border: 2px solid #1e4e6d; font-size:12px; font-family: Arial, sans-serif;">
-                        <tr>
-                            <td colspan="5" style="background-color: #5b9bd5; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 6px; border: 1px solid #000;">
-                                PARC MACHINE
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 8%;">Poste</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 25%;">N&deg; A.R.C (N&deg; de série)</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 45%;">Désignation du Produit</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 12%;">Repère</td>
-                            <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 10%;">Année</td>
-                        </tr>
-                        ${window.LM_RAPPORT.machinesData.map((m, idx) => `
-                            <tr>
-                                <td style="text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000;">${m.poste || (idx + 1)}</td>
-                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.arc || '—'} ${m.of ? ' - ' + m.of : ''}</td>
-                                <td style="padding: 6px; border: 1px solid #000;">${m.designation || '—'}</td>
-                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.repere || '—'}</td>
-                                <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.annee || '—'}</td>
+                <!-- TABLEAU PARC MACHINE -->
+                <div style="margin-top: 20px;">
+                    <table style="width:100%; border-collapse:collapse; border: 2px solid #1e4e6d; font-size:12px; font-family: Arial, sans-serif; page-break-inside: auto;">
+                        <thead>
+                            <tr style="page-break-inside: avoid; page-break-after: avoid;">
+                                <td colspan="5" style="background-color: #5b9bd5; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 6px; border: 1px solid #000;">
+                                    PARC MACHINE
+                                </td>
                             </tr>
-                        `).join('')}
+                            <tr style="page-break-inside: avoid;">
+                                <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 8%;">Poste</td>
+                                <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 25%;">N&deg; A.R.C (N&deg; de série)</td>
+                                <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 45%;">Désignation du Produit</td>
+                                <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 12%;">Repère</td>
+                                <td style="background-color: #f2f2f2; text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000; width: 10%;">Année</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${window.LM_RAPPORT.machinesData.map((m, idx) => `
+                                <tr style="page-break-inside: avoid;">
+                                    <td style="text-align: center; font-weight: bold; padding: 6px; border: 1px solid #000;">${m.poste || (idx + 1)}</td>
+                                    <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.arc || '—'} ${m.of ? ' - ' + m.of : ''}</td>
+                                    <td style="padding: 6px; border: 1px solid #000;">${m.designation || '—'}</td>
+                                    <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.repere || '—'}</td>
+                                    <td style="text-align: center; padding: 6px; border: 1px solid #000;">${m.annee || '—'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
                     </table>
                 </div>
 
