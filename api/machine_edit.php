@@ -2371,9 +2371,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </table>
 
                     <div style="text-align:center; margin-top:30px;">
-                        <h3 style="font-size:16px; border-bottom:2px solid #000; display:inline-block; padding-bottom:5px;">SÉPARATEUR À CÔNE MAGNÉTIQUE SRM</h3>
-                        <div style="margin-top:20px;">
-                            <img src="/assets/machines/srm_photo.png" style="max-width:90%; height:auto; border:1px solid #ccc; display:block; margin:0 auto;" alt="Photo SRM" onerror="this.src='/assets/machines/srm_diagram.png'">
+                        <h3 style="font-size:18px; color:#000; font-weight:bold; border-bottom:3px solid #ff6600; display:inline-block; padding-bottom:10px; margin-bottom:20px; text-transform:uppercase;">SÉPARATEUR À CÔNE MAGNÉTIQUE SRM</h3>
+                        <div style="margin-top:20px; border:2px solid #ff6600; padding:15px; display:inline-block; background-color:#fff; box-shadow:0 4px 8px rgba(0,0,0,0.1);">
+                            <img src="/assets/machines/srm_photo.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Photo SRM" onerror="this.src='/assets/machines/srm_diagram.png'">
                         </div>
                     </div>
 
