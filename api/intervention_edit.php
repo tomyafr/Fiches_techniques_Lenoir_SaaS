@@ -267,9 +267,9 @@ $machines = $stmtMach->fetchAll();
                                 <td style="padding:0.6rem 0.8rem; white-space:nowrap;">
                                     <?= htmlspecialchars($m['numero_of'] ?: '—') ?></td>
                                 <td style="padding:0.6rem 0.8rem; font-weight:600; <?php 
-                                    $cleanDesig = strtoupper(str_replace('*', '', $m['designation']));
+                                    $cleanDesig = str_to_upper_fr(str_replace('*', '', $m['designation']));
                                     echo (stripos($cleanDesig, 'FIXE RD') !== false) ? 'color: #ffb300;' : 'color: #fff;'; 
-                                ?>">
+                                ?> text-transform: none;">
                                     <?= htmlspecialchars($cleanDesig) ?>
                                 </td>
                                 <td style="padding:0.6rem 0.8rem;"><?= htmlspecialchars($mMesures['repere'] ?? '—') ?></td>

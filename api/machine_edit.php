@@ -2236,7 +2236,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </div>
                         
                         <div style="margin-bottom:25px;">
-                            <img src="/assets/machines/spm_diagram.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma SPM" onerror="this.style.display='none'">
+                            <img src="/assets/machines/spm_diagram_composite.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma Composite SPM" onerror="this.src='/assets/machines/spm_diagram.png'">
                         </div>
                         <div>
                             <img src="/assets/machines/spm_photo.png" style="max-width:90%; height:auto; border:1px solid #ccc; display:block; margin:0 auto;" alt="Photo SPM" onerror="this.style.display='none'">
