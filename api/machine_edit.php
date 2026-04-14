@@ -78,12 +78,12 @@ $isOV = strpos($designation, 'OV') !== false && strpos($designation, 'ROUE') ===
 $isOVAP = $isOV && strpos($designation, 'OVAP') !== false;
 $isLevage = (strpos($designation, 'LEVAGE') !== false || strpos($designation, 'AIMANT') !== false) && !$isAPRF && !$isPAP;
 $isPAP = strpos($designation, 'À AIMANTS PERMANENTS') !== false || strpos($designation, 'TAP/PAP') !== false || strpos($designation, 'PAP') !== false || strpos($designation, 'TAP') !== false;
-$isPM = strpos($designation, 'PM') !== false && strpos($designation, 'PLAQUE') !== false;
+$isSPM = strpos($designation, 'SPM') !== false;
+$isPM = strpos($designation, 'PM') !== false && strpos($designation, 'PLAQUE') !== false && !$isSPM;
 $isSGCP = strpos($designation, 'SGCP') !== false || strpos($designation, 'SGCM') !== false;
 $isSGA = (strpos($designation, 'SGA') !== false || strpos($designation, 'GRILLE') !== false) && !$isSGCP;
 $isSGSA = strpos($designation, 'SGSA') !== false;
 $isSLT = strpos($designation, 'SLT') !== false;
-$isSPM = strpos($designation, 'SPM') !== false;
 
 // Temps prévisionnel par type
 if ($isEDX)
