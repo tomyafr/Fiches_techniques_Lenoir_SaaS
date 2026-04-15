@@ -1269,7 +1269,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         function createPdfFooter() {
             const f = document.createElement('div');
             const leg = window.LM_RAPPORT.legal;
-            f.style.marginTop = '30px';
+            f.style.marginTop = '10px';
             f.style.width = '100%';
             f.style.textAlign = 'center';
             f.style.fontSize = '9px';
@@ -2085,6 +2085,18 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
 
             await waitForImages(container);
+
+            // --- FINAL SANITATION: Remove truly empty pages ---
+            const finalPages = Array.from(container.querySelectorAll('.pdf-page'));
+            finalPages.forEach(p => {
+                const text = p.textContent.trim();
+                const hasImg = p.querySelectorAll('img').length > 0;
+                // A page with less than 20 chars and no images is considered a "ghost" page resulting from overflow
+                if (text.length < 20 && !hasImg) {
+                    p.remove();
+                }
+            });
+
             return container;
         }
 
