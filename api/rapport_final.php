@@ -1325,19 +1325,19 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             styleNode.textContent = `
                 .pdf-page {
                     width: 21cm;
-                    min-height: 297mm; /* Full A4 height to ensure absolute footer works */
+                    min-height: auto;
                     background: white;
                     color: black;
-                    padding: 0 15mm 20mm 15mm; /* Extra bottom padding for the footer */
+                    padding: 10mm 15mm 20mm 15mm; /* 10mm top, 20mm bottom for footer area */
                     box-sizing: border-box;
                     margin: 0;
                     font-family: Arial, sans-serif;
                     font-size: 13px;
-                    position: relative; /* Essential for absolute footer */
+                    position: relative;
                 }
                 .pdf-footer {
                     position: absolute;
-                    bottom: 10mm;
+                    bottom: 5mm;
                     left: 15mm;
                     right: 15mm;
                     border-top: 2px solid #000;
@@ -2172,7 +2172,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 updatePdfProgress(80, 3, "Numérotation des pages...");
 
                 const opt = {
-                    margin: [10, 0, 15, 0], 
+                    margin: 0, 
                     filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 1.5, useCORS: true, logging: false },
