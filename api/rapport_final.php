@@ -1383,7 +1383,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 }
                 .can-split {
                     page-break-inside: auto !important;
+                    border: none !important;
                 }
+                .can-split tr td { border: 1px solid #000; }
+                /* Orange borders only on the very edges of the whole table */
+                .can-split tr:first-child td { border-top: 2px solid #F48220 !important; }
+                .can-split tr:last-child td { border-bottom: 2px solid #F48220 !important; }
+                .can-split tr td:first-child { border-left: 2px solid #F48220 !important; }
+                .can-split tr td:last-child { border-right: 2px solid #F48220 !important; }
                 .pdf-section {
                     margin-bottom: 15px;
                 }
@@ -1640,7 +1647,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                 <!-- TABLEAU PARC MACHINE -->
                 <div style="margin-top: 10px;">
-                    <table class="can-split" style="width:100%; border-collapse:collapse; border: 2px solid #F48220; font-size:12px; font-family: Arial, sans-serif;">
+                    <table class="can-split" style="width:100%; border-collapse:collapse; font-size:12px; font-family: Arial, sans-serif;">
                         <tr style="page-break-inside: avoid; page-break-after: avoid;">
                             <td colspan="5" style="background-color: #5b9bd5; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 6px; border: 1px solid #000;">
                                 PARC MACHINE
