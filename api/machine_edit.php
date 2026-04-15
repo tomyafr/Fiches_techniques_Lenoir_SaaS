@@ -2241,23 +2241,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                     <div style="text-align:center; margin-top:30px;">
                         <h3 style="font-size:18px; color:#000; font-weight:bold; border-bottom:3px solid #ff6600; display:inline-block; padding-bottom:10px; margin-bottom:20px; text-transform:uppercase;">SÉPARATEUR À PLAQUE MAGNÉTIQUE SPM</h3>
                         
-                        <?php
-                        $spmSchemaPath = '/assets/machines/spm_diagram_composite.png';
-                        if (!file_exists(__DIR__ . '/../' . $spmSchemaPath)) {
-                            $spmSchemaPath = '/assets/machines/spm_diagram.png';
-                        }
-                        if (file_exists(__DIR__ . '/../' . $spmSchemaPath)):
-                        ?>
                         <div style="margin-bottom:25px; border:2px solid #ff6600; padding:15px; display:inline-block; background-color:#fff; box-shadow:0 4px 8px rgba(0,0,0,0.1);">
-                            <img src="<?= $spmSchemaPath ?>" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma Composite SPM">
+                            <img src="/assets/machines/spm_diagram_composite.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma Composite SPM" onerror="this.src='/assets/machines/spm_diagram.png'; this.onerror=function(){this.parentElement.style.display='none';};">
                         </div>
-                        <?php endif; ?>
 
-                        <?php if (file_exists(__DIR__ . '/../assets/machines/spm_photo.png')): ?>
                         <div style="margin-top:20px; border:2px solid #ff6600; padding:15px; display:inline-block; background-color:#fff; box-shadow:0 4px 8px rgba(0,0,0,0.1);">
-                            <img src="/assets/machines/spm_photo.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Photo SPM">
+                            <img src="/assets/machines/spm_photo.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Photo SPM" onerror="this.parentElement.style.display='none';">
                         </div>
-                        <?php endif; ?>
                     </div>
 
                 <?php elseif ($isSRM): ?>
@@ -2391,17 +2381,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                     <div style="text-align:center; margin-top:30px;">
                         <h3 style="font-size:18px; color:#000; font-weight:bold; border-bottom:3px solid #ff6600; display:inline-block; padding-bottom:10px; margin-bottom:20px; text-transform:uppercase;">SÉPARATEUR À CÔNE MAGNÉTIQUE SRM</h3>
                         
-                        <?php
-                        $srmPhotoUrl = '/assets/machines/srm_photo.png';
-                        if (!file_exists(__DIR__ . '/../' . $srmPhotoUrl)) {
-                            $srmPhotoUrl = '/assets/machines/srm_diagram.png';
-                        }
-                        if (file_exists(__DIR__ . '/../' . $srmPhotoUrl)): 
-                        ?>
                         <div style="margin-top:20px; border:2px solid #ff6600; padding:15px; display:inline-block; background-color:#fff; box-shadow:0 4px 8px rgba(0,0,0,0.1);">
-                            <img src="<?= $srmPhotoUrl ?>" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Support SRM">
+                            <img src="/assets/machines/srm_photo.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Support SRM" onerror="this.src='/assets/machines/srm_diagram.png'; this.onerror=function(){this.parentElement.style.display='none';};">
                         </div>
-                        <?php endif; ?>
                     </div>
 
                 <?php elseif ($isEDX): ?>
