@@ -1699,12 +1699,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             synthPreambulePage.className = 'pdf-page';
             synthPreambulePage.style.margin = '0';
             synthPreambulePage.style.boxShadow = 'none';
+            if (container.querySelectorAll('.pdf-page').length > 0) synthPreambulePage.style.pageBreakBefore = 'always';
             synthPreambulePage.style.paddingTop = '15mm';
-            
-            // Forcer le saut de page vers le préambule de façon robuste
-            const breakDiv1 = document.createElement('div');
-            breakDiv1.className = 'html2pdf__page-break';
-            container.appendChild(breakDiv1);
             
             const s = window.LM_RAPPORT.synth;
 
@@ -1835,12 +1831,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         `;
 
                         p.style.minHeight = '100px';
-                        
-                        const bDiv = document.createElement('div');
-                        bDiv.className = 'html2pdf__page-break';
-                        container.appendChild(bDiv);
-                        
+                        if (container.querySelectorAll('.pdf-page').length > 0) p.style.pageBreakBefore = 'always';
                         container.appendChild(p);
+
                         continue; // Passe directement à la machine suivante sans fetch html !
                     }
 
@@ -1879,10 +1872,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                             // Chaque machine commence obligatoirement sur une nouvelle page
                             if (pIdx === 0) {
-                                const bDiv = document.createElement('div');
-                                bDiv.className = 'html2pdf__page-break';
-                                container.appendChild(bDiv);
-
+                                if (container.querySelectorAll('.pdf-page').length > 0) {
+                                    p.style.pageBreakBefore = 'always';
+                                }
                                 p.style.marginTop = '0';
                                 p.style.paddingTop = '10mm'; 
                                 
@@ -2005,10 +1997,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             endPage.className = 'pdf-page';
             endPage.style.padding = '0 15mm';
             endPage.style.position = 'relative';
-            
-            const bDivEnd = document.createElement('div');
-            bDivEnd.className = 'html2pdf__page-break';
-            container.appendChild(bDivEnd);
+            if (container.querySelectorAll('.pdf-page').length > 0) endPage.style.pageBreakBefore = 'always';
 
             const originalRapport = document.getElementById('rapportForm');
             const souhaitRapport = originalRapport.querySelector('[name="souhait_rapport_unique"]').checked;
