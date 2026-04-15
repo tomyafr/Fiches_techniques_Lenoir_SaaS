@@ -1269,54 +1269,57 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
         async function ensureImagesBase64(container) {
             const imgs = Array.from(container.querySelectorAll('img'));
-            const promises = imgs.map(async img => {
+            for (const img of imgs) {
                 const src = img.src || img.getAttribute('src');
-                if (!src || src.startsWith('data:')) return;
+                if (!src || src.startsWith('data:')) continue;
                 
-                try {
-                    // Prepend origin if relative
-                    let absoluteUrl = src;
-                    if (src.startsWith('/') && !src.startsWith('//')) {
-                        absoluteUrl = window.location.origin + src;
+                const fallback = img.getAttribute('data-fallback');
+                const urls = [src];
+                if (fallback) {
+                    let absoluteFallback = fallback;
+                    if (fallback.startsWith('/') && !fallback.startsWith('//')) {
+                        absoluteFallback = window.location.origin + fallback;
                     }
-                    
-                    let resp = await fetch(absoluteUrl);
-                    if (!resp.ok) {
-                        const onerrorAttr = img.getAttribute('onerror');
-                        if (onerrorAttr) {
-                            const match = onerrorAttr.match(/this\.src\s*=\s*['"]([^'"]+)['"]/);
-                            if (match && match[1]) {
-                                let fbUrl = match[1];
-                                if (fbUrl.startsWith('/') && !fbUrl.startsWith('//')) fbUrl = window.location.origin + fbUrl;
-                                const fbResp = await fetch(fbUrl);
-                                if (fbResp.ok) {
-                                    resp = fbResp;
-                                }
-                            }
+                    urls.push(absoluteFallback);
+                }
+                
+                let success = false;
+                for (const urlToFetch of urls) {
+                    try {
+                        let absoluteUrl = urlToFetch;
+                        if (urlToFetch.startsWith('/') && !urlToFetch.startsWith('//')) {
+                            absoluteUrl = window.location.origin + urlToFetch;
                         }
+                        
+                        const resp = await fetch(absoluteUrl);
+                        if (!resp.ok) continue;
+                        
+                        const blob = await resp.blob();
+                        const b64 = await new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onload = () => resolve(reader.result);
+                            reader.onerror = () => resolve(null);
+                            reader.readAsDataURL(blob);
+                        });
+                        
+                        if (b64) {
+                            img.src = b64;
+                            success = true;
+                            break;
+                        }
+                    } catch (e) {
+                        console.warn('Failed to fetch/b64 image: ' + urlToFetch, e);
                     }
-                    if (!resp.ok) throw new Error('Fetch failed');
-                    const blob = await resp.blob();
-                    
-                    return new Promise((resolve) => {
-                        const reader = new FileReader();
-                        reader.onload = () => {
-                            img.src = reader.result;
-                            resolve();
-                        };
-                        reader.onerror = resolve;
-                        reader.readAsDataURL(blob);
-                    });
-                } catch (e) {
-                    console.error('Failed to b64 image: ' + src, e);
+                }
+                
+                if (!success) {
                     img.style.display = 'none';
                     const orangeBox = img.closest('.machine-orange-box');
                     if (orangeBox) {
                         orangeBox.style.display = 'none';
                     }
                 }
-            });
-            await Promise.all(promises);
+            }
         }
 
         async function buildFullPdfContainer(opts = {}) {
