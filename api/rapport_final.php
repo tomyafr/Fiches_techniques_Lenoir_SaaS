@@ -1265,22 +1265,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             return new Promise(r => setTimeout(r, 200));
         }
 
-        // helper: create footer
-        function createPdfFooter() {
-            const f = document.createElement('div');
-            const leg = window.LM_RAPPORT.legal;
-            f.style.marginTop = '30px';
-            f.style.width = '100%';
-            f.style.textAlign = 'center';
-            f.style.fontSize = '9px';
-            f.style.fontWeight = 'bold';
-            f.style.borderTop = '2px solid #000';
-            f.style.paddingTop = '5px';
-            f.style.paddingBottom = '5px';
-            f.style.pageBreakInside = 'avoid';
-            f.innerHTML = `${leg.address}<br>${leg.contact}<br>${leg.siret}`;
-            return f;
-        }
+        // createPdfFooter removed. Footers are now drawn dynamically via jsPDF/PDF-Lib.
 
         async function ensureImagesBase64(container) {
             const imgs = Array.from(container.querySelectorAll('img'));
@@ -1687,7 +1672,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </tr>
                 </table>
             `;
-            rapportCloneWrapper.appendChild(createPdfFooter());
+            // Footer is drawn via jsPDF
             container.appendChild(rapportCloneWrapper);
 
             // --- 1.2 PAGE SYNTHÈSE + PRÉAMBULE (FUSIONNÉS POUR ÉCONOMISER DES PAGES) ---
@@ -1772,7 +1757,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
                 </div>
             `;
-            synthPreambulePage.appendChild(createPdfFooter());
+            // Footer is drawn via jsPDF
             container.appendChild(synthPreambulePage);
             }
 
@@ -1976,7 +1961,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             p.style.paddingBottom = '5mm'; 
                             p.querySelectorAll('.section-wrapper-pdf').forEach(w => w.style.marginBottom = '0');
                             p.style.minHeight = '100px'; 
-                            p.appendChild(createPdfFooter());
+                            // Footer is drawn via jsPDF
                             container.appendChild(p);
                         });
                     } catch (err) {
@@ -2080,7 +2065,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
                 </div>
             `;
-            endPage.appendChild(createPdfFooter());
+            // Footer is drawn via jsPDF
             container.appendChild(endPage);
             }
 
@@ -2158,10 +2143,24 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     const totalPages = pdf.internal.getNumberOfPages();
                     for (let i = 1; i <= totalPages; i++) {
                         pdf.setPage(i);
+                        const leg = window.LM_RAPPORT.legal;
+                        
+                        // Ligne de séparation
+                        pdf.setDrawColor(0);
+                        pdf.setLineWidth(0.3);
+                        pdf.line(15, 281, 195, 281);
+                        
+                        // Textes Légaux
                         pdf.setFont('helvetica', 'normal');
-                        pdf.setFontSize(9);
+                        pdf.setFontSize(7);
                         pdf.setTextColor(50, 50, 50);
-                        pdf.text('Page ' + i + ' / ' + totalPages, 105, 286, { align: 'center' });
+                        pdf.text((leg.address || '').replace(/<[^>]*>?/gm, ' '), 105, 284, {align: 'center'});
+                        pdf.text((leg.contact || '').replace(/<[^>]*>?/gm, ' '), 105, 287, {align: 'center'});
+                        pdf.text((leg.siret || '').replace(/<[^>]*>?/gm, ' '), 105, 290, {align: 'center'});
+
+                        // Numérotation
+                        pdf.setFontSize(9);
+                        pdf.text('Page ' + i + ' / ' + totalPages, 105, 295, { align: 'center' });
                     }
                 });
 
@@ -2250,9 +2249,24 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 for (let i = 0; i < pages.length; i++) {
                     const { width } = pages[i].getSize();
                     const text = `Page ${i + 1} / ${pages.length}`;
+                    const leg = window.LM_RAPPORT.legal || {};
+                    const addressText = (leg.address || '').replace(/<[^>]*>?/gm, ' ');
+                    const contactText = (leg.contact || '').replace(/<[^>]*>?/gm, ' ');
+                    const siretText = (leg.siret || '').replace(/<[^>]*>?/gm, ' ');
+                    
+                    pages[i].drawLine({
+                        start: { x: 42, y: 45 },
+                        end: { x: width - 42, y: 45 },
+                        thickness: 1,
+                        color: rgb(0, 0, 0)
+                    });
+                    pages[i].drawText(addressText, { x: width / 2 - font.widthOfTextAtSize(addressText, 7) / 2, y: 36, size: 7, font: font, color: rgb(0.2,0.2,0.2) });
+                    pages[i].drawText(contactText, { x: width / 2 - font.widthOfTextAtSize(contactText, 7) / 2, y: 27, size: 7, font: font, color: rgb(0.2,0.2,0.2) });
+                    pages[i].drawText(siretText, { x: width / 2 - font.widthOfTextAtSize(siretText, 7) / 2, y: 18, size: 7, font: font, color: rgb(0.2,0.2,0.2) });
+
                     pages[i].drawText(text, {
                         x: width / 2 - font.widthOfTextAtSize(text, 9) / 2,
-                        y: 31, // exact 286mm position as in 91ca0be
+                        y: 8, // exact position relative to bottom
                         size: 9,
                         font: font,
                         color: rgb(0.2, 0.2, 0.2),
