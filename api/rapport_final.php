@@ -1295,6 +1295,11 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     });
                 } catch (e) {
                     console.error('Failed to b64 image: ' + src, e);
+                    img.style.display = 'none';
+                    const orangeBox = img.closest('.machine-orange-box');
+                    if (orangeBox) {
+                        orangeBox.style.display = 'none';
+                    }
                 }
             });
             await Promise.all(promises);
