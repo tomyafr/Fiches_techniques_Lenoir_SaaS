@@ -1269,7 +1269,15 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         function createPdfFooter() {
             const f = document.createElement('div');
             const leg = window.LM_RAPPORT.legal;
-            f.className = 'pdf-footer';
+            f.style.marginTop = '30px';
+            f.style.width = '100%';
+            f.style.textAlign = 'center';
+            f.style.fontSize = '9px';
+            f.style.fontWeight = 'bold';
+            f.style.borderTop = '2px solid #000';
+            f.style.paddingTop = '5px';
+            f.style.paddingBottom = '5px';
+            f.style.pageBreakInside = 'avoid';
             f.innerHTML = `${leg.address}<br>${leg.contact}<br>${leg.siret}`;
             return f;
         }
@@ -1325,27 +1333,15 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             styleNode.textContent = `
                 .pdf-page {
                     width: 21cm;
-                    min-height: auto;
+                    min-height: 100px;
                     background: white;
                     color: black;
-                    padding: 10mm 15mm 20mm 15mm; /* 10mm top, 20mm bottom for footer area */
+                    padding: 0 15mm;
                     box-sizing: border-box;
                     margin: 0;
                     font-family: Arial, sans-serif;
                     font-size: 13px;
                     position: relative;
-                }
-                .pdf-footer {
-                    position: absolute;
-                    bottom: 5mm;
-                    left: 15mm;
-                    right: 15mm;
-                    border-top: 2px solid #000;
-                    padding-top: 5px;
-                    text-align: center;
-                    font-size: 9px;
-                    font-weight: bold;
-                    page-break-inside: avoid;
                 }
                 .pdf-section-title {
                     text-align: left !important;
@@ -1699,9 +1695,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             synthPreambulePage.className = 'pdf-page';
             synthPreambulePage.style.margin = '0';
             synthPreambulePage.style.boxShadow = 'none';
-            if (container.querySelectorAll('.pdf-page').length > 0) synthPreambulePage.style.pageBreakBefore = 'always';
+            if (container.children.length > 0) synthPreambulePage.style.pageBreakBefore = 'always';
             synthPreambulePage.style.paddingTop = '15mm';
-            
             const s = window.LM_RAPPORT.synth;
 
             // Calcul mois prochain pour le préambule
@@ -1831,7 +1826,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         `;
 
                         p.style.minHeight = '100px';
-                        if (container.querySelectorAll('.pdf-page').length > 0) p.style.pageBreakBefore = 'always';
+                        if (container.children.length > 0) p.style.pageBreakBefore = 'always';
                         container.appendChild(p);
 
                         continue; // Passe directement à la machine suivante sans fetch html !
@@ -1872,7 +1867,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                             // Chaque machine commence obligatoirement sur une nouvelle page
                             if (pIdx === 0) {
-                                if (container.querySelectorAll('.pdf-page').length > 0) {
+                                if (container.children.length > 0) {
                                     p.style.pageBreakBefore = 'always';
                                 }
                                 p.style.marginTop = '0';
@@ -1997,7 +1992,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             endPage.className = 'pdf-page';
             endPage.style.padding = '0 15mm';
             endPage.style.position = 'relative';
-            if (container.querySelectorAll('.pdf-page').length > 0) endPage.style.pageBreakBefore = 'always';
+            if (container.children.length > 0) endPage.style.pageBreakBefore = 'always';
 
             const originalRapport = document.getElementById('rapportForm');
             const souhaitRapport = originalRapport.querySelector('[name="souhait_rapport_unique"]').checked;
@@ -2090,18 +2085,6 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
 
             await waitForImages(container);
-
-            // --- FINAL SANITATION: Remove truly empty pages ---
-            const finalPages = Array.from(container.querySelectorAll('.pdf-page'));
-            finalPages.forEach(p => {
-                const text = p.textContent.trim();
-                const hasImg = p.querySelectorAll('img').length > 0;
-                // A page with less than 20 chars and no images is considered a "ghost" page resulting from overflow
-                if (text.length < 20 && !hasImg) {
-                    p.remove();
-                }
-            });
-
             return container;
         }
 
@@ -2161,7 +2144,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 updatePdfProgress(80, 3, "Numérotation des pages...");
 
                 const opt = {
-                    margin: 0, 
+                    margin: [10, 0, 15, 0], 
                     filename: window.LM_RAPPORT ? window.LM_RAPPORT.pdfFilename : 'rapport.pdf',
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 1.5, useCORS: true, logging: false },
