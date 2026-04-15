@@ -1196,13 +1196,18 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 function renderSectionC($isEDX, $isOV) {
                     ?>
-                    <div class="section-wrapper-pdf">
-                        <div class="pdf-section-title"><?= str_to_upper_fr("C) RAPPEL DES FRÉQUENCES DE NETTOYAGE ET DES DIFFÉRENTS POINTS DE CONTRÔLE :") ?></div>
-                        <img src="/assets/machines/frequences_tableau.png" style="width:100%; height:auto; border:2px solid #ed7d31;">
+                    <div class="section-wrapper-pdf" style="page-break-inside: avoid !important; break-inside: avoid !important;">
+                        <table style="width: 100%; border-collapse: collapse; page-break-inside: avoid !important;">
+                            <tr>
+                                <td style="padding: 0; border: none; page-break-inside: avoid !important;">
+                                    <div class="pdf-section-title"><?= str_to_upper_fr("C) RAPPEL DES FRÉQUENCES DE NETTOYAGE ET DES DIFFÉRENTS POINTS DE CONTRÔLE :") ?></div>
+                                    <img src="/assets/machines/frequences_tableau.png" style="width:100%; height:auto; border:2px solid #ed7d31; display: block; page-break-inside: avoid !important;">
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                     <?php
                 }
-
                 function renderSectionD($isEDX, $mesures) {
                     if (!$isEDX) return;
                     $mini = $mesures['edx_releve_mini'] ?? '....';
@@ -3083,11 +3088,8 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                         // SECTION C & D (uniquement PDF)
                         if (isset($_GET['pdf'])):
-                            echo '<div class="section-wrapper-pdf">';
                             renderSectionC($isEDX, $isOV);
-                            echo '</div><div class="section-wrapper-pdf">';
                             renderSectionD($isEDX, $mesures);
-                            echo '</div>';
                         endif;
                         ?>
 
