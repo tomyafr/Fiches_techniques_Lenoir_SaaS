@@ -2149,7 +2149,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 1.5, useCORS: true, logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: 'css', avoid: ['img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.levage-diagram-container'] }
+                    pagebreak: { mode: 'css', avoid: ['img', '.photo-annexe-item', '.pdf-section', '.section-wrapper-pdf', '.sig-zone', '.levage-diagram-container'] }
                 };
 
                 const worker = html2pdf().set(opt).from(container);
@@ -2202,7 +2202,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 1.5, useCORS: true, logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: 'css', avoid: ['img', '.photo-annexe-item', '.pdf-section', '.sig-zone', '.levage-diagram-container'] }
+                    pagebreak: { mode: 'css', avoid: ['img', '.photo-annexe-item', '.pdf-section', '.section-wrapper-pdf', '.sig-zone', '.levage-diagram-container'] }
                 };
 
                 // 1. CHUNK INTRO
