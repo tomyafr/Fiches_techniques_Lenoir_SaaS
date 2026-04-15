@@ -1374,12 +1374,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .pdf-table-container, .card, .sig-zone, .photo-annexe-item {
                     page-break-inside: avoid !important;
                 }
-                .pdf-table, table.controles { 
-                    page-break-inside: auto !important; 
-                }
-                .pdf-table tr, table.controles tr, .can-split tr { 
+                tr { 
                     page-break-inside: avoid !important; 
                     page-break-after: auto !important;
+                }
+                .pdf-table, table.controles, .can-split { 
+                    page-break-inside: auto !important; 
                 }
                 .can-split {
                     page-break-inside: auto !important;
