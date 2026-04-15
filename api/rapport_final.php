@@ -2039,14 +2039,14 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <table style="width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 15px;">
                         <tr style="height: 120px;">
                             <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
-                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Contrôleur (NOM Prénom) :</div>
+                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Contrôleur (Prénom NOM) :</div>
                                 <div style="margin-bottom: 10px;"><strong>${techNameLabel}</strong></div>
                                 <div style="text-align: center;">
                                     <img src="${sigTechImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
                                 </div>
                             </td>
                             <td style="border: 1px solid #000; padding: 8px; vertical-align: top; width: 50%;">
-                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Client (NOM Prénom) :</div>
+                                <div style="font-weight: bold; text-decoration: underline; margin-bottom: 5px;">Client (Prénom NOM) :</div>
                                 <div style="margin-bottom: 10px;"><strong>${nomSignataireFin}</strong></div>
                                 <div style="text-align: center;">
                                     <img src="${sigClientImg}" style="max-height: 80px; max-width: 90%; object-fit: contain; background: white;">
