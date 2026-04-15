@@ -1280,7 +1280,21 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         absoluteUrl = window.location.origin + src;
                     }
                     
-                    const resp = await fetch(absoluteUrl);
+                    let resp = await fetch(absoluteUrl);
+                    if (!resp.ok) {
+                        const onerrorAttr = img.getAttribute('onerror');
+                        if (onerrorAttr) {
+                            const match = onerrorAttr.match(/this\.src\s*=\s*['"]([^'"]+)['"]/);
+                            if (match && match[1]) {
+                                let fbUrl = match[1];
+                                if (fbUrl.startsWith('/') && !fbUrl.startsWith('//')) fbUrl = window.location.origin + fbUrl;
+                                const fbResp = await fetch(fbUrl);
+                                if (fbResp.ok) {
+                                    resp = fbResp;
+                                }
+                            }
+                        }
+                    }
                     if (!resp.ok) throw new Error('Fetch failed');
                     const blob = await resp.blob();
                     
