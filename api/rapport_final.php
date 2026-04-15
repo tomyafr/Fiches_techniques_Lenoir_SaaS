@@ -1575,29 +1575,29 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             // Layout exact as requested
             rapportCloneWrapper.innerHTML = `
                 <!-- HEADER (Logo, Slogan) -->
-                <table style="width:100%; border:none; margin-bottom:15px; border-bottom: 2px solid #ffb300;">
+                <table style="width:100%; border:none; margin-bottom:5px;">
                     <tr>
-                        <td style="width: 40%; vertical-align: bottom; padding-bottom: 10px;">
-                            <img src="/assets/lenoir_logo_doc.png" style="height:60px;">
+                        <td style="width: 40%; vertical-align: bottom; padding-bottom: 5px;">
+                            <img src="/assets/lenoir_logo_doc.png" style="height:55px;">
                         </td>
                         <td style="width: 60%; vertical-align: bottom; text-align: right; padding-bottom: 5px;">
-                            <div style="font-size: 11px; font-weight: normal; color: #ffb300; font-style: italic;">
+                            <div style="font-size: 10px; font-weight: normal; color: #d35400; font-style: italic;">
                                 Le spécialiste des applications magnétiques pour la séparation et le levage industriel
                             </div>
                         </td>
                     </tr>
                 </table>
+                <div style="height: 3px; background-color: #d35400; width: 100%; margin-bottom: 10px;"></div>
                 <div style="text-align: right; color: #555; font-weight: bold; font-size: 11px; margin-top: 5px; margin-bottom: 15px;">RAPPORT D'EXPERTISE</div>
 
-                <!-- GRAND CADRE ORANGE -->
-                <div style="border: 3px solid #ffb300; padding: 15px; margin-bottom: 30px;">
-                    <h1 style="text-align: center; color: #ffb300; font-size: 26px; font-weight: bold; margin: 10px 0 20px 0;">RAPPORT DE L'EXPERTISE</h1>
-                    <div style="text-align: right; font-weight: bold; font-size: 14px; color: black; margin-bottom: 15px;">N&deg;ARC : ${numArc}</div>
+                <h1 style="text-align: center; color: #d35400; font-size: 28px; font-weight: bold; margin: 20px 0 10px 0; text-transform: uppercase;">RAPPORT DE L'EXPERTISE</h1>
+                <div style="text-align: right; font-weight: bold; font-size: 14px; color: black; margin-bottom: 25px;">N&deg;ARC : ${numArc}</div>
 
-                    <!-- TABLEAU CLIENT -->
-                    <table style="width:100%; border-collapse:collapse; border: 2px solid #ffb300; margin-bottom:20px; font-size:12px; font-family: Arial, sans-serif;">
+                <!-- TABLEAU CLIENT -->
+                <div style="border: 2px solid #5b9bd5; margin-bottom: 25px;">
+                    <table style="width:100%; border-collapse:collapse; font-size:12px; font-family: Arial, sans-serif;">
                         <tr>
-                            <td colspan="4" style="background-color: #ffb300; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 6px; border: 1px solid #000;">
+                            <td colspan="4" style="background-color: #5b9bd5; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 7px; border-bottom: 1px solid #000;">
                                 COORDONNEES DU CLIENT
                             </td>
                         </tr>
@@ -1639,10 +1639,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 </div>
 
                 <!-- TABLEAU PARC MACHINE -->
-                <div style="margin-top: 10px;">
-                    <table class="can-split" style="width:100%; border-collapse:collapse; border: 2px solid #ffb300; font-size:12px; font-family: Arial, sans-serif;">
+                <div style="margin-top: 5px; border: 2px solid #5b9bd5; margin-bottom: 25px;">
+                    <table class="can-split" style="width:100%; border-collapse:collapse; font-size:12px; font-family: Arial, sans-serif;">
                         <tr style="page-break-inside: avoid; page-break-after: avoid;">
-                            <td colspan="5" style="background-color: #ffb300; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 6px; border: 1px solid #000;">
+                            <td colspan="5" style="background-color: #5b9bd5; color: white; text-align: center; font-weight: bold; text-transform: uppercase; padding: 7px; border-bottom: 1px solid #000;">
                                 PARC MACHINE
                             </td>
                         </tr>
@@ -1665,20 +1665,22 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </table>
                 </div>
 
-                <!-- SIGNATURES (Hors du cadre orange) -->
-                <table style="width:100%; border-collapse:collapse; border: 2px solid #ffb300; font-size:13px; font-family: Arial, sans-serif;">
-                    <tr>
-                        <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #ffb300; width: 25%;">Technicien sur Site :</td>
-                        <td style="padding: 15px 10px; border: 1px solid #ffb300; width: 30%;">${techName}</td>
-                        <td rowspan="2" style="padding: 5px; border: 1px solid #ffb300; width: 45%; text-align: center; vertical-align: middle;">
-                            <img src="${sigTechData}" style="max-height:80px; max-width:100%;">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #ffb300;">Date d'expertise :</td>
-                        <td style="padding: 15px 10px; border: 1px solid #ffb300;">${dateExp}</td>
-                    </tr>
-                </table>
+                <!-- SIGNATURES -->
+                <div style="border: 2px solid #5b9bd5;">
+                    <table style="width:100%; border-collapse:collapse; font-size:13px; font-family: Arial, sans-serif;">
+                        <tr>
+                            <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #000; width: 25%;">Technicien sur Site :</td>
+                            <td style="padding: 15px 10px; border: 1px solid #000; width: 30%;">${techName}</td>
+                            <td rowspan="2" style="padding: 5px; border: 1px solid #000; width: 45%; text-align: center; vertical-align: middle;">
+                                <img src="${sigTechData}" style="max-height:80px; max-width:100%;">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; padding: 15px 10px; border: 1px solid #000;">Date d'expertise :</td>
+                            <td style="padding: 15px 10px; border: 1px solid #000;">${dateExp}</td>
+                        </tr>
+                    </table>
+                </div>
             `;
             rapportCloneWrapper.appendChild(createPdfFooter());
             container.appendChild(rapportCloneWrapper);
