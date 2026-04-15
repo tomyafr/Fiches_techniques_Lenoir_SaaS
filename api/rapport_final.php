@@ -1269,15 +1269,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         function createPdfFooter() {
             const f = document.createElement('div');
             const leg = window.LM_RAPPORT.legal;
-            f.style.marginTop = '10px';
-            f.style.width = '100%';
-            f.style.textAlign = 'center';
-            f.style.fontSize = '9px';
-            f.style.fontWeight = 'bold';
-            f.style.borderTop = '2px solid #000';
-            f.style.paddingTop = '5px';
-            f.style.paddingBottom = '5px';
-            f.style.pageBreakInside = 'avoid';
+            f.className = 'pdf-footer';
             f.innerHTML = `${leg.address}<br>${leg.contact}<br>${leg.siret}`;
             return f;
         }
@@ -1333,15 +1325,27 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             styleNode.textContent = `
                 .pdf-page {
                     width: 21cm;
-                    min-height: 100px;
+                    min-height: 297mm; /* Full A4 height to ensure absolute footer works */
                     background: white;
                     color: black;
-                    padding: 0 15mm;
+                    padding: 0 15mm 20mm 15mm; /* Extra bottom padding for the footer */
                     box-sizing: border-box;
                     margin: 0;
                     font-family: Arial, sans-serif;
                     font-size: 13px;
-                    position: relative;
+                    position: relative; /* Essential for absolute footer */
+                }
+                .pdf-footer {
+                    position: absolute;
+                    bottom: 10mm;
+                    left: 15mm;
+                    right: 15mm;
+                    border-top: 2px solid #000;
+                    padding-top: 5px;
+                    text-align: center;
+                    font-size: 9px;
+                    font-weight: bold;
+                    page-break-inside: avoid;
                 }
                 .pdf-section-title {
                     text-align: left !important;
@@ -1695,8 +1699,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             synthPreambulePage.className = 'pdf-page';
             synthPreambulePage.style.margin = '0';
             synthPreambulePage.style.boxShadow = 'none';
-            if (container.children.length > 0) synthPreambulePage.style.pageBreakBefore = 'always';
             synthPreambulePage.style.paddingTop = '15mm';
+            
+            // Forcer le saut de page vers le préambule de façon robuste
+            const breakDiv1 = document.createElement('div');
+            breakDiv1.className = 'html2pdf__page-break';
+            container.appendChild(breakDiv1);
+            
             const s = window.LM_RAPPORT.synth;
 
             // Calcul mois prochain pour le préambule
@@ -1826,9 +1835,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         `;
 
                         p.style.minHeight = '100px';
-                        if (container.children.length > 0) p.style.pageBreakBefore = 'always';
+                        
+                        const bDiv = document.createElement('div');
+                        bDiv.className = 'html2pdf__page-break';
+                        container.appendChild(bDiv);
+                        
                         container.appendChild(p);
-
                         continue; // Passe directement à la machine suivante sans fetch html !
                     }
 
@@ -1867,9 +1879,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                             // Chaque machine commence obligatoirement sur une nouvelle page
                             if (pIdx === 0) {
-                                if (container.children.length > 0) {
-                                    p.style.pageBreakBefore = 'always';
-                                }
+                                const bDiv = document.createElement('div');
+                                bDiv.className = 'html2pdf__page-break';
+                                container.appendChild(bDiv);
+
                                 p.style.marginTop = '0';
                                 p.style.paddingTop = '10mm'; 
                                 
@@ -1992,7 +2005,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             endPage.className = 'pdf-page';
             endPage.style.padding = '0 15mm';
             endPage.style.position = 'relative';
-            if (container.children.length > 0) endPage.style.pageBreakBefore = 'always';
+            
+            const bDivEnd = document.createElement('div');
+            bDivEnd.className = 'html2pdf__page-break';
+            container.appendChild(bDivEnd);
 
             const originalRapport = document.getElementById('rapportForm');
             const souhaitRapport = originalRapport.querySelector('[name="souhait_rapport_unique"]').checked;
