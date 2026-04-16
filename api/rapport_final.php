@@ -1269,50 +1269,45 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
         async function ensureImagesBase64(container) {
             const imgs = Array.from(container.querySelectorAll('img'));
+            
+            const convertToB64 = async (url) => {
+                return new Promise((resolve) => {
+                    const temp = new Image();
+                    temp.crossOrigin = 'Anonymous';
+                    temp.onload = () => {
+                        try {
+                            const canvas = document.createElement('canvas');
+                            canvas.width = temp.naturalWidth;
+                            canvas.height = temp.naturalHeight;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(temp, 0, 0);
+                            resolve(canvas.toDataURL('image/png'));
+                        } catch (e) { resolve(null); }
+                    };
+                    temp.onerror = () => resolve(null);
+                    temp.src = url;
+                    setTimeout(() => resolve(null), 10000); // 10s timeout
+                });
+            };
+
             for (const img of imgs) {
-                const src = img.src || img.getAttribute('src');
-                if (!src || src.startsWith('data:')) continue;
+                const current = img.src || img.getAttribute('src');
+                if (!current || current.startsWith('data:')) continue;
                 
                 const fallback = img.getAttribute('data-fallback');
-                const urls = [src];
-                if (fallback) {
-                    let absoluteFallback = fallback;
+                
+                let b64 = await convertToB64(current);
+                if (!b64 && fallback) {
+                    let absF = fallback;
                     if (fallback.startsWith('/') && !fallback.startsWith('//')) {
-                        absoluteFallback = window.location.origin + fallback;
+                        absF = window.location.origin + fallback;
                     }
-                    urls.push(absoluteFallback);
+                    b64 = await convertToB64(absF);
                 }
                 
-                let success = false;
-                for (const urlToFetch of urls) {
-                    try {
-                        let absoluteUrl = urlToFetch;
-                        if (urlToFetch.startsWith('/') && !urlToFetch.startsWith('//')) {
-                            absoluteUrl = window.location.origin + urlToFetch;
-                        }
-                        
-                        const resp = await fetch(absoluteUrl);
-                        if (!resp.ok) continue;
-                        
-                        const blob = await resp.blob();
-                        const b64 = await new Promise((resolve) => {
-                            const reader = new FileReader();
-                            reader.onload = () => resolve(reader.result);
-                            reader.onerror = () => resolve(null);
-                            reader.readAsDataURL(blob);
-                        });
-                        
-                        if (b64) {
-                            img.src = b64;
-                            success = true;
-                            break;
-                        }
-                    } catch (e) {
-                        console.warn('Failed to fetch/b64 image: ' + urlToFetch, e);
-                    }
-                }
-                
-                if (!success) {
+                if (b64) {
+                    img.src = b64;
+                } else {
                     img.style.display = 'none';
                     const orangeBox = img.closest('.machine-orange-box');
                     if (orangeBox) {
