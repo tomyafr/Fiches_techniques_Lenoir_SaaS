@@ -1,4 +1,5 @@
 <?php
+// Stable Deployment Heartbeat - Reverting to e3adf96 stable state
 header('Content-Type: text/html; charset=utf-8');
 require_once __DIR__ . '/../includes/config.php';
 requireAuth(['technicien', 'admin']);
