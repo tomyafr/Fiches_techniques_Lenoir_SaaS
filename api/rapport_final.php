@@ -1270,53 +1270,44 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         async function ensureImagesBase64(container) {
             const imgs = Array.from(container.querySelectorAll('img'));
             
-            const convertToB64 = async (url) => {
-                return new Promise((resolve) => {
-                    const temp = new Image();
-                    if (!url.startsWith('/') && !url.startsWith(window.location.origin)) {
-                        temp.crossOrigin = 'Anonymous';
-                    }
-                    temp.onload = () => {
-                        try {
-                            const canvas = document.createElement('canvas');
-                            canvas.width = temp.naturalWidth;
-                            canvas.height = temp.naturalHeight;
-                            const ctx = canvas.getContext('2d');
-                            ctx.drawImage(temp, 0, 0);
-                            resolve(canvas.toDataURL('image/png'));
-                        } catch (e) { resolve(null); }
+            // Give synchronous inline onerror handlers a moment to mutate src if necessary
+            await new Promise(r => setTimeout(r, 100));
+            
+            const promises = imgs.map(img => {
+                return new Promise(resolve => {
+                    const finalize = () => {
+                        if (img.naturalWidth > 0) {
+                            resolve();
+                        } else {
+                            img.style.display = 'none';
+                            const box = img.closest('.machine-orange-box');
+                            if (box) box.style.display = 'none';
+                            resolve();
+                        }
                     };
-                    temp.onerror = () => resolve(null);
-                    temp.src = url;
-                    setTimeout(() => resolve(null), 10000); // 10s timeout
-                });
-            };
 
-            for (const img of imgs) {
-                const current = img.src || img.getAttribute('src');
-                if (!current || current.startsWith('data:')) continue;
-                
-                const fallback = img.getAttribute('data-fallback');
-                
-                let b64 = await convertToB64(current);
-                if (!b64 && fallback) {
-                    let absF = fallback;
-                    if (fallback.startsWith('/') && !fallback.startsWith('//')) {
-                        absF = window.location.origin + fallback;
+                    if (img.complete && img.naturalWidth > 0) {
+                        finalize();
+                    } else {
+                        img.onload = finalize;
+                        img.onerror = () => {
+                            const fallback = img.getAttribute('data-fallback');
+                            const currentSrc = img.src || img.getAttribute('src');
+                            
+                            // Prevent infinite loops if fallback also fails
+                            if (fallback && (!currentSrc || !currentSrc.includes(fallback))) {
+                                img.src = fallback;
+                                img.onload = finalize;
+                                img.onerror = finalize;
+                            } else {
+                                finalize();
+                            }
+                        };
                     }
-                    b64 = await convertToB64(absF);
-                }
-                
-                if (b64) {
-                    img.src = b64;
-                } else {
-                    img.style.display = 'none';
-                    const orangeBox = img.closest('.machine-orange-box');
-                    if (orangeBox) {
-                        orangeBox.style.display = 'none';
-                    }
-                }
-            }
+                });
+            });
+            
+            await Promise.all(promises);
         }
 
         async function buildFullPdfContainer(opts = {}) {
