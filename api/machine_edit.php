@@ -2242,11 +2242,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <h3 style="font-size:18px; color:#000; font-weight:bold; border-bottom:3px solid #ff6600; display:inline-block; padding-bottom:10px; margin-bottom:20px; text-transform:uppercase;">SÉPARATEUR À PLAQUE MAGNÉTIQUE SPM</h3>
                         
                         <div class="machine-orange-box" style="margin-bottom:25px; border:2px solid #ff6600; padding:15px; display:inline-block; background-color:#fff; box-shadow:0 4px 8px rgba(0,0,0,0.1);">
-                            <img src="/assets/machines/spm_diagram_composite.png" data-fallback="/assets/machines/spm_diagram.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma Composite SPM" onerror="this.src=this.getAttribute('data-fallback'); this.onerror=function(){this.parentElement.style.display='none';};">
-                        </div>
-
-                        <div class="machine-orange-box" style="margin-top:20px; border:2px solid #ff6600; padding:15px; display:inline-block; background-color:#fff; box-shadow:0 4px 8px rgba(0,0,0,0.1);">
-                            <img src="/assets/machines/spm_photo.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Photo SPM" onerror="this.parentElement.style.display='none';">
+                            <img src="/assets/machines/spm_diagram_composite.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma Composite SPM">
                         </div>
                     </div>
 
@@ -2382,7 +2378,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <h3 style="font-size:18px; color:#000; font-weight:bold; border-bottom:3px solid #ff6600; display:inline-block; padding-bottom:10px; margin-bottom:20px; text-transform:uppercase;">SÉPARATEUR À CÔNE MAGNÉTIQUE SRM</h3>
                         
                         <div class="machine-orange-box" style="margin-top:20px; border:2px solid #ff6600; padding:15px; display:inline-block; background-color:#fff; box-shadow:0 4px 8px rgba(0,0,0,0.1);">
-                            <img src="/assets/machines/srm_photo.png" data-fallback="/assets/machines/srm_diagram.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Support SRM" onerror="this.src=this.getAttribute('data-fallback'); this.onerror=function(){this.parentElement.style.display='none';};">
+                            <img src="/assets/machines/srm_diagram.png" style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Support SRM">
                         </div>
                     </div>
 
