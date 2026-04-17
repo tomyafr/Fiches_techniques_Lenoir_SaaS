@@ -1273,7 +1273,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const convertToB64 = async (url) => {
                 return new Promise((resolve) => {
                     const temp = new Image();
-                    temp.crossOrigin = 'Anonymous';
+                    if (!url.startsWith('/') && !url.startsWith(window.location.origin)) {
+                        temp.crossOrigin = 'Anonymous';
+                    }
                     temp.onload = () => {
                         try {
                             const canvas = document.createElement('canvas');
