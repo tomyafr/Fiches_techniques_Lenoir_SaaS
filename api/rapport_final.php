@@ -1268,64 +1268,43 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         // createPdfFooter removed. Footers are now drawn dynamically via jsPDF/PDF-Lib.
 
         async function ensureImagesBase64(container) {
+            // CRITICAL FIX: The container comes from DOMParser and is NOT in the
+            // live document. Images inside it never actually load (naturalWidth=0).
+            // Solution: temporarily attach the container to document.body so the
+            // browser triggers real image loading, then detach it.
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
+            container.style.top = '0';
+            container.style.opacity = '0';
+            document.body.appendChild(container);
+
             const imgs = Array.from(container.querySelectorAll('img'));
             
-            // Give synchronous inline onerror handlers a moment to mutate src if necessary
-            await new Promise(r => setTimeout(r, 100));
-            
-            const promises = imgs.map(img => {
+            await Promise.all(imgs.map(img => {
                 return new Promise(resolve => {
-                    let timeoutFinished = false;
-                    const safetyTimeout = setTimeout(() => {
-                        timeoutFinished = true;
-                        finalize();
-                    }, 5000); // 5s max per image
-
-                    const finalize = () => {
-                        if (timeoutFinished) return;
-                        clearTimeout(safetyTimeout);
-                        timeoutFinished = true;
-
-                        if (img.naturalWidth > 0) {
-                            resolve();
-                        } else {
-                            img.style.display = 'none';
-                            const box = img.closest('.machine-orange-box');
-                            if (box) box.style.display = 'none';
-                            resolve();
-                        }
-                    };
-
-                    const runFallback = () => {
-                        if (timeoutFinished) return;
-                        const fallback = img.getAttribute('data-fallback');
-                        const currentSrc = img.src || img.getAttribute('src') || '';
-                        
-                        // Prevent infinite loop if fallback fails too
-                        if (fallback && !currentSrc.includes(fallback)) {
-                            img.src = fallback;
-                            // Check if standard loading occurs
-                            if (img.complete) finalize();
-                            else {
-                                img.onload = finalize;
-                                img.onerror = finalize;
-                            }
-                        } else {
-                            finalize();
-                        }
-                    };
-
-                    if (img.complete) {
-                        if (img.naturalWidth > 0) finalize();
-                        else runFallback();
+                    // Safety timeout: never wait more than 8s per image
+                    const timeout = setTimeout(() => resolve(), 8000);
+                    
+                    if (img.complete && img.naturalWidth > 0) {
+                        clearTimeout(timeout);
+                        resolve();
                     } else {
-                        img.onload = finalize;
-                        img.onerror = runFallback;
+                        img.onload = () => { clearTimeout(timeout); resolve(); };
+                        img.onerror = () => { clearTimeout(timeout); resolve(); };
                     }
                 });
-            });
-            
-            await Promise.all(promises);
+            }));
+
+            // Small extra delay for rendering
+            await new Promise(r => setTimeout(r, 200));
+
+            // Detach from document - html2pdf will re-attach it itself
+            document.body.removeChild(container);
+            // Reset positioning styles
+            container.style.position = '';
+            container.style.left = '';
+            container.style.top = '';
+            container.style.opacity = '';
         }
 
         async function buildFullPdfContainer(opts = {}) {
