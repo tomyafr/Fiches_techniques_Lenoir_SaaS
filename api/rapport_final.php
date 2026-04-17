@@ -1275,7 +1275,17 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             
             const promises = imgs.map(img => {
                 return new Promise(resolve => {
+                    let timeoutFinished = false;
+                    const safetyTimeout = setTimeout(() => {
+                        timeoutFinished = true;
+                        finalize();
+                    }, 5000); // 5s max per image
+
                     const finalize = () => {
+                        if (timeoutFinished) return;
+                        clearTimeout(safetyTimeout);
+                        timeoutFinished = true;
+
                         if (img.naturalWidth > 0) {
                             resolve();
                         } else {
@@ -1286,23 +1296,31 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                         }
                     };
 
-                    if (img.complete && img.naturalWidth > 0) {
-                        finalize();
-                    } else {
-                        img.onload = finalize;
-                        img.onerror = () => {
-                            const fallback = img.getAttribute('data-fallback');
-                            const currentSrc = img.src || img.getAttribute('src');
-                            
-                            // Prevent infinite loops if fallback also fails
-                            if (fallback && (!currentSrc || !currentSrc.includes(fallback))) {
-                                img.src = fallback;
+                    const runFallback = () => {
+                        if (timeoutFinished) return;
+                        const fallback = img.getAttribute('data-fallback');
+                        const currentSrc = img.src || img.getAttribute('src') || '';
+                        
+                        // Prevent infinite loop if fallback fails too
+                        if (fallback && !currentSrc.includes(fallback)) {
+                            img.src = fallback;
+                            // Check if standard loading occurs
+                            if (img.complete) finalize();
+                            else {
                                 img.onload = finalize;
                                 img.onerror = finalize;
-                            } else {
-                                finalize();
                             }
-                        };
+                        } else {
+                            finalize();
+                        }
+                    };
+
+                    if (img.complete) {
+                        if (img.naturalWidth > 0) finalize();
+                        else runFallback();
+                    } else {
+                        img.onload = finalize;
+                        img.onerror = runFallback;
                     }
                 });
             });
