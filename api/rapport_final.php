@@ -2258,38 +2258,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 const pdfDoc = await PDFDocument.load(mergedBytes);
                 const pages = pdfDoc.getPages();
                 const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-                const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-                const fontItalic = await pdfDoc.embedFont(StandardFonts.HelveticaOblique);
-                
-                // Embed Logo for continuous header
-                let logoImg = null;
-                try {
-                    const logoResp = await fetch('/assets/lenoir_logo_doc.png');
-                    const logoBytes = await logoResp.arrayBuffer();
-                    logoImg = await pdfDoc.embedPng(logoBytes);
-                } catch(e) { console.error("Header logo error", e); }
-
-                const orangeColor = rgb(244/255, 130/255, 32/255);
                 
                 for (let i = 0; i < pages.length; i++) {
-                    const { width, height } = pages[i].getSize();
-                    
-                    // HEADER (Only for pages > 1)
-                    if (i > 0) {
-                        if (logoImg) {
-                            const lDims = logoImg.scale(0.35);
-                            pages[i].drawImage(logoImg, { x: 42, y: height - lDims.height - 25, width: lDims.width, height: lDims.height });
-                        }
-                        const tagline = "Le spécialiste des applications magnétiques pour la séparation et le levage industriel";
-                        pages[i].drawText(tagline, { x: width - fontItalic.widthOfTextAtSize(tagline, 9) - 42, y: height - 35, size: 9, font: fontItalic, color: orangeColor });
-                        
-                        pages[i].drawLine({ start: { x: 42, y: height - 55 }, end: { x: width - 42, y: height - 55 }, thickness: 2, color: orangeColor });
-                        pages[i].drawLine({ start: { x: 42, y: height - 62 }, end: { x: width - 42, y: height - 62 }, thickness: 1, color: orangeColor });
-                        
-                        const mention = "RAPPORT D'EXPERTISE";
-                        pages[i].drawText(mention, { x: width - fontBold.widthOfTextAtSize(mention, 10) - 42, y: height - 78, size: 10, font: fontBold, color: rgb(0.3, 0.3, 0.3) });
-                    }
-
+                    const { width } = pages[i].getSize();
                     const text = `Page ${i + 1} / ${pages.length}`;
                     const leg = window.LM_RAPPORT.legal || {};
                     const addressText = (leg.address || '').replace(/<[^>]*>?/gm, ' ');
