@@ -60,10 +60,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $conclusion = trim($_POST['conclusion'] ?? '');
         $postDonnees = $_POST['donnees'] ?? [];
         $postMesures = $_POST['mesures'] ?? [];
-        $postPhotos = $_POST['photos_json'] ?? '{}';
+        $postPhotosInput = $_POST['photos_json'] ?? '{}';
+        $phDataArr = json_decode($postPhotosInput, true) ?: [];
+        $finalPhTable = [];
+        foreach ($phDataArr as $k => $pl) {
+            $finalPhTable[$k] = [];
+            foreach ($pl as $p) {
+                $pId = (!empty($p['id'])) ? intval($p['id']) : null;
+                $pData = $p['data'] ?? null;
+                $pCap = $p['caption'] ?? '';
+                if ($pData && strpos($pData, 'data:') === 0) {
+                    if ($pId) {
+                        $db->prepare("UPDATE machine_photos SET data = ?, caption = ? WHERE id = ? AND machine_id = ?")->execute([$pData, $pCap, $pId, $id]);
+                    } else {
+                        $ins = $db->prepare("INSERT INTO machine_photos (machine_id, field_key, data, caption) VALUES (?, ?, ?, ?) RETURNING id");
+                        $ins->execute([$id, $k, $pData, $pCap]);
+                        $pId = $ins->fetchColumn();
+                    }
+                } elseif ($pId) {
+                    $db->prepare("UPDATE machine_photos SET caption = ? WHERE id = ? AND machine_id = ?")->execute([$pCap, $pId, $id]);
+                }
+                if ($pId) $finalPhTable[$k][] = ['id' => $pId, 'caption' => $pCap];
+            }
+        }
+        $postPhotosJson = json_encode($finalPhTable);
+        $allIdsPh = [];
+        foreach ($finalPhTable as $k => $l) foreach ($l as $ph) if ($ph['id']) $allIdsPh[] = $ph['id'];
+        if (!empty($allIdsPh)) {
+            $inCl = implode(',', array_map('intval', $allIdsPh));
+            $db->prepare("DELETE FROM machine_photos WHERE machine_id = ? AND id NOT IN ($inCl)")->execute([$id]);
+        } else {
+            $db->prepare("DELETE FROM machine_photos WHERE machine_id = ?")->execute([$id]);
+        }
 
         $db->prepare('UPDATE machines SET numero_of = ?, annee_fabrication = ?, commentaires = ?, dysfonctionnements = ?, conclusion = ?, donnees_controle = ?, mesures = ?, photos = ? WHERE id = ?')
-            ->execute([$of, $annee, $commentaire, $dysfonctionnements, $conclusion, json_encode($postDonnees), json_encode($postMesures), $postPhotos, $id]);
+            ->execute([$of, $annee, $commentaire, $dysfonctionnements, $conclusion, json_encode($postDonnees), json_encode($postMesures), $postPhotosJson, $id]);
 
         header('Location: intervention_edit.php?id=' . $machine['intervention_id'] . '&msg=saved');
         exit;

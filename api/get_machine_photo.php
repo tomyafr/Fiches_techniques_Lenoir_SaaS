@@ -11,23 +11,9 @@ if (!$machineId || !$key || !$photoId) {
     die("Paramètres manquants.");
 }
 
-$stmt = $db->prepare('SELECT photos FROM machines WHERE id = ?');
-$stmt->execute([$machineId]);
-$m = $stmt->fetch();
-
-if (!$m) die("Machine introuvable.");
-
-$photosData = json_decode($m['photos'] ?? '{}', true);
-$found = null;
-
-if (isset($photosData[$key])) {
-    foreach ($photosData[$key] as $p) {
-        if ($p['id'] == $photoId) {
-            $found = $p['data'];
-            break;
-        }
-    }
-}
+$stmt = $db->prepare('SELECT data FROM machine_photos WHERE id = ? AND machine_id = ?');
+$stmt->execute([$photoId, $machineId]);
+$found = $stmt->fetchColumn();
 
 if ($found && preg_match('/^data:([^;]+);base64,(.*)$/', $found, $matches)) {
     $mimeType = $matches[1];
