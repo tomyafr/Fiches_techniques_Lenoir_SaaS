@@ -15,6 +15,7 @@ if (!in_array($filterPeriod, $allowedPeriods, true)) {
 
 $filterUser = intval($_GET['user'] ?? 0);
 $filterArc = substr(preg_replace('/[^\w\s\-\/]/', '', trim($_GET['arc'] ?? '')), 0, 50);
+$filterClient = substr(preg_replace('/[^\w\s\-\/]/', '', trim($_GET['client'] ?? '')), 0, 50);
 
 // Calcul des dates selon la période
 $week = [
@@ -77,6 +78,11 @@ if (!$isAdmin) {
 if (!empty($filterArc)) {
     $query .= ' AND i.numero_arc ILIKE ?';
     $params[] = '%' . $filterArc . '%';
+}
+
+if (!empty($filterClient)) {
+    $query .= ' AND c.nom_societe ILIKE ?';
+    $params[] = '%' . $filterClient . '%';
 }
 
 $query .= ' ORDER BY i.date_intervention DESC, i.created_at DESC';
@@ -377,9 +383,13 @@ $nbClients = count($clientsSet);
                         value="<?= htmlspecialchars($filterArc) ?>" maxlength="50" onblur="this.form.submit()"
                         style="flex:1;min-width:150px;">
 
+                    <input type="text" name="client" placeholder="Filtrer par Client..."
+                        value="<?= htmlspecialchars($filterClient) ?>" maxlength="50" onblur="this.form.submit()"
+                        style="flex:1;min-width:150px;">
+
                     <button type="submit" class="btn btn-primary"
                         style="padding:0.6rem 1.25rem;font-size:0.8rem;">Filtrer</button>
-                    <?php if ($filterUser || $filterArc || $filterPeriod !== 'all'): ?>
+                    <?php if ($filterUser || $filterArc || $filterClient || $filterPeriod !== 'all'): ?>
                         <a href="historique.php" class="btn btn-ghost"
                             style="padding:0.6rem 1rem;font-size:0.8rem;">Effacer</a>
                     <?php endif; ?>

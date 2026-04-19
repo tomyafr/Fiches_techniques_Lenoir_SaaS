@@ -2032,7 +2032,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             const endPage = document.createElement('div');
             endPage.className = 'pdf-page';
-            endPage.style.padding = '0 15mm';
+            endPage.style.padding = '0 15mm 20mm 15mm';
             endPage.style.position = 'relative';
             if (container.children.length > 0) endPage.style.pageBreakBefore = 'always';
 
@@ -2111,13 +2111,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     </div>
 
                     <!-- FOOTER SECTION WITH QR CODE -->
-                    <div style="text-align: center; color: #1B4F72; margin-top: 0px;">
-                        <div style="font-weight: bold; margin-bottom: 4px; font-size: 11px;">UNE SEULE ADRESSE COMMUNE : contact@raoul-lenoir.com</div>
+                    <div style="text-align: center; color: #1B4F72; margin-top: 10px; width: 100%;">
+                        <div style="font-weight: bold; margin-bottom: 5px; font-size: 11px;">UNE SEULE ADRESSE COMMUNE : contact@raoul-lenoir.com</div>
                         
-                        <div style="margin-top: 2px;">
+                        <div style="display: inline-block; padding: 5px;">
                             <div style="font-size: 10px; font-weight: bold; margin-bottom: 2px;">Visitez notre site !</div>
                             <img src="/assets/qr_lenoir.png" style="width: 80px; height: 80px; display: block; margin: 0 auto;">
-                            <div style="font-weight: bold; font-size: 11px; margin-top: 2px; color: #1B4F72;">www.raoul-lenoir.com</div>
+                            <div style="font-weight: bold; font-size: 11px; margin-top: 2px; color: #1B4F72; display: block;">www.raoul-lenoir.com</div>
                         </div>
                     </div>
                 </div>
