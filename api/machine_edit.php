@@ -3193,12 +3193,23 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?php endif; ?>
                         </div>
 
-                    <div class="section-wrapper-pdf photos-annexes-wrapper" style="margin-top:20px;">
+                    <?php
+                        $hasAnnexPhotos = false;
+                        if (!empty($photosData)) {
+                            foreach ($photosData as $k => $plist) {
+                                if ($k !== 'desc_materiel' && !empty($plist)) {
+                                    $hasAnnexPhotos = true;
+                                    break;
+                                }
+                            }
+                        }
+                    ?>
+                    <div class="section-wrapper-pdf photos-annexes-wrapper <?= !$hasAnnexPhotos ? 'no-print-pdf' : '' ?>" style="margin-top:20px;">
                         <div class="pdf-section-title">PHOTOS ANNEXES</div>
                         <div id="photosAnnexesGrid"
                             style="border:1px solid #000; border-top:none; padding:10px; min-height:60px; display:flex; flex-wrap:wrap; gap:10px;">
-                            <?php if (empty($photosData)): ?>
-                                <p style="color:#999; font-size:11px; margin:0;" id="noPhotosMsg" class="no-print-pdf">Aucune photo. Utilisez les boutons 📷 sur chaque ligne de contrôle.</p>
+                            <?php if (!$hasAnnexPhotos): ?>
+                                <p style="color:#999; font-size:11px; margin:0;" id="noPhotosMsg" class="no-print-pdf">Aucune photo annexe renseignée.</p>
                             <?php else: ?>
                                 <?php $photoIndex = 1; ?>
                                 <?php foreach ($photosData as $key => $photos): ?>
