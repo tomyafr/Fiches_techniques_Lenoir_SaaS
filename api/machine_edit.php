@@ -3512,9 +3512,15 @@ foreach ($recoFreq as $rfk => $rfv) {
             container.innerHTML = '';
             var photos = allPhotos[key] || [];
             photos.forEach(function (p, i) {
+                var src = p.data;
+                if (!src && p.id) {
+                    src = 'get_machine_photo.php?machine_id=<?= $id ?>&key=' + key + '&photo_id=' + p.id;
+                }
+                if (!src) return;
+
                 var wrap = document.createElement('span');
                 wrap.className = 'photo-thumb-wrap';
-                wrap.innerHTML = '<img src="' + p.data + '" title="' + (p.caption || '') + '" onclick="openLightbox(this.src, \'' + (p.caption || '').replace(/'/g, "\\'") + '\')">' +
+                wrap.innerHTML = '<img src="' + src + '" title="' + (p.caption || '') + '" onclick="openLightbox(this.src, \'' + (p.caption || '').replace(/'/g, "\\'") + '\')">' +
                     '<button type="button" class="photo-del" onclick="deletePhoto(\'' + key + '\',' + i + ')">×</button>';
                 container.appendChild(wrap);
             });

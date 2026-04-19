@@ -1529,6 +1529,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 .photo-annexe-item { text-align: center; max-width: 200px; margin-bottom: 10px; }
                 .photo-annexe-item img { width: 180px; height: 135px; object-fit: cover; border: 1px solid #000; }
                 .photo-annexe-item p { font-size: 8pt; margin: 3px 0 0 0; color: #000; line-height: 1.2; }
+                
+                .photo-thumbs { display: block !important; margin-top: 5px; }
+                .photo-thumb-wrap { display: inline-block; margin-right: 3px; }
+                .photo-thumb-wrap img { width: 45px; height: 45px; object-fit: cover; border: 1px solid #777; }
 
                 img { max-width: 100%; }
                 .levage-diagram-container { page-break-inside: avoid !important; break-inside: avoid !important; }
@@ -1583,7 +1587,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                     <img src="/assets/lenoir_logo_doc.png" style="height:60px;">
                                 </td>
                                 <td style="width: 60%; vertical-align: bottom; text-align: right; padding-bottom: 5px;">
-                                    <div style="font-size: 11px; font-weight: normal; color: #F48220; font-style: italic;">
+                                    <div style="font-size: 11px; font-weight: normal; color: #555; font-style: italic;">
                                         Le spécialiste des applications magnétiques pour la séparation et le levage industriel
                                     </div>
                                 </td>
@@ -1850,7 +1854,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             });
 
                             // --- NETTOYAGE RADICAL DES ÉLÉMENTS D'INTERFACE ---
-                            p.querySelectorAll('.photo-btn, .btn-ia-refresh, .top-bar, .photo-thumbs, #btnChrono, .no-print-pdf, .photo-del-overlay').forEach(el => el.remove());
+                            p.querySelectorAll('.photo-btn, .btn-ia-refresh, .top-bar, #btnChrono, .no-print-pdf, .photo-del-overlay').forEach(el => el.remove());
 
                             // FIX: Blank pages. Strip default screen margins and shadows so they don't push into invisible overflowing pages
                             p.style.margin = '0';
