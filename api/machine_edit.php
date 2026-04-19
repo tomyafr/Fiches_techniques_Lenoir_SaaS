@@ -1214,8 +1214,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                             $imgS = (isset($p['id'])) 
                                 ? "get_machine_photo.php?machine_id=$id&key=$key&photo_id=".$p['id'] 
                                 : ($p['data'] ?? '');
-                            $thumbsHtml .= '<span class="photo-thumb-wrap" style="margin-right:5px;">
+                            $thumbsHtml .= '<span class="photo-thumb-wrap" style="margin-right:5px; display:inline-block; vertical-align:top; text-align:center;">
                                 <img src="' . htmlspecialchars($imgS) . '" style="width:40px; height:40px; object-fit:cover; border:1px solid #ccc; vertical-align:middle;">
+                                ' . (!empty($p['caption']) ? '<br><i style="font-size:8px; display:block; line-height:1.1; color:#555; margin-top:2px;">' . htmlspecialchars($p['caption']) . '</i>' : '') . '
                             </span>';
                         }
                     }
@@ -3520,7 +3521,13 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 var wrap = document.createElement('span');
                 wrap.className = 'photo-thumb-wrap';
+                wrap.style.display = 'inline-block';
+                wrap.style.verticalAlign = 'top';
+                wrap.style.textAlign = 'center';
+                wrap.style.marginRight = '5px';
+                
                 wrap.innerHTML = '<img src="' + src + '" title="' + (p.caption || '') + '" onclick="openLightbox(this.src, \'' + (p.caption || '').replace(/'/g, "\\'") + '\')">' +
+                    (p.caption ? '<br><i style="font-size:8px; display:block; line-height:1.1; color:#555; margin-top:2px; max-width:45px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + p.caption + '</i>' : '') +
                     '<button type="button" class="photo-del" onclick="deletePhoto(\'' + key + '\',' + i + ')">×</button>';
                 container.appendChild(wrap);
             });
