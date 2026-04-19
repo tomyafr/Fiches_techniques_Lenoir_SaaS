@@ -1089,8 +1089,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <div id="description_materiel_montage">';
                     
                     // Si aucune photo et mode édition, on affiche le placeholder avec bouton
-                    // Si aucune photo et mode PDF, on affiche seulement le rectangle avec la croix
+                    // Si aucune photo et mode PDF, on n\'affiche RIEN (demande utilisateur point 9)
                     if ($count == 0) {
+                        if ($isPdf) return '';
+                        
                         $html .= '
                         <div style="position:relative; width:100%; height:80px; border:1px solid #ddd; background:#fdfdfd; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:10px;">
                             <svg style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;" preserveAspectRatio="none">
@@ -1099,7 +1101,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </svg>
                             <div style="position:relative; z-index:1; font-size:13px; color:#999; font-weight:bold; text-align:center;">
                                 Aucune photo prise pour la partie B
-                                ' . (!$isPdf ? '<br><button type="button" class="btn btn-primary" onclick="capturePhoto(\'desc_materiel\')" style="margin-top:10px; height:32px; font-size:11px;">📷 Ajouter une photo</button>' : '') . '
+                                <br><button type="button" class="btn btn-primary" onclick="capturePhoto(\'desc_materiel\')" style="margin-top:10px; height:32px; font-size:11px;">📷 Ajouter une photo</button>
                             </div>
                         </div>';
                     } else {
@@ -3147,8 +3149,11 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                         <?php 
                         // --- SECTION B : DESCRIPTION MATERIEL (GLOBAL) ---
-                        if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:20px;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; }
-                        echo '<div class="section-wrapper-pdf">' . renderSectionB($photosData) . '</div>';
+                        $contentB = renderSectionB($photosData);
+                        if (!empty($contentB)) {
+                            if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:20px;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; }
+                            echo '<div class="section-wrapper-pdf">' . $contentB . '</div>';
+                        }
 
                         // SECTION C & D (uniquement PDF)
                         if (isset($_GET['pdf'])):
