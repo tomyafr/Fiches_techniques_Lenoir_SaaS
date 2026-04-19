@@ -1634,26 +1634,43 @@ foreach ($recoFreq as $rfk => $rfv) {
                                             <input type="text" name="mesures[sgcp_e<?= $e ?>_nb]" value="<?= htmlspecialchars($mesures['sgcp_e'.$e.'_nb'] ?? '') ?>" style="width:40px; border:none; border-bottom:1px solid #000; text-align:center; font-weight:bold;" autocomplete="off">
                                         </div>
                                         
+                                        <?php 
+                                            // Déterminer dynamiquement le nombre de barreaux à afficher
+                                            $nbB_sgcp = intval($mesures['sgcp_e'.$e.'_nb'] ?? 0);
+                                            if ($nbB_sgcp <= 0) {
+                                                if (isset($_GET['pdf'])) {
+                                                    // PDF : On essaie de trouver le dernier barreau rempli
+                                                    for ($check=11; $check>=1; $check--) {
+                                                        if (!empty($mesures['sgcp_e'.$e.'_b'.$check])) { $nbB_sgcp = $check; break; }
+                                                    }
+                                                    if ($nbB_sgcp === 0) $nbB_sgcp = 11; // Fallback par défaut
+                                                } else {
+                                                    $nbB_sgcp = 11; // Editor : on affiche tout par défaut
+                                                }
+                                            }
+                                        ?>
                                         <div style="background:#fcfcfc; border:1px solid #eee; padding:5px;">
                                             <div style="font-size:9px; color:#888; margin-bottom:5px; font-weight:bold;">Barreaux (Gauss Max) :</div>
                                             <table style="width:100%; border-collapse:collapse; border:none; font-size:10px;">
                                                 <tr>
-                                                    <td style="width:50%; border:none; padding-right:5px; vertical-align:top;">
-                                                        <?php for($b=1; $b<=6; $b++): ?>
+                                                    <td style="width:<?= $nbB_sgcp <= 6 ? '100%' : '50%' ?>; border:none; padding-right:5px; vertical-align:top;">
+                                                        <?php for($b=1; $b<=min(6, $nbB_sgcp); $b++): ?>
                                                             <div style="display:flex; justify-content:space-between; margin-bottom:3px; border-bottom:1px solid #f0f0f0;">
                                                                 <span style="font-weight:600;"><?= $b ?> :</span>
                                                                 <span><input type="text" name="mesures[sgcp_e<?= $e ?>_b<?= $b ?>]" value="<?= htmlspecialchars($mesures['sgcp_e'.$e.'_b'.$b] ?? '') ?>" style="width:35px; border:none; text-align:center; font-size:10px;"> <span style="font-size:8px; color:#aaa;">G</span></span>
                                                             </div>
                                                         <?php endfor; ?>
                                                     </td>
+                                                    <?php if ($nbB_sgcp > 6): ?>
                                                     <td style="width:50%; border:none; padding-left:5px; vertical-align:top; border-left:1px solid #eee;">
-                                                        <?php for($b=7; $b<=11; $b++): ?>
+                                                        <?php for($b=7; $b<=min(11, $nbB_sgcp); $b++): ?>
                                                             <div style="display:flex; justify-content:space-between; margin-bottom:3px; border-bottom:1px solid #f0f0f0;">
                                                                 <span style="font-weight:600;"><?= $b ?> :</span>
                                                                 <span><input type="text" name="mesures[sgcp_e<?= $e ?>_b<?= $b ?>]" value="<?= htmlspecialchars($mesures['sgcp_e'.$e.'_b'.$b] ?? '') ?>" style="width:35px; border:none; text-align:center; font-size:10px;"> <span style="font-size:8px; color:#aaa;">G</span></span>
                                                             </div>
                                                         <?php endfor; ?>
                                                     </td>
+                                                    <?php endif; ?>
                                                 </tr>
                                             </table>
                                         </div>
@@ -1760,26 +1777,42 @@ foreach ($recoFreq as $rfk => $rfv) {
                                             <input type="text" name="mesures[sgsa_e<?= $e ?>_nb]" value="<?= htmlspecialchars($mesures['sgsa_e'.$e.'_nb'] ?? '') ?>" style="width:40px; border:none; border-bottom:1px solid #000; text-align:center; font-weight:bold;" autocomplete="off">
                                         </div>
                                         
+                                        <?php 
+                                            // Déterminer dynamiquement le nombre de barreaux à afficher
+                                            $nbB_sgsa = intval($mesures['sgsa_e'.$e.'_nb'] ?? 0);
+                                            if ($nbB_sgsa <= 0) {
+                                                if (isset($_GET['pdf'])) {
+                                                    for ($check=11; $check>=1; $check--) {
+                                                        if (!empty($mesures['sgsa_e'.$e.'_b'.$check])) { $nbB_sgsa = $check; break; }
+                                                    }
+                                                    if ($nbB_sgsa === 0) $nbB_sgsa = 11;
+                                                } else {
+                                                    $nbB_sgsa = 11;
+                                                }
+                                            }
+                                        ?>
                                         <div style="background:#fcfcfc; border:1px solid #eee; padding:5px;">
                                             <div style="font-size:9px; color:#888; margin-bottom:5px; font-weight:bold;">Barreaux (Gauss Max) :</div>
                                             <table style="width:100%; border-collapse:collapse; border:none; font-size:10px;">
                                                 <tr>
-                                                    <td style="width:50%; border:none; padding-right:5px; vertical-align:top;">
-                                                        <?php for($b=1; $b<=6; $b++): ?>
+                                                    <td style="width:<?= $nbB_sgsa <= 6 ? '100%' : '50%' ?>; border:none; padding-right:5px; vertical-align:top;">
+                                                        <?php for($b=1; $b<=min(6, $nbB_sgsa); $b++): ?>
                                                             <div style="display:flex; justify-content:space-between; margin-bottom:3px; border-bottom:1px solid #f0f0f0;">
                                                                 <span style="font-weight:600;"><?= $b ?> :</span>
                                                                 <span><input type="text" name="mesures[sgsa_e<?= $e ?>_b<?= $b ?>]" value="<?= htmlspecialchars($mesures['sgsa_e'.$e.'_b'.$b] ?? '') ?>" style="width:35px; border:none; text-align:center; font-size:10px;"> <span style="font-size:8px; color:#aaa;">G</span></span>
                                                             </div>
                                                         <?php endfor; ?>
                                                     </td>
+                                                    <?php if ($nbB_sgsa > 6): ?>
                                                     <td style="width:50%; border:none; padding-left:5px; vertical-align:top; border-left:1px solid #eee;">
-                                                        <?php for($b=7; $b<=11; $b++): ?>
+                                                        <?php for($b=7; $b<=min(11, $nbB_sgsa); $b++): ?>
                                                             <div style="display:flex; justify-content:space-between; margin-bottom:3px; border-bottom:1px solid #f0f0f0;">
                                                                 <span style="font-weight:600;"><?= $b ?> :</span>
                                                                 <span><input type="text" name="mesures[sgsa_e<?= $e ?>_b<?= $b ?>]" value="<?= htmlspecialchars($mesures['sgsa_e'.$e.'_b'.$b] ?? '') ?>" style="width:35px; border:none; text-align:center; font-size:10px;"> <span style="font-size:8px; color:#aaa;">G</span></span>
                                                             </div>
                                                         <?php endfor; ?>
                                                     </td>
+                                                    <?php endif; ?>
                                                 </tr>
                                             </table>
                                         </div>
@@ -1852,27 +1885,42 @@ foreach ($recoFreq as $rfk => $rfv) {
                                             <input type="text" name="mesures[sga_e<?= $e ?>_nb]" value="<?= htmlspecialchars($mesures['sga_e'.$e.'_nb'] ?? '') ?>" style="width:40px; border:none; border-bottom:1px solid #000; text-align:center; font-weight:bold;" autocomplete="off">
                                         </div>
                                         
+                                        <?php 
+                                            // Déterminer dynamiquement le nombre de barreaux à afficher
+                                            $nbB_sga = intval($mesures['sga_e'.$e.'_nb'] ?? 0);
+                                            if ($nbB_sga <= 0) {
+                                                if (isset($_GET['pdf'])) {
+                                                    for ($check=11; $check>=1; $check--) {
+                                                        if (!empty($mesures['sga_e'.$e.'_b'.$check])) { $nbB_sga = $check; break; }
+                                                    }
+                                                    if ($nbB_sga === 0) $nbB_sga = 11;
+                                                } else {
+                                                    $nbB_sga = 11;
+                                                }
+                                            }
+                                        ?>
                                         <div style="background:#fcfcfc; border:1px solid #eee; padding:5px;">
                                             <div style="font-size:9px; color:#888; margin-bottom:5px; font-weight:bold;">Barreaux (Gauss Max) :</div>
                                             <table style="width:100%; border-collapse:collapse; border:none; font-size:10px;">
                                                 <tr>
-                                                    <td style="width:50%; border:none; padding-right:5px; vertical-align:top;">
-                                                        <?php for($b=1; $b<=6; $b++): ?>
+                                                    <td style="width:<?= $nbB_sga <= 6 ? '100%' : '50%' ?>; border:none; padding-right:5px; vertical-align:top;">
+                                                        <?php for($b=1; $b<=min(6, $nbB_sga); $b++): ?>
                                                             <div style="display:flex; justify-content:space-between; margin-bottom:3px; border-bottom:1px solid #f0f0f0;">
                                                                 <span style="font-weight:600;"><?= $b ?> :</span>
                                                                 <span><input type="text" name="mesures[sga_e<?= $e ?>_b<?= $b ?>]" value="<?= htmlspecialchars($mesures['sga_e'.$e.'_b'.$b] ?? '') ?>" style="width:35px; border:none; text-align:center; font-size:10px;"> <span style="font-size:8px; color:#aaa;">G</span></span>
                                                             </div>
                                                         <?php endfor; ?>
                                                     </td>
+                                                    <?php if ($nbB_sga > 6): ?>
                                                     <td style="width:50%; border:none; padding-left:5px; vertical-align:top; border-left:1px solid #eee;">
-                                                        <?php for($b=7; $b<=11; $b++): ?>
+                                                        <?php for($b=7; $b<=min(11, $nbB_sga); $b++): ?>
                                                             <div style="display:flex; justify-content:space-between; margin-bottom:3px; border-bottom:1px solid #f0f0f0;">
                                                                 <span style="font-weight:600;"><?= $b ?> :</span>
                                                                 <span><input type="text" name="mesures[sga_e<?= $e ?>_b<?= $b ?>]" value="<?= htmlspecialchars($mesures['sga_e'.$e.'_b'.$b] ?? '') ?>" style="width:35px; border:none; text-align:center; font-size:10px;"> <span style="font-size:8px; color:#aaa;">G</span></span>
                                                             </div>
                                                         <?php endfor; ?>
-                                                        <div style="height:15px;"></div>
                                                     </td>
+                                                    <?php endif; ?>
                                                 </tr>
                                             </table>
                                         </div>
