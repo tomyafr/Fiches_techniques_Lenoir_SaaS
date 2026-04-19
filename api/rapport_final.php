@@ -1931,6 +1931,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                             // html2pdf coupe en deux les <tr> sauvagement. 
                             // La seule vraie solution est de wrapper chaque ligne logique dans son propre <tbody> !
                             p.querySelectorAll('table.pdf-table').forEach(table => {
+                                const originalThead = table.querySelector('thead');
+                                const theadRowsClone = originalThead ? Array.from(originalThead.querySelectorAll('tr')).map(r => r.cloneNode(true)) : [];
+
                                 const rows = Array.from(table.querySelectorAll('tr'));
                                 if (!rows.length) return;
 
@@ -1963,6 +1966,43 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                         child.remove();
                                     }
                                 });
+
+                                // REPETITION DES EN-TETES SUR LES NOUVELLES PAGES (html2pdf workaround)
+                                if (theadRowsClone.length > 0) {
+                                    const pageRect = p.getBoundingClientRect();
+                                    // p.offsetWidth is the DOM width of the page container (typically ~794px for 21cm)
+                                    // 170mm is the usable PDF width (210 - margins 20/20)
+                                    // 247mm is the usable PDF height (297 - margins 30/20)
+                                    const pxPerMm = p.offsetWidth / 170;
+                                    const pageHeightPx = 247 * pxPerMm;
+
+                                    let currentPage = 1;
+                                    const processedTbodies = Array.from(table.querySelectorAll('tbody'));
+                                    
+                                    // Skip the first tbody because it already contains the original thead rows
+                                    for (let i = 1; i < processedTbodies.length; i++) {
+                                        const tbody = processedTbodies[i];
+                                        // The layout changes dynamically as we insert, so we recalculate:
+                                        const rect = tbody.getBoundingClientRect();
+                                        const pageRectUpdate = p.getBoundingClientRect();
+                                        const relY = rect.top - pageRectUpdate.top;
+                                        
+                                        const tbodyPage = Math.floor(relY / pageHeightPx) + 1;
+
+                                        if (tbodyPage > currentPage) {
+                                            currentPage = tbodyPage;
+                                            
+                                            // Inject a clone of every header row into the top of this tbody
+                                            const clonesForThisPage = theadRowsClone.map(r => r.cloneNode(true));
+                                            for (let k = clonesForThisPage.length - 1; k >= 0; k--) {
+                                                const tr = clonesForThisPage[k];
+                                                // Apply missing css that target .pdf-table thead th
+                                                tr.querySelectorAll('th').forEach(th => th.style.borderTop = '1px solid #000');
+                                                tbody.insertBefore(tr, tbody.firstChild);
+                                            }
+                                        }
+                                    }
+                                }
                             });
 
                             p.style.position = 'relative';
