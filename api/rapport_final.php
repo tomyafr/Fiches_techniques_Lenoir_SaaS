@@ -2200,6 +2200,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             updatePdfProgress(0, 1, "Démarrage du découpage...");
 
             try {
+                const PDF_CHUNK_SIZE = 2;
                 const machineIds = window.LM_RAPPORT.machinesIds || [];
                 const totalSteps = 2 + Math.ceil(machineIds.length / PDF_CHUNK_SIZE) + 1;
                 let currentProg = 0;
@@ -2219,7 +2220,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 await new Promise(r => setTimeout(r, 100)); // Safety
                 chunks.push(await html2pdf().set(pdfOptions).from(introContainer).outputPdf('arraybuffer'));
 
-                const PDF_CHUNK_SIZE = 2; // Smaller chunks for more frequent name updates in progress bar
+                // 2. CHUNKS MACHINES (chunk size defined above)
                 // 2. CHUNKS MACHINES
                 for (let i = 0; i < machineIds.length; i += PDF_CHUNK_SIZE) {
                     const group = machineIds.slice(i, i + PDF_CHUNK_SIZE);
