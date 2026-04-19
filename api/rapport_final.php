@@ -670,9 +670,9 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 <body>
     <div id="pdfDownloadOverlay">
         <div class="premium-loader-card">
-            <div class="loader-visual" style="width: 160px; height: 160px;">
-                <video autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: contain;">
-                    <source src="/Animation_PDF1.mp4" type="video/mp4">
+            <div class="loader-visual" style="width: 200px; height: 180px; margin-bottom: 2rem; display: flex; align-items: center; justify-content: center;">
+                <video autoplay loop muted playsinline preload="auto" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+                    <source src="/assets/Animation_PDF1.mp4" type="video/mp4">
                 </video>
             </div>
             
