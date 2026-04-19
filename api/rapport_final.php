@@ -2219,11 +2219,15 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 await new Promise(r => setTimeout(r, 100)); // Safety
                 chunks.push(await html2pdf().set(pdfOptions).from(introContainer).outputPdf('arraybuffer'));
 
+                const PDF_CHUNK_SIZE = 2; // Smaller chunks for more frequent name updates in progress bar
                 // 2. CHUNKS MACHINES
                 for (let i = 0; i < machineIds.length; i += PDF_CHUNK_SIZE) {
                     const group = machineIds.slice(i, i + PDF_CHUNK_SIZE);
-                    const machineText = `Machines ${i + 1} à ${Math.min(i + PDF_CHUNK_SIZE, machineIds.length)}`;
-                    let prog = 10 + ((i + PDF_CHUNK_SIZE) / machineIds.length) * 70;
+                    const firstMachine = window.LM_RAPPORT.machinesData[i];
+                    const machineName = firstMachine ? firstMachine.designation : `Machine ${i + 1}`;
+                    const machineText = `Expertise : ${machineName}${group.length > 1 ? '...' : ''}`;
+                    
+                    let prog = 10 + ((i + group.length) / machineIds.length) * 70;
                     updatePdfProgress(Math.min(prog, 80), 2, machineText);
 
                     const mContainer = await buildFullPdfContainer({ 
