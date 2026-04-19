@@ -1419,8 +1419,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </table>
 
 
-                    <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:20px;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                     <div class="pdf-section" style="margin-top:20px;">
+                        <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                         <img src="/assets/machines/aprf_diagram.png"
                             style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma APRF"
                             onerror="this.style.display='none'">
@@ -1673,8 +1673,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
 
-                    <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:20px;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
-                    <div style="display:flex; flex-direction:column; align-items:center; gap:20px; margin-top:30px;">
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:20px; margin-top:30px; page-break-inside:avoid; break-inside:avoid;">
+                        <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="width:100%; margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                         <div style="text-align:center; width:100%;">
                             <p style="font-weight:bold; margin-bottom:5px; color:#d35400; text-align:left; border-bottom:1px solid #ed7d31; padding-bottom:5px;">SGCP :</p>
                             <img src="/assets/machines/sgcp_diagram.png" 
@@ -1798,8 +1798,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
                     
-                    <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:20px;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
-                    <div style="text-align:center; margin-top:20px;">
+                    <div class="pdf-section" style="text-align:center; margin-top:20px;">
+                        <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                         <img src="/assets/machines/sgsa_diagram.png" 
                              style="max-width:100%; height:auto; display:block; margin:0 auto;" 
                              alt="Schéma Séparateur à Grilles SGSA"
@@ -1940,8 +1940,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
 
-                    <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:20px;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
-                    <div style="text-align:center; margin-top:20px;">
+                    <div class="pdf-section" style="text-align:center; margin-top:20px;">
+                        <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                         <img src="/assets/machines/sga_diagram.png" 
                              style="max-width:100%; height:auto; display:block; margin:0 auto;" 
                              alt="Schéma Séparateur à Grilles SGA"
@@ -2086,8 +2086,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
 
-                    <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:20px;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
-                    <div style="text-align:center; margin-top:30px;">
+                    <div class="pdf-section" style="text-align:center; margin-top:30px;">
+                        <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                         <div style="margin-bottom:25px;">
                             <img src="/assets/machines/slt_photo.png" style="max-width:90%; height:auto; border:1px solid #ccc; display:block; margin:0 auto;" alt="Photo SLT" onerror="this.style.display='none'">
                         </div>
@@ -2243,8 +2243,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
 
-                    <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:20px;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
-                    <div style="text-align:center; margin-top:30px;">
+                    <div class="pdf-section" style="text-align:center; margin-top:30px;">
+                        <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                         <h3 style="font-size:18px; color:#000; font-weight:bold; border-bottom:3px solid #ff6600; display:inline-block; padding-bottom:10px; margin-bottom:20px; text-transform:uppercase;">SÉPARATEUR À PLAQUE MAGNÉTIQUE SPM</h3>
                         
                         <div class="pdf-section" style="border:2px solid #ff6600; padding:10px; text-align:center; margin-top:20px;">
@@ -2380,8 +2380,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
 
-                    <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:20px;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
-                    <div style="text-align:center; margin-top:30px;">
+                    <div class="pdf-section" style="text-align:center; margin-top:30px;">
+                        <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                         <h3 style="font-size:18px; color:#000; font-weight:bold; border-bottom:3px solid #ff6600; display:inline-block; padding-bottom:10px; margin-bottom:20px; text-transform:uppercase;">SÉPARATEUR À CÔNE MAGNÉTIQUE SRM</h3>
                         
                         <div class="pdf-section" style="border:2px solid #ff6600; padding:10px; text-align:center; margin-top:20px;">
@@ -2525,8 +2525,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderFreqRowEdx("Nettoyage de l'intérieur du séparateur - partie caisson de séparation", "edx_freq_net_cais", $donnees) ?>
                     </table>
 
-                    <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:20px;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                     <div class="pdf-section" style="margin-top:20px;">
+                        <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                         <img src="/assets/machines/edx_diagram.png"
                             style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma ED-X"
                             onerror="this.style.display='none'">
@@ -2620,9 +2620,11 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderFreqRow("Graissage des paliers", "ov_freq_graiss", $donnees) ?>
                     </table>
 
-                        <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:20px;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
-                        <img src="/assets/machines/ovap_diagram.png"
-                            style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma Overband">
+                        <div class="pdf-section" style="margin-top:20px;">
+                            <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
+                            <img src="/assets/machines/ovap_diagram.png"
+                                style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma Overband">
+                        </div>
 
                     <!-- Photo section removed here, handled globally at bottom -->
 
@@ -2721,8 +2723,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
 
-                    <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:20px;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
-                    <div style="text-align:center; margin-top:20px;">
+                    <div class="pdf-section" style="text-align:center; margin-top:20px;">
+                        <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                         <img src="/assets/machines/Image_TAP-PAP_Lenoir.png" style="max-width:100%; height:auto;" alt="Schémas PAP/TAP">
                     </div>
 
@@ -2989,8 +2991,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                     </table>
 
-                        <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:20px;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                         <div class="levage-diagram-container" style="position:relative; width:100%; max-width:650px; min-height:450px; margin:20px auto 10px auto; page-break-inside:avoid;">
+                            <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                             <!-- Diagram includes Rep section and boxes -->
                             <img src="/assets/machines/levage_diagram.png" 
                                  style="width:100%; height:auto;" 
@@ -3083,12 +3085,13 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                         if ($foundSchema):
                             ?>
-                            <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:20px;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
+                            <?php if(!$titleB_printed){ echo '<div style="page-break-inside:avoid; break-inside:avoid;"><div class="pdf-section-title" style="margin-top:20px; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; $closeFallbackTitle = true; } else { $closeFallbackTitle = false; } ?>
                             <div class="pdf-section" style="border:1px solid #000; padding:10px; text-align:center; margin-top:20px;">
                                 <div style="font-weight:bold; margin-bottom:10px;">Schéma de Référence (Extrait Word) :</div>
                                 <img src="<?= htmlspecialchars($foundSchema) ?>"
                                     style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma machine">
                             </div>
+                            <?php if(isset($closeFallbackTitle) && $closeFallbackTitle){ echo '</div>'; $closeFallbackTitle = false; } ?>
                         <?php endif; ?>
 
                     <?php endif; ?>
