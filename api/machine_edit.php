@@ -1180,7 +1180,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     $thumbsHtml = '';
                     if (isset($_GET['pdf']) && !empty($photosData[$key])) {
                         foreach ($photosData[$key] as $p) {
-                            $imgS = (isset($_GET['pdf']) && !empty($p['data']) && strlen($p['data']) > 50000 && isset($p['id'])) 
+                            $imgS = (isset($p['id'])) 
                                 ? "get_machine_photo.php?machine_id=$id&key=$key&photo_id=".$p['id'] 
                                 : ($p['data'] ?? '');
                             $thumbsHtml .= '<span class="photo-thumb-wrap" style="margin-right:5px;">
@@ -3269,7 +3269,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     <?php if ($key === 'desc_materiel') continue; // Déjà affiché en Section B ?>
                                     <?php foreach ($photos as $p): ?>
                                         <div class="photo-annexe-item">
-                                            <?php $imgS = (isset($_GET['pdf']) && !empty($p['data']) && strlen($p['data']) > 50000 && isset($p['id'])) ? "get_machine_photo.php?machine_id=$id&key=$key&photo_id=".$p['id'] : $p['data']; ?><img src="<?= htmlspecialchars($imgS) ?>" onclick="openLightbox(this.src, '<?= addslashes(htmlspecialchars($p['caption'] ?? '')) ?>')">
+                                            <?php $imgS = (isset($p['id'])) ? "get_machine_photo.php?machine_id=$id&key=$key&photo_id=".$p['id'] : ($p['data'] ?? ''); ?><img src="<?= htmlspecialchars($imgS) ?>" onclick="openLightbox(this.src, '<?= addslashes(htmlspecialchars($p['caption'] ?? '')) ?>')">
                                             <?php 
                                             global $photoLabelsMap;
                                             $label = $photoLabelsMap[$key] ?? '';

@@ -1907,8 +1907,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                             p.querySelectorAll('img').forEach(img => {
                                 let src = img.getAttribute('src') || '';
-                                if (src.startsWith('/') && !src.startsWith('//')) {
-                                    img.src = window.location.origin + src;
+                                if (src && !src.startsWith('data:') && !src.startsWith('http') && !src.startsWith('//')) {
+                                    if (src.startsWith('/')) {
+                                        img.src = window.location.origin + src;
+                                    } else {
+                                        // Chemin relatif (ex: get_machine_photo.php), on assume qu'il est dans /api/
+                                        img.src = window.location.origin + '/api/' + src;
+                                    }
                                 }
                             });
 
