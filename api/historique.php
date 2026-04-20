@@ -113,6 +113,7 @@ $nbClients = count($clientsSet);
     <link rel="stylesheet" href="/assets/style.css">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#020617">
+    <?php renderSentryJS(); ?>
     <script>
         if (localStorage.getItem('theme') === 'light') document.documentElement.classList.add('light-mode');
     </script>

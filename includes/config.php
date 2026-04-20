@@ -19,7 +19,7 @@ header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: SAMEORIGIN');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 header('X-XSS-Protection: 1; mode=block');
-header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; worker-src 'self' blob:; frame-src 'self' data:;");
+header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://browser.sentry-cdn.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://*.sentry.io; worker-src 'self' blob:; frame-src 'self' data:;");
 
 // ============================================
 // BASE DE DONNÉES
@@ -379,4 +379,40 @@ function str_to_upper_fr($str) {
     $to   = ['É', 'È', 'Ê', 'Ë', 'À', 'Â', 'Î', 'Ï', 'Ô', 'Û', 'Ù', 'Ç', 'Ô'];
     $str = str_replace($from, $to, $str);
     return strtoupper($str);
+}
+
+// ============================================
+// MONITORING SENTRY (BUG-021)
+// ============================================
+define('SENTRY_DSN', 'https://7efbff412929d364019e77c9dc028264@o4511253315977216.ingest.de.sentry.io/4511253355298896');
+
+/**
+ * Affiche le script d'initialisation Sentry dans le <head>
+ */
+function renderSentryJS() {
+    if (!defined('SENTRY_DSN') || !SENTRY_DSN) return;
+    ?>
+    <script src="https://browser.sentry-cdn.com/7.114.0/bundle.min.js" integrity="sha384-S3Mo7YvV3y95NueYf4uPlsS9/WpA+58tM9E9b5vU/3F/xW1I/u4oF9G/x9Z4fV2" crossorigin="anonymous"></script>
+    <script>
+        Sentry.init({
+            dsn: "<?= SENTRY_DSN ?>",
+            integrations: [
+                new Sentry.Integrations.BrowserTracing(),
+            ],
+            tracesSampleRate: 1.0,
+            environment: "production",
+            beforeSend(event, hint) {
+                // Optionnel: On peut filtrer ou ajouter des infos ici
+                return event;
+            }
+        });
+        
+        // Monitoring des erreurs de chargement d'images (important pour les photos tech)
+        window.addEventListener('error', function(e) {
+            if (e.target.tagName === 'IMG') {
+                Sentry.captureMessage('Erreur de chargement d\'image : ' + e.target.src, 'warning');
+            }
+        }, true);
+    </script>
+    <?php
 }

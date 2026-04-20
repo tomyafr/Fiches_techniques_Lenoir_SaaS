@@ -102,6 +102,7 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/assets/icon-192.png">
     <meta name="theme-color" content="#020617">
+    <?php renderSentryJS(); ?>
     <script>
         if (localStorage.getItem('theme') === 'light') { document.documentElement.classList.add('light-mode'); }
     </script>

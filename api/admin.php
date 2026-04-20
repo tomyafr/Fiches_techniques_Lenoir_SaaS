@@ -113,6 +113,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/assets/icon-192.png">
     <meta name="theme-color" content="#020617">
+    <?php renderSentryJS(); ?>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>if (localStorage.getItem('theme') === 'light') document.documentElement.classList.add('light-mode');</script>
     <style>

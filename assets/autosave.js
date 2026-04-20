@@ -1,98 +1,125 @@
 /**
- * Autosave.js - Lightweight Offline Drafts
+ * Autosave.js - Professional Offline Drafts for Lenoir-Mec
  * 
- * Sauvegarde localement les données saisies par le technicien
- * pour éviter la perte d'informations dans les zones sans réseau (sous-sols, etc.)
+ * Ce script sauvegarde localement la progression toutes les 15 secondes.
+ * En cas de rafraîchissement ou de perte de réseau, il propose de restaurer le brouillon.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Ne cibler que les formulaires qui ont la classe 'autosave-form'
     const form = document.querySelector('form.autosave-form');
     if (!form) return;
 
-    // Utiliser l'URL de base comme clé de stockage unique
+    // Clé unique par page (chemin + query params comme ?id=...)
     const pageId = window.location.pathname + window.location.search;
     const storageKey = 'autosave_' + btoa(pageId);
+    
+    const indicator = document.getElementById('autosave-indicator');
 
-    // 1. Restaurer les données au chargement si un brouillon existe
-    const savedData = localStorage.getItem(storageKey);
-    if (savedData) {
+    // 1. Détection d'un brouillon existant au chargement
+    const savedDataStr = localStorage.getItem(storageKey);
+    if (savedDataStr) {
         try {
-            const parsedData = JSON.parse(savedData);
-            let restoredCount = 0;
+            const draft = JSON.parse(savedDataStr);
+            const draftTime = new Date(draft._ts).toLocaleString('fr-FR');
+            
+            // Création d'une bannière de restauration
+            const banner = document.createElement('div');
+            banner.style.cssText = "position:sticky; top:10px; z-index:10001; background:var(--primary); color:#000; padding:12px; border-radius:8px; margin-bottom:20px; font-weight:bold; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 15px rgba(0,0,0,0.4); border: 2px solid #000;";
+            banner.innerHTML = `
+                <div>
+                    <span>📝 Brouillon trouvé (du ${draftTime})</span>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button type="button" id="btnRestoreDraft" style="background:#020617; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-weight:800;">RESTAURER</button>
+                    <button type="button" id="btnIgnoreDraft" style="background:transparent; color:#000; border:1px solid #000; padding:6px 12px; border-radius:4px; cursor:pointer;">IGNORER</button>
+                </div>
+            `;
+            
+            form.parentNode.insertBefore(banner, form);
 
-            for (const [name, value] of Object.entries(parsedData)) {
-                // Trouver l'input correspondant (par name, car c'est ce qui est envoyé en PHP)
-                const inputs = form.querySelectorAll(`[name="${name}"]`);
-                if (!inputs.length) continue;
+            document.getElementById('btnRestoreDraft').addEventListener('click', () => {
+                restoreFromObj(draft.data);
+                banner.remove();
+                if (typeof showToast === 'function') showToast("Progression restaurée !", "success");
+            });
 
-                const input = inputs[0];
-                
-                // Restaurer les radios et checkboxes (toujours prioritaire sur le serveur car c'est un brouillon local)
-                if (input.type === 'radio' || input.type === 'checkbox') {
-                    inputs.forEach(r => {
-                        if (r.value === value) {
-                            r.checked = true;
-                            // Déclencher les événements pour que les autres scripts (pastilles, etc.) se mettent à jour visuellement
-                            r.dispatchEvent(new Event('change', { bubbles: true }));
-                            r.dispatchEvent(new Event('input', { bubbles: true }));
-                            restoredCount++;
-                        }
-                    });
-                } else if (input.tagName === 'SELECT' || input.tagName === 'TEXTAREA' || input.type === 'text' || input.type === 'number') {
-                    // Pour les textes, on ne restaure que si le champ est vide (brouillon non encore envoyé au serveur)
-                    if (!input.defaultValue && !input.getAttribute('data-server-loaded') && !input.value) {
-                        input.value = value;
-                        input.dispatchEvent(new Event('input', { bubbles: true }));
-                        restoredCount++;
-                    }
+            document.getElementById('btnIgnoreDraft').addEventListener('click', () => {
+                if (confirm("Voulez-vous supprimer ce brouillon ?")) {
+                    localStorage.removeItem(storageKey);
+                    banner.remove();
                 }
-            }
-
-            if (restoredCount > 0 && typeof showToast === 'function') {
-                showToast("Brouillon hors-ligne restauré (Réseau faible)", "info");
-            }
+            });
 
         } catch (e) {
-            console.error('Erreur lors de la lecture du autosave:', e);
+            console.error('Autosave Error:', e);
         }
     }
 
-    // 2. Sauvegarder à chaque modification
-    const saveToLocal = () => {
-        const formData = new FormData(form);
-        const dataObj = {};
-        for (let [key, val] of formData.entries()) {
-            // Ne pas sauvegarder le token CSRF ni les champs cachés techniques
-            if (key !== 'csrf_token' && key !== 'action') {
-                dataObj[key] = val;
+    /**
+     * Restaure les valeurs du formulaire à partir d'un objet
+     */
+    function restoreFromObj(data) {
+        for (const [name, value] of Object.entries(data)) {
+            const inputs = form.querySelectorAll(`[name="${name}"]`);
+            if (!inputs.length) continue;
+
+            const first = inputs[0];
+            if (first.type === 'radio' || first.type === 'checkbox') {
+                inputs.forEach(r => {
+                    if (r.value === value) {
+                        r.checked = true;
+                        r.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                });
+            } else {
+                first.value = value;
+                first.dispatchEvent(new Event('input', { bubbles: true }));
             }
         }
-        localStorage.setItem(storageKey, JSON.stringify(dataObj));
-        
-        // Petit indicateur visuel discret
-        const indicator = document.getElementById('autosave-indicator');
-        if (indicator) {
-            indicator.style.opacity = '1';
-            indicator.textContent = 'Brouillon sauvegardé localement ✓';
-            setTimeout(() => { indicator.style.opacity = '0'; }, 2000);
+    }
+
+    /**
+     * Sauvegarde l'état actuel du formulaire
+     */
+    function saveDraft() {
+        const formData = new FormData(form);
+        const dataObj = {
+            _ts: Date.now(),
+            data: {}
+        };
+
+        for (let [key, val] of formData.entries()) {
+            // On ignore les photos binaires (trop lourdes pour localStorage) et les tokens
+            if (key !== 'csrf_token' && key !== 'action' && !key.includes('photos_json')) {
+                dataObj.data[key] = val;
+            }
         }
-    };
 
-    // Déclencher la sauvegarde sur input/change
-    form.addEventListener('input', saveToLocal);
-    form.addEventListener('change', saveToLocal);
+        try {
+            localStorage.setItem(storageKey, JSON.stringify(dataObj));
+            
+            if (indicator) {
+                indicator.style.opacity = '1';
+                indicator.innerHTML = '<img src="/assets/icon_check_white.svg" style="height:12px; vertical-align:middle; margin-right:5px;"> Brouillon auto-sauvegardé';
+                setTimeout(() => { indicator.style.opacity = '0'; }, 3000);
+            }
+        } catch (e) {
+            console.warn('LocalStorage plein ou désactivé');
+        }
+    }
 
-    // 3. Vider le brouillon quand le formulaire est validé (soumission réussie au serveur)
-    form.addEventListener('submit', () => {
-        // Optionnel: on pourrait le vider seulement APRES validation serveur
-        // Mais pour l'instant, si le form part, on garde le localStorage intact 
-        // au cas où le serveur plante (Timeout hors ligne). 
-        // Le vidage se fera si la page PHP est rechargée sans POST (voir step 4)
+    // Intervalle de 15 secondes pour la sauvegarde automatique
+    setInterval(saveDraft, 15000);
+
+    // Aussi sauvegarder si on quitte la page (visibilitychange est plus fiable que beforeunload)
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') saveDraft();
     });
 });
 
-// 4. Fonction pour purger le cache manuellement (appelée en PHP si succès)
+/**
+ * Nettoyage global (appelé par le serveur après une sauvegarde réussie)
+ */
 function clearAutosaveDraft() {
     const pageId = window.location.pathname + window.location.search;
     const storageKey = 'autosave_' + btoa(pageId);

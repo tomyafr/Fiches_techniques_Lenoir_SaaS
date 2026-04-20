@@ -179,6 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="theme-color" content="#020617">
 
     <link rel="stylesheet" href="/assets/style.css">
+    <?php renderSentryJS(); ?>
     <script>
         if (localStorage.getItem('theme') === 'light') {
             document.documentElement.classList.add('light-mode');

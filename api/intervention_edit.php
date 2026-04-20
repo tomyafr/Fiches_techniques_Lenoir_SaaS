@@ -122,6 +122,7 @@ $machines = $stmtMach->fetchAll();
         <?= htmlspecialchars($intervention['numero_arc']) ?>
     </title>
     <link rel="stylesheet" href="/assets/style.css">
+    <?php renderSentryJS(); ?>
     <style>
         .machine-card {
             border: 1px solid var(--glass-border);

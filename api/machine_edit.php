@@ -297,6 +297,7 @@ foreach ($recoFreq as $rfk => $rfv) {
     <title>Fiche <?= htmlspecialchars($machine['designation']) ?></title>
     <!-- On charge quand même le style de base, mais on le surcharge pour la page A4 -->
     <link rel="stylesheet" href="/assets/style.css">
+    <?php renderSentryJS(); ?>
     <style>
         body {
             background: #1a1b1e;
