@@ -3081,19 +3081,19 @@ foreach ($recoFreq as $rfk => $rfv) {
                                  style="width:100%; height:auto;" 
                                  alt="Circulaire">
                             
-                            <!-- Diamètre pôle (83.6% / 23.0%) - Adjusted without transform -->
-                            <div style="position:absolute; left:79%; top:22%; font-size:9px;">
-                                <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:55px; border:none; background:transparent; text-align:center; font-size:9px;" autocomplete="off">
+                            <!-- Diamètre pôle (Dans la case prévue) -->
+                            <div style="position:absolute; left:77%; top:27.5%; font-size:9px;">
+                                <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:75px; border:none; background:transparent; text-align:center; font-size:9px; font-weight:bold;" autocomplete="off">
                             </div>
 
-                            <!-- Diamètre noyau (85.5% / 27.5%) -->
-                            <div style="position:absolute; left:81%; top:26.5%; font-size:9px;">
-                                <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>" class="pdf-input" style="width:55px; border:none; background:transparent; text-align:center; font-size:9px;" autocomplete="off">
+                            <!-- Diamètre noyau (Dans la case prévue) -->
+                            <div style="position:absolute; left:77%; top:32.4%; font-size:9px;">
+                                <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['levage_diam_noyau'] ?? '') ?>" class="pdf-input" style="width:75px; border:none; background:transparent; text-align:center; font-size:9px; font-weight:bold;" autocomplete="off">
                             </div>
 
-                            <!-- Epaisseur pôle (85.6% / 39.5%) -->
-                            <div style="position:absolute; left:81%; top:38.5%; font-size:9px;">
-                                <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:60px; border:none; background:transparent; text-align:center; font-size:9px;" autocomplete="off">
+                            <!-- Epaisseur pôle (Dans la case prévue) -->
+                            <div style="position:absolute; left:78%; top:43.2%; font-size:9px;">
+                                <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:70px; border:none; background:transparent; text-align:center; font-size:9px; font-weight:bold;" autocomplete="off">
                             </div>
 
                             <!-- Ø ext/int (5.3% / 45.4%) -->
