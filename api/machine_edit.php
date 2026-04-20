@@ -3874,6 +3874,20 @@ foreach ($recoFreq as $rfk => $rfv) {
             // Live chrono update every 30s
             setInterval(function () { if (chronoRunning) calcTemps(); }, 30000);
 
+            // --- SCRIPT DE CALIBRAGE DES COORDONNÉES (TEMPORAIRE) ---
+            const diagContainer = document.getElementById('levage-diagram-container');
+            if (diagContainer) {
+                diagContainer.style.cursor = 'crosshair';
+                diagContainer.addEventListener('click', function(e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+                    const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+                    const msg = `COORDONNÉES : left:${x}%; top:${y}%;`;
+                    console.log(msg);
+                    alert(msg);
+                });
+            }
+
             // --- BUG-020: Alerte si divergence des fréquences recommandées ---
             const RECO_FREQ = <?= json_encode($recoFreq) ?>;
             document.querySelectorAll('input[type="radio"]').forEach(function(radio) {
