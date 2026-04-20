@@ -1734,7 +1734,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                                 <strong>${s.ok} points conformes</strong>
                             </div>
                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
-                                <span style="display: inline-block; width: 12px; height: 12px; background: #1e4e6d; margin-right: 10px;"></span>
+                                <span style="display: inline-block; width: 12px; height: 12px; background: #f39c12; margin-right: 10px;"></span>
                                 <strong>${s.aa} points à améliorer</strong>
                             </div>
                             <div style="display: flex; align-items: center; margin-bottom: 8px;">
