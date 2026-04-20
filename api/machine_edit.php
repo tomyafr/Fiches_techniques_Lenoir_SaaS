@@ -50,6 +50,17 @@ if (isset($_GET['pdf'])) {
     $photosData = []; 
 }
 
+// AUTOMATIC DB V2 MIGRATION: Ensure machine_photos table exists
+$db->exec("CREATE TABLE IF NOT EXISTS machine_photos (
+    id SERIAL PRIMARY KEY,
+    machine_id INT NOT NULL REFERENCES machines(id) ON DELETE CASCADE,
+    field_key VARCHAR(100) NOT NULL,
+    data TEXT NOT NULL,
+    caption TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)");
+$db->exec("CREATE INDEX IF NOT EXISTS idx_machine_photos_machine ON machine_photos(machine_id)");
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     verifyCsrfToken();
     if ($_POST['action'] === 'save_machine') {

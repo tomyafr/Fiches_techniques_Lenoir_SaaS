@@ -3,6 +3,17 @@ require_once __DIR__ . '/../includes/config.php';
 requireAuth(['technicien', 'admin']);
 
 $db = getDB();
+
+// Safety: Ensure table exists
+$db->exec("CREATE TABLE IF NOT EXISTS machine_photos (
+    id SERIAL PRIMARY KEY,
+    machine_id INT NOT NULL REFERENCES machines(id) ON DELETE CASCADE,
+    field_key VARCHAR(100) NOT NULL,
+    data TEXT NOT NULL,
+    caption TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)");
+
 $machineId = $_GET['machine_id'] ?? null;
 $key = $_GET['key'] ?? null;
 $photoId = $_GET['photo_id'] ?? null;
