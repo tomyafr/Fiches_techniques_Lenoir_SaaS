@@ -3085,7 +3085,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                     </table>
 
-                        <div class="levage-diagram-container" style="position:relative; width:100%; max-width:650px; min-height:450px; margin:20px auto 10px auto; page-break-inside:avoid;">
+                        <div id="levage-diagram-container" class="levage-diagram-container" style="position:relative; width:100%; max-width:650px; min-height:450px; margin:20px auto 10px auto; page-break-inside:avoid;">
                             <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                             <!-- Diagram includes Rep section and boxes -->
                             <img src="/assets/machines/levage_diagram.png" 
