@@ -202,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="brand-icon" style="width: 280px; height: auto; margin: 0 auto 1.5rem auto;">
                 <img src="/assets/lenoir_logo_trans.svg" alt="Raoul Lenoir">
             </div>
-            <h1 class="login-title" style="color: #ffb300;">LM Expert</h1>
+            <h1 class="login-title text-gradient">LM Expert</h1>
             <p class="login-subtitle">Expertise Terrain · Lenoir-Mec</p>
         </div>
 
