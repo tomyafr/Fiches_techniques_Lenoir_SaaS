@@ -3092,19 +3092,19 @@ foreach ($recoFreq as $rfk => $rfv) {
                                  style="width:100%; height:auto;" 
                                  alt="Circulaire">
                             
-                            <!-- Diamètre pôle (COORDONNÉES EXACTES VERCEL) -->
-                            <div style="position:absolute; left:83.6%; top:23.0%; font-size:9px;">
-                                <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:70px; border:none; background:transparent; text-align:center; font-size:9px; font-weight:bold;" autocomplete="off">
+                            <!-- Diamètre pôle (CALIBRAGE FINAL VERCEL) -->
+                            <div style="position:absolute; left:83.8%; top:26.5%; transform:translate(-50%, -50%); font-size:9px;">
+                                <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:75px; border:none; background:transparent; text-align:center; font-size:9px; font-weight:bold;" autocomplete="off">
                             </div>
 
-                            <!-- Diamètre noyau (COORDONNÉES EXACTES VERCEL) -->
-                            <div style="position:absolute; left:85.5%; top:27.5%; font-size:9px;">
-                                <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['mesures_levage_diam_noyau'] ?? ($mesures['levage_diam_noyau'] ?? '')) ?>" class="pdf-input" style="width:70px; border:none; background:transparent; text-align:center; font-size:9px; font-weight:bold;" autocomplete="off">
+                            <!-- Diamètre noyau (CALIBRAGE FINAL VERCEL) -->
+                            <div style="position:absolute; left:85.5%; top:31.1%; transform:translate(-50%, -50%); font-size:9px;">
+                                <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['mesures_levage_diam_noyau'] ?? ($mesures['levage_diam_noyau'] ?? '')) ?>" class="pdf-input" style="width:75px; border:none; background:transparent; text-align:center; font-size:9px; font-weight:bold;" autocomplete="off">
                             </div>
 
-                            <!-- Epaisseur pôle (COORDONNÉES EXACTES VERCEL) -->
-                            <div style="position:absolute; left:85.6%; top:39.5%; font-size:9px;">
-                                <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:70px; border:none; background:transparent; text-align:center; font-size:9px; font-weight:bold;" autocomplete="off">
+                            <!-- Epaisseur pôle (CALIBRAGE FINAL VERCEL) -->
+                            <div style="position:absolute; left:85.5%; top:42.4%; transform:translate(-50%, -50%); font-size:9px;">
+                                <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:75px; border:none; background:transparent; text-align:center; font-size:9px; font-weight:bold;" autocomplete="off">
                             </div>
 
                             <!-- Ø ext/int (5.3% / 45.4%) -->
@@ -3873,20 +3873,6 @@ foreach ($recoFreq as $rfk => $rfv) {
 
             // Live chrono update every 30s
             setInterval(function () { if (chronoRunning) calcTemps(); }, 30000);
-
-            // --- SCRIPT DE CALIBRAGE DES COORDONNÉES (TEMPORAIRE) ---
-            const diagContainer = document.getElementById('levage-diagram-container');
-            if (diagContainer) {
-                diagContainer.style.cursor = 'crosshair';
-                diagContainer.addEventListener('click', function(e) {
-                    const rect = this.getBoundingClientRect();
-                    const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
-                    const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
-                    const msg = `COORDONNÉES : left:${x}%; top:${y}%;`;
-                    console.log(msg);
-                    alert(msg);
-                });
-            }
 
             // --- BUG-020: Alerte si divergence des fréquences recommandées ---
             const RECO_FREQ = <?= json_encode($recoFreq) ?>;
