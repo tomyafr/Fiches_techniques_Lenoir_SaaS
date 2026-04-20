@@ -218,8 +218,8 @@ body::after {
 
 .card:hover {
     border-color: var(--primary-glow);
-    transform: translateY(-2px);
-    box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.6);
+    transform: translateY(-4px) scale(1.005);
+    box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.7), 0 0 30px var(--primary-subtle);
 }
 
 /* ═══════════ TYPOGRAPHY ═══════════ */
@@ -332,13 +332,13 @@ h4 {
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
+    transform: translateY(-4px) scale(1.02);
     background: var(--primary-light);
-    box-shadow: 0 8px 25px rgba(255, 179, 0, 0.3);
+    box-shadow: 0 15px 35px rgba(255, 179, 0, 0.35);
 }
 
 .btn-primary:active {
-    transform: translateY(0);
+    transform: translateY(-1px) scale(0.98);
 }
 
 .btn-ghost {
@@ -351,6 +351,7 @@ h4 {
     background: rgba(255, 255, 255, 0.08);
     border-color: var(--primary);
     color: var(--primary);
+    transform: translateY(-2px);
 }
 
 .btn:disabled {
@@ -1438,3 +1439,35 @@ html.light-mode .active-status {
     color: var(--primary);
 }
 
+/* ═══════════ COCKPIT SPECIALS ═══════════ */
+.stat-card {
+    border-left: 4px solid var(--primary);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 100%);
+}
+
+.stat-card.success { border-left-color: var(--success); }
+.stat-card.info { border-left-color: var(--accent-cyan); }
+
+.premium-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    background: rgba(255, 179, 0, 0.1);
+    color: var(--primary);
+    border: 1px solid rgba(255, 179, 0, 0.2);
+    border-radius: 20px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+@keyframes pulse-glow {
+    0% { box-shadow: 0 0 10px rgba(255, 179, 0, 0.1); }
+    50% { box-shadow: 0 0 25px rgba(255, 179, 0, 0.2); }
+    100% { box-shadow: 0 0 10px rgba(255, 179, 0, 0.1); }
+}
+
+.cockpit-pulse {
+    animation: pulse-glow 3s infinite ease-in-out;
+}

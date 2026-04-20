@@ -267,37 +267,31 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
             </div>
 
             <!-- DASHBOARD SECTION -->
-            <div class="dashboard-grid animate-up" style="animation-delay: 0.1s;">
-                <div class="stat-card premium-glow">
-                    <div class="stat-header">
-                        <span class="stat-title">Conformité Globale</span>
-                        <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">Score IA</span>
+            <div class="dashboard-grid animate-up">
+                <div class="stat-card glass cockpit-pulse">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem;">
+                        <div>
+                            <span class="stat-label">Conformité Globale</span>
+                            <div class="stat-value" id="complianceValue">--</div>
+                        </div>
+                        <span class="premium-badge">Live</span>
                     </div>
-                    <div style="display: flex; align-items: baseline; gap: 8px;">
-                        <span class="stat-value" id="complianceValue">--</span>
-                        <span style="color: var(--text-dim); font-size: 1rem;">%</span>
-                    </div>
-                    <div class="chart-container">
+                    <div class="chart-container" style="height: 120px;">
                         <canvas id="complianceChart"></canvas>
                     </div>
                 </div>
 
-                <div class="stat-card premium-glow">
-                    <div class="stat-header">
-                        <span class="stat-title">Volume d'Expertises</span>
-                        <span class="badge" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">Mensuel</span>
-                    </div>
-                    <div class="stat-value" id="monthlyTotal">--</div>
-                    <div class="chart-container">
+                <div class="stat-card glass info">
+                    <span class="stat-label">Volume d'Expertises</span>
+                    <div class="stat-value" id="monthlyTotal" style="margin-bottom:0.5rem;">--</div>
+                    <div class="chart-container" style="height: 120px;">
                         <canvas id="monthlyChart"></canvas>
                     </div>
                 </div>
 
-                <div class="stat-card premium-glow">
-                    <div class="stat-header">
-                        <span class="stat-title">Répartition par Statut</span>
-                    </div>
-                    <div class="chart-container" style="height: 180px;">
+                <div class="stat-card glass success">
+                    <span class="stat-label">Répartition Statuts</span>
+                    <div class="chart-container" style="height: 150px; margin-top: 0.5rem;">
                         <canvas id="statusChart"></canvas>
                     </div>
                 </div>
@@ -511,39 +505,38 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                 // 1. Compliance (Gradient Orange Gauge)
                 const gradOrange = ctxComp.createLinearGradient(0, 0, 200, 0);
                 gradOrange.addColorStop(0, '#ffb300');
-                gradOrange.addColorStop(1, '#ff8f00');
+                gradOrange.addColorStop(1, '#ffc107');
 
-                document.getElementById('complianceValue').innerText = data.compliance;
+                document.getElementById('complianceValue').innerText = data.compliance + '%';
                 new Chart(ctxComp, {
                     type: 'doughnut',
                     data: {
                         datasets: [{
                             data: [data.compliance, 100 - data.compliance],
-                            backgroundColor: [gradOrange, 'rgba(255, 255, 255, 0.03)'],
+                            backgroundColor: [gradOrange, 'rgba(255, 255, 255, 0.05)'],
                             borderWidth: 0,
-                            circumference: 180,
-                            rotation: 270,
+                            circumference: 240,
+                            rotation: 240,
                         }]
                     },
                     options: {
-                        cutout: '82%',
-                        plugins: { legend: { display: false } },
+                        cutout: '75%',
+                        plugins: { legend: { display: false }, tooltip: { enabled: false } },
                         responsive: true,
                         maintainAspectRatio: false,
-                        animation: { duration: 2000, easing: 'easeOutQuart' }
+                        animation: { duration: 2500, easing: 'easeOutQuart' }
                     }
                 });
 
-                // 2. Monthly Trends (Deep Blue Area Gradient)
-                const gradBlue = ctxMonthly.createLinearGradient(0, 0, 0, 200);
-                gradBlue.addColorStop(0, 'rgba(0, 74, 153, 0.4)');
-                gradBlue.addColorStop(1, 'rgba(0, 74, 153, 0)');
+                // 2. Monthly Trends (Cyan Area Gradient)
+                const gradCyan = ctxMonthly.createLinearGradient(0, 0, 0, 100);
+                gradCyan.addColorStop(0, 'rgba(14, 165, 233, 0.3)');
+                gradCyan.addColorStop(1, 'rgba(14, 165, 233, 0)');
 
                 const monthlyLabels = (data.monthly || []).map(m => {
                     const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
                     const parts = (m.mois || "").split('-');
-                    const monthIdx = parts.length > 1 ? parseInt(parts[1]) - 1 : 0;
-                    return months[monthIdx] || "N/A";
+                    return months[parseInt(parts[1]) - 1] || "N/A";
                 });
                 document.getElementById('monthlyTotal').innerText = (data.monthly || []).reduce((a, b) => a + parseInt(b.count), 0);
                 
@@ -552,62 +545,41 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                     data: {
                         labels: monthlyLabels,
                         datasets: [{
-                            label: 'Interventions',
                             data: (data.monthly || []).map(m => m.count),
-                            borderColor: '#004a99',
-                            borderWidth: 3,
-                            backgroundColor: gradBlue,
+                            borderColor: '#0ea5e9',
+                            borderWidth: 2,
+                            backgroundColor: gradCyan,
                             fill: true,
                             tension: 0.4,
-                            pointRadius: 4,
-                            pointBackgroundColor: '#004a99',
-                            pointHoverRadius: 6,
+                            pointRadius: 0,
                         }]
                     },
                     options: {
-                        scales: {
-                            y: { display: false, beginAtZero: true },
-                            x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10, weight: '600' } } }
-                        },
-                        plugins: { 
-                            legend: { display: false },
-                            tooltip: {
-                                backgroundColor: '#0f172a',
-                                titleColor: '#fff',
-                                bodyColor: '#cbd5e1',
-                                padding: 12,
-                                cornerRadius: 8,
-                                displayColors: false
-                            }
-                        },
+                        scales: { y: { display: false }, x: { display: false } },
+                        plugins: { legend: { display: false } },
                         responsive: true,
                         maintainAspectRatio: false
                     }
                 });
 
-                // 3. Status Distribution (Brand Mix)
+                // 3. Status Distribution
                 new Chart(ctxStatus, {
-                    type: 'doughnut',
+                    type: 'bar',
                     data: {
                         labels: (data.status || []).map(s => s.statut || "N/A"),
                         datasets: [{
                             data: (data.status || []).map(s => s.count || 0),
-                            backgroundColor: ['#004a99', '#ffb300', '#64748b', '#10b981'],
-                            hoverOffset: 15,
-                            borderWidth: 2,
-                            borderColor: '#020617'
+                            backgroundColor: ['#0a1e3d', '#ffb300', '#64748b', '#10b981'],
+                            borderRadius: 6,
+                            barThickness: 20
                         }]
                     },
                     options: {
-                        plugins: {
-                            legend: {
-                                position: 'right',
-                                labels: { color: '#94a3b8', boxWidth: 10, font: { size: 11, weight: '500' }, padding: 15 }
-                            }
-                        },
+                        indexAxis: 'y',
+                        scales: { y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { display: false } }, x: { display: false } },
+                        plugins: { legend: { display: false } },
                         responsive: true,
-                        maintainAspectRatio: false,
-                        animation: { animateRotate: true, animateScale: true }
+                        maintainAspectRatio: false
                     }
                 });
 
