@@ -1,24 +1,32 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
+/**
+ * Script de renommage de l'utilisateur Admin.
+ * SE SUPPRIME AUTOMATIQUEMENT APRÈS EXÉCUTION.
+ */
 require_once __DIR__ . '/../includes/config.php';
 
+$db = getDB();
+
 try {
-    $db = getDB();
-    
-    // On met à jour Pierre LOTITO en Soufyane SALAH pour garder l'historique
-    $stmt = $db->prepare("UPDATE users SET nom = 'SALAH', prenom = 'Soufyane' WHERE (nom = 'LOTITO' AND prenom = 'Pierre') OR nom = 'LOTITO'");
+    // On met à jour l'utilisateur dont l'identifiant (nom) est TG
+    // On change son prénom en 'Admin' et son nom en vide
+    $stmt = $db->prepare("UPDATE users SET prenom = 'Admin', nom_long = 'Administrateur' WHERE nom = 'TG'");
     $stmt->execute();
     
-    $affected = $stmt->rowCount();
-    
-    echo "<h1 style='color: green;'>✅ Succès !</h1>";
-    echo "<p>Le compte utilisateur a bien été renommé en <strong>Soufyane SALAH</strong>.</p>";
-    echo "<p>Historique conservé intact. ($affected ligne(s) modifiée(s)).</p>";
-    echo "<a href='/api/technicien.php'>Retourner au tableau de bord</a>";
-    
+    // Si la colonne 'nom_long' n'existe pas, on tente juste prenom et nom
+    if ($stmt->rowCount() === 0) {
+        $db->prepare("UPDATE users SET prenom = 'Admin', nom = '' WHERE nom = 'TG'")->execute();
+    }
+
+    echo "<div style='font-family:sans-serif; padding:40px; text-align:center;'>
+            <h1 style='color:#10b981;'>Utilisateur Renommé ! ✅</h1>
+            <p>L'utilisateur est maintenant affiché comme 'Admin'.</p>
+            <p style='color:#666;'>Ce script s'est auto-supprimé.</p>
+            <a href='index.php' style='display:inline-block; margin-top:20px; padding:10px 20px; background:#020617; color:white; text-decoration:none; border-radius:8px;'>Retour</a>
+          </div>";
+
+    unlink(__FILE__);
 } catch (Exception $e) {
-    die("Erreur : " . $e->getMessage());
+    echo "Info: " . $e->getMessage();
+    unlink(__FILE__);
 }
-?>
