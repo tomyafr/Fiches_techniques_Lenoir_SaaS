@@ -87,7 +87,7 @@ $interventions = $stmt->fetchAll();
 
 $today = date('Y-m-d');
 $encours = array_filter($interventions, fn($i) => $i['statut'] === 'Brouillon');
-$terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Terminee', 'Terminée', 'Envoyee', 'Envoyée']));
+$terminees = array_slice(array_filter($interventions, fn($i) => in_array($i['statut'], ['Terminee', 'Terminée', 'Envoyee', 'Envoyée'])), 0, 5);
 
 $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
 ?>
