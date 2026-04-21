@@ -104,15 +104,15 @@ function getDB()
                 $pdo->exec("ALTER TABLE interventions ADD CONSTRAINT interventions_statut_check 
                            CHECK (statut IN ('Brouillon', 'Terminee', 'Terminée', 'Envoyee', 'Envoyée'))");
                 
-                // On s'assure que l'admin s'appelle 'admin' avec le mot de passe 'admin123'
+                // On s'assure que l'admin s'appelle 'ADMIN' avec le mot de passe 'admin123'
                 $hash = password_hash('admin123', PASSWORD_BCRYPT, ['cost' => 12]);
-                $pdo->exec("UPDATE users SET prenom = 'Admin', nom = 'admin', password_hash = '$hash' WHERE nom = 'TG' OR nom = 'ADMIN' OR nom = 'admin'");
+                $pdo->exec("UPDATE users SET prenom = 'Admin', nom = 'ADMIN', password_hash = '$hash' WHERE nom = 'TG' OR nom = 'ADMIN' OR nom = 'admin'");
                 
                 // Rafraîchir la session si nécessaire
                 if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION['user_id'])) {
                     if (($_SESSION['user_nom'] ?? '') === 'TG') {
                         $_SESSION['user_prenom'] = 'Admin';
-                        $_SESSION['user_nom'] = 'admin';
+                        $_SESSION['user_nom'] = 'ADMIN';
                     }
                 }
             } catch (Exception $e) {
