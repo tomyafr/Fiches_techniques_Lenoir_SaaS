@@ -254,15 +254,6 @@ $envoyees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Envo
                     onclick="document.getElementById('newInterventionModal').style.display='flex'">
                     <img src="/assets/icon_add_white.svg" style="height: 18px; width: 18px; margin-right: 8px; vertical-align: middle;"> NOUVELLE FICHE TECHNIQUE
                 </button>
-                <button onclick="document.getElementById('pwdInboxModal').style.display='flex'" class="btn btn-ghost"
-                    style="padding:0.6rem 1rem;">
-                    <span><img src="/assets/icons/notification.png" class="premium-icon" style="height: 18px; width: 18px; vertical-align: middle; margin-right: 4px;"></span> Demandes MDP
-                    <?php if (count($pendingPwdRequests) > 0): ?>
-                        <span
-                            style="background:var(--error); color:white; border-radius:50%; width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:bold; margin-left:0.5rem;">
-                            <?= count($pendingPwdRequests) ?>
-                        </span>
-                    <?php endif; ?>
                 </button>
             </div>
 
@@ -334,8 +325,6 @@ $envoyees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Envo
                 </div>
             </div>
 
-
-            <!-- Modal MDP (idem que précédent) -->
             <div id="pwdInboxModal"
                 style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; backdrop-filter:blur(5px);">
                 <div class="card glass animate-in"

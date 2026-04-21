@@ -263,11 +263,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <img src="/assets/icon_key_white.svg" style="height: 14px; width: 14px;"> TECH (Salah)
                 </button>
             </div>
-
-            <button type="button" class="btn btn-ghost" style="width: 100%; margin-top: 1rem; font-size: 0.75rem;"
-                onclick="document.getElementById('forgotModal').style.display='flex'">
-                J'ai oublié mon mot de passe
-            </button>
         </form>
 
         <!-- MODAL FORGOT PASSWORD -->
