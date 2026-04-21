@@ -1,10 +1,9 @@
 <?php
 /**
- * Script de maintenance pour corriger les accents des statuts en base de données.
- * Remplace 'Terminee' par 'Terminée' et 'Envoyee' par 'Envoyée'.
+ * Script de maintenance d'urgence pour corriger les accents.
+ * SE SUPPRIME AUTOMATIQUEMENT APRÈS EXÉCUTION.
  */
 require_once __DIR__ . '/../includes/config.php';
-requireAuth(['admin']); // Sécurité : seul l'admin peut lancer ce script
 
 $db = getDB();
 
@@ -26,11 +25,15 @@ try {
     echo "<div style='font-family:sans-serif; padding:40px; text-align:center;'>
             <h1 style='color:#10b981;'>Maintenance Terminée ! ✅</h1>
             <p style='font-size:1.2rem; color:#444;'>
-                - <b>$count1</b> fiches 'Terminee' ont été corrigées en 'Terminée'.<br>
-                - <b>$count2</b> fiches 'Envoyee' ont été corrigées en 'Envoyée'.
+                - <b>$count1</b> fiches ont été corrigées en 'Terminée'.<br>
+                - <b>$count2</b> fiches ont été corrigées en 'Envoyée'.
             </p>
-            <a href='admin.php' style='display:inline-block; margin-top:20px; padding:10px 20px; background:#020617; color:white; text-decoration:none; border-radius:8px;'>Retour au Dashboard</a>
+            <p style='color:#666;'>Ce script s'est auto-supprimé pour des raisons de sécurité.</p>
+            <a href='index.php' style='display:inline-block; margin-top:20px; padding:10px 20px; background:#020617; color:white; text-decoration:none; border-radius:8px;'>Retour à l'accueil</a>
           </div>";
+
+    // Auto-suppression
+    unlink(__FILE__);
 
 } catch (Exception $e) {
     if ($db->inTransaction()) $db->rollBack();
