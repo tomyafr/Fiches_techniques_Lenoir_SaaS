@@ -385,7 +385,10 @@ $envoyees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Envo
             <div class="card glass animate-in">
                 <div
                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
-                    <h3 style="font-size: 1.3rem;">Toutes les Fiches Techniques</h3>
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
+                        <h3 style="font-size: 1.3rem;">Toutes les Fiches Techniques</h3>
+                        <a href="historique.php" style="font-size: 0.8rem; color: var(--primary); text-decoration: none; font-weight: 600;">Voir tout →</a>
+                    </div>
                     <form method="GET" style="display: flex; gap: 0.5rem;" autocomplete="off">
                         <input type="text" name="arc" class="input" style="width: 160px; padding: 0.5rem;"
                             placeholder="Recherche ARC..." value="<?= htmlspecialchars($filterArc) ?>">
@@ -403,18 +406,21 @@ $envoyees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Envo
                                 <th style="padding: 1rem;">Client</th>
                                 <th style="padding: 1rem;">Machines</th>
                                 <th style="padding: 1rem;">Technicien</th>
-                                <th style="padding: 1rem;">Statut</th>
+                                <th style="padding: 1rem; text-align:right;">Statut</th>
                                 <th style="padding: 1rem; text-align:right;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if (empty($interventions)): ?>
+                            <?php 
+                            $displayedInterventions = array_slice($interventions, 0, 5);
+                            if (empty($displayedInterventions)): 
+                            ?>
                                 <tr>
                                     <td colspan="7" style="padding: 2rem; text-align: center; color: var(--text-dim);">
                                         Aucune intervention trouvée.</td>
                                 </tr>
                             <?php else: ?>
-                                <?php foreach ($interventions as $i): ?>
+                                <?php foreach ($displayedInterventions as $i): ?>
                                     <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
                                         <td style="padding: 1rem; font-weight:bold; color:var(--primary);">
                                             <?= htmlspecialchars($i['numero_arc']) ?>
@@ -428,7 +434,7 @@ $envoyees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Envo
                                         <td style="padding: 1rem; font-size:0.85rem; color:var(--text-dim);">
                                             <?= htmlspecialchars(substr($i['tech_prenom'], 0, 1) . '. ' . $i['tech_nom']) ?>
                                         </td>
-                                        <td style="padding: 1rem;">
+                                        <td style="padding: 1rem; text-align:right;">
                                             <span
                                                 style="font-size:0.7rem; padding:0.2rem 0.6rem; border-radius:20px; font-weight:bold; 
                                                 <?= in_array($i['statut'], ['Terminee', 'Terminée']) ? 'background:rgba(16,185,129,0.1);color:var(--success);' : (in_array($i['statut'], ['Envoyee', 'Envoyée']) ? 'background:var(--primary);color:#000;' : 'background:rgba(255,255,255,0.1);color:var(--text-dim);') ?>">
@@ -441,8 +447,7 @@ $envoyees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Envo
                                                     style="padding:0.4rem 0.6rem; font-size:0.8rem; text-decoration:none;">PDF</a>
                                             <?php else: ?>
                                                 <a href="intervention_edit.php?id=<?= $i['id'] ?>" class="btn btn-ghost"
-                                                    style="padding:0.4rem 0.6rem; font-size:0.8rem; text-decoration:none;">Continuer
-                                                    la saisie →</a>
+                                                    style="padding:0.4rem 0.6rem; font-size:0.8rem; text-decoration:none;">Continuer →</a>
                                             <?php endif; ?>
                                         </td>
                                     </tr>
