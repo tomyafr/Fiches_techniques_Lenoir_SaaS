@@ -106,6 +106,14 @@ function getDB()
                 
                 // On s'assure que l'admin s'appelle 'Admin'
                 $pdo->exec("UPDATE users SET prenom = 'Admin', nom = '' WHERE nom = 'TG'");
+                
+                // Rafraîchir la session si nécessaire (si on est l'admin dont le nom vient d'être changé)
+                if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION['user_id'])) {
+                    if (($_SESSION['user_nom'] ?? '') === 'TG') {
+                        $_SESSION['user_prenom'] = 'Admin';
+                        $_SESSION['user_nom'] = '';
+                    }
+                }
             } catch (Exception $e) {
                 // Silencieusement ignoré si déjà fait ou erreur mineure
             }

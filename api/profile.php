@@ -220,6 +220,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
     <style>
         @media (max-width: 1024px) {
             .mobile-header { display: flex !important; }
+            .sidebar { padding-top: calc(var(--mobile-header-height) + 1rem) !important; }
             .main-content { padding-top: calc(var(--mobile-header-height) + 1.5rem) !important; }
         }
         @media (min-width: 1025px) {
