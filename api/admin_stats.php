@@ -9,8 +9,18 @@ $db = getDB();
 try {
     $stats = [];
 
-    // 1. Interventions par statut
-    $stmt = $db->query("SELECT statut, COUNT(*) as count FROM interventions GROUP BY statut");
+    // 1. Interventions par statut (on regroupe les versions avec et sans accents)
+    $stmt = $db->query("
+        SELECT 
+            CASE 
+                WHEN statut IN ('Terminee', 'Terminée') THEN 'Terminée'
+                WHEN statut IN ('Envoyee', 'Envoyée') THEN 'Envoyée'
+                ELSE statut 
+            END as statut,
+            COUNT(*) as count 
+        FROM interventions 
+        GROUP BY 1
+    ");
     $stats['status'] = $stmt->fetchAll();
 
     // 2. Volume mensuel (6 derniers mois, incluant les mois à 0)
