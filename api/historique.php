@@ -458,8 +458,8 @@ $nbClients = count($clientsSet);
                                         </td>
                                         <td style="text-align:center;">
                                             <span
-                                                class="status-badge <?= $i['statut'] === 'Terminee' ? 'status-terminee' : 'status-brouillon' ?>">
-                                                <?= $i['statut'] === 'Terminee' ? 'Signée' : 'En Saisie' ?>
+                                                class="status-badge <?= in_array($i['statut'], ['Terminee', 'Terminée', 'Envoyee', 'Envoyée']) ? 'status-terminee' : 'status-brouillon' ?>">
+                                                <?= in_array($i['statut'], ['Terminee', 'Terminée']) ? 'Signée' : (in_array($i['statut'], ['Envoyee', 'Envoyée']) ? 'Envoyée' : 'En Saisie') ?>
                                             </span>
                                         </td>
                                         <td style="white-space:nowrap;">
@@ -508,7 +508,7 @@ $nbClients = count($clientsSet);
             </a>
             <a href="historique.php" class="mobile-nav-item active">
                 <img src="/assets/icon_history_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
-                <span class="mobile-nav-label">Historique</span>
+                <span class="mobile-nav-label">Hist.</span>
             </a>
             <a href="profile.php" class="mobile-nav-item">
                 <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">

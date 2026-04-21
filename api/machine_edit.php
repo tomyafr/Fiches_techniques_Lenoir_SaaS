@@ -991,6 +991,48 @@ foreach ($recoFreq as $rfk => $rfv) {
                 font-weight: 800;
                 color: #ff4444;
             }
+
+            /* Responsive Meta Tables */
+            .meta-table tr {
+                display: flex !important;
+                flex-direction: column !important;
+                width: 100% !important;
+            }
+            .meta-table td {
+                display: block !important;
+                width: 100% !important;
+                border: none !important;
+                border-bottom: 1px solid #000 !important;
+                box-sizing: border-box !important;
+            }
+            .meta-table td[style*="background"] {
+                background: #f0f0f0 !important;
+                font-weight: bold;
+                padding: 4px 8px !important;
+            }
+
+            /* Fix Diagonal Headers on Mobile */
+            .diagonal-header {
+                height: 165px !important; /* Plenty of space for rotated text */
+            }
+            .diag-text {
+                font-size: 10px !important;
+                bottom: 50px !important;
+                font-weight: 800 !important;
+            }
+            
+            /* Tighten pastilles for more label space */
+            .pastille-group {
+                width: 125px !important;
+            }
+            .pastille-group label {
+                width: 24px !important;
+                height: 24px !important;
+            }
+            
+            .pdf-table td {
+                padding: 6px 4px !important;
+            }
         }
         .btn-ia-refresh {
             background: rgba(230, 126, 34, 0.1);
@@ -1090,7 +1132,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     Poste : <input type="text" name="mesures[poste]" value="<?= htmlspecialchars($mesures['poste'] ?? '') ?>" style="border:none; border-bottom:1px dashed #000; font-weight:bold; width:30px; background:transparent;" autocomplete="off">
                 </div>
 
-                <table
+                <table class="meta-table"
                     style="width:100%; border-collapse:collapse; border:1px solid #000; margin-bottom:20px; font-size:13px; color:#000; page-break-after: avoid; break-after: avoid;">
                     <tr>
                         <td style="width:15%; font-weight:bold; border:1px solid #000; padding:6px; background:#d9d9d9;">N°

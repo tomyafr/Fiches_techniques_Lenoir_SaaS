@@ -391,8 +391,8 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                             <p
                                 style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase;">
                                 Statut Actuel</p>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <select name="statut" class="input" style="flex:1; padding: 0.5rem; flex-basis: 60%;">
+                            <div class="statut-group-mobile" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <select name="statut" class="input" style="flex:1; padding: 0.5rem; min-width: 200px;">
                                     <option value="actif" <?= $currentStatut === 'actif' ? 'selected' : '' ?>>🟢 Actif
                                     </option>
                                     <option value="pause" <?= $currentStatut === 'pause' ? 'selected' : '' ?>>☕ En pause
@@ -400,7 +400,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                                     <option value="absent" <?= $currentStatut === 'absent' ? 'selected' : '' ?>>🔴
                                         Absent(e)</option>
                                 </select>
-                                <button type="submit" class="btn btn-ghost" style="padding: 0.5rem 1rem;">Mettre à
+                                <button type="submit" class="btn btn-ghost" style="padding: 0.5rem 1rem; flex: 1;">Mettre à
                                     jour</button>
                             </div>
                         </form>
@@ -636,7 +636,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                 </a>
                 <a href="historique.php" class="mobile-nav-item">
                     <img src="/assets/icon_history_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
-                    <span class="mobile-nav-label">Historique</span>
+                    <span class="mobile-nav-label">Hist.</span>
                 </a>
                 <?php if ($_SESSION['role'] === 'admin'): ?>
                 <a href="equipe.php" class="mobile-nav-item">
