@@ -45,7 +45,27 @@ $mesures = json_decode($machine['mesures'] ?? '{}', true);
 // On ne charge les photos en PHP que pour la génération PDF. 
 // Pour le web, on les charge en AJAX plus bas.
 if (isset($_GET['pdf'])) {
-    $photosData = json_decode($machine['photos'] ?? '{}', true) ?: [];
+    $photosConfig = json_decode($machine['photos'] ?? '{}', true) ?: [];
+    $photosData = [];
+    foreach ($photosConfig as $k => $list) {
+        $photosData[$k] = [];
+        foreach ($list as $p) {
+            if (!empty($p['id'])) {
+                $stPh = $db->prepare("SELECT data, caption FROM machine_photos WHERE id = ?");
+                $stPh->execute([$p['id']]);
+                $phRow = $stPh->fetch();
+                if ($phRow) {
+                    $photosData[$k][] = [
+                        'data' => $phRow['data'], 
+                        'comment' => $phRow['caption'],
+                        'id' => $p['id']
+                    ];
+                }
+            } elseif (!empty($p['data'])) {
+                $photosData[$k][] = $p;
+            }
+        }
+    }
 } else {
     $photosData = []; 
 }
@@ -1254,9 +1274,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     $thumbsHtml = '';
                     if (isset($_GET['pdf']) && !empty($photosData[$key])) {
                         foreach ($photosData[$key] as $p) {
-                            $imgS = (isset($p['id'])) 
-                                ? "get_machine_photo.php?machine_id=$id&key=$key&photo_id=".$p['id'] 
-                                : ($p['data'] ?? '');
+                            $imgS = (!empty($p['data'])) ? $p['data'] : (isset($p['id']) ? "/get_machine_photo.php?machine_id=$id&key=$key&photo_id=".$p['id'] : "");
                             $thumbsHtml .= '<span class="photo-thumb-wrap" style="margin-right:5px; display:inline-block; vertical-align:top; text-align:center;">
                                 <img src="' . htmlspecialchars($imgS) . '" style="width:40px; height:40px; object-fit:cover; border:1px solid #ccc; vertical-align:middle;">
                                 ' . (!empty($p['caption']) ? '<br><i style="font-size:8px; display:block; line-height:1.1; color:#555; margin-top:2px;">' . htmlspecialchars($p['caption']) . '</i>' : '') . '
@@ -3344,7 +3362,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     <?php if ($key === 'desc_materiel') continue; // Déjà affiché en Section B ?>
                                     <?php foreach ($photos as $p): ?>
                                         <div class="photo-annexe-item">
-                                            <?php $imgS = (isset($p['id'])) ? "get_machine_photo.php?machine_id=$id&key=$key&photo_id=".$p['id'] : ($p['data'] ?? ''); ?><img src="<?= htmlspecialchars($imgS) ?>" onclick="openLightbox(this.src, '<?= addslashes(htmlspecialchars($p['caption'] ?? '')) ?>')">
+                                            <?php $imgS = (!empty($p['data'])) ? $p['data'] : (isset($p['id']) ? "/get_machine_photo.php?machine_id=$id&key=$key&photo_id=".$p['id'] : ""); ?><img src="<?= htmlspecialchars($imgS) ?>" onclick="openLightbox(this.src, '<?= addslashes(htmlspecialchars($p['caption'] ?? '')) ?>')">
                                             <?php 
                                             global $photoLabelsMap;
                                             $label = $photoLabelsMap[$key] ?? '';
@@ -3398,7 +3416,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 const grid = document.getElementById('photosAnnexesGrid');
                 if (grid) grid.innerHTML = '<p style="color:#28a745; font-size:11px; margin:0;">⌛ Chargement des photos...</p>';
                 
-                const response = await fetch('get_machine_photos.php?id=<?= $id ?>');
+                const response = await fetch('/get_machine_photos.php?id=<?= $id ?>');
                 if (!response.ok) throw new Error('Erreur lors du chargement des photos');
                 
                 const data = await response.json();
@@ -3558,7 +3576,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             photos.forEach(function (p, i) {
                 var src = p.data;
                 if (!src && p.id) {
-                    src = 'get_machine_photo.php?machine_id=<?= $id ?>&key=' + key + '&photo_id=' + p.id;
+                    src = '/get_machine_photo.php?machine_id=<?= $id ?>&key=' + key + '&photo_id=' + p.id;
                 }
                 if (!src) return;
 
@@ -3599,9 +3617,15 @@ foreach ($recoFreq as $rfk => $rfv) {
             var html = `<div class="photo-montage-grid ${gridClass}">`;
             
             photos.slice(0, 4).forEach(function(p, i) {
+                var src = p.data;
+                if (!src && p.id) {
+                    src = '/get_machine_photo.php?machine_id=<?= $id ?>&key=desc_materiel&photo_id=' + p.id;
+                }
+                if (!src) return;
+
                 html += `
                     <div class="montage-item">
-                        <img src="${p.data}" alt="Photo Matériel ${i+1}" onclick="openLightbox(this.src, 'Photo Matériel ${i+1}')">
+                        <img src="${src}" alt="Photo Matériel ${i+1}" onclick="openLightbox(this.src, 'Photo Matériel ${i+1}')">
                         <button type="button" class="photo-del-overlay no-print-pdf" onclick="deletePhoto('desc_materiel', ${i})">×</button>
                     </div>`;
             });
@@ -3640,7 +3664,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                         label = label.charAt(0).toUpperCase() + label.slice(1);
                     }
                     
-                    item.innerHTML = '<img src="' + p.data + '" onclick="openLightbox(this.src, \'' + (p.caption || '').replace(/'/g, "\\'") + '\')">' +
+                    var src = p.data;
+                    if (!src && p.id) {
+                        src = '/get_machine_photo.php?machine_id=<?= $id ?>&key=' + key + '&photo_id=' + p.id;
+                    }
+                    if (!src) return;
+
+                    item.innerHTML = '<img src="' + src + '" onclick="openLightbox(this.src, \'' + (p.caption || '').replace(/'/g, "\\'") + '\')">' +
                         '<p><strong>Photo ' + photoIndex + ' : ' + label + '</strong>' + (p.caption ? '<br><em>' + p.caption + '</em>' : '') + '</p>';
                     grid.appendChild(item);
                     photoIndex++;

@@ -97,9 +97,9 @@ $stmt = $db->prepare($query);
 $stmt->execute($params);
 $interventions = $stmt->fetchAll();
 
-$encours = array_filter($interventions, fn($i) => $i['statut'] === 'Brouillon');
-$terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Terminee', 'Terminée']));
-$envoyees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Envoyee', 'Envoyée']));
+$encours = array_filter($interventions, fn($i) => strtolower($i['statut']) === 'brouillon');
+$terminees = array_filter($interventions, fn($i) => in_array(strtolower($i['statut']), ['terminee', 'terminée']));
+$envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statut']), ['envoyee', 'envoyée']));
 
 ?>
 <!DOCTYPE html>
@@ -422,12 +422,12 @@ $envoyees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Envo
                                         <td style="padding: 1rem; text-align:right;">
                                             <span
                                                 style="font-size:0.7rem; padding:0.2rem 0.6rem; border-radius:20px; font-weight:bold; 
-                                                <?= in_array($i['statut'], ['Terminee', 'Terminée']) ? 'background:rgba(16,185,129,0.1);color:var(--success);' : (in_array($i['statut'], ['Envoyee', 'Envoyée']) ? 'background:var(--primary);color:#000;' : 'background:rgba(255,255,255,0.1);color:var(--text-dim);') ?>">
-                                                <?= htmlspecialchars(in_array($i['statut'], ['Terminee', 'Terminée']) ? 'Terminée' : (in_array($i['statut'], ['Envoyee', 'Envoyée']) ? 'Envoyée' : $i['statut'])) ?>
+                                                <?= in_array(strtolower($i['statut']), ['terminee', 'terminée']) ? 'background:rgba(16,185,129,0.1);color:var(--success);' : (in_array(strtolower($i['statut']), ['envoyee', 'envoyée']) ? 'background:var(--primary);color:#000;' : 'background:rgba(255,255,255,0.1);color:var(--text-dim);') ?>">
+                                                <?= htmlspecialchars(in_array(strtolower($i['statut']), ['terminee', 'terminée']) ? 'Terminée' : (in_array(strtolower($i['statut']), ['envoyee', 'envoyée']) ? 'Envoyée' : $i['statut'])) ?>
                                             </span>
                                         </td>
                                         <td style="padding: 1rem; text-align:right;">
-                                            <?php if ($i['statut'] !== 'Brouillon'): ?>
+                                            <?php if (strtolower($i['statut']) !== 'brouillon'): ?>
                                                 <a href="rapport_final.php?id=<?= $i['id'] ?>&download=1" target="_blank" class="btn btn-ghost"
                                                     style="padding:0.4rem 0.6rem; font-size:0.8rem; text-decoration:none;">PDF</a>
                                             <?php else: ?>

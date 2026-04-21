@@ -13,7 +13,7 @@ if (!in_array($filterPeriod, $allowedPeriods, true)) {
     $filterPeriod = 'all';
 }
 
-$filterStatut = $_GET['statut'] ?? 'all';
+$filterStatut = strtolower($_GET['statut'] ?? 'all');
 $allowedStatuts = ['all', 'brouillon', 'terminee', 'envoyee'];
 if (!in_array($filterStatut, $allowedStatuts, true)) {
     $filterStatut = 'all';
@@ -81,6 +81,14 @@ if (!$isAdmin) {
     $params[] = $filterUser;
 }
 
+if ($filterStatut === 'brouillon') {
+    $query .= " AND i.statut ILIKE 'Brouillon%'";
+} elseif ($filterStatut === 'terminee') {
+    $query .= " AND i.statut ILIKE 'Termin%'";
+} elseif ($filterStatut === 'envoyee') {
+    $query .= " AND i.statut ILIKE 'Envoy%'";
+}
+
 if (!empty($filterArc)) {
     $query .= ' AND i.numero_arc ILIKE ?';
     $params[] = '%' . $filterArc . '%';
@@ -89,14 +97,6 @@ if (!empty($filterArc)) {
 if (!empty($filterClient)) {
     $query .= ' AND c.nom_societe ILIKE ?';
     $params[] = '%' . $filterClient . '%';
-}
-
-if ($filterStatut === 'brouillon') {
-    $query .= " AND i.statut = 'Brouillon'";
-} elseif ($filterStatut === 'terminee') {
-    $query .= " AND i.statut IN ('Terminee', 'Terminée')";
-} elseif ($filterStatut === 'envoyee') {
-    $query .= " AND i.statut IN ('Envoyee', 'Envoyée')";
 }
 
 // ── Pagination ─────────────────────────────────────────────────────────────
@@ -115,23 +115,19 @@ $totalItems = $countStmt->fetchColumn();
 $totalPages = ceil($totalItems / $itemsPerPage);
 
 // 2. Requête finale avec LIMIT et OFFSET
-$query .= " LIMIT $itemsPerPage OFFSET $offset";
-$stmt = $db->prepare($query);
+$paginatedQuery = $query . " LIMIT $itemsPerPage OFFSET $offset";
+$stmt = $db->prepare($paginatedQuery);
 $stmt->execute($params);
 $interventions = $stmt->fetchAll();
 
 // Stats sur le lot filtré complet (pas seulement la page)
-// Pour garder les stats calculées sur TOUT le résultat filtré :
-$allStmt = $db->prepare('SELECT statut, client_id FROM interventions i JOIN clients c ON i.client_id = c.id WHERE i.date_intervention >= ? AND i.date_intervention <= ?' . 
-    (!$isAdmin ? ' AND i.technicien_id = ?' : ($filterUser > 0 ? ' AND i.technicien_id = ?' : '')) . 
-    (!empty($filterArc) ? ' AND i.numero_arc ILIKE ?' : '') .
-    (!empty($filterClient) ? ' AND c.nom_societe ILIKE ?' : '')
-);
-$allStmt->execute($params);
-$allFiltered = $allStmt->fetchAll();
+$allFilteredQuery = 'SELECT statut FROM (' . $query . ') AS filtered_lot';
+$allFilteredStmt = $db->prepare($allFilteredQuery);
+$allFilteredStmt->execute($params);
+$allFiltered = $allFilteredStmt->fetchAll();
 
 $nbInterventions = count($allFiltered);
-$terminees = count(array_filter($allFiltered, fn($i) => in_array($i['statut'], ['Terminee', 'Terminée', 'Envoyee', 'Envoyée'])));
+$terminees = count(array_filter($allFiltered, fn($i) => in_array(strtolower($i['statut']), ['terminee', 'terminée', 'envoyee', 'envoyée'])));
 $brouillons = $nbInterventions - $terminees;
 
 $clientsSet = [];
@@ -489,7 +485,7 @@ $nbClients = count($clientsSet);
                     style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--glass-border);display:flex;justify-content:space-between;align-items:center;">
                     <h3 style="font-size:1rem;">Détail des documents <span
                             style="font-size:0.75rem;color:var(--text-dim);font-weight:400;margin-left:0.5rem;">
-                            <?= $nbInterventions ?> interventions
+                            <?= $totalItems ?> interventions
                         </span></h3>
                 </div>
 
@@ -525,11 +521,11 @@ $nbClients = count($clientsSet);
                                                             style="object-fit: cover;">
                                                     <?php else: ?>
                                                         <div class="avatar">
-                                                            <?= strtoupper(substr($i['tech_prenom'], 0, 1) . substr($i['tech_nom'], 0, 1)) ?>
+                                                            <?= strtoupper(substr($i['tech_prenom'] ?? '', 0, 1) . substr($i['tech_nom'] ?? '', 0, 1)) ?>
                                                         </div>
                                                     <?php endif; ?>
                                                     <span style="font-weight:600; font-size: 0.8rem;">
-                                                        <?= htmlspecialchars($i['tech_prenom'] . ' ' . $i['tech_nom']) ?>
+                                                        <?= htmlspecialchars(($i['tech_prenom'] ?? '') . ' ' . ($i['tech_nom'] ?? '')) ?>
                                                     </span>
                                                 </div>
                                             </td>
@@ -545,14 +541,14 @@ $nbClients = count($clientsSet);
                                         </td>
                                         <td style="text-align:center;">
                                             <span
-                                                class="status-badge <?= in_array($i['statut'], ['Terminee', 'Terminée', 'Envoyee', 'Envoyée']) ? 'status-terminee' : 'status-brouillon' ?>">
-                                                <?= in_array($i['statut'], ['Terminee', 'Terminée', 'Envoyee', 'Envoyée']) ? 'Signée' : 'En Saisie' ?>
+                                                class="status-badge <?= in_array(strtolower($i['statut']), ['terminee', 'terminée', 'envoyee', 'envoyée']) ? 'status-terminee' : 'status-brouillon' ?>">
+                                                <?= in_array(strtolower($i['statut']), ['terminee', 'terminée', 'envoyee', 'envoyée']) ? 'Signée' : 'En Saisie' ?>
                                             </span>
                                         </td>
                                         <td style="white-space:nowrap;">
                                             <div style="display: grid; grid-template-columns: 36px 36px 36px; gap: 8px; justify-content: center; margin: 0 auto; width: max-content;">
                                                 <div>
-                                                    <?php if (in_array($i['statut'], ['Terminee', 'Terminée', 'Envoyee', 'Envoyée'])): ?>
+                                                    <?php if (in_array(strtolower($i['statut']), ['terminee', 'terminée', 'envoyee', 'envoyée'])): ?>
                                                         <a href="rapport_final.php?id=<?= $i['id'] ?>&msg=ok" class="btn btn-ghost"
                                                             style="width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; color: var(--success);"
                                                             title="Voir le rapport"><img src="/assets/icon_document_blue.svg" style="height: 18px; width: 18px;"></a>
@@ -565,7 +561,7 @@ $nbClients = count($clientsSet);
                                                 </div>
                                                 <div>
                                                     <a href="#"
-                                                        onclick="if(confirm('Supprimer cette fiche définitivement ?')) window.location.href='delete_intervention.php?id=<?= $i['id'] ?>&csrf_token=<?= getCsrfToken() ?>';"
+                                                        onclick="if(confirm('🚨 ATTENTION : Supprimer cette fiche ARC <?= htmlspecialchars($i['numero_arc']) ?> définitivement ainsi que toutes ses fiches machines ? Cette action est irréversible.')) window.location.href='delete_intervention.php?id=<?= $i['id'] ?>&csrf_token=<?= getCsrfToken() ?>';"
                                                         class="btn btn-ghost"
                                                         style="width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; color: var(--error);"
                                                         title="Supprimer"><img src="/assets/icon_delete_red.svg" style="height: 18px; width: 18px;"></a>
@@ -577,6 +573,44 @@ $nbClients = count($clientsSet);
                             </tbody>
                         </table>
                     </div>
+
+                    <?php if ($totalPages > 1): ?>
+                        <?php
+                        $queryParams = $_GET;
+                        unset($queryParams['page']);
+                        $baseQuery = http_build_query($queryParams);
+                        if ($baseQuery) $baseQuery .= '&';
+                        ?>
+                        <div class="pagination" style="padding: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 2rem; border-top: 1px solid var(--glass-border);">
+                            <?php if ($currentPage > 1): ?>
+                                <a href="historique.php?<?= $baseQuery ?>page=<?= $currentPage - 1 ?>" class="pagination-link">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                                    Précédent
+                                </a>
+                            <?php else: ?>
+                                <span class="pagination-link disabled" style="opacity: 0.3; cursor: not-allowed;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                                    Précédent
+                                </span>
+                            <?php endif; ?>
+
+                            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-dim);">
+                                Page <span style="color: var(--primary);"><?= $currentPage ?></span> sur <?= $totalPages ?>
+                            </div>
+
+                            <?php if ($currentPage < $totalPages): ?>
+                                <a href="historique.php?<?= $baseQuery ?>page=<?= $currentPage + 1 ?>" class="pagination-link">
+                                    Suivant
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </a>
+                            <?php else: ?>
+                                <span class="pagination-link disabled" style="opacity: 0.3; cursor: not-allowed;">
+                                    Suivant
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
                 <?php endif; ?>
             </div>
             <div class="app-footer">
