@@ -96,6 +96,20 @@ function getDB()
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]);
+
+            // AUTO-FIX: Mise à jour des contraintes pour les accents et renommage admin
+            try {
+                // On autorise 'Terminée' et 'Envoyée' dans la base
+                $pdo->exec("ALTER TABLE interventions DROP CONSTRAINT IF EXISTS interventions_statut_check");
+                $pdo->exec("ALTER TABLE interventions ADD CONSTRAINT interventions_statut_check 
+                           CHECK (statut IN ('Brouillon', 'Terminee', 'Terminée', 'Envoyee', 'Envoyée'))");
+                
+                // On s'assure que l'admin s'appelle 'Admin'
+                $pdo->exec("UPDATE users SET prenom = 'Admin', nom = '' WHERE nom = 'TG'");
+            } catch (Exception $e) {
+                // Silencieusement ignoré si déjà fait ou erreur mineure
+            }
+
         } catch (PDOException $e) {
             // Afficher l'erreur (temporaire)
             die('Erreur de connexion à la base de données : ' . $e->getMessage());
