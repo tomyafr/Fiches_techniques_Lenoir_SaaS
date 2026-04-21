@@ -951,6 +951,46 @@ foreach ($recoFreq as $rfk => $rfv) {
                 margin: 0 0 20px 0;
                 transform-origin: top left;
             }
+
+            /* Mobile Top Bar Optimizations */
+            .top-bar {
+                padding: 10px 12px;
+                gap: 8px;
+            }
+
+            .top-bar .btn {
+                padding: 0.6rem !important;
+                min-width: 44px;
+                justify-content: center;
+            }
+
+            .top-bar .btn span {
+                display: none; /* Hide button text on mobile */
+            }
+
+            .top-bar .mobile-header-title {
+                display: none; /* Hide title if it overlaps, or we can keep it if space allows */
+                /* or just make it smaller */
+                font-size: 0.75rem;
+                max-width: 100px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            
+            .top-bar label {
+                padding: 5px 8px !important;
+            }
+            
+            .top-bar label span {
+                display: none; /* Hide "Exclure du rapport" text */
+            }
+            
+            .top-bar label::after {
+                content: 'X'; /* Simple indicator for exclusion button */
+                font-size: 10px;
+                font-weight: 800;
+                color: #ff4444;
+            }
         }
         .btn-ia-refresh {
             background: rgba(230, 126, 34, 0.1);
@@ -986,22 +1026,26 @@ foreach ($recoFreq as $rfk => $rfv) {
             <button type="button" class="btn btn-ghost"
                 onclick="window.location.href='intervention_edit.php?id=<?= $machine['intervention_id'] ?>'"
                 style="padding: 0.4rem 0.8rem; color: var(--error); display:flex; align-items:center; gap:6px; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.5px; border-radius: var(--radius-sm); border: 1px solid rgba(244, 63, 94, 0.2); background: rgba(244, 63, 94, 0.05);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                RETOUR
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                <span>RETOUR</span>
             </button>
             <span class="mobile-header-title" style="color: var(--primary); font-size: 0.9rem; font-weight: 700; position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap;">
                 <?= htmlspecialchars(str_to_upper_fr(str_replace('*', '', $machine['designation'] ?? ''))) ?>
             </span>
-            <div style="display:flex; gap:10px; align-items:center;">
+            <div style="display:flex; gap:8px; align-items:center;">
                 <label style="color:white; font-size:0.8rem; display:flex; align-items:center; gap:5px; cursor:pointer; background:rgba(255,255,255,0.1); padding:5px 10px; border-radius:5px;">
                     <input type="checkbox" name="mesures[excluded]" value="1" <?= ($mesures['excluded'] ?? false) ? 'checked' : '' ?>>
-                    Exclure du rapport
+                    <span>Exclure</span>
                 </label>
                 <button type="button" class="btn btn-ghost" onclick="window.print()"
-                    style="background:#2b2d31; color:white; border:1px solid #444; display:flex; align-items:center; gap:6px;">
-                    <img src="/assets/icon_document_white.svg" style="height: 16px; width: 16px; margin-right: 8px; vertical-align: middle;"> IMPRIMER
+                    style="background:#2b2d31; color:white; border:1px solid #444; display:flex; align-items:center; gap:6px; padding: 0.6rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+                    <span>IMPRIMER</span>
                 </button>
-                <button type="submit" class="btn btn-primary" style="background:#e6b12a; color:#000;">ENREGISTRER</button>
+                <button type="submit" class="btn btn-primary" style="background:#e6b12a; color:#000; padding: 0.6rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v13a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    <span>ENREGISTRER</span>
+                </button>
             </div>
         </div>
 
