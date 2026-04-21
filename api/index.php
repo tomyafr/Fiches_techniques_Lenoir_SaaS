@@ -253,9 +253,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- Raccourcis de test rapides -->
             <div style="display:flex; gap:10px; margin-top:20px;">
                 <button type="button" class="btn btn-ghost"
-                    onclick="document.getElementById('nom').value='TG'; document.getElementById('password').value='password123'; document.querySelector('.login-card').submit();"
+                    onclick="document.getElementById('nom').value='ADMIN'; document.getElementById('password').value='password123'; document.querySelector('.login-card').submit();"
                     style="flex:1; font-size:11px; padding:0.5rem; display:flex; align-items:center; justify-content:center; gap:6px;">
-                    <img src="/assets/icon_key_white.svg" style="height: 14px; width: 14px;"> Admin
+                    <img src="/assets/icon_key_white.svg" style="height: 14px; width: 14px;"> Admin (ADMIN)
                 </button>
                 <button type="button" class="btn btn-ghost"
                     onclick="document.getElementById('nom').value='SALAH'; document.getElementById('password').value='password123'; document.querySelector('.login-card').submit();"

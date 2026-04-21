@@ -105,13 +105,13 @@ function getDB()
                            CHECK (statut IN ('Brouillon', 'Terminee', 'Terminée', 'Envoyee', 'Envoyée'))");
                 
                 // On s'assure que l'admin s'appelle 'Admin'
-                $pdo->exec("UPDATE users SET prenom = 'Admin', nom = '' WHERE nom = 'TG'");
+                $pdo->exec("UPDATE users SET prenom = 'Admin', nom = 'ADMIN' WHERE nom = 'TG'");
                 
                 // Rafraîchir la session si nécessaire (si on est l'admin dont le nom vient d'être changé)
                 if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION['user_id'])) {
                     if (($_SESSION['user_nom'] ?? '') === 'TG') {
                         $_SESSION['user_prenom'] = 'Admin';
-                        $_SESSION['user_nom'] = '';
+                        $_SESSION['user_nom'] = 'ADMIN';
                     }
                 }
             } catch (Exception $e) {
