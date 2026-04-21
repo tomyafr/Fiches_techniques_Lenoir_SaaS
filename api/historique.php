@@ -13,6 +13,12 @@ if (!in_array($filterPeriod, $allowedPeriods, true)) {
     $filterPeriod = 'all';
 }
 
+$filterStatut = $_GET['statut'] ?? 'all';
+$allowedStatuts = ['all', 'brouillon', 'terminee', 'envoyee'];
+if (!in_array($filterStatut, $allowedStatuts, true)) {
+    $filterStatut = 'all';
+}
+
 $filterUser = intval($_GET['user'] ?? 0);
 $filterArc = substr(preg_replace('/[^\w\s\-\/]/', '', trim($_GET['arc'] ?? '')), 0, 50);
 $filterClient = substr(preg_replace('/[^\w\s\-\/]/', '', trim($_GET['client'] ?? '')), 0, 50);
@@ -83,6 +89,14 @@ if (!empty($filterArc)) {
 if (!empty($filterClient)) {
     $query .= ' AND c.nom_societe ILIKE ?';
     $params[] = '%' . $filterClient . '%';
+}
+
+if ($filterStatut === 'brouillon') {
+    $query .= " AND i.statut = 'Brouillon'";
+} elseif ($filterStatut === 'terminee') {
+    $query .= " AND i.statut IN ('Terminee', 'Terminée')";
+} elseif ($filterStatut === 'envoyee') {
+    $query .= " AND i.statut IN ('Envoyee', 'Envoyée')";
 }
 
 // ── Pagination ─────────────────────────────────────────────────────────────
@@ -447,6 +461,13 @@ $nbClients = count($clientsSet);
                         </select>
                     <?php endif; ?>
 
+                    <select name="statut" onchange="this.form.submit()">
+                        <option value="all" <?= $filterStatut === 'all' ? 'selected' : '' ?>>Tous les états</option>
+                        <option value="brouillon" <?= $filterStatut === 'brouillon' ? 'selected' : '' ?>>Brouillon</option>
+                        <option value="terminee" <?= $filterStatut === 'terminee' ? 'selected' : '' ?>>Terminée</option>
+                        <option value="envoyee" <?= $filterStatut === 'envoyee' ? 'selected' : '' ?>>Envoyée</option>
+                    </select>
+
                     <input type="text" name="arc" placeholder="Filtrer par ARC..."
                         value="<?= htmlspecialchars($filterArc) ?>" maxlength="50"
                         style="flex:1;min-width:150px;">
@@ -455,11 +476,10 @@ $nbClients = count($clientsSet);
                         value="<?= htmlspecialchars($filterClient) ?>" maxlength="50"
                         style="flex:1;min-width:150px;">
 
-                    <button type="submit" class="btn btn-primary"
-                        style="padding:0.6rem 1.25rem;font-size:0.8rem;">Filtrer</button>
-                    <?php if ($filterUser || $filterArc || $filterClient || $filterPeriod !== 'all'): ?>
-                        <a href="historique.php" class="btn btn-ghost"
-                            style="padding:0.6rem 1rem;font-size:0.8rem;">Effacer</a>
+                    <button type="submit" class="btn btn-primary" style="padding:0.6rem 1.25rem;font-size:0.8rem;">Filtrer</button>
+                    
+                    <?php if ($filterUser || $filterArc || $filterClient || $filterStatut !== 'all' || $filterPeriod !== 'all'): ?>
+                        <a href="historique.php" class="btn btn-ghost" style="padding:0.6rem 1rem;font-size:0.8rem;">Effacer</a>
                     <?php endif; ?>
                 </form>
             </div>

@@ -356,20 +356,28 @@ $envoyees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Envo
                 </div>
             </div>
 
-            <div class="stats-grid animate-in" style="margin-bottom:2rem;">
-                <div class="stat-item glass">
+            <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                <a href="historique.php?statut=brouillon" class="stat-item glass animate-in-delay-1" style="text-decoration: none; transition: 0.3s; cursor: pointer;">
                     <span class="stat-label">Brouillons</span>
                     <span class="stat-value" style="color:var(--text-main);"><?= count($encours) ?></span>
-                </div>
-                <div class="stat-item glass">
+                </a>
+                <a href="historique.php?statut=terminee" class="stat-item glass animate-in-delay-1" style="text-decoration: none; transition: 0.3s; cursor: pointer; border-top: 3px solid var(--primary);">
                     <span class="stat-label">Terminées</span>
                     <span class="stat-value" style="color:var(--primary);"><?= count($terminees) ?></span>
-                </div>
-                <div class="stat-item glass">
+                </a>
+                <a href="historique.php?statut=envoyee" class="stat-item glass animate-in-delay-1" style="grid-column: 1 / -1; text-align: center; text-decoration: none; transition: 0.3s; cursor: pointer;">
                     <span class="stat-label">Envoyées</span>
                     <span class="stat-value" style="color:var(--success);"><?= count($envoyees) ?></span>
-                </div>
+                </a>
             </div>
+
+            <style>
+                .stat-item:hover {
+                    background: rgba(255, 255, 255, 0.05);
+                    transform: translateY(-5px);
+                    box-shadow: var(--shadow-premium);
+                }
+            </style>
 
             <div class="card glass animate-in">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
