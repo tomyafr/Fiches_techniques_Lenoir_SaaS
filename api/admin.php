@@ -249,13 +249,7 @@ $envoyees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Envo
                 </script>
             <?php endif; ?>
 
-            <div style="display:flex; justify-content:space-between; margin-bottom: 2rem; align-items: center;">
-                <button class="btn btn-primary"
-                    onclick="document.getElementById('newInterventionModal').style.display='flex'">
-                    <img src="/assets/icon_add_white.svg" style="height: 18px; width: 18px; margin-right: 8px; vertical-align: middle;"> NOUVELLE FICHE TECHNIQUE
-                </button>
-                </button>
-            </div>
+
 
             <!-- DASHBOARD SECTION -->
             <div class="dashboard-grid animate-up">
