@@ -218,8 +218,13 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
 
 <body>
     <style>
-        .mobile-header { display: flex !important; }
-        .main-content { padding-top: calc(var(--mobile-header-height) + 1.5rem) !important; }
+        @media (max-width: 1024px) {
+            .mobile-header { display: flex !important; }
+            .main-content { padding-top: calc(var(--mobile-header-height) + 1.5rem) !important; }
+        }
+        @media (min-width: 1025px) {
+            .mobile-header { display: none !important; }
+        }
     </style>
     <!-- ═══ HEADER MOBILE ═══ -->
     <header class="mobile-header" style="z-index: 1001;">
@@ -393,27 +398,27 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                         <form method="POST" id="statusForm">
                             <?= csrfField() ?>
                             <input type="hidden" name="action" value="update_statut">
-                            <p style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.8rem; text-transform: uppercase;">Statut Actuel</p>
-                            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-                                <label style="cursor:pointer; flex: 1; min-width: 100px;">
+                            <p style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.6rem; text-transform: uppercase; letter-spacing: 0.05em;">Statut Actuel</p>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <label style="cursor:pointer; flex: 1; min-width: 90px;">
                                     <input type="radio" name="statut" value="actif" <?= $currentStatut === 'actif' ? 'checked' : '' ?> style="display:none;" onchange="this.form.submit()">
-                                    <div style="padding: 0.8rem; border-radius: 12px; border: 1px solid <?= $currentStatut === 'actif' ? 'var(--success)' : 'var(--glass-border)' ?>; background: <?= $currentStatut === 'actif' ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.02)' ?>; text-align:center; transition: 0.3s;">
-                                        <span style="display:block; font-size: 1.2rem; margin-bottom: 4px;">🟢</span>
-                                        <span style="font-weight: 700; font-size: 0.8rem; color: <?= $currentStatut === 'actif' ? 'var(--success)' : 'var(--text-dim)' ?>;">ACTIF</span>
+                                    <div style="padding: 0.5rem; border-radius: 8px; border: 1px solid <?= $currentStatut === 'actif' ? 'var(--success)' : 'var(--glass-border)' ?>; background: <?= $currentStatut === 'actif' ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.02)' ?>; text-align:center; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success);"></div>
+                                        <span style="font-weight: 700; font-size: 0.7rem; color: <?= $currentStatut === 'actif' ? 'var(--success)' : 'var(--text-dim)' ?>;">ACTIF</span>
                                     </div>
                                 </label>
-                                <label style="cursor:pointer; flex: 1; min-width: 100px;">
+                                <label style="cursor:pointer; flex: 1; min-width: 90px;">
                                     <input type="radio" name="statut" value="pause" <?= $currentStatut === 'pause' ? 'checked' : '' ?> style="display:none;" onchange="this.form.submit()">
-                                    <div style="padding: 0.8rem; border-radius: 12px; border: 1px solid <?= $currentStatut === 'pause' ? 'var(--primary)' : 'var(--glass-border)' ?>; background: <?= $currentStatut === 'pause' ? 'rgba(255,179,0,0.1)' : 'rgba(255,255,255,0.02)' ?>; text-align:center; transition: 0.3s;">
-                                        <span style="display:block; font-size: 1.2rem; margin-bottom: 4px;">☕</span>
-                                        <span style="font-weight: 700; font-size: 0.8rem; color: <?= $currentStatut === 'pause' ? 'var(--primary)' : 'var(--text-dim)' ?>;">PAUSE</span>
+                                    <div style="padding: 0.5rem; border-radius: 8px; border: 1px solid <?= $currentStatut === 'pause' ? 'var(--primary)' : 'var(--glass-border)' ?>; background: <?= $currentStatut === 'pause' ? 'rgba(255,179,0,0.1)' : 'rgba(255,255,255,0.02)' ?>; text-align:center; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 8px var(--primary);"></div>
+                                        <span style="font-weight: 700; font-size: 0.7rem; color: <?= $currentStatut === 'pause' ? 'var(--primary)' : 'var(--text-dim)' ?>;">PAUSE</span>
                                     </div>
                                 </label>
-                                <label style="cursor:pointer; flex: 1; min-width: 100px;">
+                                <label style="cursor:pointer; flex: 1; min-width: 90px;">
                                     <input type="radio" name="statut" value="absent" <?= $currentStatut === 'absent' ? 'checked' : '' ?> style="display:none;" onchange="this.form.submit()">
-                                    <div style="padding: 0.8rem; border-radius: 12px; border: 1px solid <?= $currentStatut === 'absent' ? 'var(--error)' : 'var(--glass-border)' ?>; background: <?= $currentStatut === 'absent' ? 'rgba(239,68,68,0.1)' : 'rgba(255,255,255,0.02)' ?>; text-align:center; transition: 0.3s;">
-                                        <span style="display:block; font-size: 1.2rem; margin-bottom: 4px;">🔴</span>
-                                        <span style="font-weight: 700; font-size: 0.8rem; color: <?= $currentStatut === 'absent' ? 'var(--error)' : 'var(--text-dim)' ?>;">ABSENT</span>
+                                    <div style="padding: 0.5rem; border-radius: 8px; border: 1px solid <?= $currentStatut === 'absent' ? 'var(--error)' : 'var(--glass-border)' ?>; background: <?= $currentStatut === 'absent' ? 'rgba(239,68,68,0.1)' : 'rgba(255,255,255,0.02)' ?>; text-align:center; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--error); box-shadow: 0 0 8px var(--error);"></div>
+                                        <span style="font-weight: 700; font-size: 0.7rem; color: <?= $currentStatut === 'absent' ? 'var(--error)' : 'var(--text-dim)' ?>;">ABSENT</span>
                                     </div>
                                 </label>
                             </div>
