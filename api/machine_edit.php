@@ -3092,18 +3092,18 @@ foreach ($recoFreq as $rfk => $rfv) {
                                  style="width:100%; height:auto;" 
                                  alt="Circulaire">
                             
-                            <!-- Diamètre pôle (CALIBRAGE FINAL VERCEL) -->
-                            <div style="position:absolute; left:83.8%; top:26.5%; transform:translate(-50%, -50%); font-size:9px;">
+                            <!-- Diamètre pôle (CALIBRAGE FINAL V4 - Compensé) -->
+                            <div style="position:absolute; left:83.8%; top:27.7%; transform:translate(-50%, -50%); font-size:9px;">
                                 <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:75px; border:none; background:transparent; text-align:center; font-size:9px; font-weight:bold;" autocomplete="off">
                             </div>
 
-                            <!-- Diamètre noyau (CALIBRAGE FINAL VERCEL) -->
-                            <div style="position:absolute; left:85.5%; top:31.1%; transform:translate(-50%, -50%); font-size:9px;">
+                            <!-- Diamètre noyau (CALIBRAGE FINAL V4 - Compensé) -->
+                            <div style="position:absolute; left:85.5%; top:32.3%; transform:translate(-50%, -50%); font-size:9px;">
                                 <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['mesures_levage_diam_noyau'] ?? ($mesures['levage_diam_noyau'] ?? '')) ?>" class="pdf-input" style="width:75px; border:none; background:transparent; text-align:center; font-size:9px; font-weight:bold;" autocomplete="off">
                             </div>
 
-                            <!-- Epaisseur pôle (CALIBRAGE FINAL VERCEL) -->
-                            <div style="position:absolute; left:85.5%; top:42.4%; transform:translate(-50%, -50%); font-size:9px;">
+                            <!-- Epaisseur pôle (CALIBRAGE FINAL V4 - Compensé) -->
+                            <div style="position:absolute; left:85.5%; top:43.6%; transform:translate(-50%, -50%); font-size:9px;">
                                 <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:75px; border:none; background:transparent; text-align:center; font-size:9px; font-weight:bold;" autocomplete="off">
                             </div>
 
