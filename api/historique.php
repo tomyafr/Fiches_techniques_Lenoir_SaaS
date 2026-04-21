@@ -85,15 +85,39 @@ if (!empty($filterClient)) {
     $params[] = '%' . $filterClient . '%';
 }
 
+// ── Pagination ─────────────────────────────────────────────────────────────
+$itemsPerPage = 10;
+$currentPage = max(1, intval($_GET['page'] ?? 1));
+$offset = ($currentPage - 1) * $itemsPerPage;
+
+// IMPORTANT: Ajouter l'ordre AVANT de compter et de limiter
 $query .= ' ORDER BY i.date_intervention DESC, i.created_at DESC';
 
+// 1. Requête pour le total total (sans LIMIT)
+$countQuery = 'SELECT COUNT(*) FROM (' . $query . ') AS total_items';
+$countStmt = $db->prepare($countQuery);
+$countStmt->execute($params);
+$totalItems = $countStmt->fetchColumn();
+$totalPages = ceil($totalItems / $itemsPerPage);
+
+// 2. Requête finale avec LIMIT et OFFSET
+$query .= " LIMIT $itemsPerPage OFFSET $offset";
 $stmt = $db->prepare($query);
 $stmt->execute($params);
 $interventions = $stmt->fetchAll();
 
-// Stats
-$nbInterventions = count($interventions);
-$terminees = count(array_filter($interventions, fn($i) => in_array($i['statut'], ['Terminee', 'Terminée', 'Envoyee', 'Envoyée'])));
+// Stats sur le lot filtré complet (pas seulement la page)
+// Pour garder les stats calculées sur TOUT le résultat filtré :
+$allStmt = $db->prepare('SELECT statut, client_id FROM interventions i JOIN clients c ON i.client_id = c.id WHERE i.date_intervention >= ? AND i.date_intervention <= ?' . 
+    (!$isAdmin ? ' AND i.technicien_id = ?' : ($filterUser > 0 ? ' AND i.technicien_id = ?' : '')) . 
+    (!empty($filterArc) ? ' AND i.numero_arc ILIKE ?' : '') .
+    (!empty($filterClient) ? ' AND c.nom_societe ILIKE ?' : '')
+);
+$allStmt->execute($params);
+$allFiltered = $allStmt->fetchAll();
+
+$nbInterventions = count($allFiltered);
+$terminees = count(array_filter($allFiltered, fn($i) => in_array($i['statut'], ['Terminee', 'Terminée', 'Envoyee', 'Envoyée'])));
 $brouillons = $nbInterventions - $terminees;
 
 $clientsSet = [];
@@ -230,6 +254,49 @@ $nbClients = count($clientsSet);
             .col-tech {
                 display: none;
             }
+        }
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .pagination-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.6rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .pagination-link:hover:not(.disabled) {
+            background: var(--primary-subtle);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .pagination-link.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .pagination-info {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 500;
         }
     </style>
 </head>
