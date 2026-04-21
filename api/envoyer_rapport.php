@@ -268,7 +268,7 @@ if ($simulationRequested || (empty($mailersendKey) && empty($sendgridKey) && emp
 // ── Mise à jour du statut ────────────────────────────────────────────────────
 if ($result['success']) {
     try {
-        $db->prepare("UPDATE interventions SET statut = 'Envoyee', email_envoye_le = NOW(), email_destinataire = ? WHERE id = ?")
+        $db->prepare("UPDATE interventions SET statut = 'Envoyée', email_envoye_le = NOW(), email_destinataire = ? WHERE id = ?")
             ->execute([$clientEmail, $interventionId]);
     } catch (Exception $e) {
         // La colonne peut ne pas exister encore – on ignore silencieusement

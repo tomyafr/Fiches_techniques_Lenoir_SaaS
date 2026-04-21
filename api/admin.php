@@ -98,8 +98,8 @@ $stmt->execute($params);
 $interventions = $stmt->fetchAll();
 
 $encours = array_filter($interventions, fn($i) => $i['statut'] === 'Brouillon');
-$terminees = array_filter($interventions, fn($i) => $i['statut'] === 'Terminee');
-$envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
+$terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Terminee', 'Terminée']));
+$envoyees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Envoyee', 'Envoyée']));
 
 ?>
 <!DOCTYPE html>
@@ -431,8 +431,8 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                                         <td style="padding: 1rem;">
                                             <span
                                                 style="font-size:0.7rem; padding:0.2rem 0.6rem; border-radius:20px; font-weight:bold; 
-                                                <?= $i['statut'] === 'Terminee' ? 'background:rgba(16,185,129,0.1);color:var(--success);' : ($i['statut'] === 'Envoyee' ? 'background:var(--primary);color:#000;' : 'background:rgba(255,255,255,0.1);color:var(--text-dim);') ?>">
-                                                <?= htmlspecialchars($i['statut']) ?>
+                                                <?= in_array($i['statut'], ['Terminee', 'Terminée']) ? 'background:rgba(16,185,129,0.1);color:var(--success);' : (in_array($i['statut'], ['Envoyee', 'Envoyée']) ? 'background:var(--primary);color:#000;' : 'background:rgba(255,255,255,0.1);color:var(--text-dim);') ?>">
+                                                <?= htmlspecialchars(in_array($i['statut'], ['Terminee', 'Terminée']) ? 'Terminée' : (in_array($i['statut'], ['Envoyee', 'Envoyée']) ? 'Envoyée' : $i['statut'])) ?>
                                             </span>
                                         </td>
                                         <td style="padding: 1rem; text-align:right;">

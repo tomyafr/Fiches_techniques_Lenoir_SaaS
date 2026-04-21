@@ -93,7 +93,7 @@ $interventions = $stmt->fetchAll();
 
 // Stats
 $nbInterventions = count($interventions);
-$terminees = count(array_filter($interventions, fn($i) => in_array($i['statut'], ['Terminee', 'Envoyee'])));
+$terminees = count(array_filter($interventions, fn($i) => in_array($i['statut'], ['Terminee', 'Terminée', 'Envoyee', 'Envoyée'])));
 $brouillons = $nbInterventions - $terminees;
 
 $clientsSet = [];
@@ -458,14 +458,14 @@ $nbClients = count($clientsSet);
                                         </td>
                                         <td style="text-align:center;">
                                             <span
-                                                class="status-badge <?= $i['statut'] === 'Terminee' ? 'status-terminee' : 'status-brouillon' ?>">
-                                                <?= $i['statut'] === 'Terminee' ? 'Signée' : 'En Saisie' ?>
+                                                class="status-badge <?= in_array($i['statut'], ['Terminee', 'Terminée', 'Envoyee', 'Envoyée']) ? 'status-terminee' : 'status-brouillon' ?>">
+                                                <?= in_array($i['statut'], ['Terminee', 'Terminée', 'Envoyee', 'Envoyée']) ? 'Signée' : 'En Saisie' ?>
                                             </span>
                                         </td>
                                         <td style="white-space:nowrap;">
                                             <div style="display: grid; grid-template-columns: 36px 36px 36px; gap: 8px; justify-content: center; margin: 0 auto; width: max-content;">
                                                 <div>
-                                                    <?php if ($i['statut'] === 'Terminee'): ?>
+                                                    <?php if (in_array($i['statut'], ['Terminee', 'Terminée', 'Envoyee', 'Envoyée'])): ?>
                                                         <a href="rapport_final.php?id=<?= $i['id'] ?>&msg=ok" class="btn btn-ghost"
                                                             style="width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; color: var(--success);"
                                                             title="Voir le rapport"><img src="/assets/icon_document_blue.svg" style="height: 18px; width: 18px;"></a>

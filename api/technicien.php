@@ -87,7 +87,7 @@ $interventions = $stmt->fetchAll();
 
 $today = date('Y-m-d');
 $encours = array_filter($interventions, fn($i) => $i['statut'] === 'Brouillon');
-$terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Terminee', 'Envoyee']));
+$terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Terminee', 'Terminée', 'Envoyee', 'Envoyée']));
 
 $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
 ?>
@@ -248,16 +248,17 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
                                     </p>
                                 </div>
                                 <div style="display:flex; align-items:center; gap:0.5rem;">
-                                    <?php if ($i['statut'] === 'Terminee'): ?>
+                                    <?php if (in_array($i['statut'], ['Terminee', 'Terminée'])): ?>
+                                        <span class="status-badge" style="background:rgba(16,185,129,0.1); color:#10b981; border:1px solid rgba(16,185,129,0.2);">Terminée</span>
+                                    <?php else: ?>
+                                        <span class="status-badge" style="background:rgba(59,130,246,0.1); color:#3b82f6; border:1px solid rgba(59,130,246,0.2);">Envoyée</span>
+                                    <?php endif; ?>
+                                    <?php if ($i['statut'] === 'Terminee' || $i['statut'] === 'Terminée'): ?>
                                         <a href="rapport_final.php?id=<?= $i['id'] ?>&msg=ok"
                                             style="font-size:0.75rem; padding:0.3rem 0.6rem; background:rgba(16,185,129,0.1); color:var(--success); border-radius:4px; text-decoration:none; white-space:nowrap;">
                                             <img src="/assets/icon_document_blue.svg" style="height: 14px; width: 14px; vertical-align: middle; margin-right: 4px;"> Rapport
                                         </a>
                                     <?php endif; ?>
-                                    <span
-                                        style="font-size: 0.8rem; padding: 0.2rem 0.5rem; background: rgba(16, 185, 129, 0.1); color: var(--success); border-radius: 4px;">
-                                        <?= htmlspecialchars($i['statut']) ?>
-                                    </span>
                                 </div>
                             </div>
                         <?php endforeach; ?>

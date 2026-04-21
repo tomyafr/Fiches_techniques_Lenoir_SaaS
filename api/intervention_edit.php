@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $nomClient = $_POST['nomClient'] ?? null;
 
         $db->prepare('UPDATE interventions SET signature_client = ?, signature_technicien = ?, nom_signataire_client = ?, statut = ? WHERE id = ?')
-            ->execute([$sigClient, $sigTech, $nomClient, 'Terminee', $id]);
+            ->execute([$sigClient, $sigTech, $nomClient, 'Terminée', $id]);
 
         // redirect based on role
         if ($_SESSION['role'] === 'admin') {
