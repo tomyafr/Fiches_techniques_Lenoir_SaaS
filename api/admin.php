@@ -383,17 +383,11 @@ $envoyees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Envo
             </div>
 
             <div class="card glass animate-in">
-                <div
-                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
                     <div style="display: flex; align-items: center; gap: 1.5rem;">
-                        <h3 style="font-size: 1.3rem;">Toutes les Fiches Techniques</h3>
+                        <h3 style="font-size: 1.3rem;">Dernières Fiches Techniques</h3>
                         <a href="historique.php" style="font-size: 0.8rem; color: var(--primary); text-decoration: none; font-weight: 600;">Voir tout →</a>
                     </div>
-                    <form method="GET" style="display: flex; gap: 0.5rem;" autocomplete="off">
-                        <input type="text" name="arc" class="input" style="width: 160px; padding: 0.5rem;"
-                            placeholder="Recherche ARC..." value="<?= htmlspecialchars($filterArc) ?>">
-                        <button type="submit" class="btn btn-ghost" style="padding: 0.5rem;">Filtrer</button>
-                    </form>
                 </div>
 
                 <div style="overflow-x: auto;">
