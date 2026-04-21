@@ -381,11 +381,11 @@ $nbClients = count($clientsSet);
                     <?php endif; ?>
 
                     <input type="text" name="arc" placeholder="Filtrer par ARC..."
-                        value="<?= htmlspecialchars($filterArc) ?>" maxlength="50" onblur="this.form.submit()"
+                        value="<?= htmlspecialchars($filterArc) ?>" maxlength="50"
                         style="flex:1;min-width:150px;">
 
                     <input type="text" name="client" placeholder="Filtrer par Client..."
-                        value="<?= htmlspecialchars($filterClient) ?>" maxlength="50" onblur="this.form.submit()"
+                        value="<?= htmlspecialchars($filterClient) ?>" maxlength="50"
                         style="flex:1;min-width:150px;">
 
                     <button type="submit" class="btn btn-primary"
