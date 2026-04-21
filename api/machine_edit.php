@@ -934,6 +934,27 @@ foreach ($recoFreq as $rfk => $rfv) {
             }
         }
 
+        @media (max-width: 1200px) {
+            .mobile-header-title {
+                position: static !important;
+                transform: none !important;
+                left: auto !important;
+                flex: 1;
+                margin: 0 15px;
+                font-size: 0.8rem !important;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                white-space: normal !important;
+            }
+            .top-bar {
+                padding: 10px 15px;
+                gap: 10px;
+            }
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 0;
@@ -973,6 +994,12 @@ foreach ($recoFreq as $rfk => $rfv) {
         .btn-ia-refresh img {
             filter: sepia(1) saturate(5) hue-rotate(-30deg);
         }
+        .desktop-only { display: inline; }
+        .mobile-only { display: none; }
+        @media (max-width: 992px) {
+            .desktop-only { display: none; }
+            .mobile-only { display: inline; }
+        }
     </style>
 </head>
 
@@ -992,16 +1019,20 @@ foreach ($recoFreq as $rfk => $rfv) {
             <span class="mobile-header-title" style="color: var(--primary); font-size: 0.9rem; font-weight: 700; position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap;">
                 <?= htmlspecialchars(str_to_upper_fr(str_replace('*', '', $machine['designation'] ?? ''))) ?>
             </span>
-            <div style="display:flex; gap:10px; align-items:center;">
-                <label style="color:white; font-size:0.8rem; display:flex; align-items:center; gap:5px; cursor:pointer; background:rgba(255,255,255,0.1); padding:5px 10px; border-radius:5px;">
+            <div style="display:flex; gap:8px; align-items:center;">
+                <label style="color:white; font-size:0.75rem; display:flex; align-items:center; gap:5px; cursor:pointer; background:rgba(255,255,255,0.05); padding:6px 10px; border-radius:5px; border: 1px solid rgba(255,255,255,0.1);">
                     <input type="checkbox" name="mesures[excluded]" value="1" <?= ($mesures['excluded'] ?? false) ? 'checked' : '' ?>>
-                    Exclure du rapport
+                    <span class="desktop-only">Exclure du rapport</span>
+                    <span class="mobile-only">EXCLURE</span>
                 </label>
                 <button type="button" class="btn btn-ghost" onclick="window.print()"
-                    style="background:#2b2d31; color:white; border:1px solid #444; display:flex; align-items:center; gap:6px;">
-                    <img src="/assets/icon_document_white.svg" style="height: 16px; width: 16px; margin-right: 8px; vertical-align: middle;"> IMPRIMER
+                    style="background:#2b2d31; color:white; border:1px solid #444; display:flex; align-items:center; gap:6px; padding: 6px 12px;">
+                    <img src="/assets/icon_document_white.svg" style="height: 16px; width: 16px;"> <span class="desktop-only" style="margin-left: 0;">IMPRIMER</span>
                 </button>
-                <button type="submit" class="btn btn-primary" style="background:#e6b12a; color:#000;">ENREGISTRER</button>
+                <button type="submit" class="btn btn-primary" style="background:#e6b12a; color:#000; display:flex; align-items:center; gap:6px; padding: 6px 12px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    <span class="desktop-only">ENREGISTRER</span>
+                </button>
             </div>
         </div>
 
