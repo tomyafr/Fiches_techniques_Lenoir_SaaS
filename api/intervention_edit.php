@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $nomClient = $_POST['nomClient'] ?? null;
 
         $db->prepare('UPDATE interventions SET signature_client = ?, signature_technicien = ?, nom_signataire_client = ?, statut = ? WHERE id = ?')
-            ->execute([$sigClient, $sigTech, $nomClient, 'Terminée', $id]);
+            ->execute([$sigClient, $sigTech, $nomClient, 'Terminee', $id]);
 
         // redirect based on role
         if ($_SESSION['role'] === 'admin') {
@@ -138,11 +138,6 @@ $machines = $stmtMach->fetchAll();
             border-left-color: var(--accent-cyan);
             background: var(--primary-subtle);
         }
-
-        @media screen and (max-width: 600px) {
-            .mobile-header .btn-ghost span { display: none; }
-            .mobile-header .btn-ghost { padding: 0.6rem !important; }
-        }
     </style>
 </head>
 
@@ -154,8 +149,8 @@ $machines = $stmtMach->fetchAll();
     <header class="mobile-header">
         <button class="btn btn-ghost" onclick="document.getElementById('modalQuit').style.display='flex'"
             style="padding: 0.4rem 0.8rem; color: var(--error); display:flex; align-items:center; gap:6px; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.5px; border-radius: var(--radius-sm); border: 1px solid rgba(244, 63, 94, 0.2); background: rgba(244, 63, 94, 0.05);">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-            <span>RETOUR</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            RETOUR
         </button>
         <span class="mobile-header-title">Fiche ARC</span>
         <span class="mobile-header-user"></span>

@@ -432,7 +432,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
                                             <span
                                                 style="font-size:0.7rem; padding:0.2rem 0.6rem; border-radius:20px; font-weight:bold; 
                                                 <?= $i['statut'] === 'Terminee' ? 'background:rgba(16,185,129,0.1);color:var(--success);' : ($i['statut'] === 'Envoyee' ? 'background:var(--primary);color:#000;' : 'background:rgba(255,255,255,0.1);color:var(--text-dim);') ?>">
-                                                <?= htmlspecialchars(in_array($i['statut'], ['Terminee', 'Terminée']) ? 'Terminée' : (in_array($i['statut'], ['Envoyee', 'Envoyée']) ? 'Envoyée' : $i['statut'])) ?>
+                                                <?= htmlspecialchars($i['statut']) ?>
                                             </span>
                                         </td>
                                         <td style="padding: 1rem; text-align:right;">
@@ -464,7 +464,7 @@ $envoyees = array_filter($interventions, fn($i) => $i['statut'] === 'Envoyee');
             </a>
             <a href="historique.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
                 <img src="/assets/icon_history_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
-                <span class="mobile-nav-label">Hist.</span>
+                <span class="mobile-nav-label">Historique</span>
             </a>
             <a href="equipe.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
                 <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">

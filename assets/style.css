@@ -576,7 +576,6 @@ h4 {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    padding-right: 15px; /* Added spacing for iPhone edge */
 }
 
 /* ═══════════ MOBILE: Bottom Navigation ═══════════ */

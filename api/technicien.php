@@ -87,7 +87,7 @@ $interventions = $stmt->fetchAll();
 
 $today = date('Y-m-d');
 $encours = array_filter($interventions, fn($i) => $i['statut'] === 'Brouillon');
-$terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Terminée', 'Envoyée']));
+$terminees = array_filter($interventions, fn($i) => in_array($i['statut'], ['Terminee', 'Envoyee']));
 
 $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
 ?>
@@ -248,7 +248,7 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
                                     </p>
                                 </div>
                                 <div style="display:flex; align-items:center; gap:0.5rem;">
-                                    <?php if ($i['statut'] === 'Terminée'): ?>
+                                    <?php if ($i['statut'] === 'Terminee'): ?>
                                         <a href="rapport_final.php?id=<?= $i['id'] ?>&msg=ok"
                                             style="font-size:0.75rem; padding:0.3rem 0.6rem; background:rgba(16,185,129,0.1); color:var(--success); border-radius:4px; text-decoration:none; white-space:nowrap;">
                                             <img src="/assets/icon_document_blue.svg" style="height: 14px; width: 14px; vertical-align: middle; margin-right: 4px;"> Rapport
@@ -291,8 +291,8 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
                         <div id="autocomplete_results" class="autocomplete-dropdown" style="display:none;"></div>
                     </div>
 
-                    <div class="name-grid-stack" style="margin-bottom: 1.5rem;">
-                        <div class="form-group" style="margin-bottom:1rem;">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem; margin-bottom: 1.5rem;">
+                        <div class="form-group" style="margin-bottom:0;">
                             <label class="label">Prénom du contact</label>
                             <input type="text" name="contact_prenom" class="input" placeholder="Prénom...">
                         </div>
@@ -326,7 +326,7 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
             <button class="mobile-nav-item <?= $showNewTab ? '' : 'active' ?>" onclick="switchTab('dashboard'); setActiveNav(this)"
                 id="nav-mob-dashboard">
                                 <img src="/assets/icon_dashboard_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
-                <span class="mobile-nav-label">Tableau</span>
+                <span class="mobile-nav-label">Dashboard</span>
             </button>
             <button class="mobile-nav-item <?= $showNewTab ? 'active' : '' ?>" onclick="switchTab('nouvelle'); setActiveNav(this)" id="nav-mob-nouvelle">
                                 <img src="/assets/icon_add_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
@@ -334,7 +334,7 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
             </button>
             <a href="historique.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
                                 <img src="/assets/icon_history_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
-                <span class="mobile-nav-label">Hist.</span>
+                <span class="mobile-nav-label">Historique</span>
             </a>
             <a href="profile.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
                                 <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">

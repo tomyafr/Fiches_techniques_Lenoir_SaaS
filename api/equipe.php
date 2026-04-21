@@ -151,7 +151,7 @@ $equipe = $stmtUsers->fetchAll();
             </a>
             <a href="historique.php" class="mobile-nav-item">
                 <img src="/assets/icon_history_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
-                <span class="mobile-nav-label">Hist.</span>
+                <span class="mobile-nav-label">Historique</span>
             </a>
             <a href="equipe.php" class="mobile-nav-item active">
                 <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
