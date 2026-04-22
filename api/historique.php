@@ -203,8 +203,8 @@ $nbClients = count($clientsSet);
         }
 
         .filter-bar select, .filter-bar input {
-            padding: 0.6rem 0.75rem;
-            font-size: 0.8rem;
+            padding: 0.5rem 0.6rem;
+            font-size: 0.75rem;
             min-width: 0;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--glass-border);
@@ -212,6 +212,7 @@ $nbClients = count($clientsSet);
             color: var(--text-main);
             outline: none;
             transition: var(--transition-fast);
+            flex: 1; /* Force equal width and single line */
         }
 
         .filter-bar select:focus, .filter-bar input:focus {
@@ -555,13 +556,23 @@ $nbClients = count($clientsSet);
                                         style="cursor: pointer;" title="Double-clic pour ouvrir">
                                         <?php if ($isAdmin): ?>
                                             <td class="col-tech">
-                                                <div style="display:flex;align-items:center;gap:0.6rem;">
+                                                    <?php 
+                                                        $techInitiales = strtoupper(substr($i['tech_prenom'] ?? '', 0, 1) . substr($i['tech_nom'] ?? '', 0, 1));
+                                                        $gradients = [
+                                                            'linear-gradient(135deg, #0ea5e9, #6366f1)',
+                                                            'linear-gradient(135deg, #f59e0b, #ef4444)',
+                                                            'linear-gradient(135deg, #10b981, #059669)',
+                                                            'linear-gradient(135deg, #8b5cf6, #d946ef)'
+                                                        ];
+                                                        $gradIndex = (isset($i['technicien_id']) ? $i['technicien_id'] : 0) % count($gradients);
+                                                        $grad = $gradients[$gradIndex];
+                                                    ?>
                                                     <?php if (!empty($i['avatar_base64'])): ?>
                                                         <img src="<?= htmlspecialchars($i['avatar_base64']) ?>" class="avatar"
-                                                            style="object-fit: cover; width: 32px; height: 32px; border-radius: 50%;">
+                                                            style="object-fit: cover; width: 32px; height: 32px; border-radius: 8px;">
                                                     <?php else: ?>
-                                                        <div class="avatar" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--primary-light); color: white; font-size: 0.7rem; font-weight: bold;">
-                                                            <?= strtoupper(substr($i['tech_prenom'] ?? '', 0, 1) . substr($i['tech_nom'] ?? '', 0, 1)) ?>
+                                                        <div class="avatar" style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: <?= $grad ?>; color: white; font-size: 0.7rem; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                                                            <?= $techInitiales ?: '??' ?>
                                                         </div>
                                                     <?php endif; ?>
                                                     <span style="font-weight:600; font-size: 0.8rem;">

@@ -165,29 +165,57 @@ $machines = $stmtMach->fetchAll();
             </script>
         <?php endif; ?>
 
-        <!-- INTRO CLIENT -->
-        <div class="card glass animate-in" style="margin-bottom: 2rem;">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                <div>
-                    <h2 style="color: var(--primary); margin-bottom: 0.5rem;">
-                        <?= htmlspecialchars($intervention['nom_societe']) ?>
-                    </h2>
-                    <p style="color: var(--text-dim); font-size: 0.85rem; margin-bottom: 0.2rem;">
-                        <strong>ARC:</strong>
-                        <?= htmlspecialchars($intervention['numero_arc']) ?> &nbsp;|&nbsp;
-                        <strong>Date:</strong>
-                        <?= date('d/m/Y', strtotime($intervention['date_intervention'])) ?>
-                    </p>
-                    <p style="color: var(--text-dim); font-size: 0.85rem;">
-                        <strong>Contact:</strong>
-                        <?= htmlspecialchars($intervention['contact_nom']) ?: 'N/A' ?>
-                    </p>
+        <!-- PROGRESS STEPPER -->
+        <?php 
+            $step = 1;
+            if (count($machines) > 0) $step = 2;
+            if (strtolower($intervention['statut']) === 'terminee' || strtolower($intervention['statut']) === 'envoyee') $step = 3;
+            
+            $clientInitial = strtoupper(substr($intervention['nom_societe'], 0, 1));
+            $gradients = [
+                'linear-gradient(135deg, #0ea5e9, #6366f1)',
+                'linear-gradient(135deg, #f59e0b, #ef4444)',
+                'linear-gradient(135deg, #10b981, #059669)',
+                'linear-gradient(135deg, #8b5cf6, #d946ef)'
+            ];
+            $grad = $gradients[ord($clientInitial) % count($gradients)];
+        ?>
+        <div class="card glass animate-in" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+            <div style="display:flex; align-items:center; gap:1.25rem; margin-bottom: 2rem;">
+                <div style="width: 64px; height: 64px; border-radius: 16px; background: <?= $grad ?>; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 1.8rem; flex-shrink: 0; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
+                    <?= $clientInitial ?>
                 </div>
-                <div>
-                    <span class="badge"
-                        style="background: rgba(255, 179, 0, 0.1); color: var(--primary); padding: 0.4rem 0.8rem; border-radius: 20px; font-weight: bold; font-size: 0.75rem;">
-                        <?= htmlspecialchars($intervention['statut']) ?>
-                    </span>
+                <div style="flex:1;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div>
+                            <h2 style="font-size: 1.4rem; margin:0; line-height:1.2;"><?= htmlspecialchars($intervention['nom_societe']) ?></h2>
+                            <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 0.2rem;">
+                                <span style="font-weight: 700; color: var(--primary);">ARC <?= htmlspecialchars($intervention['numero_arc']) ?></span> · <?= date('d/m/Y', strtotime($intervention['date_intervention'])) ?>
+                            </p>
+                        </div>
+                        <span class="premium-role-badge admin" style="background: rgba(14, 165, 233, 0.1); color: var(--accent-cyan); border-color: rgba(14, 165, 233, 0.2); font-size: 0.65rem; padding: 0.3rem 0.6rem;">
+                            <?= htmlspecialchars(strtoupper($intervention['statut'])) ?>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEPPER -->
+            <div style="display:flex; justify-content:space-between; position:relative; padding: 0 10px;">
+                <div style="position:absolute; top:12px; left:20px; right:20px; height:2px; background:rgba(255,255,255,0.05); z-index:0;"></div>
+                <div style="position:absolute; top:12px; left:20px; width:<?= ($step-1)*50 ?>%; height:2px; background:var(--primary); z-index:1; transition: width 0.5s ease;"></div>
+                
+                <div style="z-index:2; text-align:center; flex:1;">
+                    <div style="width:24px; height:24px; border-radius:50%; background:<?= $step >= 1 ? 'var(--primary)' : 'var(--bg-elevated)' ?>; margin:0 auto 0.5rem; border:4px solid var(--bg-glass); display:flex; align-items:center; justify-content:center; font-size:0.6rem; color:#000; font-weight:900;">1</div>
+                    <p style="font-size:0.6rem; font-weight:700; color:<?= $step >= 1 ? 'var(--text-main)' : 'var(--text-dim)' ?>;">INTERVENTION</p>
+                </div>
+                <div style="z-index:2; text-align:center; flex:1;">
+                    <div style="width:24px; height:24px; border-radius:50%; background:<?= $step >= 2 ? 'var(--primary)' : 'var(--bg-elevated)' ?>; margin:0 auto 0.5rem; border:4px solid var(--bg-glass); display:flex; align-items:center; justify-content:center; font-size:0.6rem; color:#000; font-weight:900;">2</div>
+                    <p style="font-size:0.6rem; font-weight:700; color:<?= $step >= 2 ? 'var(--text-main)' : 'var(--text-dim)' ?>;">MACHINES</p>
+                </div>
+                <div style="z-index:2; text-align:center; flex:1;">
+                    <div style="width:24px; height:24px; border-radius:50%; background:<?= $step >= 3 ? 'var(--primary)' : 'var(--bg-elevated)' ?>; margin:0 auto 0.5rem; border:4px solid var(--bg-glass); display:flex; align-items:center; justify-content:center; font-size:0.6rem; color:#000; font-weight:900;">3</div>
+                    <p style="font-size:0.6rem; font-weight:700; color:<?= $step >= 3 ? 'var(--text-main)' : 'var(--text-dim)' ?>;">VALIDATION</p>
                 </div>
             </div>
         </div>

@@ -185,14 +185,20 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
                 </script>
             <?php endif; ?>
 
-            <div class="stats-grid animate-in">
-                <div class="stat-item glass">
-                    <span class="stat-label">En cours</span>
-                    <span class="stat-value" style="color: var(--accent-cyan);"><?= count($encours) ?></span>
+            <div class="stats-grid animate-in" style="grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem;">
+                <div class="stat-item glass premium-glow" style="border-left: 3px solid var(--accent-cyan); padding: 1.25rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                        <span class="stat-label" style="margin:0;">En cours</span>
+                        <img src="/assets/icon_gear_orange.svg" style="height:16px; opacity:0.5; filter: hue-rotate(180deg);">
+                    </div>
+                    <span class="stat-value" style="color: var(--accent-cyan); font-size: 2rem;"><?= count($encours) ?></span>
                 </div>
-                <div class="stat-item glass">
-                    <span class="stat-label">Historique</span>
-                    <span class="stat-value"><?= count($terminees) ?></span>
+                <div class="stat-item glass premium-glow" style="border-left: 3px solid var(--primary); padding: 1.25rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                        <span class="stat-label" style="margin:0;">Historique</span>
+                        <img src="/assets/icon_history_white.svg" style="height:16px; opacity:0.5;">
+                    </div>
+                    <span class="stat-value" style="font-size: 2rem;"><?= count($terminees) ?></span>
                 </div>
             </div>
 
@@ -210,16 +216,31 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
                 <?php else: ?>
                     <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                         <?php foreach ($encours as $i): ?>
+                            <?php 
+                                $clientInitial = strtoupper(substr($i['nom_societe'], 0, 1));
+                                $gradients = [
+                                    'linear-gradient(135deg, #0ea5e9, #6366f1)',
+                                    'linear-gradient(135deg, #f59e0b, #ef4444)',
+                                    'linear-gradient(135deg, #10b981, #059669)',
+                                    'linear-gradient(135deg, #8b5cf6, #d946ef)'
+                                ];
+                                $grad = $gradients[ord($clientInitial) % count($gradients)];
+                            ?>
                             <a href="intervention_edit.php?id=<?= $i['id'] ?>" class="card glass of-card"
-                                style="padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; text-decoration: none; color: inherit;">
-                                <div>
-                                    <span class="date-badge"><?= date('d/m/Y', strtotime($i['date_intervention'])) ?></span>
-                                    <p style="font-weight: 700; font-size: 1rem;"><?= htmlspecialchars($i['nom_societe']) ?></p>
-                                    <p style="font-size: 0.8rem; color: var(--text-dim);">ARC:
-                                        <?= htmlspecialchars($i['numero_arc']) ?>
+                                style="padding: 1rem 1.25rem; display: flex; align-items: center; gap: 1rem; text-decoration: none; color: inherit; transition: var(--transition-smooth);">
+                                <div style="width: 44px; height: 44px; border-radius: 12px; background: <?= $grad ?>; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 1.2rem; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+                                    <?= $clientInitial ?>
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.1rem;">
+                                        <p style="font-weight: 700; font-size: 0.95rem; margin:0;"><?= htmlspecialchars($i['nom_societe']) ?></p>
+                                        <span style="font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 4px; background: rgba(14, 165, 233, 0.1); color: var(--accent-cyan); font-weight: 700;">BROUILLON</span>
+                                    </div>
+                                    <p style="font-size: 0.75rem; color: var(--text-dim); margin:0;">
+                                        ARC: <?= htmlspecialchars($i['numero_arc']) ?> · <?= date('d/m/Y', strtotime($i['date_intervention'])) ?>
                                     </p>
                                 </div>
-                                <span style="color: var(--primary);">Éditer →</span>
+                                <div style="color: var(--primary); font-size: 1.2rem; opacity: 0.5;">›</div>
                             </a>
                         <?php endforeach; ?>
                     </div>
