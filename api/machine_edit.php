@@ -417,9 +417,9 @@ foreach ($recoFreq as $rfk => $rfv) {
         .pdf-section-title {
             font-weight: bold;
             font-size: 16px;
-            color: #d35400;
+            color: #ed7d31;
             margin-bottom: 10px;
-            border-bottom: 2px solid #d35400;
+            border-bottom: 2px solid #ed7d31;
             padding-bottom: 5px;
             page-break-after: avoid;
             break-after: avoid;
@@ -870,7 +870,7 @@ foreach ($recoFreq as $rfk => $rfv) {
         /* --- SECTION BLUE BAR WITH LINES --- */
         .section-header-row {
             height: 30px;
-            background: #5b9bd5 !important;
+            background: #ed7d31 !important;
             padding: 0 !important;
         }
         .section-header-wrapper {
@@ -1281,35 +1281,118 @@ foreach ($recoFreq as $rfk => $rfv) {
                     </div>';
                 }
 
-                function renderSectionC($isEDX, $isOV) {
+                function renderSectionC($isEDX, $isOV, $isSGSA = false, $donnees = []) {
                     ?>
                     <div class="section-wrapper-pdf" style="page-break-before: always; page-break-inside: avoid !important; break-inside: avoid !important;">
                         <table style="width: 100%; border-collapse: collapse; page-break-inside: avoid !important;">
                             <tr>
                                 <td style="padding: 0; border: none; page-break-inside: avoid !important;">
                                     <div class="pdf-section-title" id="section-c"><?= str_to_upper_fr("C) RAPPEL DES FRÉQUENCES DE NETTOYAGE ET DES DIFFÉRENTS POINTS DE CONTRÔLE :") ?></div>
-                                    <img src="/assets/machines/frequences_tableau.png" style="width:100%; height:auto; border:2px solid #ed7d31; display: block; page-break-inside: avoid !important;">
+                                    <?php if ($isSGSA): ?>
+                                        <table class="pdf-table" style="width:100%; border-collapse:collapse; border:2px solid #ed7d31; font-size:11px;">
+                                            <thead>
+                                                <tr style="background:#ed7d31; color:white;">
+                                                    <th style="padding:8px; width:35%;">POINTS DE CONTRÔLE</th>
+                                                    <th style="padding:8px; width:8%;">QUOTIDIEN</th>
+                                                    <th style="padding:8px; width:8%;">HEBDO.</th>
+                                                    <th style="padding:8px; width:8%;">MENSUEL</th>
+                                                    <th style="padding:8px; width:8%;">ANNUEL</th>
+                                                    <th style="padding:8px;">COMMENTAIRES / RECOMMANDATIONS</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?= renderFreqRow("Nettoyage des barreaux magnétiques", "sgsa_freq_nettoyage", $donnees) ?>
+                                                <?= renderFreqRow("Contrôle visuel de l'aspect général", "sgsa_freq_aspect", $donnees) ?>
+                                                <?= renderFreqRow("Contrôle du coulissement des tiroirs", "sgsa_freq_coulisse", $donnees) ?>
+                                                <?= renderFreqRow("Contrôle de l'étanchéité des tiroirs", "sgsa_freq_etanche", $donnees) ?>
+                                                <?= renderFreqRow("Graissage des paliers", "sgsa_freq_paliers", $donnees) ?>
+                                            </tbody>
+                                        </table>
+                                    <?php else: ?>
+                                        <img src="/assets/machines/frequences_tableau.png" style="width:100%; height:auto; border:2px solid #ed7d31; display: block; page-break-inside: avoid !important;">
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         </table>
                     </div>
                     <?php
                 }
-                function renderSectionD($isEDX, $mesures) {
-                    if (!$isEDX) return;
-                    $mini = $mesures['edx_releve_mini'] ?? '....';
-                    $maxi = $mesures['edx_releve_maxi'] ?? '....';
-                    ?>
-                    <div class="section-wrapper-pdf">
-                        <div class="pdf-section-title" id="section-d"><?= str_to_upper_fr("D) RELEVÉS D’INDUCTION MAGNÉTIQUE :") ?></div>
-                        <div style="border:1px solid #ed7d31; padding:10px; font-size:13px; background:#fff;">
-                            <p style="margin:5px 0;"><strong>Roue polaire :</strong></p>
-                            <p style="margin:5px 0 5px 20px;">• Relevé mini : <strong><?= htmlspecialchars($mini) ?></strong> Gauss</p>
-                            <p style="margin:5px 0 5px 20px;">• Relevé maxi : <strong><?= htmlspecialchars($maxi) ?></strong> Gauss</p>
-                            <p style="margin:10px 0 5px 0; font-style:italic; font-size:11px; color:#555;">(Matériel neuf = 2000 Gauss en standard +/- 10%)</p>
+                function renderSectionD($isEDX, $mesures, $isSGSA = false, $donnees = []) {
+                    if (!$isEDX && !$isSGSA) return;
+                    
+                    if ($isEDX):
+                        $mini = $mesures['edx_releve_mini'] ?? '....';
+                        $maxi = $mesures['edx_releve_maxi'] ?? '....';
+                        $vignette = $mesures['edx_releve_vignette'] ?? '....';
+                        ?>
+                        <div class="section-wrapper-pdf" style="page-break-before: always; page-break-inside: avoid !important;">
+                            <div class="pdf-section-title" id="section-d"><?= str_to_upper_fr("D) RELEVÉS D'INDUCTION MAGNÉTIQUE :") ?></div>
+                            <table class="pdf-table" style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                                <tr style="background: #f2f2f2;">
+                                    <th style="padding: 10px; border: 1px solid #000; width: 50%;">Zone de mesure</th>
+                                    <th style="padding: 10px; border: 1px solid #000; width: 50%;">Valeur mesurée (Gauss)</th>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; border: 1px solid #000;">Induction mini à la surface de la virole</td>
+                                    <td style="padding: 10px; border: 1px solid #000; text-align: center; font-weight: bold;"><?= htmlspecialchars($mini) ?> G</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; border: 1px solid #000;">Induction maxi à la surface de la virole</td>
+                                    <td style="padding: 10px; border: 1px solid #000; text-align: center; font-weight: bold;"><?= htmlspecialchars($maxi) ?> G</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px; border: 1px solid #000;">Induction à travers la bande (vignette)</td>
+                                    <td style="padding: 10px; border: 1px solid #000; text-align: center; font-weight: bold;"><?= htmlspecialchars($vignette) ?> G</td>
+                                </tr>
+                            </table>
                         </div>
-                    </div>
-                    <?php
+                        <?php
+                    elseif ($isSGSA):
+                        ?>
+                        <div class="section-wrapper-pdf" style="page-break-before: always; page-break-inside: avoid !important;">
+                            <div class="pdf-section-title" id="section-d">D) RELEVÉS D’INDUCTION MAGNÉTIQUE :</div>
+                            <p style="font-size:11px; margin-bottom:15px;">Mesures effectuées avec un gaussmètre sur la surface des barreaux magnétiques.</p>
+                            
+                            <table class="pdf-table" style="width:100%; border-collapse:collapse; border:1px solid #000; font-size:11px;">
+                                <thead style="background:#ed7d31; color:white;">
+                                    <tr>
+                                        <th style="padding:10px; border:1px solid #000; width:20%;">ÉTAGES</th>
+                                        <th style="padding:10px; border:1px solid #000;">VALEURS RELEVÉES (GAUSS) SUR LES BARREAUX</th>
+                                        <th style="padding:10px; border:1px solid #000; width:15%;">ÉTAT</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php for($e=1; $e<=3; $e++): 
+                                        $nbB = intval($mesures['sgsa_e'.$e.'_nb'] ?? 0);
+                                        if($nbB <= 0) {
+                                             for ($check=11; $check>=1; $check--) {
+                                                if (!empty($mesures['sgsa_e'.$e.'_b'.$check])) { $nbB = $check; break; }
+                                            }
+                                            if ($nbB === 0) $nbB = 11;
+                                        }
+                                        $vals = [];
+                                        for($b=1; $b<=$nbB; $b++) {
+                                            if(!empty($mesures['sgsa_e'.$e.'_b'.$b])) {
+                                                $vals[] = "B$b: <b>" . htmlspecialchars($mesures['sgsa_e'.$e.'_b'.$b]) . " G</b>";
+                                            }
+                                        }
+                                        $stat = $donnees['sgsa_e'.$e.'_stat'] ?? '';
+                                    ?>
+                                        <tr>
+                                            <td style="padding:10px; border:1px solid #000; font-weight:bold; background:#f9f9f9;">Étage <?= $e ?></td>
+                                            <td style="padding:10px; border:1px solid #000; line-height:1.6;">
+                                                <?= !empty($vals) ? implode(" | ", $vals) : "Néant" ?>
+                                            </td>
+                                            <td style="padding:5px; border:1px solid #000; text-align:center; vertical-align:middle;">
+                                                <?= renderEtatRadios("sgsa_e".$e."_stat", $donnees, 3) ?>
+                                            </td>
+                                        </tr>
+                                    <?php endfor; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <?php
+                    endif;
                 }
                 function renderCheckRow($label, $key, $donnees)
                 {
@@ -1325,12 +1408,12 @@ foreach ($recoFreq as $rfk => $rfv) {
                     for ($i = 0; $i < $nbCols; $i++) {
                         $tds .= '<div style="width:'.$w.'; border-right:1px solid #000; height:100%; box-sizing:border-box;"></div>';
                     }
-                    return '<tr class="section-header-row" style="background:#5b9bd5 !important; page-break-before: avoid; break-before: avoid;">
+                    return '<tr class="section-header-row" style="background:#ed7d31 !important; page-break-before: avoid; break-before: avoid;">
                         <td style="width:35%; font-weight:bold; color:white; padding:4px 10px; font-size:11px; page-break-before: avoid; break-before: avoid; border-top:1px solid #000;">' . str_to_upper_fr(htmlspecialchars($title)) . '</td>
                         <td style="width:140px; padding:0; vertical-align:middle; height:30px; border-top:1px solid #000;">
                             <div style="display:flex; width:140px; height:100%; margin: 0 auto; border:none; border-left: 1px solid #000;">' . $tds . '</div>
                         </td>
-                        <td style="width:35%; background:#5b9bd5 !important; border-left:none !important; border-top:1px solid #000;"></td>
+                        <td style="width:35%; background:#ed7d31 !important; border-left:none !important; border-top:1px solid #000;"></td>
                     </tr>';
                 }
                 function renderEdxRow($label, $key, $donnees)
@@ -1546,7 +1629,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                     <?= renderEtatRadios("pm_induction_" . $ikey . "_stat", $donnees, 3) ?>
                                 </td>
-                                <td style="padding:0; width:35%;"><textarea name="donnees[pm_induction_<?= $ikey ?>_stat_comment]" class="pdf-textarea" style="height:25px; border:none; width:100%; box-sizing:border-box; padding:4px;" placeholder="Commentaires..."><?= htmlspecialchars($donnees["pm_induction_" . $ikey . "_stat_comment"] ?? '') ?></textarea></td>
+                                <td style="padding:0; width:35%;"><textarea name="donnees[pm_induction_<?= $ikey ?>_stat_comment]" class="pdf-textarea" style="height:25px; border:none; width:100%; box-sizing:border-box; padding:4px;" placeholder="Commentaires..."><?= htmlspecialchars($donnees["pm_induction_$ikey" . "_stat_comment"] ?? '') ?></textarea></td>
                             </tr>
                             <?php endforeach; ?>
 
@@ -1569,7 +1652,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                     <?= renderEtatRadios("pm_dist_" . $dkey . "_stat", $donnees, 3) ?>
                                 </td>
-                                <td style="padding:0; width:35%;"><textarea name="donnees[pm_dist_<?= $dkey ?>_stat_comment]" class="pdf-textarea" style="height:25px; border:none; width:100%; box-sizing:border-box; padding:4px;" placeholder="Commentaires..."><?= htmlspecialchars($donnees["pm_dist_" . $dkey . "_stat_comment"] ?? '') ?></textarea></td>
+                                <td style="padding:0; width:35%;"><textarea name="donnees[pm_dist_<?= $dkey ?>_stat_comment]" class="pdf-textarea" style="height:25px; border:none; width:100%; box-sizing:border-box; padding:4px;" placeholder="Commentaires..."><?= htmlspecialchars($donnees["pm_dist_$dkey" . "_stat_comment"] ?? '') ?></textarea></td>
                             </tr>
                             <?php endforeach; ?>
 
@@ -1879,7 +1962,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                                 }
                                             }
                                         ?>
-                                        <div style="background:#fcfcfc; border:1px solid #eee; padding:5px;">
+                                        <div style="background:#fcfcfc; border:1px solid #eee; padding:5px;" class="no-print-pdf">
                                             <div style="font-size:9px; color:#888; margin-bottom:5px; font-weight:bold;">Barreaux (Gauss Max) :</div>
                                             <table style="width:100%; border-collapse:collapse; border:none; font-size:10px;">
                                                 <tr>
@@ -1919,6 +2002,29 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
                     
+                    <div class="pdf-section" style="margin-top:20px;">
+                        <div class="pdf-section-title">C) RAPPEL DES FRÉQUENCES DE NETTOYAGE ET DES DIFFÉRENTS POINTS DE CONTRÔLE :</div>
+                        <table class="pdf-table" style="width:100%; border-collapse:collapse; border:2px solid #ed7d31; font-size:11px;">
+                            <thead>
+                                <tr style="background:#ed7d31; color:white;">
+                                    <th style="padding:8px; width:35%;">POINTS DE CONTRÔLE</th>
+                                    <th style="padding:8px; width:8%;">QUOTIDIEN</th>
+                                    <th style="padding:8px; width:8%;">HEBDO.</th>
+                                    <th style="padding:8px; width:8%;">MENSUEL</th>
+                                    <th style="padding:8px; width:8%;">ANNUEL</th>
+                                    <th style="padding:8px;">COMMENTAIRES / RECOMMANDATIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?= renderFreqRow("Nettoyage des barreaux magnétiques", "sgsa_freq_nettoyage", $donnees) ?>
+                                <?= renderFreqRow("Contrôle visuel de l'aspect général", "sgsa_freq_aspect", $donnees) ?>
+                                <?= renderFreqRow("Contrôle du coulissement des tiroirs", "sgsa_freq_coulisse", $donnees) ?>
+                                <?= renderFreqRow("Contrôle de l'étanchéité des tiroirs", "sgsa_freq_etanche", $donnees) ?>
+                                <?= renderFreqRow("Graissage des paliers", "sgsa_freq_paliers", $donnees) ?>
+                            </tbody>
+                        </table>
+                    </div>
+
                     <div class="pdf-section" style="text-align:center; margin-top:20px;">
                         <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                         <img src="/assets/machines/sgsa_diagram.png" 
@@ -2641,7 +2747,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <table class="pdf-table controles" style="font-size:11px; margin-top:20px;">
                         <tr>
-                            <th colspan="6" style="background:#5b9bd5; color:white; font-size:10px;">En présence du client /
+                            <th colspan="6" style="background:#ed7d31; color:white; font-size:10px;">En présence du client /
                                 Rappel des fréquences de nettoyage et des différents points de contrôle</th>
                         </tr>
                         <tr>
@@ -2739,7 +2845,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <table class="pdf-table controles" style="font-size:11px; margin-top:10px;">
                         <tr>
-                            <th colspan="6" style="background:#5b9bd5; color:white;">En présence du client / Rappel des
+                            <th colspan="6" style="background:#ed7d31; color:white;">En présence du client / Rappel des
                                 fréquences de nettoyage et des différents points de contrôle</th>
                         </tr>
                         <tr>
@@ -3243,8 +3349,8 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                         // SECTION C & D (uniquement PDF)
                         if (isset($_GET['pdf'])):
-                            renderSectionC($isEDX, $isOV);
-                            renderSectionD($isEDX, $mesures);
+                            renderSectionC($isEDX, $isOV, $isSGSA, $donnees);
+                            renderSectionD($isEDX, $mesures, $isSGSA, $donnees);
                         endif;
                         ?>
 
