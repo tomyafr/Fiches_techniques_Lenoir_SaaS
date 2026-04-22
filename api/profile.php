@@ -320,8 +320,11 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
         <main class="main-content">
             <?php if ($forceChange && $messageType !== 'success'): ?>
                 <div class="force-banner">
-                    <strong>⚠ Changement de mot de passe obligatoire</strong><br>
-                    Pour des raisons de sécurité, vous devez définir un nouveau mot de passe avant de continuer.
+                    <span style="font-size: 1.2rem; flex-shrink: 0;">⚠</span>
+                    <div>
+                        <strong style="display: block; margin-bottom: 2px;">Changement de mot de passe obligatoire</strong>
+                        <span style="font-size: 0.8rem; opacity: 0.9;">Pour des raisons de sécurité, vous devez définir un nouveau mot de passe avant de continuer.</span>
+                    </div>
                 </div>
             <?php endif; ?>
 
