@@ -1289,15 +1289,18 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <td style="padding: 0; border: none; page-break-inside: avoid !important;">
                                     <div class="pdf-section-title" id="section-c"><?= str_to_upper_fr("C) RAPPEL DES FRÉQUENCES DE NETTOYAGE ET DES DIFFÉRENTS POINTS DE CONTRÔLE :") ?></div>
                                     <?php if ($isSGSA): ?>
-                                        <table class="pdf-table" style="width:100%; border-collapse:collapse; border:2px solid #5b9bd5; font-size:11px;">
+                                        <table class="pdf-table" style="width:100%; border-collapse:collapse; border:1px solid #000; font-size:11px;">
                                             <thead>
                                                 <tr style="background:#5b9bd5; color:white;">
-                                                    <th style="padding:8px; width:35%;">POINTS DE CONTRÔLE</th>
-                                                    <th style="padding:8px; width:8%;">QUOTIDIEN</th>
-                                                    <th style="padding:8px; width:8%;">HEBDO.</th>
-                                                    <th style="padding:8px; width:8%;">MENSUEL</th>
-                                                    <th style="padding:8px; width:8%;">ANNUEL</th>
-                                                    <th style="padding:8px;">COMMENTAIRES / RECOMMANDATIONS</th>
+                                                    <th colspan="6" style="padding:6px; text-transform:uppercase; font-size:10px; border:1px solid #000;">EN PRÉSENCE DU CLIENT / RAPPEL DES FRÉQUENCES DE NETTOYAGE ET DES DIFFÉRENTS POINTS DE CONTRÔLE</th>
+                                                </tr>
+                                                <tr style="background:#fff; color:#000;">
+                                                    <th style="padding:4px; width:35%; border:1px solid #000;">CONTRÔLE</th>
+                                                    <th style="padding:4px; width:10%; border:1px solid #000;">QUOTIDIEN</th>
+                                                    <th style="padding:4px; width:10%; border:1px solid #000;">HEBDOMADAIRE</th>
+                                                    <th style="padding:4px; width:10%; border:1px solid #000;">MENSUEL</th>
+                                                    <th style="padding:4px; width:10%; border:1px solid #000;">ANNUEL</th>
+                                                    <th style="padding:4px; border:1px solid #000;">COMMENTAIRES</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -1353,43 +1356,71 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <div class="pdf-section-title" id="section-d">D) RELEVÉS D’INDUCTION MAGNÉTIQUE :</div>
                             <p style="font-size:11px; margin-bottom:15px;">Mesures effectuées avec un gaussmètre sur la surface des barreaux magnétiques.</p>
                             
-                            <table class="pdf-table" style="width:100%; border-collapse:collapse; border:1px solid #000; font-size:11px;">
-                                <thead style="background:#5b9bd5; color:white;">
-                                    <tr>
-                                        <th style="padding:10px; border:1px solid #000; width:20%;">ÉTAGES</th>
-                                        <th style="padding:10px; border:1px solid #000;">VALEURS RELEVÉES (GAUSS) SUR LES BARREAUX</th>
-                                        <th style="padding:10px; border:1px solid #000; width:15%;">ÉTAT</th>
+                            <?php for($e=1; $e<=3; $e++): 
+                                $nbB = intval($mesures['sgsa_e'.$e.'_nb'] ?? 0);
+                                if($nbB <= 0) {
+                                    for ($check=11; $check>=1; $check--) {
+                                        if (!empty($mesures['sgsa_e'.$e.'_b'.$check])) { $nbB = $check; break; }
+                                    }
+                                }
+                                if($nbB <= 0) continue;
+                            ?>
+                                <table style="width:100%; border-collapse:collapse; margin-bottom:20px; border:1px solid #000; font-size:10px; page-break-inside:avoid;">
+                                    <tr style="background:#5b9bd5; color:white; font-weight:bold;">
+                                        <td style="padding:6px; width:60%; font-size:12px; border:1px solid #000;">ETAGE <?= $e ?></td>
+                                        <td style="padding:6px; text-align:center; width:20%; border:1px solid #000;">Correct</td>
+                                        <td style="padding:6px; text-align:center; width:20%; border:1px solid #000;">HS</td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    <?php for($e=1; $e<=3; $e++): 
-                                        $nbB = intval($mesures['sgsa_e'.$e.'_nb'] ?? 0);
-                                        if($nbB <= 0) {
-                                             for ($check=11; $check>=1; $check--) {
-                                                if (!empty($mesures['sgsa_e'.$e.'_b'.$check])) { $nbB = $check; break; }
-                                            }
-                                            if ($nbB === 0) $nbB = 11;
-                                        }
-                                        $vals = [];
-                                        for($b=1; $b<=$nbB; $b++) {
-                                            if(!empty($mesures['sgsa_e'.$e.'_b'.$b])) {
-                                                $vals[] = "B$b: <b>" . htmlspecialchars($mesures['sgsa_e'.$e.'_b'.$b]) . " G</b>";
-                                            }
-                                        }
-                                        $stat = $donnees['sgsa_e'.$e.'_stat'] ?? '';
-                                    ?>
-                                        <tr>
-                                            <td style="padding:10px; border:1px solid #000; font-weight:bold; background:#f9f9f9;">Étage <?= $e ?></td>
-                                            <td style="padding:10px; border:1px solid #000; line-height:1.6;">
-                                                <?= !empty($vals) ? implode(" | ", $vals) : "Néant" ?>
-                                            </td>
-                                            <td style="padding:5px; border:1px solid #000; text-align:center; vertical-align:middle;">
-                                                <?= renderEtatRadios("sgsa_e".$e."_stat", $donnees, 3) ?>
-                                            </td>
-                                        </tr>
-                                    <?php endfor; ?>
-                                </tbody>
-                            </table>
+                                    <tr>
+                                        <td style="padding:5px; border:1px solid #000;">Nombre de barreaux : <?= $nbB ?></td>
+                                        <td style="border:1px solid #000;"></td>
+                                        <td style="border:1px solid #000;"></td>
+                                    </tr>
+                                    <?php $etanche_v = $donnees['sgsa_e'.$e.'_etancheite_stat'] ?? ''; ?>
+                                    <tr>
+                                        <td style="padding:5px; border:1px solid #000;">Étanchéité à la fermeture</td>
+                                        <td style="text-align:center; border:1px solid #000;"><?= ($etanche_v == '1' ? '☑' : '☐') ?></td>
+                                        <td style="text-align:center; border:1px solid #000;"><?= ($etanche_v == '0' ? '☑' : '☐') ?></td>
+                                    </tr>
+                                    <tr style="background:#ccc; text-align:center; font-weight:bold;">
+                                        <td colspan="3" style="padding:4px; border:1px solid #000;">BARREAUX (en partant de gauche)</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" style="padding:0; border:1px solid #000;">
+                                            <table style="width:100%; border-collapse:collapse; text-align:center; table-layout:fixed;">
+                                                <tr style="font-weight:bold; background:#eee;">
+                                                    <td style="width:140px; text-align:left; padding:4px; border:1px solid #000;">Relevés d'induction :</td>
+                                                    <?php for($i=1; $i<=$nbB; $i++): ?><td style="border:1px solid #000;"><?= $i ?></td><?php endfor; ?>
+                                                </tr>
+                                                <tr>
+                                                    <td style="text-align:left; padding:4px; font-weight:bold; border:1px solid #000;">Barreaux</td>
+                                                    <?php for($i=1; $i<=$nbB; $i++): ?>
+                                                        <td style="border:1px solid #000; background:#92d050; font-weight:bold;"><?= htmlspecialchars($mesures['sgsa_e'.$e.'_b'.$i] ?? '') ?></td>
+                                                    <?php endfor; ?>
+                                                </tr>
+                                                <tr>
+                                                    <td style="text-align:left; padding:4px; font-weight:bold; border:1px solid #000;">Correct</td>
+                                                    <?php for($i=1; $i<=$nbB; $i++): ?>
+                                                        <td style="border:1px solid #000;"><?= (($mesures['sgsa_e'.$e.'_b'.$i.'_stat'] ?? '') == 'correct' ? '☑' : '☐') ?></td>
+                                                    <?php endfor; ?>
+                                                </tr>
+                                                <tr>
+                                                    <td style="text-align:left; padding:4px; font-weight:bold; border:1px solid #000;">Faible</td>
+                                                    <?php for($i=1; $i<=$nbB; $i++): ?>
+                                                        <td style="border:1px solid #000;"><?= (($mesures['sgsa_e'.$e.'_b'.$i.'_stat'] ?? '') == 'faible' ? '☑' : '☐') ?></td>
+                                                    <?php endfor; ?>
+                                                </tr>
+                                                <tr>
+                                                    <td style="text-align:left; padding:4px; font-weight:bold; border:1px solid #000;">Perte (%)</td>
+                                                    <?php for($i=1; $i<=$nbB; $i++): ?>
+                                                        <td style="border:1px solid #000; font-size:9px;"><?= ($mesures['sgsa_e'.$e.'_b'.$i.'_loss'] ?? '') ? $mesures['sgsa_e'.$e.'_b'.$i.'_loss'].'%' : '-' ?></td>
+                                                    <?php endfor; ?>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            <?php endfor; ?>
                         </div>
                         <?php
                     endif;
@@ -1456,12 +1487,12 @@ foreach ($recoFreq as $rfk => $rfv) {
                 {
                     $v = $donnees[$key] ?? '';
                     return '<tr>
-                        <td style="font-weight:bold; font-size:11px; width:35%;">' . htmlspecialchars($label) . '</td>
-                        <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="q" ' . ($v == 'q' ? 'checked' : '') . '></td>
-                        <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="h" ' . ($v == 'h' ? 'checked' : '') . '></td>
-                        <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="m" ' . ($v == 'm' ? 'checked' : '') . '></td>
-                        <td style="text-align:center;"><input type="radio" name="donnees[' . $key . ']" value="a" ' . ($v == 'a' ? 'checked' : '') . '></td>
-                        <td style="padding:0; width:35%;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
+                        <td style="font-weight:bold; font-size:11px; width:35%; border:1px solid #000; padding:4px;">' . htmlspecialchars($label) . '</td>
+                        <td style="text-align:center; border:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="q" ' . ($v == 'q' ? 'checked' : '') . '></td>
+                        <td style="text-align:center; border:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="h" ' . ($v == 'h' ? 'checked' : '') . '></td>
+                        <td style="text-align:center; border:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="m" ' . ($v == 'm' ? 'checked' : '') . '></td>
+                        <td style="text-align:center; border:1px solid #000;"><input type="radio" name="donnees[' . $key . ']" value="a" ' . ($v == 'a' ? 'checked' : '') . '></td>
+                        <td style="padding:0; width:35%; border:1px solid #000;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea></td>
                     </tr>';
                 }
                 function renderDiagonalHeader($nbCols = 5) {
@@ -1968,18 +1999,32 @@ foreach ($recoFreq as $rfk => $rfv) {
                                                 <tr>
                                                     <td style="width:<?= $nbB_sgsa <= 6 ? '100%' : '50%' ?>; border:none; padding-right:5px; vertical-align:top;">
                                                         <?php for($b=1; $b<=min(6, $nbB_sgsa); $b++): ?>
-                                                            <div style="display:flex; justify-content:space-between; margin-bottom:3px; border-bottom:1px solid #f0f0f0;">
-                                                                <span style="font-weight:600;"><?= $b ?> :</span>
-                                                                <span><input type="text" name="mesures[sgsa_e<?= $e ?>_b<?= $b ?>]" value="<?= htmlspecialchars($mesures['sgsa_e'.$e.'_b'.$b] ?? '') ?>" style="width:35px; border:none; text-align:center; font-size:10px;"> <span style="font-size:8px; color:#aaa;">G</span></span>
+                                                            <div style="display:flex; flex-direction:column; margin-bottom:5px; border-bottom:1px solid #eee; padding-bottom:5px;">
+                                                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                                                    <span style="font-weight:bold; color:#1B4F72;"><?= $b ?> :</span>
+                                                                    <span><input type="text" name="mesures[sgsa_e<?= $e ?>_b<?= $b ?>]" value="<?= htmlspecialchars($mesures['sgsa_e'.$e.'_b'.$b] ?? '') ?>" style="width:40px; border:1px solid #ccc; text-align:center; font-size:10px; border-radius:3px;"> <span style="font-size:8px; color:#aaa;">G</span></span>
+                                                                </div>
+                                                                <div style="display:flex; gap:5px; margin-top:3px; font-size:9px;">
+                                                                    <label style="display:flex; align-items:center; gap:2px;"><input type="radio" name="mesures[sgsa_e<?= $e ?>_b<?= $b ?>_stat]" value="correct" <?= ($mesures['sgsa_e'.$e.'_b'.$b.'_stat'] ?? '') == 'correct' ? 'checked' : '' ?>> Cor.</label>
+                                                                    <label style="display:flex; align-items:center; gap:2px;"><input type="radio" name="mesures[sgsa_e<?= $e ?>_b<?= $b ?>_stat]" value="faible" <?= ($mesures['sgsa_e'.$e.'_b'.$b.'_stat'] ?? '') == 'faible' ? 'checked' : '' ?>> Faib.</label>
+                                                                    <input type="text" name="mesures[sgsa_e<?= $e ?>_b<?= $b ?>_loss]" value="<?= htmlspecialchars($mesures['sgsa_e'.$e.'_b'.$b.'_loss'] ?? '') ?>" placeholder="-%" style="width:30px; border:1px solid #ccc; font-size:9px; text-align:center; margin-left:auto;">
+                                                                </div>
                                                             </div>
                                                         <?php endfor; ?>
                                                     </td>
                                                     <?php if ($nbB_sgsa > 6): ?>
                                                     <td style="width:50%; border:none; padding-left:5px; vertical-align:top; border-left:1px solid #eee;">
                                                         <?php for($b=7; $b<=min(11, $nbB_sgsa); $b++): ?>
-                                                            <div style="display:flex; justify-content:space-between; margin-bottom:3px; border-bottom:1px solid #f0f0f0;">
-                                                                <span style="font-weight:600;"><?= $b ?> :</span>
-                                                                <span><input type="text" name="mesures[sgsa_e<?= $e ?>_b<?= $b ?>]" value="<?= htmlspecialchars($mesures['sgsa_e'.$e.'_b'.$b] ?? '') ?>" style="width:35px; border:none; text-align:center; font-size:10px;"> <span style="font-size:8px; color:#aaa;">G</span></span>
+                                                            <div style="display:flex; flex-direction:column; margin-bottom:5px; border-bottom:1px solid #eee; padding-bottom:5px;">
+                                                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                                                    <span style="font-weight:bold; color:#1B4F72;"><?= $b ?> :</span>
+                                                                    <span><input type="text" name="mesures[sgsa_e<?= $e ?>_b<?= $b ?>]" value="<?= htmlspecialchars($mesures['sgsa_e'.$e.'_b'.$b] ?? '') ?>" style="width:40px; border:1px solid #ccc; text-align:center; font-size:10px; border-radius:3px;"> <span style="font-size:8px; color:#aaa;">G</span></span>
+                                                                </div>
+                                                                <div style="display:flex; gap:5px; margin-top:3px; font-size:9px;">
+                                                                    <label style="display:flex; align-items:center; gap:2px;"><input type="radio" name="mesures[sgsa_e<?= $e ?>_b<?= $b ?>_stat]" value="correct" <?= ($mesures['sgsa_e'.$e.'_b'.$b.'_stat'] ?? '') == 'correct' ? 'checked' : '' ?>> Cor.</label>
+                                                                    <label style="display:flex; align-items:center; gap:2px;"><input type="radio" name="mesures[sgsa_e<?= $e ?>_b<?= $b ?>_stat]" value="faible" <?= ($mesures['sgsa_e'.$e.'_b'.$b.'_stat'] ?? '') == 'faible' ? 'checked' : '' ?>> Faib.</label>
+                                                                    <input type="text" name="mesures[sgsa_e<?= $e ?>_b<?= $b ?>_loss]" value="<?= htmlspecialchars($mesures['sgsa_e'.$e.'_b'.$b.'_loss'] ?? '') ?>" placeholder="-%" style="width:30px; border:1px solid #ccc; font-size:9px; text-align:center; margin-left:auto;">
+                                                                </div>
                                                             </div>
                                                         <?php endfor; ?>
                                                     </td>
@@ -2002,29 +2047,6 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tbody>
                     </table>
                     
-                    <div class="pdf-section" style="margin-top:20px;">
-                        <div class="pdf-section-title">C) RAPPEL DES FRÉQUENCES DE NETTOYAGE ET DES DIFFÉRENTS POINTS DE CONTRÔLE :</div>
-                        <table class="pdf-table" style="width:100%; border-collapse:collapse; border:2px solid #5b9bd5; font-size:11px;">
-                            <thead>
-                                <tr style="background:#5b9bd5; color:white;">
-                                    <th style="padding:8px; width:35%;">POINTS DE CONTRÔLE</th>
-                                    <th style="padding:8px; width:8%;">QUOTIDIEN</th>
-                                    <th style="padding:8px; width:8%;">HEBDO.</th>
-                                    <th style="padding:8px; width:8%;">MENSUEL</th>
-                                    <th style="padding:8px; width:8%;">ANNUEL</th>
-                                    <th style="padding:8px;">COMMENTAIRES / RECOMMANDATIONS</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?= renderFreqRow("Nettoyage des barreaux magnétiques", "sgsa_freq_nettoyage", $donnees) ?>
-                                <?= renderFreqRow("Contrôle visuel de l'aspect général", "sgsa_freq_aspect", $donnees) ?>
-                                <?= renderFreqRow("Contrôle du coulissement des tiroirs", "sgsa_freq_coulisse", $donnees) ?>
-                                <?= renderFreqRow("Contrôle de l'étanchéité des tiroirs", "sgsa_freq_etanche", $donnees) ?>
-                                <?= renderFreqRow("Graissage des paliers", "sgsa_freq_paliers", $donnees) ?>
-                            </tbody>
-                        </table>
-                    </div>
-
                     <div class="pdf-section" style="text-align:center; margin-top:20px;">
                         <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                         <img src="/assets/machines/sgsa_diagram.png" 
