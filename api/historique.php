@@ -205,7 +205,24 @@ $nbClients = count($clientsSet);
         .filter-bar select, .filter-bar input {
             padding: 0.6rem 0.75rem;
             font-size: 0.8rem;
-            min-width: 0; /* Allow shrinking */
+            min-width: 0;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--text-main);
+            outline: none;
+            transition: var(--transition-fast);
+        }
+
+        .filter-bar select:focus, .filter-bar input:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .filter-bar select option {
+            background: #0f172a;
+            color: white;
         }
 
         @media (max-width: 1024px) {
