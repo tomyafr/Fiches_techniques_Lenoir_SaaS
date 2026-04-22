@@ -417,9 +417,9 @@ foreach ($recoFreq as $rfk => $rfv) {
         .pdf-section-title {
             font-weight: bold;
             font-size: 16px;
-            color: #1B4F72;
+            color: #ed7d31;
             margin-bottom: 10px;
-            border-bottom: 2px solid #1B4F72;
+            border-bottom: 2px solid #ed7d31;
             padding-bottom: 5px;
             page-break-after: avoid;
             break-after: avoid;
@@ -1864,14 +1864,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                     <div style="display:flex; flex-direction:column; align-items:center; gap:20px; margin-top:30px; page-break-inside:avoid; break-inside:avoid;">
                         <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="width:100%; margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                         <div style="text-align:center; width:100%;">
-                            <p style="font-weight:bold; margin-bottom:5px; color:#1B4F72; text-align:left; border-bottom:1px solid #5b9bd5; padding-bottom:5px;">SGCP :</p>
+                            <p style="font-weight:bold; margin-bottom:5px; color:#ed7d31; text-align:left; border-bottom:1px solid #5b9bd5; padding-bottom:5px;">SGCP :</p>
                             <img src="/assets/machines/sgcp_diagram.png" 
                                  style="max-width:100%; height:auto; display:block; margin:0 auto; border:1px solid #eee; border-radius:8px;" 
                                  alt="Schéma SGCP"
                                  onerror="this.style.display='none'">
                         </div>
                         <div style="text-align:center; width:100%;">
-                            <p style="font-weight:bold; margin-bottom:5px; color:#1B4F72; text-align:left; border-bottom:1px solid #5b9bd5; padding-bottom:5px;">SGCM :</p>
+                            <p style="font-weight:bold; margin-bottom:5px; color:#ed7d31; text-align:left; border-bottom:1px solid #5b9bd5; padding-bottom:5px;">SGCM :</p>
                             <img src="/assets/machines/sgcm_diagram.png" 
                                  style="max-width:100%; height:auto; display:block; margin:0 auto; border:1px solid #eee; border-radius:8px;" 
                                  alt="Schéma SGCM"
