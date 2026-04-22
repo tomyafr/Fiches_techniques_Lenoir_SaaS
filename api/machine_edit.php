@@ -417,9 +417,9 @@ foreach ($recoFreq as $rfk => $rfv) {
         .pdf-section-title {
             font-weight: bold;
             font-size: 16px;
-            color: #ed7d31;
+            color: #d35400;
             margin-bottom: 10px;
-            border-bottom: 2px solid #ed7d31;
+            border-bottom: 2px solid #d35400;
             padding-bottom: 5px;
             page-break-after: avoid;
             break-after: avoid;
@@ -870,7 +870,7 @@ foreach ($recoFreq as $rfk => $rfv) {
         /* --- SECTION BLUE BAR WITH LINES --- */
         .section-header-row {
             height: 30px;
-            background: #ed7d31 !important;
+            background: #5b9bd5 !important;
             padding: 0 !important;
         }
         .section-header-wrapper {
@@ -1408,12 +1408,12 @@ foreach ($recoFreq as $rfk => $rfv) {
                     for ($i = 0; $i < $nbCols; $i++) {
                         $tds .= '<div style="width:'.$w.'; border-right:1px solid #000; height:100%; box-sizing:border-box;"></div>';
                     }
-                    return '<tr class="section-header-row" style="background:#ed7d31 !important; page-break-before: avoid; break-before: avoid;">
+                    return '<tr class="section-header-row" style="background:#5b9bd5 !important; page-break-before: avoid; break-before: avoid;">
                         <td style="width:35%; font-weight:bold; color:white; padding:4px 10px; font-size:11px; page-break-before: avoid; break-before: avoid; border-top:1px solid #000;">' . str_to_upper_fr(htmlspecialchars($title)) . '</td>
                         <td style="width:140px; padding:0; vertical-align:middle; height:30px; border-top:1px solid #000;">
                             <div style="display:flex; width:140px; height:100%; margin: 0 auto; border:none; border-left: 1px solid #000;">' . $tds . '</div>
                         </td>
-                        <td style="width:35%; background:#ed7d31 !important; border-left:none !important; border-top:1px solid #000;"></td>
+                        <td style="width:35%; background:#5b9bd5 !important; border-left:none !important; border-top:1px solid #000;"></td>
                     </tr>';
                 }
                 function renderEdxRow($label, $key, $donnees)
@@ -2747,7 +2747,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <table class="pdf-table controles" style="font-size:11px; margin-top:20px;">
                         <tr>
-                            <th colspan="6" style="background:#ed7d31; color:white; font-size:10px;">En présence du client /
+                            <th colspan="6" style="background:#5b9bd5; color:white; font-size:10px;">En présence du client /
                                 Rappel des fréquences de nettoyage et des différents points de contrôle</th>
                         </tr>
                         <tr>
@@ -2845,7 +2845,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <table class="pdf-table controles" style="font-size:11px; margin-top:10px;">
                         <tr>
-                            <th colspan="6" style="background:#ed7d31; color:white;">En présence du client / Rappel des
+                            <th colspan="6" style="background:#5b9bd5; color:white;">En présence du client / Rappel des
                                 fréquences de nettoyage et des différents points de contrôle</th>
                         </tr>
                         <tr>
