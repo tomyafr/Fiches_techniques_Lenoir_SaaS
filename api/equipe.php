@@ -106,20 +106,34 @@ $equipe = $stmtUsers->fetchAll();
                         <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
                             <?php if (!empty($membre['avatar_base64'])): ?>
                                 <img src="<?= htmlspecialchars($membre['avatar_base64']) ?>" 
-                                     style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 1px solid var(--primary);">
+                                      style="width: 50px; height: 50px; border-radius: 12px; object-fit: cover; border: 2px solid var(--glass-border);">
                             <?php else: ?>
-                                <div style="width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 800; color: var(--primary);">
+                                <?php 
+                                    $gradients = [
+                                        'linear-gradient(135deg, #0ea5e9, #6366f1)',
+                                        'linear-gradient(135deg, #f59e0b, #ef4444)',
+                                        'linear-gradient(135deg, #10b981, #059669)',
+                                        'linear-gradient(135deg, #8b5cf6, #d946ef)'
+                                    ];
+                                    $grad = $gradients[$membre['id'] % count($gradients)];
+                                ?>
+                                <div style="width: 50px; height: 50px; border-radius: 12px; background: <?= $grad ?>; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 800; color: #fff; box-shadow: 0 8px 16px rgba(0,0,0,0.2);">
                                     <?= strtoupper(substr($membre['prenom'], 0, 1) . substr($membre['nom'], 0, 1)) ?>
                                 </div>
                             <?php endif; ?>
-                            <div>
+                            <div style="position: relative;">
                                 <h3 style="font-size: 1.15rem; margin-bottom: 0.2rem;">
                                     <?= htmlspecialchars($membre['prenom'] . ' ' . $membre['nom']) ?>
                                 </h3>
-                                <span
-                                    style="font-size: 0.6rem; padding: 0.2rem 0.5rem; border-radius: 4px; background: rgba(255, 179, 0, 0.2); color: var(--primary);">
-                                    <?= htmlspecialchars(strtoupper($membre['role'])) ?>
-                                </span>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span style="font-size: 0.6rem; padding: 0.2rem 0.5rem; border-radius: 4px; background: rgba(255, 179, 0, 0.2); color: var(--primary); font-weight: 700;">
+                                        <?= htmlspecialchars(strtoupper($membre['role'])) ?>
+                                    </span>
+                                    <span style="display: flex; align-items: center; gap: 4px; font-size: 0.65rem; color: var(--success); font-weight: 600;">
+                                        <span style="width: 6px; height: 6px; background: var(--success); border-radius: 50%; display: inline-block;"></span>
+                                        Actif
+                                    </span>
+                                </div>
                             </div>
                         </div>
 

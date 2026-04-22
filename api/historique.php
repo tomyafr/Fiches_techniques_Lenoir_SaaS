@@ -180,24 +180,47 @@ $nbClients = count($clientsSet);
         }
 
         .avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--accent-cyan));
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #0ea5e9, #6366f1);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-weight: 800;
-            font-size: 0.65rem;
-            color: #000;
+            font-weight: 700;
+            font-size: 0.7rem;
+            color: #fff;
             flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
         }
 
         .filter-bar {
             display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            margin-bottom: 1.75rem;
+            gap: 0.5rem;
+            flex-wrap: nowrap;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+
+        .filter-bar select, .filter-bar input {
+            padding: 0.6rem 0.75rem;
+            font-size: 0.8rem;
+            min-width: 0; /* Allow shrinking */
+        }
+
+        @media (max-width: 1024px) {
+            .filter-bar {
+                flex-wrap: wrap;
+            }
+            .filter-bar > * {
+                flex: 1 1 calc(33% - 0.5rem);
+            }
+        }
+        @media (max-width: 600px) {
+            .filter-bar > * {
+                flex: 1 1 100%;
+            }
+        }
         }
 
         .filter-bar select,
@@ -518,9 +541,9 @@ $nbClients = count($clientsSet);
                                                 <div style="display:flex;align-items:center;gap:0.6rem;">
                                                     <?php if (!empty($i['avatar_base64'])): ?>
                                                         <img src="<?= htmlspecialchars($i['avatar_base64']) ?>" class="avatar"
-                                                            style="object-fit: cover;">
+                                                            style="object-fit: cover; width: 32px; height: 32px; border-radius: 50%;">
                                                     <?php else: ?>
-                                                        <div class="avatar">
+                                                        <div class="avatar" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--primary-light); color: white; font-size: 0.7rem; font-weight: bold;">
                                                             <?= strtoupper(substr($i['tech_prenom'] ?? '', 0, 1) . substr($i['tech_nom'] ?? '', 0, 1)) ?>
                                                         </div>
                                                     <?php endif; ?>
