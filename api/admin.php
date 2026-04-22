@@ -119,9 +119,19 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
     <style>
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(1, 1fr);
             gap: 1.5rem;
             margin-bottom: 2.5rem;
+        }
+        @media (min-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (min-width: 1400px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
         .stat-card {
             background: var(--glass-bg);
