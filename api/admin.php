@@ -136,8 +136,20 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
         }
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border-color: var(--lenoir-orange);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            border-color: var(--primary);
+        }
+        .stat-card.cockpit-pulse {
+            border-left: 4px solid var(--primary);
+        }
+        .stat-card.info {
+            border-left: 4px solid #0ea5e9;
+        }
+        .stat-card.success {
+            border-left: 4px solid var(--success);
+        }
+        .stat-card.premium {
+            border-left: 4px solid #a855f7;
         }
         .stat-header {
             display: flex;
@@ -253,31 +265,44 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
 
             <!-- DASHBOARD SECTION -->
             <div class="dashboard-grid animate-up">
+                <!-- 1. Conformité -->
                 <div class="stat-card glass cockpit-pulse">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                         <div>
-                            <span class="stat-label">Conformité Globale</span>
+                            <span class="stat-title">Conformité Globale</span>
                             <div class="stat-value" id="complianceValue">--</div>
                         </div>
-                        <span class="premium-badge">Live</span>
+                        <span class="premium-badge">Score</span>
                     </div>
-                    <div class="chart-container" style="height: 120px;">
+                    <div class="chart-container" style="height: 140px;">
                         <canvas id="complianceChart"></canvas>
                     </div>
                 </div>
 
+                <!-- 2. Volume Expertises -->
                 <div class="stat-card glass info">
-                    <span class="stat-label">Volume d'Expertises</span>
-                    <div class="stat-value" id="monthlyTotal" style="margin-bottom:0.5rem;">--</div>
-                    <div class="chart-container" style="height: 120px;">
+                    <div>
+                        <span class="stat-title">Volume d'Expertises</span>
+                        <div class="stat-value" id="monthlyTotal">--</div>
+                    </div>
+                    <div class="chart-container" style="height: 140px;">
                         <canvas id="monthlyChart"></canvas>
                     </div>
                 </div>
 
+                <!-- 3. Répartition Statuts -->
                 <div class="stat-card glass success">
-                    <span class="stat-label">Répartition Statuts</span>
-                    <div class="chart-container" style="height: 150px; margin-top: 0.5rem;">
+                    <span class="stat-title">Répartition Statuts</span>
+                    <div class="chart-container" style="height: 140px; margin-top: 0.5rem;">
                         <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 4. Top Clients -->
+                <div class="stat-card glass premium">
+                    <span class="stat-title">Top 5 Clients</span>
+                    <div class="chart-container" style="height: 140px; margin-top: 0.5rem;">
+                        <canvas id="clientsChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -491,6 +516,7 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
                 const ctxComp = document.getElementById('complianceChart').getContext('2d');
                 const ctxMonthly = document.getElementById('monthlyChart').getContext('2d');
                 const ctxStatus = document.getElementById('statusChart').getContext('2d');
+                const ctxClients = document.getElementById('clientsChart').getContext('2d');
 
                 // 1. Compliance (Gradient Orange Gauge)
                 const gradOrange = ctxComp.createLinearGradient(0, 0, 200, 0);
@@ -561,12 +587,33 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
                             data: (data.status || []).map(s => s.count || 0),
                             backgroundColor: ['#0a1e3d', '#ffb300', '#64748b', '#10b981'],
                             borderRadius: 6,
-                            barThickness: 20
+                            barThickness: 15
                         }]
                     },
                     options: {
                         indexAxis: 'y',
-                        scales: { y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { display: false } }, x: { display: false } },
+                        scales: { y: { ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { display: false } }, x: { display: false } },
+                        plugins: { legend: { display: false } },
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+
+                // 4. Top Clients Distribution
+                new Chart(ctxClients, {
+                    type: 'bar',
+                    data: {
+                        labels: (data.top_clients || []).map(c => c.nom_societe.substring(0, 15) + (c.nom_societe.length > 15 ? '...' : '')),
+                        datasets: [{
+                            data: (data.top_clients || []).map(c => c.count || 0),
+                            backgroundColor: '#a855f7',
+                            borderRadius: 6,
+                            barThickness: 15
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        scales: { y: { ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { display: false } }, x: { display: false } },
                         plugins: { legend: { display: false } },
                         responsive: true,
                         maintainAspectRatio: false
