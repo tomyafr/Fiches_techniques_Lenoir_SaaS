@@ -35,14 +35,14 @@ if ($_SESSION['role'] === 'admin') {
 $machine = $stmt->fetch();
 
 if (!$machine) {
-    die("Machine introuvable ou accÃ¨s refusÃ©.");
+    die("Machine introuvable ou accès refusé.");
 }
 
 $donnees = json_decode($machine['donnees_controle'] ?? '{}', true);
 $mesures = json_decode($machine['mesures'] ?? '{}', true);
 
 // BUG-FIX: Vercel Payload Too Large (4.5MB limit)
-// On ne charge les photos en PHP que pour la gÃ©nÃ©ration PDF. 
+// On ne charge les photos en PHP que pour la génération PDF.
 // Pour le web, on les charge en AJAX plus bas.
 if (isset($_GET['pdf'])) {
     $photosConfig = json_decode($machine['photos'] ?? '{}', true) ?: [];
@@ -182,7 +182,7 @@ $heureDebut = $mesures['heure_debut'] ?? '';
 $heureFin = $mesures['heure_fin'] ?? '';
 
 /**
- * GÃ©nÃ¨re un rÃ©sumÃ© des dysfonctionnements via IA ou fallback local.
+ * Génère un résumé des dysfonctionnements via IA ou fallback local.
  */
 function generateDysfunctionsAI($machine, $type = 'E') {
     $donnees = json_decode($machine['donnees_controle'] ?? '{}', true);
@@ -195,19 +195,19 @@ function generateDysfunctionsAI($machine, $type = 'E') {
         $listeNC = implode("\n", array_map(fn($i) => "- " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['nc']));
         $listeAA = implode("\n", array_map(fn($i) => "- " . $i['designation'] . ($i['commentaire'] ? " (" . $i['commentaire'] . ")" : ""), $issues['aa']));
 
-        $systemPrompt = "Tu es le rÃ©dacteur technique officiel des rapports d'expertise Lenoir-Mec (sÃ©paration magnÃ©tique et levage industriel, groupe Delachaux).
+        $systemPrompt = "Tu es le rédacteur technique officiel des rapports d'expertise Lenoir-Mec (séparation magnétique et levage industriel, groupe Delachaux).
 
-CONTEXTE : Tu rÃ©diges la section \"E) CAUSE DE DYSFONCTIONNEMENT\" d'une fiche d'inspection terrain. Cette section apparaÃ®t dans un rapport PDF envoyÃ© au client final. Le technicien a inspectÃ© un Ã©quipement et relevÃ© des anomalies.
+CONTEXTE : Tu rédiges la section \"E) CAUSE DE DYSFONCTIONNEMENT\" d'une fiche d'inspection terrain. Cette section apparaît dans un rapport PDF envoyé au client final. Le technicien a inspecté un équipement et relevé des anomalies.
 
-Ã‰TATS D'Ã‰VALUATION :
+ÉTATS D'ÉVALUATION :
 - N/A = Non applicable (le point ne concerne pas cette machine)
 - OK = Conforme
-- A.A = Ã€ amÃ©liorer (point orange â€” dÃ©gradation constatÃ©e, pas critique)
-- N.C = Non conforme (point rouge â€” dÃ©faut avÃ©rÃ© nÃ©cessitant intervention)
-- N.R = NÃ©cessite remplacement (point rouge foncÃ© â€” piÃ¨ce HS ou dangereuse)
+- A.A = À améliorer (point orange — dégradation constatée, pas critique)
+- N.C = Non conforme (point rouge — défaut avéré nécessitant intervention)
+- N.R = Nécessite remplacement (point rouge foncé — pièce HS ou dangereuse)
 
-RÃˆGLES DE RÃ‰DACTION STRICTES :
-1. NE JAMAIS Ã©crire le titre \"E) CAUSE DE DYSFONCTIONNEMENT\" â€” il est dÃ©jÃ  imprimÃ© sur le rapport.
+RÈGLES DE RÉDACTION STRICTES :
+1. NE JAMAIS écrire le titre \"E) CAUSE DE DYSFONCTIONNEMENT\" — il est déjà imprimé sur le rapport.
 2. NE JAMAIS ajouter de phrase d'introduction, de salutation, ou de conclusion.
 3. NE JAMAIS inventer de constats non fournis dans les donnÃ©es.
 4. Chaque anomalie = 1 tiret, 1 ligne, maximum 15 mots.
@@ -1847,7 +1847,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </tr>
 
                             <?php for($e=1; $e<=2; $e++): ?>
-                                <?= renderSectionHeader("ETAGE ".($e==1 ? '1 (SupÃ©rieur)' : $e), 3) ?>
+                                <?= renderSectionHeader("ETAGE ".($e==1 ? '1 (Supérieur)' : $e), 3) ?>
                                 <tr>
                                     <td style="padding:8px; vertical-align:top;">
                                         <div style="margin-bottom:8px; font-weight:bold;">
@@ -1992,15 +1992,15 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <tr>
                                 <td colspan="3" style="padding:10px; background:#f9f9f9; border:1px solid #ddd;">
                                     <div style="display:flex; align-items:center; gap:15px; font-weight:bold;">
-                                        Valeur de rÃ©fÃ©rence (Neuf) :
+                                        Valeur de référence (Neuf) :
                                         <input type="text" id="sgsa_gauss_ref" name="mesures[sgsa_gauss_ref]" value="<?= htmlspecialchars($mesures['sgsa_gauss_ref'] ?? '6000') ?>" style="width:60px; text-align:center; border:1px solid #ccc; border-radius:3px; padding:2px;">
-                                        <span style="font-size:11px; color:#666; font-weight:normal;">(G) - UtilisÃ©e pour le calcul automatique du statut et de la perte</span>
+                                        <span style="font-size:11px; color:#666; font-weight:normal;">(G) - Utilisée pour le calcul automatique du statut et de la perte</span>
                                     </div>
                                 </td>
                             </tr>
 
                             <?php for($e=1; $e<=3; $e++): ?>
-                                <?= renderSectionHeader("ETAGE ".($e==1 ? '1 (SupÃ©rieur)' : $e), 3) ?>
+                                <?= renderSectionHeader("ETAGE ".($e==1 ? '1 (Supérieur)' : $e), 3) ?>
                                 <tr>
                                     <td style="padding:8px; vertical-align:top;">
                                         <div style="margin-bottom:8px; font-weight:bold;">
@@ -2116,7 +2116,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?= renderAprfRow("PrÃ©sence de bagues coulissantes", "sga_bagues", $donnees) ?>
 
                             <?php for($e=1; $e<=3; $e++): ?>
-                                <?= renderSectionHeader("ETAGE ".($e==1 ? '1 (SupÃ©rieur)' : $e), 3) ?>
+                                <?= renderSectionHeader("ETAGE ".($e==1 ? '1 (Supérieur)' : $e), 3) ?>
                                 <tr>
                                     <td style="padding:8px; vertical-align:top;">
                                         <div style="margin-bottom:8px;">

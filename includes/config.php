@@ -105,25 +105,21 @@ function getDB()
                            CHECK (statut IN ('Brouillon', 'Terminee', 'Terminée', 'Envoyee', 'Envoyée'))");
                 
                 // On s'assure que l'admin s'appelle 'ADMIN' avec le mot de passe 'admin123'
-                // On ne le fait que si le compte n'existe pas ou si on veut forcer le reset
                 $stmt = $pdo->prepare("SELECT id, password_hash FROM users WHERE nom = 'ADMIN'");
                 $stmt->execute();
                 $adminUser = $stmt->fetch();
                 
                 $targetHash = password_hash('admin123', PASSWORD_BCRYPT, ['cost' => 12]);
                 if (!$adminUser) {
-                    // Nettoyage des anciens comptes
                     $pdo->exec("DELETE FROM users WHERE nom IN ('TG', 'admin')");
-                    // Création si inexistant
                     $pdo->prepare("INSERT INTO users (nom, prenom, password_hash, role, actif) VALUES ('ADMIN', 'Admin', ?, 'admin', true)")
                         ->execute([$targetHash]);
                 }
             } catch (Exception $e) {
-                // Silencieusement ignoré si déjà fait ou erreur mineure
+                // Silencieusement ignoré
             }
 
         } catch (PDOException $e) {
-            // Afficher l'erreur (temporaire)
             die('Erreur de connexion à la base de données : ' . $e->getMessage());
         }
     }
@@ -136,7 +132,6 @@ function getDB()
 function startSecureSession()
 {
     if (session_status() === PHP_SESSION_NONE) {
-        // Configuration sécurisée de la session
         $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
             || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
             || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
@@ -145,14 +140,13 @@ function startSecureSession()
             'lifetime' => SESSION_TIMEOUT,
             'path' => '/',
             'domain' => '',
-            'secure' => $isHttps,   // Secure uniquement en HTTPS
-            'httponly' => true,        // HttpOnly: inaccessible via JS (anti-XSS)
-            'samesite' => 'Strict',   // SameSite: protection CSRF
+            'secure' => $isHttps,
+            'httponly' => true,
+            'samesite' => 'Strict',
         ]);
         session_start();
     }
 
-    // Set CSRF token cookie early if not present (Double Submit Cookie pattern for Serverless)
     if (empty($_COOKIE['csrf_token'])) {
         $token = bin2hex(random_bytes(32));
         $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
@@ -169,7 +163,6 @@ function startSecureSession()
         $_COOKIE['csrf_token'] = $token;
     }
 
-    // Vérification du timeout de session
     if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > SESSION_TIMEOUT) {
         session_unset();
         session_destroy();
@@ -177,10 +170,8 @@ function startSecureSession()
         return;
     }
 
-    // Restaurer depuis le cookie de secours si session PHP vide (important Vercel)
     if (!isset($_SESSION['user_id']) && isset($_COOKIE['APP_SESSION_BACKUP'])) {
         $raw = $_COOKIE['APP_SESSION_BACKUP'];
-        // Vérification signature HMAC avant de restaurer
         $secret = getenv('SESSION_SECRET') ?: 'default-secret-change-in-prod';
         $parts = explode('.', $raw, 2);
         if (count($parts) === 2) {
@@ -203,7 +194,6 @@ function startSecureSession()
     }
 }
 
-// Enregistrer les infos en cookie de secours (signé HMAC)
 function setSessionBackup()
 {
     $secret = getenv('SESSION_SECRET') ?: 'default-secret-change-in-prod';
@@ -230,9 +220,6 @@ function setSessionBackup()
     ]);
 }
 
-// ============================================
-// AUTHENTIFICATION
-// ============================================
 function requireAuth($role = null)
 {
     startSecureSession();
@@ -243,38 +230,18 @@ function requireAuth($role = null)
     if ($role) {
         $allowedRoles = is_array($role) ? $role : [$role];
         if (!in_array($_SESSION['role'], $allowedRoles)) {
-            // Journaliser la tentative d'accès non autorisée
-            logAudit('UNAUTHORIZED_ACCESS', "Role requis: " . implode(',', $allowedRoles) . ", Role actuel: " . ($_SESSION['role'] ?? 'none'));
             header('Location: index.php');
-            exit;
-        }
-    }
-    // Vérifier si le changement de mot de passe est obligatoire
-    if (isset($_SESSION['must_change_password']) && $_SESSION['must_change_password']) {
-        $currentPage = basename($_SERVER['PHP_SELF']);
-        if ($currentPage !== 'profile.php' && $currentPage !== 'logout.php') {
-            header('Location: profile.php?force=1');
             exit;
         }
     }
 }
 
-// ============================================
-// TOKEN CSRF
-// ============================================
-/**
- * Génère (ou récupère) le token CSRF de la session courante
- */
 function getCsrfToken(): string
 {
     startSecureSession();
     return $_COOKIE['csrf_token'] ?? '';
 }
 
-/**
- * Vérifie le token CSRF soumis dans un formulaire POST
- * Termine le script avec une erreur 403 si invalide
- */
 function verifyCsrfToken(): void
 {
     startSecureSession();
@@ -282,120 +249,15 @@ function verifyCsrfToken(): void
     $stored = $_COOKIE['csrf_token'] ?? '';
     if (empty($stored) || empty($submitted) || !hash_equals($stored, $submitted)) {
         http_response_code(403);
-        die('Erreur de sécurité : token CSRF invalide. Veuillez recharger la page.');
+        die('Erreur de sécurité : token CSRF invalide.');
     }
 }
 
-/**
- * Retourne un champ HTML caché avec le token CSRF
- */
 function csrfField(): string
 {
     return '<input type="hidden" name="csrf_token" value="' . htmlspecialchars(getCsrfToken()) . '">';
 }
 
-// ============================================
-// POLITIQUE DE MOT DE PASSE
-// ============================================
-/**
- * Valide un mot de passe selon la politique de sécurité
- * Retourne un tableau d'erreurs (vide si valide)
- */
-function validatePassword(string $password): array
-{
-    $errors = [];
-    if (strlen($password) < PASSWORD_MIN_LENGTH) {
-        $errors[] = "Le mot de passe doit contenir au moins " . PASSWORD_MIN_LENGTH . " caractères.";
-    }
-    if (PASSWORD_REQUIRE_UPPERCASE && !preg_match('/[A-Z]/', $password)) {
-        $errors[] = "Le mot de passe doit contenir au moins une lettre majuscule.";
-    }
-    if (PASSWORD_REQUIRE_LOWERCASE && !preg_match('/[a-z]/', $password)) {
-        $errors[] = "Le mot de passe doit contenir au moins une lettre minuscule.";
-    }
-    if (PASSWORD_REQUIRE_NUMBER && !preg_match('/[0-9]/', $password)) {
-        $errors[] = "Le mot de passe doit contenir au moins un chiffre.";
-    }
-    if (PASSWORD_REQUIRE_SPECIAL && !preg_match('/[\W_]/', $password)) {
-        $errors[] = "Le mot de passe doit contenir au moins un caractère spécial (!@#\$%^&*...).";
-    }
-    // Vérification listes noires communes
-    $blacklist = ['password123', 'Password123', 'password', '123456789', 'azerty123'];
-    if (in_array(strtolower($password), array_map('strtolower', $blacklist))) {
-        $errors[] = "Ce mot de passe est trop commun et n'est pas autorisé.";
-    }
-    return $errors;
-}
-
-/**
- * Calcule le score de force d'un mot de passe (0-4)
- */
-function getPasswordStrength(string $password): int
-{
-    $score = 0;
-    if (strlen($password) >= 12)
-        $score++;
-    if (preg_match('/[A-Z]/', $password))
-        $score++;
-    if (preg_match('/[0-9]/', $password))
-        $score++;
-    if (preg_match('/[\W_]/', $password))
-        $score++;
-    return $score;
-}
-
-// ============================================
-// UTILITAIRES DATE / SEMAINE
-// ============================================
-function getCurrentWeekDates()
-{
-    $today = new DateTime();
-    $dayOfWeek = (int) $today->format('N');
-    $monday = clone $today;
-    $monday->modify('-' . ($dayOfWeek - 1) . ' days');
-    $sunday = clone $monday;
-    $sunday->modify('+6 days');
-
-    $dates = [];
-    $current = clone $monday;
-    while ($current <= $sunday) {
-        $dates[] = $current->format('Y-m-d');
-        $current->modify('+1 day');
-    }
-
-    return [
-        'monday' => $monday->format('Y-m-d'),
-        'sunday' => $sunday->format('Y-m-d'),
-        'dates' => $dates,
-        'labels' => ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
-    ];
-}
-
-// ============================================
-// JOURNAL D'AUDIT
-// ============================================
-/**
- * Enregistrer une action dans le log d'audit
- */
-function logAudit($action, $details = '')
-{
-    try {
-        $db = getDB();
-        $stmt = $db->prepare('INSERT INTO audit_logs (user_id, action, details, ip_address) VALUES (?, ?, ?, ?)');
-        $stmt->execute([
-            $_SESSION['user_id'] ?? null,
-            $action,
-            $details,
-            $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'],
-        ]);
-    } catch (Exception $e) {
-        // On ne bloque pas l'app si le log échoue
-    }
-}
-
-/**
- * Robust uppercase for French accents (with mbstring fallback)
- */
 function str_to_upper_fr($str) {
     if (!$str) return '';
     if (function_exists('mb_strtoupper')) {
@@ -407,14 +269,8 @@ function str_to_upper_fr($str) {
     return strtoupper($str);
 }
 
-// ============================================
-// MONITORING SENTRY (BUG-021)
-// ============================================
 define('SENTRY_DSN', 'https://7efbff412929d364019e77c9dc028264@o4511253315977216.ingest.de.sentry.io/4511253355298896');
 
-/**
- * Affiche le script d'initialisation Sentry dans le <head>
- */
 function renderSentryJS() {
     if (!defined('SENTRY_DSN') || !SENTRY_DSN) return;
     ?>
@@ -426,19 +282,8 @@ function renderSentryJS() {
                 new Sentry.Integrations.BrowserTracing(),
             ],
             tracesSampleRate: 1.0,
-            environment: "production",
-            beforeSend(event, hint) {
-                // Optionnel: On peut filtrer ou ajouter des infos ici
-                return event;
-            }
+            environment: "production"
         });
-        
-        // Monitoring des erreurs de chargement d'images (important pour les photos tech)
-        window.addEventListener('error', function(e) {
-            if (e.target.tagName === 'IMG') {
-                Sentry.captureMessage('Erreur de chargement d\'image : ' + e.target.src, 'warning');
-            }
-        }, true);
     </script>
     <?php
 }
