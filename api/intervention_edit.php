@@ -181,7 +181,7 @@ $machines = $stmtMach->fetchAll();
             $grad = $gradients[ord($clientInitial) % count($gradients)];
         ?>
         <div class="card glass animate-in" style="margin-bottom: 1.5rem; padding: 1.5rem;">
-            <div style="display:flex; align-items:center; gap:1.25rem; margin-bottom: 2rem;">
+            <div style="display:flex; align-items:center; gap:1.25rem;">
                 <div style="width: 64px; height: 64px; border-radius: 16px; background: <?= $grad ?>; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 1.8rem; flex-shrink: 0; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
                     <?= $clientInitial ?>
                 </div>
@@ -197,25 +197,6 @@ $machines = $stmtMach->fetchAll();
                             <?= htmlspecialchars(strtoupper($intervention['statut'])) ?>
                         </span>
                     </div>
-                </div>
-            </div>
-
-            <!-- STEPPER -->
-            <div style="display:flex; justify-content:space-between; position:relative; padding: 0 10px;">
-                <div style="position:absolute; top:12px; left:20px; right:20px; height:2px; background:rgba(255,255,255,0.05); z-index:0;"></div>
-                <div style="position:absolute; top:12px; left:20px; width:<?= ($step-1)*50 ?>%; height:2px; background:var(--primary); z-index:1; transition: width 0.5s ease;"></div>
-                
-                <div style="z-index:2; text-align:center; flex:1;">
-                    <div style="width:24px; height:24px; border-radius:50%; background:<?= $step >= 1 ? 'var(--primary)' : 'var(--bg-elevated)' ?>; margin:0 auto 0.5rem; border:4px solid var(--bg-glass); display:flex; align-items:center; justify-content:center; font-size:0.6rem; color:#000; font-weight:900;">1</div>
-                    <p style="font-size:0.6rem; font-weight:700; color:<?= $step >= 1 ? 'var(--text-main)' : 'var(--text-dim)' ?>;">INTERVENTION</p>
-                </div>
-                <div style="z-index:2; text-align:center; flex:1;">
-                    <div style="width:24px; height:24px; border-radius:50%; background:<?= $step >= 2 ? 'var(--primary)' : 'var(--bg-elevated)' ?>; margin:0 auto 0.5rem; border:4px solid var(--bg-glass); display:flex; align-items:center; justify-content:center; font-size:0.6rem; color:#000; font-weight:900;">2</div>
-                    <p style="font-size:0.6rem; font-weight:700; color:<?= $step >= 2 ? 'var(--text-main)' : 'var(--text-dim)' ?>;">MACHINES</p>
-                </div>
-                <div style="z-index:2; text-align:center; flex:1;">
-                    <div style="width:24px; height:24px; border-radius:50%; background:<?= $step >= 3 ? 'var(--primary)' : 'var(--bg-elevated)' ?>; margin:0 auto 0.5rem; border:4px solid var(--bg-glass); display:flex; align-items:center; justify-content:center; font-size:0.6rem; color:#000; font-weight:900;">3</div>
-                    <p style="font-size:0.6rem; font-weight:700; color:<?= $step >= 3 ? 'var(--text-main)' : 'var(--text-dim)' ?>;">VALIDATION</p>
                 </div>
             </div>
         </div>

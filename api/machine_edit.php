@@ -330,74 +330,20 @@ foreach ($recoFreq as $rfk => $rfv) {
     <link rel="stylesheet" href="/assets/style.css">
     <?php renderSentryJS(); ?>
     <style>
-        body {
-            background: #020617;
-            color: #f8fafc;
-            padding: 20px;
-            font-family: 'Inter', system-ui, sans-serif;
-            margin: 0;
-        }
-
-        /* Nav Stepper Sticky */
-        .stepper-nav {
-            position: fixed;
-            top: calc(var(--mobile-header-height) + 0.5rem);
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            padding: 0.5rem;
-            border-radius: 50px;
-            display: flex;
-            gap: 0.25rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            max-width: 95vw;
-            overflow-x: auto;
-        }
-        .stepper-nav a {
-            text-decoration: none;
-            color: var(--text-dim);
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-        .stepper-nav a:hover {
-            background: rgba(255,255,255,0.05);
-            color: var(--text-main);
-        }
-        .stepper-nav a.active {
-            background: var(--primary);
-            color: #000;
-        }
-
-        /* A4 Page Style to mimic PDF - Now Dark Glass */
+        /* A4 Page Style to mimic PDF */
         .pdf-page {
             width: 21cm;
             min-height: 29.7cm;
-            margin: 80px auto 20px auto;
-            background: var(--bg-glass);
-            backdrop-filter: blur(10px);
-            color: var(--text-main);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            margin: 60px auto 20px auto;
+            background: white;
+            color: black;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
             position: relative;
-            padding: 1.5cm 1cm 1cm 1cm;
+            padding: 1.5cm 1cm 1cm 1cm; /* Augmentation du padding top pour éviter les textes coupés */
             box-sizing: border-box;
-            border-radius: 16px;
-            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            overflow: hidden;
             font-size: 13px;
-        }
-
-        @media (max-width: 21cm) {
-            .pdf-page {
-                width: 98vw;
-                padding: 1rem;
-                margin-top: 100px;
-            }
         }
 
         .pdf-header {
@@ -412,7 +358,7 @@ foreach ($recoFreq as $rfk => $rfv) {
         .lenoir-title {
             font-size: 24px;
             font-weight: 900;
-            color: var(--primary);
+            color: #000;
             margin: 0;
             text-transform: uppercase;
         }
@@ -425,14 +371,12 @@ foreach ($recoFreq as $rfk => $rfv) {
 
         .pdf-title-box {
             text-align: center;
-            border: 1px solid var(--glass-border);
+            border: 2px solid #000;
             padding: 10px;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
-            background: rgba(255, 179, 0, 0.05);
-            color: var(--primary);
+            background: #f0f0f0;
             margin-bottom: 20px;
-            border-radius: 8px;
         }
 
         .pdf-table thead {
@@ -455,17 +399,9 @@ foreach ($recoFreq as $rfk => $rfv) {
 
         .pdf-table th,
         .pdf-table td {
-            border: 1px solid var(--glass-border);
-            padding: 6px 8px;
+            border: 1px solid #000;
+            padding: 4px 5px;
             vertical-align: middle;
-            color: var(--text-main);
-        }
-        .pdf-table th {
-            background: rgba(255, 255, 255, 0.03);
-            color: var(--primary);
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 11px;
         }
 
         /* Wrappers pour sections B, C, D, E, F */
@@ -1086,29 +1022,32 @@ foreach ($recoFreq as $rfk => $rfv) {
         <input type="hidden" name="action" value="save_machine">
         <?= csrfField() ?>
 
-    <header class="mobile-header" style="display:flex;">
-        <button type="button" class="btn btn-ghost"
-            onclick="window.location.href='intervention_edit.php?id=<?= $machine['intervention_id'] ?>'"
-            style="padding: 0.4rem 0.8rem; color: var(--error); display:flex; align-items:center; gap:6px; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.5px; border-radius: var(--radius-sm); border: 1px solid rgba(244, 63, 94, 0.2); background: rgba(244, 63, 94, 0.05);">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-            RETOUR
-        </button>
-        <span class="mobile-header-title" style="color: var(--primary); font-size: 0.9rem; font-weight: 700; position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap;">
-            <?= htmlspecialchars(str_to_upper_fr(str_replace('*', '', $machine['designation'] ?? ''))) ?>
-        </span>
-        <div style="display:flex; gap:8px; align-items:center;">
-             <button type="submit" form="machineForm" class="btn btn-primary" style="background:#e6b12a; color:#000; padding: 6px 12px; font-size: 0.75rem; font-weight: bold;">SAUVER</button>
+        <div class="top-bar">
+            <button type="button" class="btn btn-ghost"
+                onclick="window.location.href='intervention_edit.php?id=<?= $machine['intervention_id'] ?>'"
+                style="padding: 0.4rem 0.8rem; color: var(--error); display:flex; align-items:center; gap:6px; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.5px; border-radius: var(--radius-sm); border: 1px solid rgba(244, 63, 94, 0.2); background: rgba(244, 63, 94, 0.05);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                RETOUR
+            </button>
+            <span class="mobile-header-title" style="color: var(--primary); font-size: 0.9rem; font-weight: 700; position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap;">
+                <?= htmlspecialchars(str_to_upper_fr(str_replace('*', '', $machine['designation'] ?? ''))) ?>
+            </span>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <label style="color:white; font-size:0.75rem; display:flex; align-items:center; gap:5px; cursor:pointer; background:rgba(255,255,255,0.05); padding:6px 10px; border-radius:5px; border: 1px solid rgba(255,255,255,0.1);">
+                    <input type="checkbox" name="mesures[excluded]" value="1" <?= ($mesures['excluded'] ?? false) ? 'checked' : '' ?>>
+                    <span class="desktop-only">Exclure du rapport</span>
+                    <span class="mobile-only">EXCLURE</span>
+                </label>
+                <button type="button" class="btn btn-ghost" onclick="window.print()"
+                    style="background:#2b2d31; color:white; border:1px solid #444; display:flex; align-items:center; gap:6px; padding: 6px 12px;">
+                    <img src="/assets/icon_document_white.svg" style="height: 16px; width: 16px;"> <span class="desktop-only" style="margin-left: 0;">IMPRIMER</span>
+                </button>
+                <button type="submit" class="btn btn-primary" style="background:#e6b12a; color:#000; display:flex; align-items:center; gap:6px; padding: 6px 12px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    <span class="desktop-only">ENREGISTRER</span>
+                </button>
+            </div>
         </div>
-    </header>
-
-    <nav class="stepper-nav">
-        <a href="#section-a" id="nav-a" class="active">A. Infos</a>
-        <a href="#section-b" id="nav-b">B. Mesures</a>
-        <a href="#section-c" id="nav-c">C. Fréq.</a>
-        <a href="#section-d" id="nav-d">D. Induc.</a>
-        <a href="#section-e" id="nav-e">E. Dysf.</a>
-        <a href="#section-f" id="nav-f">F. Concl.</a>
-    </nav>
 
         <div class="mobile-wrapper">
             <!-- Saut de page forcé en début de chaque machine pour éviter les coupures d'en-tête -->
