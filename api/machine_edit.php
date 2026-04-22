@@ -3881,9 +3881,18 @@ foreach ($recoFreq as $rfk => $rfv) {
                 label.style.transform = 'scale(1.5) rotate(15deg)';
                 setTimeout(() => { label.style.transform = ''; }, 300);
                 if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
+                
+                // Sécurité : On empêche la re-sélection de CETTE gommette pendant 2 secondes
                 label.dataset.longPressed = 'true';
-                setTimeout(() => { delete label.dataset.longPressed; }, 500);
-            }, 2000); // 2 secondes
+                label.style.opacity = '0.4'; // Indice visuel de verrouillage
+                label.style.pointerEvents = 'none'; // Empêche physiquement le clic pendant le cooldown
+                
+                setTimeout(() => { 
+                    delete label.dataset.longPressed; 
+                    label.style.opacity = '';
+                    label.style.pointerEvents = '';
+                }, 2000); // Cooldown de 2 secondes
+            }, 1000); // On réduit à 1 seconde pour que ce soit plus réactif
         }
         function cancelPastillePress() { clearTimeout(pastillePressTimer); }
 
