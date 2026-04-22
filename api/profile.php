@@ -350,11 +350,80 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                     </div>
                     <div>
                         <p style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Rôle</p>
-                        <p style="font-size: 1.1rem; font-weight: 700; color: var(--primary);">
-                            <?= $_SESSION['role'] === 'admin' ? 'Administrateur' : 'Technicien' ?>
-                        </p>
+                        <div style="margin-top: 0.4rem;">
+                            <?php if ($_SESSION['role'] === 'admin'): ?>
+                                <span class="premium-role-badge admin">
+                                    <span class="badge-icon">👑</span> Administrateur
+                                </span>
+                            <?php else: ?>
+                                <span class="premium-role-badge tech">
+                                    <span class="badge-icon">🔧</span> Technicien
+                                </span>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
+
+                <style>
+                    .premium-role-badge {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 8px;
+                        padding: 0.4rem 1rem;
+                        border-radius: 50px;
+                        font-size: 0.75rem;
+                        font-weight: 800;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                        backdrop-filter: blur(10px);
+                        border: 1px solid rgba(255,255,255,0.1);
+                    }
+                    .premium-role-badge.admin {
+                        background: linear-gradient(135deg, rgba(255, 179, 0, 0.2), rgba(255, 215, 0, 0.1));
+                        color: #ffb300;
+                        border-color: rgba(255, 179, 0, 0.3);
+                        box-shadow: 0 0 15px rgba(255, 179, 0, 0.1);
+                    }
+                    .premium-role-badge.tech {
+                        background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(99, 102, 241, 0.1));
+                        color: #0ea5e9;
+                        border-color: rgba(14, 165, 233, 0.3);
+                        box-shadow: 0 0 15px rgba(14, 165, 233, 0.1);
+                    }
+                    .badge-icon { font-size: 0.9rem; }
+
+                    /* Switch CSS */
+                    .switch {
+                        position: relative;
+                        display: inline-block;
+                        width: 44px;
+                        height: 24px;
+                    }
+                    .switch input { opacity: 0; width: 0; height: 0; }
+                    .slider {
+                        position: absolute;
+                        cursor: pointer;
+                        top: 0; left: 0; right: 0; bottom: 0;
+                        background-color: rgba(255,255,255,0.1);
+                        transition: .4s;
+                        border-radius: 34px;
+                        border: 1px solid var(--glass-border);
+                    }
+                    .slider:before {
+                        position: absolute;
+                        content: "";
+                        height: 16px;
+                        width: 16px;
+                        left: 3px;
+                        bottom: 3px;
+                        background-color: white;
+                        transition: .4s;
+                        border-radius: 50%;
+                    }
+                    input:checked + .slider { background-color: var(--primary); }
+                    input:focus + .slider { box-shadow: 0 0 1px var(--primary); }
+                    input:checked + .slider:before { transform: translateX(20px); }
+                </style>
 
                 <!-- PREFERENCES / STATUT -->
                 <div
@@ -362,19 +431,20 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                     <h4 style="margin-bottom: 1.5rem; color: var(--primary); display:flex; align-items:center; gap:8px;">
                         <span>⚙️</span> Préférences & Statut
                     </h4>
-
+ 
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
                         <!-- Theme Toggle -->
                         <div>
                             <p
-                                style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase;">
+                                style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">
                                 Thème d'affichage</p>
-                            <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
-                                <input type="checkbox" id="themeToggle"
-                                    style="width: 1.25rem; height: 1.25rem; cursor: pointer;">
-                                <span id="themeToggleLabel" style="font-weight: bold; color: var(--text-main);">Mode
-                                    Sombre 🌙</span>
-                            </label>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <label class="switch">
+                                    <input type="checkbox" id="themeToggle">
+                                    <span class="slider"></span>
+                                </label>
+                                <span id="themeToggleLabel" style="font-weight: 700; font-size: 0.85rem; color: var(--text-main);">Mode Sombre 🌙</span>
+                            </div>
                             <script>
                                 const themeToggle = document.getElementById('themeToggle');
                                 const themeLabel = document.getElementById('themeToggleLabel');
