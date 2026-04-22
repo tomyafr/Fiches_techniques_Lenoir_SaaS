@@ -417,9 +417,9 @@ foreach ($recoFreq as $rfk => $rfv) {
         .pdf-section-title {
             font-weight: bold;
             font-size: 16px;
-            color: #d35400;
+            color: #1B4F72;
             margin-bottom: 10px;
-            border-bottom: 2px solid #d35400;
+            border-bottom: 2px solid #1B4F72;
             padding-bottom: 5px;
             page-break-after: avoid;
             break-after: avoid;
@@ -1289,9 +1289,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <td style="padding: 0; border: none; page-break-inside: avoid !important;">
                                     <div class="pdf-section-title" id="section-c"><?= str_to_upper_fr("C) RAPPEL DES FRÉQUENCES DE NETTOYAGE ET DES DIFFÉRENTS POINTS DE CONTRÔLE :") ?></div>
                                     <?php if ($isSGSA): ?>
-                                        <table class="pdf-table" style="width:100%; border-collapse:collapse; border:2px solid #ed7d31; font-size:11px;">
+                                        <table class="pdf-table" style="width:100%; border-collapse:collapse; border:2px solid #5b9bd5; font-size:11px;">
                                             <thead>
-                                                <tr style="background:#ed7d31; color:white;">
+                                                <tr style="background:#5b9bd5; color:white;">
                                                     <th style="padding:8px; width:35%;">POINTS DE CONTRÔLE</th>
                                                     <th style="padding:8px; width:8%;">QUOTIDIEN</th>
                                                     <th style="padding:8px; width:8%;">HEBDO.</th>
@@ -1309,7 +1309,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                             </tbody>
                                         </table>
                                     <?php else: ?>
-                                        <img src="/assets/machines/frequences_tableau.png" style="width:100%; height:auto; border:2px solid #ed7d31; display: block; page-break-inside: avoid !important;">
+                                        <img src="/assets/machines/frequences_tableau.png" style="width:100%; height:auto; border:2px solid #5b9bd5; display: block; page-break-inside: avoid !important;">
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -1354,7 +1354,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <p style="font-size:11px; margin-bottom:15px;">Mesures effectuées avec un gaussmètre sur la surface des barreaux magnétiques.</p>
                             
                             <table class="pdf-table" style="width:100%; border-collapse:collapse; border:1px solid #000; font-size:11px;">
-                                <thead style="background:#ed7d31; color:white;">
+                                <thead style="background:#5b9bd5; color:white;">
                                     <tr>
                                         <th style="padding:10px; border:1px solid #000; width:20%;">ÉTAGES</th>
                                         <th style="padding:10px; border:1px solid #000;">VALEURS RELEVÉES (GAUSS) SUR LES BARREAUX</th>
@@ -1864,14 +1864,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                     <div style="display:flex; flex-direction:column; align-items:center; gap:20px; margin-top:30px; page-break-inside:avoid; break-inside:avoid;">
                         <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="width:100%; margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                         <div style="text-align:center; width:100%;">
-                            <p style="font-weight:bold; margin-bottom:5px; color:#d35400; text-align:left; border-bottom:1px solid #ed7d31; padding-bottom:5px;">SGCP :</p>
+                            <p style="font-weight:bold; margin-bottom:5px; color:#1B4F72; text-align:left; border-bottom:1px solid #5b9bd5; padding-bottom:5px;">SGCP :</p>
                             <img src="/assets/machines/sgcp_diagram.png" 
                                  style="max-width:100%; height:auto; display:block; margin:0 auto; border:1px solid #eee; border-radius:8px;" 
                                  alt="Schéma SGCP"
                                  onerror="this.style.display='none'">
                         </div>
                         <div style="text-align:center; width:100%;">
-                            <p style="font-weight:bold; margin-bottom:5px; color:#d35400; text-align:left; border-bottom:1px solid #ed7d31; padding-bottom:5px;">SGCM :</p>
+                            <p style="font-weight:bold; margin-bottom:5px; color:#1B4F72; text-align:left; border-bottom:1px solid #5b9bd5; padding-bottom:5px;">SGCM :</p>
                             <img src="/assets/machines/sgcm_diagram.png" 
                                  style="max-width:100%; height:auto; display:block; margin:0 auto; border:1px solid #eee; border-radius:8px;" 
                                  alt="Schéma SGCM"
@@ -2004,9 +2004,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                     
                     <div class="pdf-section" style="margin-top:20px;">
                         <div class="pdf-section-title">C) RAPPEL DES FRÉQUENCES DE NETTOYAGE ET DES DIFFÉRENTS POINTS DE CONTRÔLE :</div>
-                        <table class="pdf-table" style="width:100%; border-collapse:collapse; border:2px solid #ed7d31; font-size:11px;">
+                        <table class="pdf-table" style="width:100%; border-collapse:collapse; border:2px solid #5b9bd5; font-size:11px;">
                             <thead>
-                                <tr style="background:#ed7d31; color:white;">
+                                <tr style="background:#5b9bd5; color:white;">
                                     <th style="padding:8px; width:35%;">POINTS DE CONTRÔLE</th>
                                     <th style="padding:8px; width:8%;">QUOTIDIEN</th>
                                     <th style="padding:8px; width:8%;">HEBDO.</th>
