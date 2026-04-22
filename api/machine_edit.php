@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 header('Content-Type: text/html; charset=utf-8');
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/ia_helper.php';
@@ -1289,26 +1289,44 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <td style="padding: 0; border: none; page-break-inside: avoid !important;">
                                     <div class="pdf-section-title" id="section-c"><?= str_to_upper_fr("C) RAPPEL DES FRÃ‰QUENCES DE NETTOYAGE ET DES DIFFÃ‰RENTS POINTS DE CONTRÃ”LE :") ?></div>
                                     <?php if ($isSGSA): ?>
-                                        <table class="pdf-table" style="width:100%; border-collapse:collapse; border:1px solid #000; font-size:11px;">
+                                        <table style="width:100%; border-collapse:collapse; border:1px solid #000; font-size:11px;">
                                             <thead>
-                                                <tr style="background:#5b9bd5; color:white;">
-                                                    <th colspan="6" style="padding:6px; text-transform:uppercase; font-size:10px; border:1px solid #000;">EN PRÃ‰SENCE DU CLIENT / RAPPEL DES FRÃ‰QUENCES DE NETTOYAGE ET DES DIFFÃ‰RENTS POINTS DE CONTRÃ”LE</th>
-                                                </tr>
-                                                <tr style="background:#fff; color:#000;">
-                                                    <th style="padding:4px; width:35%; border:1px solid #000;">CONTRÃ”LE</th>
-                                                    <th style="padding:4px; width:10%; border:1px solid #000;">QUOTIDIEN</th>
-                                                    <th style="padding:4px; width:10%; border:1px solid #000;">HEBDOMADAIRE</th>
-                                                    <th style="padding:4px; width:10%; border:1px solid #000;">MENSUEL</th>
-                                                    <th style="padding:4px; width:10%; border:1px solid #000;">ANNUEL</th>
-                                                    <th style="padding:4px; border:1px solid #000;">COMMENTAIRES</th>
+                                                <tr style="background:#ed7d31; color:black; font-weight:bold; text-align:center;">
+                                                    <th style="padding:8px; border:1px solid #000; width:15%;">Fréquence.</th>
+                                                    <th style="padding:8px; border:1px solid #000; width:15%;">Type de maintenance</th>
+                                                    <th style="padding:8px; border:1px solid #000; width:15%;">Composant.</th>
+                                                    <th style="padding:8px; border:1px solid #000; width:40%;">Opération à effectuer.</th>
+                                                    <th style="padding:8px; border:1px solid #000; width:15%;">Mise en sécurité.</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <?= renderFreqRow("Nettoyage des barreaux magnÃ©tiques", "sgsa_freq_nettoyage", $donnees) ?>
-                                                <?= renderFreqRow("ContrÃ´le visuel de l'aspect gÃ©nÃ©ral", "sgsa_freq_aspect", $donnees) ?>
-                                                <?= renderFreqRow("ContrÃ´le du coulissement des tiroirs", "sgsa_freq_coulisse", $donnees) ?>
-                                                <?= renderFreqRow("ContrÃ´le de l'Ã©tanchÃ©itÃ© des tiroirs", "sgsa_freq_etanche", $donnees) ?>
-                                                <?= renderFreqRow("Graissage des paliers", "sgsa_freq_paliers", $donnees) ?>
+                                                <tr style="background:#fff2cc;">
+                                                    <td rowspan="2" style="padding:8px; border:1px solid #000; text-align:center; font-weight:bold; vertical-align:middle;">Quotidienne à hebdomadaire</td>
+                                                    <td style="padding:8px; border:1px solid #000; text-align:center; font-weight:bold; vertical-align:middle;">Préventive</td>
+                                                    <td style="padding:8px; border:1px solid #000; text-align:center; font-weight:bold; vertical-align:middle;">Fourreaux barreaux</td>
+                                                    <td style="padding:8px; border:1px solid #000; vertical-align:top;">
+                                                        <p style="margin-bottom:8px;"><strong>Contrôle visuel :</strong> vérifier à l'aide d'une source lumineuse si les fourreaux et les barreaux ne sont pas contaminés de particules ferromagnétiques ni de produits colmatés</p>
+                                                        <p style="margin:0;"><strong>Nota :</strong> le dépoussiérage s'effectue à l'aide d'un aspirateur.</p>
+                                                    </td>
+                                                    <td style="padding:8px; border:1px solid #000; text-align:center; font-weight:bold; vertical-align:middle;">Hors production</td>
+                                                </tr>
+                                                <tr style="background:#fff2cc;">
+                                                    <td style="padding:8px; border:1px solid #000; text-align:center; font-weight:bold; vertical-align:middle;">Préventive</td>
+                                                    <td style="padding:8px; border:1px solid #000; text-align:center; font-weight:bold; vertical-align:middle;">Caisson tiroir</td>
+                                                    <td style="padding:8px; border:1px solid #000; vertical-align:top;">
+                                                        Vérifier l'étanchéité du caisson en inspectant le joint situé sur la face avant du caisson.
+                                                    </td>
+                                                    <td style="padding:8px; border:1px solid #000; text-align:center; font-weight:bold; vertical-align:middle;">Hors production</td>
+                                                </tr>
+                                                <tr style="background:#fbe5d6;">
+                                                    <td style="padding:8px; border:1px solid #000; text-align:center; font-weight:bold; vertical-align:middle;">Trimestrielle</td>
+                                                    <td style="padding:8px; border:1px solid #000; text-align:center; font-weight:bold; vertical-align:middle;">Préventive</td>
+                                                    <td style="padding:8px; border:1px solid #000; text-align:center; font-weight:bold; vertical-align:middle;">Visserie</td>
+                                                    <td style="padding:8px; border:1px solid #000; vertical-align:top;">
+                                                        Vérifier le bon serrage de l'ensemble de la visserie
+                                                    </td>
+                                                    <td style="padding:8px; border:1px solid #000; text-align:center; font-weight:bold; vertical-align:middle;">Hors production</td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     <?php else: ?>
