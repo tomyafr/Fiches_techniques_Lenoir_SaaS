@@ -540,7 +540,11 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
                         plugins: { legend: { display: false }, tooltip: { enabled: false } },
                         responsive: true,
                         maintainAspectRatio: false,
-                        animation: { duration: 2500, easing: 'easeOutQuart' }
+                        animation: {
+                            duration: 2500,
+                            easing: 'easeOutQuart',
+                            delay: (context) => context.dataIndex * 100
+                        }
                     }
                 });
 
@@ -574,7 +578,12 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
                         scales: { y: { display: false }, x: { display: false } },
                         plugins: { legend: { display: false } },
                         responsive: true,
-                        maintainAspectRatio: false
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 2000,
+                            easing: 'easeInOutQuart',
+                            delay: 200
+                        }
                     }
                 });
 
@@ -595,7 +604,12 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
                         scales: { y: { ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { display: false } }, x: { display: false } },
                         plugins: { legend: { display: false } },
                         responsive: true,
-                        maintainAspectRatio: false
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1500,
+                            easing: 'easeOutBounce',
+                            delay: 400
+                        }
                     }
                 });
 
@@ -616,7 +630,12 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
                         scales: { y: { ticks: { color: '#94a3b8', font: { size: 9 } }, grid: { display: false } }, x: { display: false } },
                         plugins: { legend: { display: false } },
                         responsive: true,
-                        maintainAspectRatio: false
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1500,
+                            easing: 'easeOutCubic',
+                            delay: 600
+                        }
                     }
                 });
 
