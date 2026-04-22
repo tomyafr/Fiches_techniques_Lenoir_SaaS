@@ -105,15 +105,18 @@ function getDB()
                            CHECK (statut IN ('Brouillon', 'Terminee', 'Terminée', 'Envoyee', 'Envoyée'))");
                 
                 // On s'assure que l'admin s'appelle 'ADMIN' avec le mot de passe 'admin123'
-                $hash = password_hash('admin123', PASSWORD_BCRYPT, ['cost' => 12]);
-                $pdo->exec("UPDATE users SET prenom = 'Admin', nom = 'ADMIN', password_hash = '$hash' WHERE nom = 'TG' OR nom = 'ADMIN' OR nom = 'admin'");
+                // On ne le fait que si le compte n'existe pas ou si on veut forcer le reset
+                $stmt = $pdo->prepare("SELECT id, password_hash FROM users WHERE nom = 'ADMIN'");
+                $stmt->execute();
+                $adminUser = $stmt->fetch();
                 
-                // Rafraîchir la session si nécessaire
-                if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION['user_id'])) {
-                    if (($_SESSION['user_nom'] ?? '') === 'TG') {
-                        $_SESSION['user_prenom'] = 'Admin';
-                        $_SESSION['user_nom'] = 'ADMIN';
-                    }
+                $targetHash = password_hash('admin123', PASSWORD_BCRYPT, ['cost' => 12]);
+                if (!$adminUser) {
+                    // Nettoyage des anciens comptes
+                    $pdo->exec("DELETE FROM users WHERE nom IN ('TG', 'admin')");
+                    // Création si inexistant
+                    $pdo->prepare("INSERT INTO users (nom, prenom, password_hash, role, actif) VALUES ('ADMIN', 'Admin', ?, 'admin', true)")
+                        ->execute([$targetHash]);
                 }
             } catch (Exception $e) {
                 // Silencieusement ignoré si déjà fait ou erreur mineure
