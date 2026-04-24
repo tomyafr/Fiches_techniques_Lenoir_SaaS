@@ -1159,7 +1159,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 // === HELPERS ===
                 function newPdfPage() {
                     // MF-007 Fix: on ne casse plus les pages artificiellement entre sections
-                    // html2pdf gÃ¨re les sauts via le systÃ¨me de tbody splitting
+                    // html2pdf gère les sauts via le système de tbody splitting
                     return ''; 
                 }
                 function renderSectionB($photosData)
@@ -1357,11 +1357,11 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     <td style="padding: 10px; border: 1px solid #000; text-align: center; font-weight: bold;"><?= htmlspecialchars($mini) ?> G</td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 10px; border: 1px solid #000;">Induction maxi Ã  la surface de la virole</td>
+                                    <td style="padding: 10px; border: 1px solid #000;">Induction maxi à la surface de la virole</td>
                                     <td style="padding: 10px; border: 1px solid #000; text-align: center; font-weight: bold;"><?= htmlspecialchars($maxi) ?> G</td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 10px; border: 1px solid #000;">Induction Ã  travers la bande (vignette)</td>
+                                    <td style="padding: 10px; border: 1px solid #000;">Induction à travers la bande (vignette)</td>
                                     <td style="padding: 10px; border: 1px solid #000; text-align: center; font-weight: bold;"><?= htmlspecialchars($vignette) ?> G</td>
                                 </tr>
                             </table>
@@ -1370,7 +1370,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     elseif ($isSGSA):
                         ?>
                         <div class="section-wrapper-pdf" style="page-break-before: always; page-break-inside: avoid !important;">
-                            <div class="pdf-section-title" id="section-d">D) RELEVÃ‰S Dâ€™INDUCTION MAGNÃ‰TIQUE :</div>
+                            <div class="pdf-section-title" id="section-d">D) RELEVÉS D'INDUCTION MAGNÉTIQUE :</div>
                             <p style="font-size:11px; margin-bottom:15px;">Mesures effectuées avec un gaussmètre sur la surface des barreaux magnétiques (Valeur de référence neuf : <?= htmlspecialchars($mesures['sgsa_gauss_ref'] ?? '6000') ?> G).</p>
 
                             
@@ -1396,7 +1396,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     </tr>
                                     <?php $etanche_v = $donnees['sgsa_e'.$e.'_etancheite_stat'] ?? ''; ?>
                                     <tr>
-                                        <td style="padding:5px; border:1px solid #000;">Ã‰tanchÃ©itÃ© Ã  la fermeture</td>
+                                        <td style="padding:5px; border:1px solid #000;">Étanchéité à la fermeture</td>
                                         <td style="text-align:center; border:1px solid #000;"><?= ($etanche_v == '1' ? 'â˜‘' : 'â˜') ?></td>
                                         <td style="text-align:center; border:1px solid #000;"><?= ($etanche_v == '0' ? 'â˜‘' : 'â˜') ?></td>
                                     </tr>
@@ -1407,7 +1407,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                         <td colspan="3" style="padding:0; border:1px solid #000;">
                                             <table style="width:100%; border-collapse:collapse; text-align:center; table-layout:fixed;">
                                                 <tr style="font-weight:bold; background:#eee;">
-                                                    <td style="width:140px; text-align:left; padding:4px; border:1px solid #000;">RelevÃ©s d'induction :</td>
+                                                    <td style="width:140px; text-align:left; padding:4px; border:1px solid #000;">Relevés d'induction :</td>
                                                     <?php for($i=1; $i<=$nbB; $i++): ?><td style="border:1px solid #000;"><?= $i ?></td><?php endfor; ?>
                                                 </tr>
                                                 <tr>
@@ -1448,7 +1448,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     return '<tr>
                         <td style="font-weight:bold; font-size:12px; width:35%;">' . htmlspecialchars($label) . '</td>
                         <td class="col-etat" style="text-align:center;">' . renderEtatRadios($key . "_radio", $donnees) . '</td>
-                        <td class="col-comment"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" placeholder="DÃ©tails..." oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
+                        <td class="col-comment"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" placeholder="Détails..." oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
                     </tr>';
                 }
                 function renderSectionHeader($title, $nbCols = 5) {
@@ -1515,7 +1515,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 }
                 function renderDiagonalHeader($nbCols = 5) {
                     $labels = ($nbCols == 5) 
-                        ? ['Pas concernÃ©', 'Correct', 'A amÃ©liorer', 'Pas correct', 'NÃ©cessite<br>remplacement']
+                        ? ['Pas concerné', 'Correct', 'A améliorer', 'Pas correct', 'Nécessite<br>remplacement']
                         : ['Bon', 'A remp.<br>sous :', 'H.S.'];
                     
                     $colsHtml = '';
@@ -1594,7 +1594,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                         <tr>
                             <td style="padding:4px; font-weight:bold;">
-                                GranulomÃ©trie : 
+                                Granulométrie : 
                                 <input type="text" name="mesures[aprf_granu]" value="<?= htmlspecialchars($mesures['aprf_granu'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;"> mm
                             </td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
@@ -1605,7 +1605,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <tr>
                             <td style="padding:4px; font-weight:bold;">
                                 Distance aimants / bande : 
-                                <input type="text" name="mesures[aprf_dist_min]" value="<?= htmlspecialchars($mesures['aprf_dist_min'] ?? '') ?>" class="pdf-input" style="width:40px; text-align:center;"> Ã  
+                                <input type="text" name="mesures[aprf_dist_min]" value="<?= htmlspecialchars($mesures['aprf_dist_min'] ?? '') ?>" class="pdf-input" style="width:40px; text-align:center;"> à 
                                 <input type="text" name="mesures[aprf_dist_max]" value="<?= htmlspecialchars($mesures['aprf_dist_max'] ?? '') ?>" class="pdf-input" style="width:40px; text-align:center;"> mm
                             </td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
@@ -1625,14 +1625,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                         <tr>
                             <td style="padding:4px; font-weight:bold;">
-                                DÃ©bit : 
+                                Débit : 
                                 <input type="text" name="mesures[aprf_debit]" value="<?= htmlspecialchars($mesures['aprf_debit'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;"> t/h
                             </td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
                                 <?= renderAprfEtatRadios("aprf_debit_stat", $donnees) ?>
                             </td>
                             <td style="padding:4px;">
-                                Avec densitÃ© de <input type="text" name="mesures[aprf_densite]" value="<?= htmlspecialchars($mesures['aprf_densite'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;">
+                                Avec densité de <input type="text" name="mesures[aprf_densite]" value="<?= htmlspecialchars($mesures['aprf_densite'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;">
                             </td>
                         </tr>
                         </tbody>
@@ -1642,7 +1642,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     <div class="pdf-section" style="margin-top:20px;">
                         <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                         <img src="/assets/machines/aprf_diagram.png"
-                            style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="SchÃ©ma APRF"
+                            style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma APRF"
                             onerror="this.style.display='none'">
                     </div>
 
@@ -1655,12 +1655,12 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?= renderDiagonalHeader(3) ?>
                         </thead>
                         <tbody>
-                            <?= renderSectionHeader("Plaques MagnÃ©tiques type PM/PML/PMN/PMNL", 3) ?>
+                            <?= renderSectionHeader("Plaques Magnétiques type PM/PML/PMN/PMNL", 3) ?>
                             <?= renderAprfRow("Satisfaction de fonctionnement", "pm_satisfaction", $donnees) ?>
-                            <?= renderAprfRow("Aspect gÃ©nÃ©ral", "pm_aspect", $donnees) ?>
+                            <?= renderAprfRow("Aspect général", "pm_aspect", $donnees) ?>
 
                             <tr>
-                                <th colspan="3" style="background:#e0e0e0; font-weight:bold; font-size:11px; border-top: 1px solid #000; border-bottom: 1px solid #000; padding:4px;">ContrÃ´le dâ€™induction :</th>
+                                <th colspan="3" style="background:#e0e0e0; font-weight:bold; font-size:11px; border-top: 1px solid #000; border-bottom: 1px solid #000; padding:4px;">Contrôle d’induction :</th>
                             </tr>
                             <?php 
                             $inductions = [
@@ -1671,7 +1671,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             foreach($inductions as $ikey => $idata): ?>
                             <tr>
                                 <td style="padding:4px; padding-left:25px; font-size:11px; width:35%;">
-                                    <span style="font-weight:bold; margin-right:5px;">âž¤</span> <?= $idata['label'] ?> 
+                                    <span style="font-weight:bold; margin-right:5px;">➤</span> <?= $idata['label'] ?> 
                                     <input type="text" name="mesures[pm_induction_<?= $ikey ?>]" value="<?= htmlspecialchars($mesures['pm_induction_' . $ikey] ?? '') ?>" style="width:50px; border:none; border-bottom:1px dashed #000; text-align:center; font-weight:bold; font-size:11px;" autocomplete="off"> 
                                     <?= $idata['suffix'] ?>
                                 </td>
@@ -1688,14 +1688,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?php 
                             $distances = [
                                 'ecrou'   => 'Ecrou M4 =',
-                                'rond50'  => 'Rond Ã˜6 Lg50 =',
-                                'rond100' => 'Rond Ã˜6 Lg100 =',
-                                'bille'   => 'Bille Ã˜20 ='
+                                'rond50'  => 'Rond Ø6 Lg50 =',
+                                'rond100' => 'Rond Ø6 Lg100 =',
+                                'bille'   => 'Bille Ø20 ='
                             ];
                             foreach($distances as $dkey => $dlabel): ?>
                             <tr>
                                 <td style="padding:4px; padding-left:25px; font-size:11px; width:35%;">
-                                    <span style="font-weight:bold; margin-right:5px;">âž¤</span> <?= $dlabel ?> 
+                                    <span style="font-weight:bold; margin-right:5px;">➤</span> <?= $dlabel ?> 
                                     <input type="text" name="mesures[pm_dist_<?= $dkey ?>]" value="<?= htmlspecialchars($mesures['pm_dist_' . $dkey] ?? '') ?>" style="width:40px; border:none; border-bottom:1px dashed #000; text-align:center; font-weight:bold; font-size:11px;" autocomplete="off"> mm
                                 </td>
                                 <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
@@ -1706,7 +1706,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?php endforeach; ?>
 
                             <tr>
-                                <td style="padding:4px; font-weight:bold; font-size:11px; width:35%;">Type dâ€™aimants : Ferrite / NÃ©odyme</td>
+                                <td style="padding:4px; font-weight:bold; font-size:11px; width:35%;">Type d’aimants : Ferrite / Néodyme</td>
                                 <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                     <?= renderEtatRadios("pm_aimants", $donnees, 3) ?>
                                 </td>
@@ -1714,7 +1714,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </tr>
                             <tr>
                                 <td style="padding:4px; font-weight:bold; font-size:11px; width:35%;">
-                                    TempÃ©rature dâ€™utilisation : Ambiante / Haute : 
+                                    Température d’utilisation : Ambiante / Haute : 
                                     <input type="text" name="mesures[pm_temp_valeur]" value="<?= htmlspecialchars($mesures['pm_temp_valeur'] ?? '') ?>" style="width:35px; border:none; border-bottom:1px dashed #000; text-align:center; font-weight:bold; font-size:11px;" autocomplete="off"> °C
                                 </td>
                                 <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
@@ -1724,7 +1724,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </tr>
 
                             <?= renderAprfRow("Etat du volet (option)", "pm_volet", $donnees) ?>
-                            <?= renderAprfRow("Etat des chÃ¢ssis (option)", "pm_chassis", $donnees) ?>
+                            <?= renderAprfRow("Etat des châssis (option)", "pm_chassis", $donnees) ?>
                             <?= renderAprfRow("Etat des ressauts (option)", "pm_ressauts", $donnees) ?>
 
                             <?= renderSectionHeader("APPLICATION CLIENT", 3) ?>
@@ -1737,7 +1737,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     <?= renderEtatRadios("pm_produit_stat", $donnees, 3) ?>
                                 </td>
                                 <td style="padding:4px; font-size:11px; color:#555;">
-                                    Aciers de <input type="text" name="mesures[pm_prod_min]" value="<?= htmlspecialchars($mesures['pm_prod_min'] ?? '') ?>" style="width:25px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off"> Ã  <input type="text" name="mesures[pm_prod_max]" value="<?= htmlspecialchars($mesures['pm_prod_max'] ?? '') ?>" style="width:25px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off"> mm
+                                    Aciers de <input type="text" name="mesures[pm_prod_min]" value="<?= htmlspecialchars($mesures['pm_prod_min'] ?? '') ?>" style="width:25px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off"> à <input type="text" name="mesures[pm_prod_max]" value="<?= htmlspecialchars($mesures['pm_prod_max'] ?? '') ?>" style="width:25px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off"> mm
                                 </td>
                             </tr>
                             <tr>
@@ -1752,14 +1752,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </tr>
                             <tr>
                                 <td style="padding:4px; font-weight:bold;">
-                                    DÃ©bit : 
+                                    Débit : 
                                     <input type="text" name="mesures[pm_debit]" value="<?= htmlspecialchars($mesures['pm_debit'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;" autocomplete="off"> t/h
                                 </td>
                                 <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
                                     <?= renderEtatRadios("pm_debit_stat", $donnees, 3) ?>
                                 </td>
                                 <td style="padding:4px; font-size:11px; color:#555;">
-                                    Avec densitÃ© de <input type="text" name="mesures[pm_densite]" value="<?= htmlspecialchars($mesures['pm_densite'] ?? '') ?>" style="width:50px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off">
+                                    Avec densité de <input type="text" name="mesures[pm_densite]" value="<?= htmlspecialchars($mesures['pm_densite'] ?? '') ?>" style="width:50px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off">
                                 </td>
                             </tr>
                             <tr>
@@ -1772,7 +1772,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                         <label><input type="radio" name="mesures[pm_atex]" value="oui" <?= ($mesures['pm_atex'] ?? '') === 'oui' ? 'checked' : '' ?>> Oui</label>
                                     </div>
                                 </td>
-                                <td style="padding:4px;"><input type="text" name="mesures[pm_atex_precision]" value="<?= htmlspecialchars($mesures['pm_atex_precision'] ?? '') ?>" placeholder="PrÃ©ciser..." style="width:100%; border:none; border-bottom:1px dashed #000; font-size:11px;" autocomplete="off"></td>
+                                <td style="padding:4px;"><input type="text" name="mesures[pm_atex_precision]" value="<?= htmlspecialchars($mesures['pm_atex_precision'] ?? '') ?>" placeholder="Préciser..." style="width:100%; border:none; border-bottom:1px dashed #000; font-size:11px;" autocomplete="off"></td>
                             </tr>
 
                         </tbody>
@@ -1781,7 +1781,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     <div style="text-align:center; margin-top:20px;">
                         <img src="/assets/machines/pm_diagram.png" 
                              style="max-width:100%; height:auto; display:block; margin:0 auto;" 
-                             alt="SchÃ©mas Plaques MagnÃ©tiques PM"
+                             alt="Schémas Plaques Magnétiques PM"
                              onerror="this.style.display='none'">
                     </div>
 
@@ -1792,10 +1792,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?= renderDiagonalHeader(3) ?>
                         </thead>
                         <tbody>
-                            <?= renderSectionHeader("SÃ©parateur Ã  grilles Ã  commande pneumatique ou manuelle", 3) ?>
+                            <?= renderSectionHeader("Séparateur à grilles à commande pneumatique ou manuelle", 3) ?>
                             <?= renderAprfRow("Satisfaction de fonctionnement", "sgcp_satisfaction", $donnees) ?>
-                            <?= renderAprfRow("Aspect gÃ©nÃ©ral", "sgcp_aspect", $donnees) ?>
-                            <?= renderAprfRow("FrÃ©quence de nettoyage", "sgcp_f", $donnees) ?>
+                            <?= renderAprfRow("Aspect général", "sgcp_aspect", $donnees) ?>
+                            <?= renderAprfRow("Fréquence de nettoyage", "sgcp_f", $donnees) ?>
 
                             <?= renderSectionHeader("APPLICATION CLIENT", 3) ?>
                             <tr>
@@ -1819,24 +1819,24 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     <?= renderEtatRadios("sgcp_granulo_stat", $donnees, 3) ?>
                                 </td>
                                 <td style="padding:8px; font-size:10px; color:#555;">
-                                    Aciers de <input type="text" name="mesures[sgcp_acier_min]" value="<?= htmlspecialchars($mesures['sgcp_acier_min'] ?? '') ?>" style="width:30px; border:none; border-bottom:1px dashed #000; text-align:center;"> Ã  <input type="text" name="mesures[sgcp_acier_max]" value="<?= htmlspecialchars($mesures['sgcp_acier_max'] ?? '') ?>" style="width:30px; border:none; border-bottom:1px dashed #000; text-align:center;"> mm
+                                    Aciers de <input type="text" name="mesures[sgcp_acier_min]" value="<?= htmlspecialchars($mesures['sgcp_acier_min'] ?? '') ?>" style="width:30px; border:none; border-bottom:1px dashed #000; text-align:center;"> à <input type="text" name="mesures[sgcp_acier_max]" value="<?= htmlspecialchars($mesures['sgcp_acier_max'] ?? '') ?>" style="width:30px; border:none; border-bottom:1px dashed #000; text-align:center;"> mm
                                 </td>
                             </tr>
                             <tr>
                                 <td style="padding:8px; font-weight:bold;">
-                                    DÃ©bit : 
+                                    Débit : 
                                     <input type="text" name="mesures[sgcp_debit]" value="<?= htmlspecialchars($mesures['sgcp_debit'] ?? '') ?>" style="width:60px; border:none; border-bottom:1px solid #000; text-align:center; margin-left:5px;"> t/h
                                 </td>
                                 <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                     <?= renderEtatRadios("sgcp_debit_stat", $donnees, 3) ?>
                                 </td>
                                 <td style="padding:8px; font-size:10px; color:#555;">
-                                    Avec densitÃ© de <input type="text" name="mesures[sgcp_densite]" value="<?= htmlspecialchars($mesures['sgcp_densite'] ?? '') ?>" style="width:60px; border:none; border-bottom:1px dashed #000; text-align:center;">
+                                    Avec densité de <input type="text" name="mesures[sgcp_densite]" value="<?= htmlspecialchars($mesures['sgcp_densite'] ?? '') ?>" style="width:60px; border:none; border-bottom:1px dashed #000; text-align:center;">
                                 </td>
                             </tr>
                             <tr>
                                 <td style="padding:8px; font-weight:bold;">
-                                    Environnement Atex ? Non â€“ Oui :
+                                    Environnement Atex ? Non — Oui :
                                     <input type="text" name="mesures[sgcp_atex]" value="<?= htmlspecialchars($mesures['sgcp_atex'] ?? '') ?>" style="width:100px; border:none; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
                                 </td>
                                 <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
@@ -1855,7 +1855,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                         </div>
                                         
                                         <?php 
-                                            // DÃ©terminer dynamiquement le nombre de barreaux Ã  afficher
+                                            // Déterminer dynamiquement le nombre de barreaux à afficher
                                             $nbB_sgcp = intval($mesures['sgcp_e'.$e.'_nb'] ?? 0);
                                             if ($nbB_sgcp <= 0) {
                                                 if (isset($_GET['pdf'])) {
@@ -1863,9 +1863,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                                                     for ($check=11; $check>=1; $check--) {
                                                         if (!empty($mesures['sgcp_e'.$e.'_b'.$check])) { $nbB_sgcp = $check; break; }
                                                     }
-                                                    if ($nbB_sgcp === 0) $nbB_sgcp = 11; // Fallback par dÃ©faut
+                                                    if ($nbB_sgcp === 0) $nbB_sgcp = 11; // Fallback par défaut
                                                 } else {
-                                                    $nbB_sgcp = 11; // Editor : on affiche tout par dÃ©faut
+                                                    $nbB_sgcp = 11; // Editor : on affiche tout par défaut
                                                 }
                                             }
                                         ?>
@@ -1896,22 +1896,22 @@ foreach ($recoFreq as $rfk => $rfv) {
                                         </div>
                                     </td>
                                     <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
-                                        <div style="margin-bottom:8px; font-size:9px; color:#888; font-weight:bold; letter-spacing:0.5px;">Ã‰TAT GLOBAL Ã‰TAGE</div>
+                                        <div style="margin-bottom:8px; font-size:9px; color:#888; font-weight:bold; letter-spacing:0.5px;">ÉTAT GLOBAL ÉTAGE</div>
                                         <?= renderEtatRadios("sgcp_e".$e."_stat", $donnees, 3) ?>
                                     </td>
                                     <td style="padding:0; vertical-align:top; width:30%;">
-                                        <textarea name="donnees[sgcp_e<?= $e ?>_comment]" class="pdf-textarea" style="height:100%; min-height:140px; border:none; width:100%; box-sizing:border-box; padding:8px;" placeholder="Observation Ã©tage <?= $e ?>..."><?= htmlspecialchars($donnees["sgcp_e".$e."_comment"] ?? '') ?></textarea>
+                                        <textarea name="donnees[sgcp_e<?= $e ?>_comment]" class="pdf-textarea" style="height:100%; min-height:140px; border:none; width:100%; box-sizing:border-box; padding:8px;" placeholder="Observation étage <?= $e ?>..."><?= htmlspecialchars($donnees["sgcp_e".$e."_comment"] ?? '') ?></textarea>
                                     </td>
                                 </tr>
                                 <?= renderAprfRow("Coulissement des barreaux", "sgcp_e".$e."_coulissement", $donnees) ?>
-                                <?= renderAprfRow("EtanchÃ©itÃ© du tiroir Ã  la fermeture", "sgcp_e".$e."_etancheite", $donnees) ?>
+                                <?= renderAprfRow("Étanchéité du tiroir à la fermeture", "sgcp_e".$e."_etancheite", $donnees) ?>
                             <?php endfor; ?>
 
                         </tbody>
                     </table>
 
                     <div style="display:flex; flex-direction:column; align-items:center; gap:20px; margin-top:30px; page-break-inside:avoid; break-inside:avoid;">
-                        <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="width:100%; margin-top:0; text-align:left;">B) DESCRIPTION DU MATÃ‰RIEL :</div>'; $titleB_printed = true; } ?>
+                        <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="width:100%; margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                         <div style="text-align:center; width:100%;">
                             <p style="font-weight:bold; margin-bottom:5px; color:#ed7d31; text-align:left; border-bottom:1px solid #5b9bd5; padding-bottom:5px;">SGCP :</p>
                             <img src="/assets/machines/sgcp_diagram.png" 
@@ -1974,7 +1974,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     <?= renderEtatRadios("sgsa_debit_stat", $donnees, 3) ?>
                                 </td>
                                 <td style="padding:8px; font-size:10px; color:#555;">
-                                    Avec densitÃ© de <input type="text" name="mesures[sgsa_densite]" value="<?= htmlspecialchars($mesures['sgsa_densite'] ?? '') ?>" style="width:60px; border:none; border-bottom:1px dashed #000; text-align:center;">
+                                    Avec densité de <input type="text" name="mesures[sgsa_densite]" value="<?= htmlspecialchars($mesures['sgsa_densite'] ?? '') ?>" style="width:60px; border:none; border-bottom:1px dashed #000; text-align:center;">
                                 </td>
                             </tr>
                             <tr>
@@ -2011,7 +2011,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                         
                                         <?php 
                                             $nbB_sgsa = intval($mesures['sgsa_e'.$e.'_nb'] ?? 0);
-                                            // Par dÃ©faut, si non dÃ©fini, on montre au moins ce qui est dÃ©jÃ  rempli
+                                            // Par défaut, si non défini, on montre au moins ce qui est déjà rempli
                                             if ($nbB_sgsa <= 0) {
                                                 for ($check=10; $check>=1; $check--) {
                                                     if (!empty($mesures['sgsa_e'.$e.'_b'.$check])) { $nbB_sgsa = $check; break; }
@@ -2056,15 +2056,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                                         </div>
                                     </td>
                                     <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
-                                        <div style="margin-bottom:8px; font-size:9px; color:#888; font-weight:bold; letter-spacing:0.5px;">Ã‰TAT GLOBAL Ã‰TAGE</div>
+                                        <div style="margin-bottom:8px; font-size:9px; color:#888; font-weight:bold; letter-spacing:0.5px;">ÉTAT GLOBAL ÉTAGE</div>
                                         <?= renderEtatRadios("sgsa_e".$e."_stat", $donnees, 3) ?>
                                     </td>
                                     <td style="padding:0; vertical-align:top; width:30%;">
-                                        <textarea name="donnees[sgsa_e<?= $e ?>_comment]" class="pdf-textarea" style="height:100%; min-height:140px; border:none; width:100%; box-sizing:border-box; padding:8px;" placeholder="Observation Ã©tage <?= $e ?>..."><?= htmlspecialchars($donnees["sgsa_e".$e."_comment"] ?? '') ?></textarea>
+                                        <textarea name="donnees[sgsa_e<?= $e ?>_comment]" class="pdf-textarea" style="height:100%; min-height:140px; border:none; width:100%; box-sizing:border-box; padding:8px;" placeholder="Observation étage <?= $e ?>..."><?= htmlspecialchars($donnees["sgsa_e".$e."_comment"] ?? '') ?></textarea>
                                     </td>
                                 </tr>
                                 <?= renderAprfRow("Coulissement des tiroirs", "sgsa_e".$e."_coulissement", $donnees) ?>
-                                <?= renderAprfRow("EtanchÃ©itÃ© du tiroir Ã  la fermeture", "sgsa_e".$e."_etancheite", $donnees) ?>
                                 <?= renderAprfRow("Étanchéité du tiroir à la fermeture", "sgsa_e".$e."_etancheite", $donnees) ?>
                             <?php endfor; ?>
                         </tbody>
@@ -2545,12 +2544,12 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?= renderDiagonalHeader(3) ?>
                         </thead>
                         <tbody>
-                            <?= renderSectionHeader("CÃ´ne magnÃ©tique", 3) ?>
+                            <?= renderSectionHeader("Cône magnétique", 3) ?>
                             <?= renderAprfRow("Satisfaction de fonctionnement", "srm_satisfaction", $donnees) ?>
-                            <?= renderAprfRow("Aspect gÃ©nÃ©ral", "srm_aspect", $donnees) ?>
-                            <?= renderAprfRow("Ã‰tanchÃ©itÃ© de la porte", "srm_etanch_porte", $donnees) ?>
+                            <?= renderAprfRow("Aspect général", "srm_aspect", $donnees) ?>
+                            <?= renderAprfRow("Étanchéité de la porte", "srm_etanch_porte", $donnees) ?>
                             <tr>
-                                <td style="padding:4px; font-weight:bold;">PrÃ©sence d'un dÃ©tecteur d'ouverture OUI / NON</td>
+                                <td style="padding:4px; font-weight:bold;">Présence d'un détecteur d'ouverture OUI / NON</td>
                                 <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
                                     <div style="display:flex; justify-content:center; gap:10px; font-size:10px;">
                                         <label><input type="radio" name="mesures[srm_detecteur]" value="non" <?= ($mesures['srm_detecteur'] ?? '') === 'non' ? 'checked' : '' ?>> Non</label>
@@ -2559,26 +2558,26 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 </td>
                                 <td style="padding:0;"><textarea name="donnees[srm_detecteur_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($donnees["srm_detecteur_comment"] ?? '') ?></textarea></td>
                             </tr>
-                            <?= renderAprfRow("Ã‰tanchÃ©itÃ© des brides Sup + Inf", "srm_etanch_brides", $donnees) ?>
-                            <?= renderAprfRow("Etat des charniÃ¨res et du verrouillage", "srm_charnieres", $donnees) ?>
+                            <?= renderAprfRow("Étanchéité des brides Sup + Inf", "srm_etanch_brides", $donnees) ?>
+                            <?= renderAprfRow("Etat des charnières et du verrouillage", "srm_charnieres", $donnees) ?>
 
-                            <?= renderSectionHeader("ContrÃ´le d'induction :", 3) ?>
+                            <?= renderSectionHeader("Contrôle d'induction :", 3) ?>
                             <tr>
-                                <td style="padding:4px; font-weight:bold;">âž¤ P1 = <input type="text" name="mesures[srm_induction_p1]" value="<?= htmlspecialchars($mesures['srm_induction_p1'] ?? '') ?>" class="pdf-input" style="width:100px; text-align:center;" autocomplete="off"> Gauss</td>
+                                <td style="padding:4px; font-weight:bold;">➤ P1 = <input type="text" name="mesures[srm_induction_p1]" value="<?= htmlspecialchars($mesures['srm_induction_p1'] ?? '') ?>" class="pdf-input" style="width:100px; text-align:center;" autocomplete="off"> Gauss</td>
                                 <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
                                     <?= renderEtatRadios("srm_induction_p1_stat", $donnees, 3) ?>
                                 </td>
                                 <td style="padding:0;"><textarea name="donnees[srm_induction_p1_stat_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($donnees["srm_induction_p1_stat_comment"] ?? '') ?></textarea></td>
                             </tr>
                             <tr>
-                                <td style="padding:4px; font-weight:bold;">âž¤ P2 = <input type="text" name="mesures[srm_induction_p2]" value="<?= htmlspecialchars($mesures['srm_induction_p2'] ?? '') ?>" class="pdf-input" style="width:100px; text-align:center;" autocomplete="off"> Gauss</td>
+                                <td style="padding:4px; font-weight:bold;">➤ P2 = <input type="text" name="mesures[srm_induction_p2]" value="<?= htmlspecialchars($mesures['srm_induction_p2'] ?? '') ?>" class="pdf-input" style="width:100px; text-align:center;" autocomplete="off"> Gauss</td>
                                 <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
                                     <?= renderEtatRadios("srm_induction_p2_stat", $donnees, 3) ?>
                                 </td>
                                 <td style="padding:0;"><textarea name="donnees[srm_induction_p2_stat_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($donnees["srm_induction_p2_stat_comment"] ?? '') ?></textarea></td>
                             </tr>
                             <tr>
-                                <td style="padding:4px; font-weight:bold;">âž¤ P3 = <input type="text" name="mesures[srm_induction_p3]" value="<?= htmlspecialchars($mesures['srm_induction_p3'] ?? '') ?>" class="pdf-input" style="width:100px; text-align:center;" autocomplete="off"> Gauss</td>
+                                <td style="padding:4px; font-weight:bold;">➤ P3 = <input type="text" name="mesures[srm_induction_p3]" value="<?= htmlspecialchars($mesures['srm_induction_p3'] ?? '') ?>" class="pdf-input" style="width:100px; text-align:center;" autocomplete="off"> Gauss</td>
                                 <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
                                     <?= renderEtatRadios("srm_induction_p3_stat", $donnees, 3) ?>
                                 </td>
@@ -2586,11 +2585,11 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </tr>
 
                             <tr>
-                                <td style="padding:4px; font-weight:bold;">Type d'aimants : Ferrite / NÃ©odyme</td>
+                                <td style="padding:4px; font-weight:bold;">Type d'aimants : Ferrite / Néodyme</td>
                                 <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
                                     <div style="display:flex; justify-content:center; gap:10px; font-size:10px;">
                                         <label><input type="radio" name="mesures[srm_aimants]" value="ferrite" <?= ($mesures['srm_aimants'] ?? '') === 'ferrite' ? 'checked' : '' ?>> Ferrite</label>
-                                        <label><input type="radio" name="mesures[srm_aimants]" value="neodyme" <?= ($mesures['srm_aimants'] ?? '') === 'neodyme' ? 'checked' : '' ?>> NÃ©odyme</label>
+                                        <label><input type="radio" name="mesures[srm_aimants]" value="neodyme" <?= ($mesures['srm_aimants'] ?? '') === 'neodyme' ? 'checked' : '' ?>> Néodyme</label>
                                     </div>
                                 </td>
                                 <td style="padding:0;"><textarea name="donnees[srm_aimants_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($donnees["srm_aimants_comment"] ?? '') ?></textarea></td>
@@ -2607,7 +2606,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <td style="padding:0;"><textarea name="donnees[srm_temperature_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($donnees["srm_temperature_comment"] ?? '') ?></textarea></td>
                             </tr>
 
-                            <?= renderAprfRow("Etat du cÃ´ne de sÃ©paration", "srm_cone_separation", $donnees) ?>
+                            <?= renderAprfRow("Etat du cône de séparation", "srm_cone_separation", $donnees) ?>
 
                             <?= renderSectionHeader("APPLICATION CLIENT", 3) ?>
                             <tr>
@@ -2619,7 +2618,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     <?= renderEtatRadios("srm_produit_stat", $donnees, 3) ?>
                                 </td>
                                 <td style="padding:4px; font-size:11px; color:#555;">
-                                    Aciers de <input type="text" name="mesures[srm_prod_min]" value="<?= htmlspecialchars($mesures['srm_prod_min'] ?? '') ?>" style="width:25px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off"> Ã  <input type="text" name="mesures[srm_prod_max]" value="<?= htmlspecialchars($mesures['srm_prod_max'] ?? '') ?>" style="width:25px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off"> mm
+                                    Aciers de <input type="text" name="mesures[srm_prod_min]" value="<?= htmlspecialchars($mesures['srm_prod_min'] ?? '') ?>" style="width:25px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off"> à <input type="text" name="mesures[srm_prod_max]" value="<?= htmlspecialchars($mesures['srm_prod_max'] ?? '') ?>" style="width:25px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off"> mm
                                 </td>
                             </tr>
                             <tr>
@@ -2634,14 +2633,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </tr>
                             <tr>
                                 <td style="padding:4px; font-weight:bold;">
-                                    DÃ©bit : 
+                                    Débit : 
                                     <input type="text" name="mesures[srm_debit]" value="<?= htmlspecialchars($mesures['srm_debit'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;" autocomplete="off"> t/h
                                 </td>
                                 <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
                                     <?= renderEtatRadios("srm_debit_stat", $donnees, 3) ?>
                                 </td>
                                 <td style="padding:4px; font-size:11px; color:#555;">
-                                    Avec densitÃ© de <input type="text" name="mesures[srm_densite]" value="<?= htmlspecialchars($mesures['srm_densite'] ?? '') ?>" style="width:50px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off">
+                                    Avec densité de <input type="text" name="mesures[srm_densite]" value="<?= htmlspecialchars($mesures['srm_densite'] ?? '') ?>" style="width:50px; border:none; border-bottom:1px dashed #000; text-align:center;" autocomplete="off">
                                 </td>
                             </tr>
                             <tr>
@@ -2654,11 +2653,11 @@ foreach ($recoFreq as $rfk => $rfv) {
                                         <label><input type="radio" name="mesures[srm_atex]" value="oui" <?= ($mesures['srm_atex'] ?? '') === 'oui' ? 'checked' : '' ?>> Oui</label>
                                     </div>
                                 </td>
-                                <td style="padding:4px;"><input type="text" name="mesures[srm_atex_precision]" value="<?= htmlspecialchars($mesures['srm_atex_precision'] ?? '') ?>" placeholder="PrÃ©ciser..." style="width:100%; border:none; border-bottom:1px dashed #000; font-size:11px;" autocomplete="off"></td>
+                                <td style="padding:4px;"><input type="text" name="mesures[srm_atex_precision]" value="<?= htmlspecialchars($mesures['srm_atex_precision'] ?? '') ?>" placeholder="Préciser..." style="width:100%; border:none; border-bottom:1px dashed #000; font-size:11px;" autocomplete="off"></td>
                             </tr>
 
                             <tr>
-                                <td style="padding:4px; font-weight:bold;">Commentaire gÃ©nÃ©ral :</td>
+                                <td style="padding:4px; font-weight:bold;">Commentaire général :</td>
                                 <td colspan="2" style="padding:0;">
                                     <textarea name="mesures[srm_commentaire_general]" class="pdf-textarea" style="height:60px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($mesures["srm_commentaire_general"] ?? '') ?></textarea>
                                 </td>
@@ -2685,47 +2684,47 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?= renderDiagonalHeader(5) ?>
                         </thead>
                         <tbody>
-                        <?= renderSectionHeader("Environnement / Aspect gÃ©nÃ©ral", 5) ?>
-                         <?= renderEdxRow("AccÃ¨s au sÃ©parateur", "edx_acces", $donnees) ?>
-                        <?= renderEdxRow("Etat gÃ©nÃ©ral du sÃ©parateur", "edx_etat_gen", $donnees) ?>
+                        <?= renderSectionHeader("Environnement / Aspect général", 5) ?>
+                         <?= renderEdxRow("Accès au séparateur", "edx_acces", $donnees) ?>
+                        <?= renderEdxRow("Etat général du séparateur", "edx_etat_gen", $donnees) ?>
 
                         <?= renderSectionHeader("Partie A - Convoyeur", 5) ?>
-                        <?= renderEdxRow("Etat gÃ©nÃ©ral des verrous", "edx_verrous", $donnees) ?>
-                        <?= renderEdxRow("Etat gÃ©nÃ©ral des grenouillÃ¨res", "edx_grenouilles", $donnees) ?>
-                        <?= renderEdxRow("Etat gÃ©nÃ©ral des poignÃ©es de portes", "edx_poignees", $donnees) ?>
-                        <?= renderEdxRow("Etat gÃ©nÃ©ral des carters de protection/ des portes", "edx_carters", $donnees) ?>
-                        <?= renderEdxRow("Aspect gÃ©nÃ©ral intÃ©rieur sÃ©parateur", "edx_int_sep", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le visuel des Ã©tanchÃ©itÃ©s latÃ©rales", "edx_etanch", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le visuel Ã©tat extÃ©rieur de la bande", "edx_bande_ext", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le visuel Ã©tat intÃ©rieur de la bande", "edx_bande_int", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le de la tension de bande", "edx_tension_bande", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le Ã©tat des rouleaux anti-dÃ©port de bande", "edx_rlx_anti", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le Ã©tat des dÃ©tecteurs de dÃ©port de bande", "edx_detecteurs", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le Ã©tat des guides TEFLON / tÃ´le INOX dÃ©port de bande", "edx_guides", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le Ã©tat du racleur de bande", "edx_racleur", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le rÃ©glage du racleur de bande", "edx_racleur_regl", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le rÃ©glage des paliers PHUSE-TENDEURS", "edx_paliers_phuse", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le Ã©tat du tambour moteur", "edx_tambour", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le visuel fibre virole roue polaire", "edx_virole", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le visuel Ã©tat dÃ©flecteur carbone roue polaire", "edx_deflecteur", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le visuel Ã©tat caisson roue polaire", "edx_caisson_roue", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le Ã©tat gÃ©nÃ©ral des vis de fixation virole fibre", "edx_vis_virole", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le Ã©tat du contrÃ´leur de rotation", "edx_ctrl_rot", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le et repÃ¨re du rÃ©glage du 3Ã¨me rouleau, ajustement bande", "edx_3e_rouleau", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le Ã©tat des rouleaux \"mines\"", "edx_rlx_mines", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le Ã©tat du motorÃ©ducteur entraÃ®nement bande", "edx_motor", $donnees) ?>
-                        <?= renderEdxRow("DÃ©montage carter de protection (courroie/accouplement) moteur entraÃ®nement roue polaire", "edx_dem_carter", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le Ã©tat des courroies", "edx_courroies", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le tension des courroies", "edx_tens_courroies", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le Ã©tat accouplement", "edx_accoupl", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le alignement moteur", "edx_align_mot", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le Ã©tat des paliers/roulements de la virole fibre", "edx_pal_fibre", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le graissage des paliers/roulements de la virole fibre", "edx_graiss_fibre", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le Ã©tat des paliers/roulements de la roue polaire", "edx_pal_roue", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le graissage des paliers/roulements de la roue polaire", "edx_graiss_roue", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le induction roue polaire", "edx_induc_roue", $donnees) ?>
-                        <?= renderEdxRow("Etat gÃ©nÃ©ral des cÃ¢bles d'alimentation, boÃ®tiers de raccordement, connexion", "edx_cables", $donnees) ?>
-                        <?= renderEdxRow("Nettoyage complet de l'intÃ©rieur du sÃ©parateur", "edx_nettoyage", $donnees) ?>
+                        <?= renderEdxRow("Etat général des verrous", "edx_verrous", $donnees) ?>
+                        <?= renderEdxRow("Etat général des grenouillères", "edx_grenouilles", $donnees) ?>
+                        <?= renderEdxRow("Etat général des poignées de portes", "edx_poignees", $donnees) ?>
+                        <?= renderEdxRow("Etat général des carters de protection/ des portes", "edx_carters", $donnees) ?>
+                        <?= renderEdxRow("Aspect général intérieur séparateur", "edx_int_sep", $donnees) ?>
+                        <?= renderEdxRow("Contrôle visuel des étanchéités latérales", "edx_etanch", $donnees) ?>
+                        <?= renderEdxRow("Contrôle visuel état extérieur de la bande", "edx_bande_ext", $donnees) ?>
+                        <?= renderEdxRow("Contrôle visuel état intérieur de la bande", "edx_bande_int", $donnees) ?>
+                        <?= renderEdxRow("Contrôle de la tension de bande", "edx_tension_bande", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état des rouleaux anti-déport de bande", "edx_rlx_anti", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état des détecteurs de déport de bande", "edx_detecteurs", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état des guides TEFLON / tôle INOX déport de bande", "edx_guides", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état du racleur de bande", "edx_racleur", $donnees) ?>
+                        <?= renderEdxRow("Contrôle réglage du racleur de bande", "edx_racleur_regl", $donnees) ?>
+                        <?= renderEdxRow("Contrôle réglage des paliers PHUSE-TENDEURS", "edx_paliers_phuse", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état du tambour moteur", "edx_tambour", $donnees) ?>
+                        <?= renderEdxRow("Contrôle visuel fibre virole roue polaire", "edx_virole", $donnees) ?>
+                        <?= renderEdxRow("Contrôle visuel état déflecteur carbone roue polaire", "edx_deflecteur", $donnees) ?>
+                        <?= renderEdxRow("Contrôle visuel état caisson roue polaire", "edx_caisson_roue", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état général des vis de fixation virole fibre", "edx_vis_virole", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état du contrôleur de rotation", "edx_ctrl_rot", $donnees) ?>
+                        <?= renderEdxRow("Contrôle et repère du réglage du 3ème rouleau, ajustement bande", "edx_3e_rouleau", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état des rouleaux \"mines\"", "edx_rlx_mines", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état du motoréducteur entraînement bande", "edx_motor", $donnees) ?>
+                        <?= renderEdxRow("Démontage carter de protection (courroie/accouplement) moteur entraînement roue polaire", "edx_dem_carter", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état des courroies", "edx_courroies", $donnees) ?>
+                        <?= renderEdxRow("Contrôle tension des courroies", "edx_tens_courroies", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état accouplement", "edx_accoupl", $donnees) ?>
+                        <?= renderEdxRow("Contrôle alignement moteur", "edx_align_mot", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état des paliers/roulements de la virole fibre", "edx_pal_fibre", $donnees) ?>
+                        <?= renderEdxRow("Contrôle graissage des paliers/roulements de la virole fibre", "edx_graiss_fibre", $donnees) ?>
+                        <?= renderEdxRow("Contrôle état des paliers/roulements de la roue polaire", "edx_pal_roue", $donnees) ?>
+                        <?= renderEdxRow("Contrôle graissage des paliers/roulements de la roue polaire", "edx_graiss_roue", $donnees) ?>
+                        <?= renderEdxRow("Contrôle induction roue polaire", "edx_induc_roue", $donnees) ?>
+                        <?= renderEdxRow("Etat général des câbles d'alimentation, boîtiers de raccordement, connexion", "edx_cables", $donnees) ?>
+                        <?= renderEdxRow("Nettoyage complet de l'intérieur du séparateur", "edx_nettoyage", $donnees) ?>
                         <?= renderEdxRow("Remontage des carters de protection/portes", "edx_remontage", $donnees) ?>
                         </tbody>
                     </table>
@@ -2765,61 +2764,61 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderEdxRow("Aspect général armoire électrique", "edx_C_arm", $donnees) ?>
                         <?= renderEdxRow("Aspect général boutonnerie façade armoire", "edx_C_bout", $donnees) ?>
                         <?= renderEdxRow("Etat général AU séparateur", "edx_C_au", $donnees) ?>
-                        <?= renderEdxRow("Ouverture armoire Ã©lectrique", "edx_C_ouvert", $donnees) ?>
+                        <?= renderEdxRow("Ouverture armoire électrique", "edx_C_ouvert", $donnees) ?>
                         <?= renderEdxRow("Etat général intérieur armoire électrique", "edx_C_int", $donnees) ?>
 
                         <tr>
                             <th colspan="3" style="background:#e0e0e0; font-weight:normal;">Sous Tension</th>
                         </tr>
-                        <?= renderEdxRow("Vitesse bande relevÃ©e", "edx_C_vit_b", $donnees) ?>
+                        <?= renderEdxRow("Vitesse bande relevée", "edx_C_vit_b", $donnees) ?>
                         <?= renderEdxRow("Vitesse bande conforme process", "edx_C_vit_b_conf", $donnees) ?>
-                        <?= renderEdxRow("Nouveaux rÃ©glages rÃ©alisÃ©s", "edx_C_regl1", $donnees) ?>
-                        <?= renderEdxRow("Vitesse roue polaire relevÃ©e", "edx_C_vit_r", $donnees) ?>
+                        <?= renderEdxRow("Nouveaux réglages réalisés", "edx_C_regl1", $donnees) ?>
+                        <?= renderEdxRow("Vitesse roue polaire relevée", "edx_C_vit_r", $donnees) ?>
                         <?= renderEdxRow("Vitesse roue polaire conforme aux process", "edx_C_vit_r_conf", $donnees) ?>
-                        <?= renderEdxRow("Nouveaux rÃ©glages rÃ©alisÃ©s", "edx_C_regl2", $donnees) ?>
-                        <?= renderEdxRow("Nouveaux rÃ©glages volet de sÃ©paration", "edx_C_regl3", $donnees) ?>
-                        <?= renderEdxRow("ContrÃ´le freinage roue polaire", "edx_C_frein", $donnees) ?>
-                        <?= renderEdxRow("Temps de freinage constatÃ©", "edx_C_temps", $donnees) ?>
-                        <?= renderEdxRow("VÃ©rification des serrages cÃ¢bles de l'armoire", "edx_C_cables", $donnees) ?>
-                        <?= renderEdxRow("Fermeture de l'armoire Ã©lectrique", "edx_C_ferm", $donnees) ?>
+                        <?= renderEdxRow("Nouveaux réglages réalisés", "edx_C_regl2", $donnees) ?>
+                        <?= renderEdxRow("Nouveaux réglages volet de séparation", "edx_C_regl3", $donnees) ?>
+                        <?= renderEdxRow("Contrôle freinage roue polaire", "edx_C_frein", $donnees) ?>
+                        <?= renderEdxRow("Temps de freinage constaté", "edx_C_temps", $donnees) ?>
+                        <?= renderEdxRow("Vérification des serrages cÃ¢bles de l'armoire", "edx_C_cables", $donnees) ?>
+                        <?= renderEdxRow("Fermeture de l'armoire électrique", "edx_C_ferm", $donnees) ?>
                         </tbody>
                     </table>
 
                     <?= newPdfPage() ?>
-                    <div style="margin-top:20px; font-weight:bold; font-size:11px;">Commentaire gÃ©nÃ©ral :</div>
+                    <div style="margin-top:20px; font-weight:bold; font-size:11px;">Commentaire général :</div>
                     <textarea name="commentaires" class="pdf-textarea"
                         style="height:100px; padding:5px; margin-top:5px; border:1px solid #000; width:100%; box-sizing:border-box;"><?= htmlspecialchars($machine['commentaires']) ?></textarea>
 
                     <table class="pdf-table controles" style="font-size:11px; margin-top:20px;">
                         <tr>
-                            <th colspan="6" style="background:#5b9bd5; color:white; font-size:10px;">En prÃ©sence du client /
-                                Rappel des frÃ©quences de nettoyage et des diffÃ©rents points de contrÃ´le</th>
+                            <th colspan="6" style="background:#5b9bd5; color:white; font-size:10px;">En présence du client /
+                                Rappel des fréquences de nettoyage et des différents points de contrôle</th>
                         </tr>
                         <tr>
-                            <th style="width:40%;">ContrÃ´le</th>
+                            <th style="width:40%;">Contrôle</th>
                             <th style="text-align:center;">Quotidien</th>
                             <th style="text-align:center;">Hebdomadaire</th>
                             <th style="text-align:center;">Mensuel</th>
                             <th style="text-align:center;">Annuel</th>
                             <th style="width:25%;">Commentaires</th>
                         </tr>
-                        <?= renderFreqRowEdx("ContrÃ´le visuel de la bande", "edx_freq_bande", $donnees) ?>
-                        <?= renderFreqRowEdx("ContrÃ´le visuel de la virole en fibre Ã©poxy", "edx_freq_virole", $donnees) ?>
-                        <?= renderFreqRowEdx("ContrÃ´le visuel du tambour moteur", "edx_freq_tamb", $donnees) ?>
-                        <?= renderFreqRowEdx("ContrÃ´le Ã©chauffement des paliers", "edx_freq_pal", $donnees) ?>
+                        <?= renderFreqRowEdx("Contrôle visuel de la bande", "edx_freq_bande", $donnees) ?>
+                        <?= renderFreqRowEdx("Contrôle visuel de la virole en fibre époxy", "edx_freq_virole", $donnees) ?>
+                        <?= renderFreqRowEdx("Contrôle visuel du tambour moteur", "edx_freq_tamb", $donnees) ?>
+                        <?= renderFreqRowEdx("Contrôle échauffement des paliers", "edx_freq_pal", $donnees) ?>
                         <?= renderFreqRowEdx("Graissage des paliers", "edx_freq_graiss", $donnees) ?>
-                        <?= renderFreqRowEdx("Nettoyage de l'intÃ©rieur du sÃ©parateur - partie convoyage", "edx_freq_net_conv", $donnees) ?>
-                        <?= renderFreqRowEdx("Nettoyage de l'intÃ©rieur du sÃ©parateur - partie caisson de sÃ©paration", "edx_freq_net_cais", $donnees) ?>
+                        <?= renderFreqRowEdx("Nettoyage de l'intérieur du séparateur - partie convoyage", "edx_freq_net_conv", $donnees) ?>
+                        <?= renderFreqRowEdx("Nettoyage de l'intérieur du séparateur - partie caisson de séparation", "edx_freq_net_cais", $donnees) ?>
                     </table>
 
                     <div class="pdf-section" style="margin-top:20px;">
                         <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                         <img src="/assets/machines/edx_diagram.png"
-                            style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="SchÃ©ma ED-X"
+                            style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma ED-X"
                             onerror="this.style.display='none'">
 
                         <img src="/assets/machines/edx_diagram_2.png"
-                            style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="SchÃ©ma ED-X (Suite)"
+                            style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma ED-X (Suite)"
                             onerror="this.style.display='none'">
                     </div>
 
@@ -2832,29 +2831,29 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?= renderDiagonalHeader(5) ?>
                         </thead>
                         <tbody>
-                        <?= renderSectionHeader("Environnement / Aspect gÃ©nÃ©ral", 5) ?>
-                        <?= renderOvRow("AccÃ¨s au sÃ©parateur", "ov_acces", $donnees) ?>
-                        <?= renderOvRow("Etat gÃ©nÃ©ral du sÃ©parateur", "ov_etat_gen", $donnees) ?>
+                        <?= renderSectionHeader("Environnement / Aspect général", 5) ?>
+                        <?= renderOvRow("Accès au séparateur", "ov_acces", $donnees) ?>
+                        <?= renderOvRow("Etat général du séparateur", "ov_etat_gen", $donnees) ?>
 
-                        <?= renderSectionHeader("Partie A - Le sÃ©parateur", 5) ?>
+                        <?= renderSectionHeader("Partie A - Le séparateur", 5) ?>
                         <?= renderOvRow("Etat de la bande", "ov_bande", $donnees) ?>
-                        <?= renderOvRow("PrÃ©sence des protections latÃ©rales", "ov_pres_prot", $donnees) ?>
-                        <?= renderOvRow("Etat des protections latÃ©rales", "ov_etat_prot", $donnees) ?>
-                        <?= renderOvRow("PrÃ©sences des dÃ©flecteurs", "ov_pres_def", $donnees) ?>
-                        <?= renderOvRow("Etat des dÃ©flecteurs", "ov_etat_def", $donnees) ?>
+                        <?= renderOvRow("Présence des protections latérales", "ov_pres_prot", $donnees) ?>
+                        <?= renderOvRow("Etat des protections latérales", "ov_etat_prot", $donnees) ?>
+                        <?= renderOvRow("Présences des déflecteurs", "ov_pres_def", $donnees) ?>
+                        <?= renderOvRow("Etat des déflecteurs", "ov_etat_def", $donnees) ?>
                         <?= renderOvRow("Etat de la boulonnerie", "ov_boulon", $donnees) ?>
                         <?= renderOvRow("Etat des longerons", "ov_longeron", $donnees) ?>
-                        <?= renderOvRow("Etat des cÃ¢bles et presse-Ã©toupes", "ov_cables", $donnees) ?>
-                        <?= renderOvRow("ModÃ¨le et Ã©tat du moteur", "ov_moteur", $donnees) ?>
+                        <?= renderOvRow("Etat des câbles et presse-étoupes", "ov_cables", $donnees) ?>
+                        <?= renderOvRow("Modèle et état du moteur", "ov_moteur", $donnees) ?>
                         <?= renderOvRow("Etat du bras de couple", "ov_couple", $donnees) ?>
-                        <?= renderOvRow("Etat du contrÃ´leur de rotation", "ov_ctrl", $donnees) ?>
-                        <?= renderOvRow("Etat des galets anti-dÃ©port de bande", "ov_galets", $donnees) ?>
-                        <?= renderOvRow("Etat des dÃ©tecteurs anti-dÃ©port de bande", "ov_detect", $donnees) ?>
+                        <?= renderOvRow("Etat du contrôleur de rotation", "ov_ctrl", $donnees) ?>
+                        <?= renderOvRow("Etat des galets anti-déport de bande", "ov_galets", $donnees) ?>
+                        <?= renderOvRow("Etat des détecteurs anti-déport de bande", "ov_detect", $donnees) ?>
                         <?= renderOvRow("Etat des paliers PHUSE tendeurs", "ov_pal_phuse", $donnees) ?>
-                        <?= renderOvRow("Etat des paliers du tambour motorisÃ©", "ov_pal_mot", $donnees) ?>
+                        <?= renderOvRow("Etat des paliers du tambour motorisé", "ov_pal_mot", $donnees) ?>
                         <?= renderOvRow("Etat du caisson en acier inoxydable", "ov_caisson", $donnees) ?>
-                        <?= renderOvRow("ContrÃ´le des connexions dans la boÃ®te Ã  bornes", "ov_conn", $donnees) ?>
-                        <?= renderOvRow("Mesure de rÃ©sistance", "ov_resist", $donnees) ?>
+                        <?= renderOvRow("Contrôle des connexions dans la boîte à bornes", "ov_conn", $donnees) ?>
+                        <?= renderOvRow("Mesure de résistance", "ov_resist", $donnees) ?>
                         <?= renderOvRow("Mesure de l'isolement sous 1000 volts CC", "ov_isol", $donnees) ?>
                         <?= renderOvRow("Option 1 :", "ov_opt1", $donnees) ?>
                         <?= renderOvRow("Option 2 :", "ov_opt2", $donnees) ?>
@@ -2869,10 +2868,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderSectionHeader("Partie B - Les performances", 3) ?>
                         <?php
                         $ovPerfs = [
-                            'ov_perf_bille'   => 'Bille diamÃ¨tre 20',
+                            'ov_perf_bille'   => 'Bille diamètre 20',
                             'ov_perf_ecrou'   => 'Ecrou M4',
-                            'ov_perf_rond50'  => 'Rond diamÃ¨tre 6 longueur 50',
-                            'ov_perf_rond100' => 'Rond diamÃ¨tre 6 longueur 100'
+                            'ov_perf_rond50'  => 'Rond diamètre 6 longueur 50',
+                            'ov_perf_rond100' => 'Rond diamètre 6 longueur 100'
                         ];
                         foreach($ovPerfs as $key => $label): ?>
                         <tr>
@@ -2890,27 +2889,27 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                     <table class="pdf-table controles" style="font-size:11px; margin-top:10px;">
                         <tr>
-                            <th colspan="6" style="background:#5b9bd5; color:white;">En prÃ©sence du client / Rappel des
-                                frÃ©quences de nettoyage et des diffÃ©rents points de contrÃ´le</th>
+                            <th colspan="6" style="background:#5b9bd5; color:white;">En présence du client / Rappel des
+                                fréquences de nettoyage et des différents points de contrôle</th>
                         </tr>
                         <tr>
-                            <th style="width:30%; text-align:center; background:#fff;">ContrÃ´le</th>
+                            <th style="width:30%; text-align:center; background:#fff;">Contrôle</th>
                             <th style="text-align:center; background:#fff;">Quotidien</th>
                             <th style="text-align:center; background:#fff;">Hebdomadaire</th>
                             <th style="text-align:center; background:#fff;">Mensuel</th>
                             <th style="text-align:center; background:#fff;">Annuel</th>
                             <th style="text-align:center; width:25%; background:#fff;">Commentaires</th>
                         </tr>
-                        <?= renderFreqRow("ContrÃ´le visuel de la bande", "ov_freq_bande", $donnees) ?>
-                        <?= renderFreqRow("ContrÃ´le visuel des fixations", "ov_freq_fix", $donnees) ?>
-                        <?= renderFreqRow("ContrÃ´le visuel des tambours", "ov_freq_tamb", $donnees) ?>
+                        <?= renderFreqRow("Contrôle visuel de la bande", "ov_freq_bande", $donnees) ?>
+                        <?= renderFreqRow("Contrôle visuel des fixations", "ov_freq_fix", $donnees) ?>
+                        <?= renderFreqRow("Contrôle visuel des tambours", "ov_freq_tamb", $donnees) ?>
                         <?= renderFreqRow("Graissage des paliers", "ov_freq_graiss", $donnees) ?>
                     </table>
 
                         <div class="pdf-section" style="margin-top:20px;">
                             <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
                             <img src="/assets/machines/ovap_diagram.png"
-                                style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="SchÃ©ma Overband">
+                                style="max-width:100%; height:auto; display:block; margin:20px auto;" alt="Schéma Overband">
                         </div>
 
                     <!-- Photo section removed here, handled globally at bottom -->
@@ -2925,7 +2924,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <tbody>
                         <?= renderSectionHeader("PAP/TAP", 3) ?>
                         <?= renderAprfRow("Satisfaction de fonctionnement", "paptap_satisfaction", $donnees) ?>
-                        <?= renderAprfRow("Aspect gÃ©nÃ©ral", "paptap_aspect", $donnees) ?>
+                        <?= renderAprfRow("Aspect général", "paptap_aspect", $donnees) ?>
 
                         <?= renderSectionHeader("PRODUIT", 3) ?>
                         <tr>
@@ -2938,13 +2937,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </td>
                             <td style="padding:4px;">
                                 Aciers de <input type="text" name="mesures[paptap_acier_min]" value="<?= htmlspecialchars($mesures['paptap_acier_min'] ?? '') ?>" class="pdf-input" style="width:30px; text-align:center;">
-                                Ã  <input type="text" name="mesures[paptap_acier_max]" value="<?= htmlspecialchars($mesures['paptap_acier_max'] ?? '') ?>" class="pdf-input" style="width:30px; text-align:center;"> mm
+                                à <input type="text" name="mesures[paptap_acier_max]" value="<?= htmlspecialchars($mesures['paptap_acier_max'] ?? '') ?>" class="pdf-input" style="width:30px; text-align:center;"> mm
                             </td>
                         </tr>
                         <tr>
                             <td style="padding:4px;">
-                                GranulomÃ©trie : 
-                                <input type="text" name="mesures[paptap_granu_min]" value="<?= htmlspecialchars($mesures['paptap_granu_min'] ?? '') ?>" class="pdf-input" style="width:40px; text-align:center;"> Ã  
+                                Granulométrie : 
+                                <input type="text" name="mesures[paptap_granu_min]" value="<?= htmlspecialchars($mesures['paptap_granu_min'] ?? '') ?>" class="pdf-input" style="width:40px; text-align:center;"> à 
                                 <input type="text" name="mesures[paptap_granu_max]" value="<?= htmlspecialchars($mesures['paptap_granu_max'] ?? '') ?>" class="pdf-input" style="width:40px; text-align:center;"> mm
                             </td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
@@ -2954,34 +2953,34 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                         <tr>
                             <td style="padding:4px;">
-                                DÃ©bit : 
+                                Débit : 
                                 <input type="text" name="mesures[paptap_debit]" value="<?= htmlspecialchars($mesures['paptap_debit'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;"> t/h
                             </td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
                                 <?= renderAprfEtatRadios("paptap_debit_stat", $donnees) ?>
                             </td>
                             <td style="padding:4px;">
-                                Avec densitÃ© de <input type="text" name="mesures[paptap_densite]" value="<?= htmlspecialchars($mesures['paptap_densite'] ?? '') ?>" class="pdf-input" style="width:50px; text-align:center;">
+                                Avec densité de <input type="text" name="mesures[paptap_densite]" value="<?= htmlspecialchars($mesures['paptap_densite'] ?? '') ?>" class="pdf-input" style="width:50px; text-align:center;">
                             </td>
                         </tr>
                         <tr>
                             <td style="padding:4px;">
-                                Montage sur : Convoyeur / TrÃ©mie / Autre :
+                                Montage sur : Convoyeur / Trémie / Autre :
                             </td>
                             <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
                                 <?= renderAprfEtatRadios("paptap_montage_stat", $donnees) ?>
                             </td>
-                            <td style="padding:0;"><textarea name="donnees[paptap_montage_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" placeholder="PrÃ©cisez..."><?= htmlspecialchars($donnees['paptap_montage_comment'] ?? '') ?></textarea></td>
+                            <td style="padding:0;"><textarea name="donnees[paptap_montage_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" placeholder="Précisez..."><?= htmlspecialchars($donnees['paptap_montage_comment'] ?? '') ?></textarea></td>
                         </tr>
 
                         <!-- Section MECANIQUE -->
                         <?= renderSectionHeader("MECANIQUE", 3) ?>
-                        <?= renderAprfRow("Etat dâ€™usure de la virole inox", "paptap_virole", $donnees) ?>
-                        <?= renderAprfRow("RevÃªtement caoutchouc lisse ou losange", "paptap_revetement", $donnees) ?>
+                        <?= renderAprfRow("Etat d’usure de la virole inox", "paptap_virole", $donnees) ?>
+                        <?= renderAprfRow("Revêtement caoutchouc lisse ou losange", "paptap_revetement", $donnees) ?>
                         <?= renderAprfRow("Nombre et taille des tasseaux", "paptap_tasseaux", $donnees) ?>
                         <?= renderAprfRow("Etat de lâ€™arbre dâ€™entrainement", "paptap_arbre", $donnees) ?>
                         <?= renderAprfRow("Etat des paliers et graissage", "paptap_paliers", $donnees) ?>
-                        <?= renderAprfRow("Rotation sans difficultÃ©", "paptap_rotation", $donnees) ?>
+                        <?= renderAprfRow("Rotation sans difficulté", "paptap_rotation", $donnees) ?>
 
                         <!-- Section MAGNETIQUE -->
                         <?= renderSectionHeader("MAGNETIQUE", 3) ?>
@@ -3005,14 +3004,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </td>
                             <td style="padding:0;"><textarea name="donnees[paptap_induction_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;"><?= htmlspecialchars($donnees['paptap_induction_comment'] ?? '') ?></textarea></td>
                         </tr>
-                        <?= renderAprfRow("Aimants : Ferrite ou NÃ©odyme", "paptap_aimants", $donnees) ?>
-                        <?= renderAprfRow("PrÃ©sence et position correcte dâ€™un volet de sÃ©paration", "paptap_volet", $donnees) ?>
+                        <?= renderAprfRow("Aimants : Ferrite ou Néodyme", "paptap_aimants", $donnees) ?>
+                        <?= renderAprfRow("Présence et position correcte d’un volet de séparation", "paptap_volet", $donnees) ?>
                         </tbody>
                     </table>
 
                     <div class="pdf-section" style="text-align:center; margin-top:20px;">
                         <?php if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:0; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; } ?>
-                        <img src="/assets/machines/Image_TAP-PAP_Lenoir.png" style="max-width:100%; height:auto;" alt="SchÃ©mas PAP/TAP">
+                        <img src="/assets/machines/Image_TAP-PAP_Lenoir.png" style="max-width:100%; height:auto;" alt="Schémas PAP/TAP">
                     </div>
 
                 <?php elseif ($isLevage): ?>
@@ -3042,13 +3041,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </th>
                          </tr>
                         <?= renderAprfRow("Satisfaction de fonctionnement", "levage_satisfaction", $donnees) ?>
-                        <?= renderAprfRow("Aspect gÃ©nÃ©ral", "levage_aspect", $donnees) ?>
+                        <?= renderAprfRow("Aspect général", "levage_aspect", $donnees) ?>
 
                         <!-- Section MECANIQUE -->
                         <?= renderSectionHeader("MECANIQUE", 3) ?>
-                        <?= renderAprfRow("PlanÃ©itÃ© des pÃ´les et du noyau", "levage_planeite", $donnees) ?>
-                        <?= renderAprfRow("Jeu entre bouclier et pÃ´les", "levage_jeu_bouclier", $donnees) ?>
-                        <?= renderAprfRow("EtanchÃ©itÃ© de la boite de connexion (Joint/PE)", "levage_etanch_boite", $donnees) ?>
+                        <?= renderAprfRow("Planéité des pôles et du noyau", "levage_planeite", $donnees) ?>
+                        <?= renderAprfRow("Jeu entre bouclier et pôles", "levage_jeu_bouclier", $donnees) ?>
+                        <?= renderAprfRow("Etanchéité de la boite de connexion (Joint/PE)", "levage_etanch_boite", $donnees) ?>
                         <?= renderAprfRow("Maintien du cÃ¢ble par le PE et le collier STAUFF", "levage_maintien_cable", $donnees) ?>
                         <?= renderAprfRow("Etat des vis tenant le couvercle", "levage_etat_vis", $donnees) ?>
                         <?= renderAprfRow("Etat des axes de Levage", "levage_axes", $donnees) ?>
@@ -3074,7 +3073,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                         <tr>
                             <td style="padding:4px; font-weight:bold; width:35%;">
-                                RÃ©sistance Ã  froid :
+                                Résistance à froid :
                                 <input type="text" name="mesures[levage_resistance]"
                                     value="<?= htmlspecialchars($mesures['levage_resistance'] ?? '') ?>" class="pdf-input"
                                     style="width:80px; text-align:center; margin-left:5px;">
@@ -3090,12 +3089,12 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                         <tr>
                             <td style="padding:4px; font-weight:bold; width:35%;">
-                                TempÃ©rature de la carcasse :
+                                Température de la carcasse :
                                 <input type="text" name="mesures[levage_temp_carcasse]"
                                     value="<?= htmlspecialchars($mesures['levage_temp_carcasse'] ?? '') ?>"
                                     class="pdf-input"
                                     style="width:80px; text-align:center; margin-left:5px;">
-                                Â°C
+                                °C
                             </td>
                             <td
                                 style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
@@ -3108,12 +3107,12 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                         <tr>
                             <td style="padding:4px; font-weight:bold; width:35%;">
-                                TempÃ©rature ambiante :
+                                Température ambiante :
                                 <input type="text" name="mesures[levage_temp_ambiante]"
                                     value="<?= htmlspecialchars($mesures['levage_temp_ambiante'] ?? '') ?>"
                                     class="pdf-input"
                                     style="width:80px; text-align:center; margin-left:5px;">
-                                Â°C
+                                °C
                             </td>
                             <td
                                 style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
@@ -3126,7 +3125,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                         <tr>
                             <td style="padding:4px; font-weight:bold; width:35%;">
-                                Electroaimant arrÃªtÃ© depuis
+                                Electroaimant arrêté depuis
                                 <input type="text" name="mesures[levage_arrete_depuis]"
                                     value="<?= htmlspecialchars($mesures['levage_arrete_depuis'] ?? '') ?>"
                                     class="pdf-input"
@@ -3162,7 +3161,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                         <tr>
                             <td style="padding:4px; font-weight:bold;">
-                                IntensitÃ© :
+                                Intensité :
                                 <input type="text" name="mesures[levage_intensite]"
                                     value="<?= htmlspecialchars($mesures['levage_intensite'] ?? '') ?>" class="pdf-input"
                                     style="width:80px; text-align:center; margin-left:5px;"> A
@@ -3177,7 +3176,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                         <tr>
                             <td style="padding:4px; font-weight:bold;">
-                                Champ magnÃ©tique au centre du noyau :
+                                Champ magnétique au centre du noyau :
                                 <input type="text" name="mesures[levage_champ_centre]"
                                     value="<?= htmlspecialchars($mesures['levage_champ_centre'] ?? '') ?>" class="pdf-input"
                                     style="width:80px; text-align:center; margin-left:5px;">
@@ -3194,7 +3193,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                         <tr>
                             <td style="padding:4px; font-weight:bold;">
-                                Champ magnÃ©tique au milieu du pÃ´le :
+                                Champ magnétique au milieu du pôle :
                                 <input type="text" name="mesures[levage_champ_pole]"
                                     value="<?= htmlspecialchars($mesures['levage_champ_pole'] ?? '') ?>" class="pdf-input"
                                     style="width:80px; text-align:center; margin-left:5px;">
@@ -3212,7 +3211,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderSectionHeader("APPLICATION DU CLIENT", 3) ?>
                         <tr>
                             <td style="padding:4px; font-weight:bold;">
-                                Type de produit manipulÃ© : Brame / TÃ´le / Paquets / Coils / ProfilÃ©s
+                                Type de produit manipulé : Brame / Tôle / Paquets / Coils / Profilés
                             </td>
                             <td style="border:1px solid #000; text-align:center;"></td>
                             <td style="padding:4px; font-weight:bold; text-align:left;">
@@ -3237,11 +3236,11 @@ foreach ($recoFreq as $rfk => $rfv) {
                         </tr>
                         <tr>
                             <td style="padding:4px; font-weight:bold;">
-                                TempÃ©rature Maxi des produits :
+                                Température Maxi des produits :
                                 <input type="text" name="mesures[levage_temp_maxi]"
                                     value="<?= htmlspecialchars($mesures['levage_temp_maxi'] ?? '') ?>" class="pdf-input"
                                     style="width:80px; text-align:center; margin-left:5px;">
-                                Â°C
+                                °C
                             </td>
                             <td style="border:1px solid #000; text-align:center;"></td>
                             <td style="padding:0;"><textarea name="donnees[levage_temp_maxi_comment]" class="pdf-textarea"
@@ -3285,27 +3284,27 @@ foreach ($recoFreq as $rfk => $rfv) {
                                  style="width:100%; height:auto;" 
                                  alt="Circulaire">
                             
-                            <!-- DiamÃ¨tre pÃ´le (AJUSTEMENT FINAL V5) -->
+                            <!-- Diamètre pôle (AJUSTEMENT FINAL V5) -->
                             <div style="position:absolute; left:83.8%; top:27.2%; transform:translate(-50%, -50%); font-size:9px;">
                                 <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:75px; border:none; background:transparent; text-align:center; font-size:9px; font-weight:bold;" autocomplete="off">
                             </div>
 
-                            <!-- DiamÃ¨tre noyau (AJUSTEMENT FINAL V5) -->
+                            <!-- Diamètre noyau (AJUSTEMENT FINAL V5) -->
                             <div style="position:absolute; left:85.5%; top:31.8%; transform:translate(-50%, -50%); font-size:9px;">
                                 <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['mesures_levage_diam_noyau'] ?? ($mesures['levage_diam_noyau'] ?? '')) ?>" class="pdf-input" style="width:75px; border:none; background:transparent; text-align:center; font-size:9px; font-weight:bold;" autocomplete="off">
                             </div>
 
-                            <!-- Epaisseur pÃ´le (AJUSTEMENT FINAL V5) -->
+                            <!-- Epaisseur pôle (AJUSTEMENT FINAL V5) -->
                             <div style="position:absolute; left:85.5%; top:43.1%; transform:translate(-50%, -50%); font-size:9px;">
                                 <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:75px; border:none; background:transparent; text-align:center; font-size:9px; font-weight:bold;" autocomplete="off">
                             </div>
 
-                            <!-- Ã˜ ext/int (5.3% / 45.4%) -->
+                            <!-- Ø ext/int (5.3% / 45.4%) -->
                             <div style="position:absolute; left:5.3%; top:44%; font-size:9px; font-weight:bold; color:#000; line-height:1.2;">
-                                Ã˜ ext 2 : <input type="text" name="mesures[levage_ext2]" value="<?= htmlspecialchars($mesures['levage_ext2'] ?? '') ?>" class="pdf-input" style="width:40px; background:transparent; font-size:9px;" autocomplete="off"><br>
-                                Ã˜ ext 1 : <input type="text" name="mesures[levage_ext1]" value="<?= htmlspecialchars($mesures['levage_ext1'] ?? '') ?>" class="pdf-input" style="width:40px; background:transparent; font-size:9px;" autocomplete="off"><br>
-                                Ã˜ int 2 : <input type="text" name="mesures[levage_int2]" value="<?= htmlspecialchars($mesures['levage_int2'] ?? '') ?>" class="pdf-input" style="width:40px; background:transparent; font-size:9px;" autocomplete="off"><br>
-                                Ã˜ int 1 : <input type="text" name="mesures[levage_int1]" value="<?= htmlspecialchars($mesures['levage_int1'] ?? '') ?>" class="pdf-input" style="width:40px; background:transparent; font-size:9px;" autocomplete="off">
+                                Ø ext 2 : <input type="text" name="mesures[levage_ext2]" value="<?= htmlspecialchars($mesures['levage_ext2'] ?? '') ?>" class="pdf-input" style="width:40px; background:transparent; font-size:9px;" autocomplete="off"><br>
+                                Ø ext 1 : <input type="text" name="mesures[levage_ext1]" value="<?= htmlspecialchars($mesures['levage_ext1'] ?? '') ?>" class="pdf-input" style="width:40px; background:transparent; font-size:9px;" autocomplete="off"><br>
+                                Ø int 2 : <input type="text" name="mesures[levage_int2]" value="<?= htmlspecialchars($mesures['levage_int2'] ?? '') ?>" class="pdf-input" style="width:40px; background:transparent; font-size:9px;" autocomplete="off"><br>
+                                Ø int 1 : <input type="text" name="mesures[levage_int1]" value="<?= htmlspecialchars($mesures['levage_int1'] ?? '') ?>" class="pdf-input" style="width:40px; background:transparent; font-size:9px;" autocomplete="off">
                             </div>
                         </div>
                         <!-- Handled globally -->
@@ -3315,8 +3314,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <!-- GENERIC SCHEMA -->
                         <div
                             style="background:#fff3cd; color:#856404; padding:15px; margin-bottom:20px; font-weight:bold; border:1px solid #ffeeba; text-align:center;">
-                            Cette machine (<?= htmlspecialchars($machine['designation']) ?>) n'a pas encore de modÃ¨le PDF
-                            numÃ©risÃ© sur mesure (comme APRF ou ED-X). Voici la grille gÃ©nÃ©rique.
+                            Cette machine (<?= htmlspecialchars($machine['designation']) ?>) n'a pas encore de modèle PDF
+                            numérisé sur mesure (comme APRF ou ED-X). Voici la grille générique.
                         </div>
 
                         <table class="pdf-table controles">
@@ -3330,29 +3329,29 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </tr>
                             <?= renderCheckRow("Fixation de l'appareil", "gen_fixation", $donnees) ?>
                             <?= renderCheckRow("Appareil sale / Nettoyage", "gen_sale", $donnees) ?>
-                            <?= renderCheckRow("Usure importante des piÃ¨ces", "gen_usure", $donnees) ?>
+                            <?= renderCheckRow("Usure importante des pièces", "gen_usure", $donnees) ?>
 
                             <tr>
                                 <th colspan="3" style="background:#ddd;">Transmission & Motorisation</th>
                             </tr>
-                            <?= renderCheckRow("Tension courroies ou chaÃ®nes", "gen_tension", $donnees) ?>
+                            <?= renderCheckRow("Tension courroies ou chaînes", "gen_tension", $donnees) ?>
                             <?= renderCheckRow("Alignement pignons / poulies", "gen_align", $donnees) ?>
-                            <?= renderCheckRow("Graissage chaÃ®ne / Niveau d'huile", "gen_huile", $donnees) ?>
-                            <?= renderCheckRow("Ã‰chauffement ou Bruit suspect", "gen_bruit", $donnees) ?>
+                            <?= renderCheckRow("Graissage chaîne / Niveau d'huile", "gen_huile", $donnees) ?>
+                            <?= renderCheckRow("Échauffement ou Bruit suspect", "gen_bruit", $donnees) ?>
 
                             <tr>
-                                <th colspan="3" style="background:#ddd;">ContrÃ´les Ã©lectriques & Divers</th>
+                                <th colspan="3" style="background:#ddd;">Contrôles électriques & Divers</th>
                             </tr>
-                            <?= renderCheckRow("Test dÃ©clenchement dÃ©fauts", "gen_defauts", $donnees) ?>
-                            <?= renderCheckRow("Tester bouton ArrÃªt d'Urgence", "gen_au", $donnees) ?>
+                            <?= renderCheckRow("Test déclenchement défauts", "gen_defauts", $donnees) ?>
+                            <?= renderCheckRow("Tester bouton Arrêt d'Urgence", "gen_au", $donnees) ?>
                             <?= renderCheckRow("Mesure isolation & Induction", "gen_mesures", $donnees) ?>
                             </tbody>
                         </table>
 
                         <?php
-                        // Automatiquement charger le schÃ©ma s'il existe (pour dÃ©panner)
+                        // Automatiquement charger le schéma s'il existe (pour dépanner)
                         $cleanName = strtolower(preg_replace('/[^a-zA-Z0-9-]/', '', $machine['designation']));
-                        // Essayer qq mots clÃ©s extraits
+                        // Essayer qq mots clés extraits
                         $possiblePrefixes = explode(' ', strtolower($machine['designation']));
                         $foundSchema = null;
                         $exts = ['png', 'jpg', 'jpeg'];
@@ -3372,11 +3371,11 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                         if ($foundSchema):
                             ?>
-                            <?php if(!$titleB_printed){ echo '<div style="page-break-inside:avoid; break-inside:avoid;"><div class="pdf-section-title" style="margin-top:20px; text-align:left;">B) DESCRIPTION DU MATÃ‰RIEL :</div>'; $titleB_printed = true; $closeFallbackTitle = true; } else { $closeFallbackTitle = false; } ?>
+                            <?php if(!$titleB_printed){ echo '<div style="page-break-inside:avoid; break-inside:avoid;"><div class="pdf-section-title" style="margin-top:20px; text-align:left;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; $closeFallbackTitle = true; } else { $closeFallbackTitle = false; } ?>
                             <div class="pdf-section" style="border:1px solid #000; padding:10px; text-align:center; margin-top:20px;">
-                                <div style="font-weight:bold; margin-bottom:10px;">SchÃ©ma de RÃ©fÃ©rence (Extrait Word) :</div>
+                                <div style="font-weight:bold; margin-bottom:10px;">Schéma de Référence (Extrait Word) :</div>
                                 <img src="<?= htmlspecialchars($foundSchema) ?>"
-                                    style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="SchÃ©ma machine">
+                                    style="max-width:100%; height:auto; display:block; margin:0 auto;" alt="Schéma machine">
                             </div>
                             <?php if(isset($closeFallbackTitle) && $closeFallbackTitle){ echo '</div>'; $closeFallbackTitle = false; } ?>
                         <?php endif; ?>
@@ -3388,7 +3387,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         // --- SECTION B : DESCRIPTION MATERIEL (GLOBAL) ---
                         $contentB = renderSectionB($photosData);
                         if (!empty($contentB)) {
-                            if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:20px;">B) DESCRIPTION DU MATÃ‰RIEL :</div>'; $titleB_printed = true; }
+                            if(!$titleB_printed){ echo '<div class="pdf-section-title" style="margin-top:20px;">B) DESCRIPTION DU MATÉRIEL :</div>'; $titleB_printed = true; }
                             echo '<div class="section-wrapper-pdf">' . $contentB . '</div>';
                         }
 
@@ -3402,7 +3401,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <div class="section-wrapper-pdf" style="padding:0; background: transparent; page-break-inside: avoid; break-inside: avoid;">
                             <div class="pdf-section-title" id="section-e">E) CAUSE DE DYSFONCTIONNEMENT :</div>
                             <?php if (!isset($_GET['pdf'])): ?>
-                                <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette zone est prÃ©-remplie avec les points "Non conformes" ou "Ã€ amÃ©liorer" dÃ©tectÃ©s. Vous pouvez Ã©diter le texte ci-dessous.</p>
+                                <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette zone est pré-remplie avec les points "Non conformes" ou "Ã€ améliorer" détectés. Vous pouvez éditer le texte ci-dessous.</p>
                                 <textarea name="dysfonctionnements" id="dysfonctionnementsText" class="pdf-textarea" style="min-height:100px; font-size:13px; border: 1px solid #ccc; background:#fff; padding:5px;"><?= htmlspecialchars($machine['dysfonctionnements'] ?? '') ?></textarea>
                                 <button type="button" class="btn-ia-action" onclick="generateDysfunctions(this)" style="margin-top:5px; background:#2980b9; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:11px;">
                                     <img src="/assets/ai_expert.jpg" style="height: 14px; width: 14px; vertical-align: middle; border-radius:3px; margin-right: 4px;"> Actualiser
@@ -3416,7 +3415,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 ?>
                                 <div style="font-size:13px; white-space: pre-wrap; margin-bottom:10px;"><?= htmlspecialchars($dysText) ?></div>
                                 <?php
-                                // Affichage des photos liÃ©es aux points critiques
+                                // Affichage des photos liées aux points critiques
                                 $criticalPhotos = [];
                                 foreach ($donnees as $k => $v) {
                                     if (strpos($k, '_radio') !== false && in_array($v, ['nc', 'nr', 'aa'])) {
@@ -3441,9 +3440,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <div class="section-wrapper-pdf" style="padding:0; background: transparent; page-break-inside: avoid; break-inside: avoid;">
                             <div class="pdf-section-title" id="section-f">F) CONCLUSION :</div>
                             <?php if (!isset($_GET['pdf'])): ?>
-                                <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette conclusion peut Ãªtre gÃ©nÃ©rÃ©e par l'IA en fonction des rÃ©sultats du contrÃ´le.</p>
+                                <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette conclusion peut être générée par l'IA en fonction des résultats du contrôle.</p>
                                 <textarea name="conclusion" id="conclusionText" class="pdf-textarea" style="min-height:80px; font-size:13px; border: 1px solid #ccc; background:#fff; padding:5px;"><?= htmlspecialchars($machine['conclusion'] ?? '') ?></textarea>
-                                <button type="button" onclick="generateConclusion(this)" style="margin-top:5px; background:#2980b9; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:11px;"><img src="/assets/ai_expert.jpg" style="height:14px; width:14px; vertical-align:middle; border-radius:3px; margin-right:4px;"> GÃ©nÃ©rer par l'Expert IA</button>
+                                <button type="button" onclick="generateConclusion(this)" style="margin-top:5px; background:#2980b9; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:11px;"><img src="/assets/ai_expert.jpg" style="height:14px; width:14px; vertical-align:middle; border-radius:3px; margin-right:4px;"> Générer par l'Expert IA</button>
                             <?php else: ?>
                                 <?php 
                                     $concText = trim($machine['conclusion'] ?? '');
@@ -3458,13 +3457,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <div style="margin-top:15px; border-top: 1px solid #ddd; padding-top:10px;">
                                 <table style="width:100%; border-collapse:collapse;">
                                     <tr>
-                                        <td colspan="2" style="font-weight:bold; font-size:14px; color:#d35400; padding-bottom:15px;">RAPPEL : Le nettoyage de votre <?= $isEDX ? 'EDX' : ($isOV ? 'OV' : 'Ã©quipement') ?> doit Ãªtre rÃ©gulier et complet (intÃ©rieur et extÃ©rieur)</td>
+                                        <td colspan="2" style="font-weight:bold; font-size:14px; color:#d35400; padding-bottom:15px;">RAPPEL : Le nettoyage de votre <?= $isEDX ? 'EDX' : ($isOV ? 'OV' : 'équipement') ?> doit être régulier et complet (intérieur et extérieur)</td>
                                     </tr>
                                     <tr>
                                         <td style="width:60px; vertical-align:middle; padding-bottom:15px;">
                                             <img src="/assets/hazard/magnet.png" style="height:45px;">
                                         </td>
-                                        <td style="font-size:14px; vertical-align:middle; padding-bottom:15px; font-weight:bold;">Attention ! Champ magnÃ©tique !</td>
+                                        <td style="font-size:14px; vertical-align:middle; padding-bottom:15px; font-weight:bold;">Attention ! Champ magnétique !</td>
                                     </tr>
                                     <tr>
                                         <td style="width:60px; vertical-align:middle; padding-bottom:15px;">
@@ -3476,7 +3475,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                         <td style="width:60px; vertical-align:middle; padding-bottom:15px;">
                                             <img src="/assets/hazard/no_implants.png" style="height:45px;">
                                         </td>
-                                        <td style="font-size:14px; vertical-align:middle; padding-bottom:15px; font-weight:bold;">AccÃ¨s interdit aux porteurs dâ€™implants actifs !</td>
+                                        <td style="font-size:14px; vertical-align:middle; padding-bottom:15px; font-weight:bold;">Accès interdit aux porteurs dâ€™implants actifs !</td>
                                     </tr>
                                 </table>
                             </div>
@@ -3499,11 +3498,11 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <div id="photosAnnexesGrid"
                             style="border:1px solid #000; border-top:none; padding:10px; min-height:60px; display:flex; flex-wrap:wrap; gap:10px;">
                             <?php if (!$hasAnnexPhotos): ?>
-                                <p style="color:#999; font-size:11px; margin:0;" id="noPhotosMsg" class="no-print-pdf">Aucune photo annexe renseignÃ©e.</p>
+                                <p style="color:#999; font-size:11px; margin:0;" id="noPhotosMsg" class="no-print-pdf">Aucune photo annexe renseignée.</p>
                             <?php else: ?>
                                 <?php $photoIndex = 1; ?>
                                 <?php foreach ($photosData as $key => $photos): ?>
-                                    <?php if ($key === 'desc_materiel') continue; // DÃ©jÃ  affichÃ© en Section B ?>
+                                    <?php if ($key === 'desc_materiel') continue; // Déjà affiché en Section B ?>
                                     <?php foreach ($photos as $p): ?>
                                         <div class="photo-annexe-item">
                                             <?php $imgS = (!empty($p['data'])) ? $p['data'] : (isset($p['id']) ? "/get_machine_photo.php?machine_id=$id&key=$key&photo_id=".$p['id'] : ""); ?><img src="<?= htmlspecialchars($imgS) ?>" onclick="openLightbox(this.src, '<?= addslashes(htmlspecialchars($p['caption'] ?? '')) ?>')">
@@ -3566,14 +3565,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                 const data = await response.json();
                 allPhotos = data;
                 
-                // On met Ã  jour l'affichage
+                // On met à jour l'affichage
                 Object.keys(allPhotos).forEach(function (key) {
                     renderThumbsForKey(key);
                 });
                 renderDescriptionMontage();
                 renderAnnexes();
                 syncPhotos();
-                console.log("Photos chargÃ©es via AJAX.");
+                console.log("Photos chargées via AJAX.");
             } catch (err) {
                 console.error("Erreur AJAX photos:", err);
                 const grid = document.getElementById('photosAnnexesGrid');
@@ -3605,7 +3604,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 const serialized = document.getElementById('photosJsonInput').value;
                 const sizeMB = (serialized.length / (1024 * 1024)).toFixed(2);
                 if (serialized.length > 4.5 * 1024 * 1024) {
-                    alert("âš ï¸ Attention : La fiche contient trop de photos (" + sizeMB + " Mo). Vercel limite l'enregistrement Ã  4.5 Mo.\nVeuillez supprimer une ou deux photos avant d'enregistrer.");
+                    alert("âš ï¸ Attention : La fiche contient trop de photos (" + sizeMB + " Mo). Vercel limite l'enregistrement à 4.5 Mo.\nVeuillez supprimer une ou deux photos avant d'enregistrer.");
                     e.preventDefault();
                     return false;
                 }
@@ -3617,7 +3616,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             document.getElementById('cameraInput').click();
         }
 
-        // ImplÃ©mentation de Compressor.js (remplace l'ancienne compression Canvas trÃ¨s lente et buggÃ©e sur iOS)
+        // Implémentation de Compressor.js (remplace l'ancienne compression Canvas très lente et buggée sur iOS)
         document.getElementById('cameraInput').addEventListener('change', function (e) {
             if (isUploading) return;
             var file = e.target.files[0];
@@ -3636,7 +3635,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 
             // --- BUG-013: Validation de la taille de l'image ---
             if (file.size < 50 * 1024) { // lowered to 50KB to be safe
-                alert("âŒ Image rejetÃ©e : Le fichier est trop petit. Veuillez prendre une photo nette.");
+                alert("âŒ Image rejetée : Le fichier est trop petit. Veuillez prendre une photo nette.");
                 if (btn) {
                     btn.innerHTML = 'ðŸ“·';
                     btn.disabled = false;
@@ -3676,7 +3675,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             };
 
             if (typeof Compressor === 'undefined') {
-                console.warn("Compressor.js non chargÃ©, utilisation du fallback direct.");
+                console.warn("Compressor.js non chargé, utilisation du fallback direct.");
                 handleResult(file);
             } else {
                 new Compressor(file, {
@@ -3750,7 +3749,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     <div class="photo-montage-grid empty">
                         <div class="photo-placeholder">
                             <span>ðŸ“¸</span>
-                            <p>En attente de photo du matÃ©riel (max 4)...</p>
+                            <p>En attente de photo du matériel (max 4)...</p>
                             <button type="button" class="photo-btn" onclick="capturePhoto('desc_materiel')">âž• AJOUTER PHOTO</button>
                         </div>
                     </div>`;
@@ -3769,14 +3768,14 @@ foreach ($recoFreq as $rfk => $rfv) {
 
                 html += `
                     <div class="montage-item">
-                        <img src="${src}" alt="Photo MatÃ©riel ${i+1}" onclick="openLightbox(this.src, 'Photo MatÃ©riel ${i+1}')">
+                        <img src="${src}" alt="Photo Matériel ${i+1}" onclick="openLightbox(this.src, 'Photo Matériel ${i+1}')">
                         <button type="button" class="photo-del-overlay no-print-pdf" onclick="deletePhoto('desc_materiel', ${i})">Ã—</button>
                     </div>`;
             });
             
             html += '</div>';
             
-            // Si moins de 4, on affiche quand mÃªme le bouton d'ajout en dessous
+            // Si moins de 4, on affiche quand même le bouton d'ajout en dessous
             if (count < 4) {
                 html += `<div style="text-align:center; margin-top:10px;">
                     <button type="button" class="photo-btn" onclick="capturePhoto('desc_materiel')" style="padding:6px 12px; font-size:12px;">
@@ -3840,7 +3839,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 await new Promise(r => setTimeout(r, speed));
             }
             autoGrow(element);
-            // DÃ©clenche l'Ã©vÃ©nement input pour forcer la sauvegarde (autosave.js)
+            // Déclenche l'événement input pour forcer la sauvegarde (autosave.js)
             element.dispatchEvent(new Event('input', { bubbles: true }));
         }
 
@@ -3864,7 +3863,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     alert('Erreur IA : ' + (data.error || 'Indisponible'));
                 }
             } catch (e) {
-                alert('Erreur de connexion Ã  l\'API IA.');
+                alert('Erreur de connexion à l\'API IA.');
             } finally {
                 if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
             }
@@ -3874,7 +3873,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             btn = btn || (window.event ? window.event.currentTarget : null);
             const textarea = document.getElementById('dysfonctionnementsText');
             
-            if (textarea.value && textarea.value !== "Aucun dysfonctionnement majeur signalÃ©." && !confirm("Voulez-vous Ã©craser le contenu actuel par l'analyse IA ?")) return;
+            if (textarea.value && textarea.value !== "Aucun dysfonctionnement majeur signalé." && !confirm("Voulez-vous écraser le contenu actuel par l'analyse IA ?")) return;
             
             const originalText = btn ? btn.innerHTML : '';
             if (btn) { btn.innerHTML = 'â³ Analyse expert...'; btn.disabled = true; }
@@ -3893,7 +3892,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     alert('Erreur IA : ' + (data.error || 'Indisponible'));
                 }
             } catch (e) {
-                alert('Erreur de connexion Ã  l\'API IA.');
+                alert('Erreur de connexion à l\'API IA.');
             } finally {
                 if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
             }
@@ -3927,17 +3926,17 @@ foreach ($recoFreq as $rfk => $rfv) {
                 setTimeout(() => { label.style.transform = ''; }, 300);
                 if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
                 
-                // SÃ©curitÃ© : On empÃªche la re-sÃ©lection de CETTE gommette pendant 2 secondes
+                // Sécurité : On empêche la re-sélection de CETTE gommette pendant 2 secondes
                 label.dataset.longPressed = 'true';
                 label.style.opacity = '0.4'; // Indice visuel de verrouillage
-                label.style.pointerEvents = 'none'; // EmpÃªche physiquement le clic pendant le cooldown
+                label.style.pointerEvents = 'none'; // Empêche physiquement le clic pendant le cooldown
                 
                 setTimeout(() => { 
                     delete label.dataset.longPressed; 
                     label.style.opacity = '';
                     label.style.pointerEvents = '';
                 }, 2000); // Cooldown de 2 secondes
-            }, 1000); // On rÃ©duit Ã  1 seconde pour que ce soit plus rÃ©actif
+            }, 1000); // On réduit à 1 seconde pour que ce soit plus réactif
         }
         function cancelPastillePress() { clearTimeout(pastillePressTimer); }
 
@@ -3961,7 +3960,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             }
         });
         
-        // Listener global pour mettre Ã  jour les classes visuelles (utilisÃ© par autosave.js et les clics manuels)
+        // Listener global pour mettre à jour les classes visuelles (utilisé par autosave.js et les clics manuels)
         document.addEventListener('change', function(e) {
             if (e.target.matches('.pastille-group input[type="radio"]')) {
                 const radio = e.target;
@@ -4023,8 +4022,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                 var h = Math.floor(mins / 60), m = mins % 60;
                 var formatted = h + (m > 0 ? '.' + Math.round((m/60)*100)/100 : ''); // Decimal format as requested by user often in these SaaS
                 // But wait, the previous format was hHmm. Let's stick to a readable format or what they had.
-                // The user said "Met bien les valeurs de chaque fiche genre les valeur du temps prÃ©visionnel dans le tableau du T.PrÃ©vu"
-                // Temps prÃ©visionnel is "1h", "3h30", etc.
+                // The user said "Met bien les valeurs de chaque fiche genre les valeur du temps prévisionnel dans le tableau du T.Prévu"
+                // Temps prévisionnel is "1h", "3h30", etc.
                 var display = h + 'h' + pad2(m);
                 span.textContent = '= ' + display;
                 
@@ -4062,7 +4061,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             <?php if (!isset($_GET['pdf'])): ?>
                 loadPhotosAsync();
             <?php else: ?>
-                // Mode PDF : on utilise les donnÃ©es PHP dÃ©jÃ  injectÃ©es
+                // Mode PDF : on utilise les données PHP déjà injectées
                 Object.keys(allPhotos).forEach(function (key) {
                     renderThumbsForKey(key);
                 });
@@ -4088,7 +4087,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             // Live chrono update every 30s
             setInterval(function () { if (chronoRunning) calcTemps(); }, 30000);
 
-            // --- BUG-020: Alerte si divergence des frÃ©quences recommandÃ©es ---
+            // --- BUG-020: Alerte si divergence des fréquences recommandées ---
             const RECO_FREQ = <?= json_encode($recoFreq) ?>;
             document.querySelectorAll('input[type="radio"]').forEach(function(radio) {
                 radio.addEventListener('change', function() {
@@ -4098,7 +4097,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         const recoVal = RECO_FREQ[match[1]];
                         if (this.value !== recoVal) {
                             const labels = { q: 'Quotidien', h: 'Hebdomadaire', m: 'Mensuel', a: 'Annuel' };
-                            alert("âš ï¸ Recommandation Lenoir-Mec :\nLa frÃ©quence prÃ©conisÃ©e pour ce contrÃ´le est : " + labels[recoVal] + ".\nVous avez sÃ©lectionnÃ© : " + labels[this.value] + ".");
+                            alert("âš ï¸ Recommandation Lenoir-Mec :\nLa fréquence préconisée pour ce contrôle est : " + labels[recoVal] + ".\nVous avez sélectionné : " + labels[this.value] + ".");
                         }
                     }
                 });
