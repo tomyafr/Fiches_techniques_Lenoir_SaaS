@@ -123,14 +123,9 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
             gap: 1.5rem;
             margin-bottom: 2.5rem;
         }
-        @media (min-width: 768px) {
+        @media (min-width: 1024px) {
             .dashboard-grid {
                 grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        @media (min-width: 1400px) {
-            .dashboard-grid {
-                grid-template-columns: repeat(4, 1fr);
             }
         }
         .stat-card {
