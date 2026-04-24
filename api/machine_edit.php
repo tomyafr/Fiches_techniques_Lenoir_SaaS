@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 header('Content-Type: text/html; charset=utf-8');
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/ia_helper.php';
@@ -1134,7 +1134,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <input type="time" name="mesures[heure_debut]" id="heureDebut"
                                 value="<?= htmlspecialchars($heureDebut) ?>"
                                 style="border:none; outline:none; font-size:13px; background:transparent; width:70px;">
-                            <span style="color:#999; font-size:11px;">â†’</span>
+                            <span style="color:#999; font-size:11px;">→</span>
                             <input type="time" name="mesures[heure_fin]" id="heureFin"
                                 value="<?= htmlspecialchars($heureFin) ?>"
                                 style="border:none; outline:none; font-size:13px; background:transparent; width:70px;">
@@ -1148,7 +1148,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 value="<?= htmlspecialchars($mesures['temps_realise'] ?? '') ?>"> h
                             <span id="tempsCalc" style="font-weight:bold; color:#1B4F72; font-size:14px; margin-left:5px;"></span>
                             <button type="button" id="btnChrono" onclick="toggleChrono()" class="no-print-pdf"
-                                style="background:#28a745; color:white; border:none; border-radius:4px; padding:3px 10px; font-size:11px; cursor:pointer; margin-left:8px; vertical-align:middle;">â–¶
+                                style="background:#28a745; color:white; border:none; border-radius:4px; padding:3px 10px; font-size:11px; cursor:pointer; margin-left:8px; vertical-align:middle;">▶
                                 Chrono</button>
                         </td>
                     </tr>
@@ -2779,7 +2779,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderEdxRow("Nouveaux réglages volet de séparation", "edx_C_regl3", $donnees) ?>
                         <?= renderEdxRow("Contrôle freinage roue polaire", "edx_C_frein", $donnees) ?>
                         <?= renderEdxRow("Temps de freinage constaté", "edx_C_temps", $donnees) ?>
-                        <?= renderEdxRow("Vérification des serrages cÃ¢bles de l'armoire", "edx_C_cables", $donnees) ?>
+                        <?= renderEdxRow("Vérification des serrages câbles de l'armoire", "edx_C_cables", $donnees) ?>
                         <?= renderEdxRow("Fermeture de l'armoire électrique", "edx_C_ferm", $donnees) ?>
                         </tbody>
                     </table>
@@ -3048,7 +3048,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderAprfRow("Planéité des pôles et du noyau", "levage_planeite", $donnees) ?>
                         <?= renderAprfRow("Jeu entre bouclier et pôles", "levage_jeu_bouclier", $donnees) ?>
                         <?= renderAprfRow("Etanchéité de la boite de connexion (Joint/PE)", "levage_etanch_boite", $donnees) ?>
-                        <?= renderAprfRow("Maintien du cÃ¢ble par le PE et le collier STAUFF", "levage_maintien_cable", $donnees) ?>
+                        <?= renderAprfRow("Maintien du câble par le PE et le collier STAUFF", "levage_maintien_cable", $donnees) ?>
                         <?= renderAprfRow("Etat des vis tenant le couvercle", "levage_etat_vis", $donnees) ?>
                         <?= renderAprfRow("Etat des axes de Levage", "levage_axes", $donnees) ?>
                         <?= renderAprfRow("Etat des chaines", "levage_chaines", $donnees) ?>
@@ -3557,7 +3557,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             try {
                 // Afficher un petit indicateur de chargement
                 const grid = document.getElementById('photosAnnexesGrid');
-                if (grid) grid.innerHTML = '<p style="color:#28a745; font-size:11px; margin:0;">âŒ› Chargement des photos...</p>';
+                if (grid) grid.innerHTML = '<p style="color:#28a745; font-size:11px; margin:0;">⌛ Chargement des photos...</p>';
                 
                 const response = await fetch('/get_machine_photos.php?id=<?= $id ?>');
                 if (!response.ok) throw new Error('Erreur lors du chargement des photos');
@@ -3627,7 +3627,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             // Visual feedback
             const btn = document.querySelector(`.photo-btn[onclick*="${currentPhotoKey}"]`);
             if (btn) {
-                btn.innerHTML = 'âŒ›';
+                btn.innerHTML = '⌛';
                 btn.disabled = true;
                 btn.style.opacity = '0.5';
                 btn.style.pointerEvents = 'none';
@@ -3748,9 +3748,9 @@ foreach ($recoFreq as $rfk => $rfv) {
                 container.innerHTML = `
                     <div class="photo-montage-grid empty">
                         <div class="photo-placeholder">
-                            <span>ðŸ“¸</span>
+                            <span>📸</span>
                             <p>En attente de photo du matériel (max 4)...</p>
-                            <button type="button" class="photo-btn" onclick="capturePhoto('desc_materiel')">âž• AJOUTER PHOTO</button>
+                            <button type="button" class="photo-btn" onclick="capturePhoto('desc_materiel')">➕ AJOUTER PHOTO</button>
                         </div>
                     </div>`;
                 return;
@@ -3993,7 +3993,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 // Stop: set heure_fin to now
                 var now2 = new Date();
                 finInput.value = pad2(now2.getHours()) + ':' + pad2(now2.getMinutes());
-                btn.textContent = 'â–¶ Chrono';
+                btn.textContent = '▶ Chrono';
                 btn.style.background = '#28a745';
                 chronoRunning = false;
                 calcTemps();
