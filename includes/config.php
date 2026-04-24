@@ -230,9 +230,32 @@ function requireAuth($role = null)
     if ($role) {
         $allowedRoles = is_array($role) ? $role : [$role];
         if (!in_array($_SESSION['role'], $allowedRoles)) {
+            logAudit('UNAUTHORIZED_ACCESS', "Role requis: " . implode(',', $allowedRoles) . ", Role actuel: " . ($_SESSION['role'] ?? 'none'));
             header('Location: index.php');
             exit;
         }
+    }
+}
+
+// ============================================
+// JOURNAL D'AUDIT
+// ============================================
+/**
+ * Enregistrer une action dans le log d'audit
+ */
+function logAudit($action, $details = '')
+{
+    try {
+        $db = getDB();
+        $stmt = $db->prepare('INSERT INTO audit_logs (user_id, action, details, ip_address) VALUES (?, ?, ?, ?)');
+        $stmt->execute([
+            $_SESSION['user_id'] ?? null,
+            $action,
+            $details,
+            $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'],
+        ]);
+    } catch (Exception $e) {
+        // On ne bloque pas l'app si le log échoue
     }
 }
 
