@@ -14,6 +14,9 @@ error_reporting(E_ALL);
 // Supprimer le header X-Powered-By (exposition de la version PHP)
 header_remove('X-Powered-By');
 
+// Forcer l'encodage UTF-8
+header('Content-Type: text/html; charset=utf-8');
+
 // Headers de sécurité essentiels
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: SAMEORIGIN');

@@ -8,6 +8,9 @@ Options -Indexes
 # Masquer la signature du serveur Apache
 ServerSignature Off
 
+# Forcer l'encodage UTF-8
+AddDefaultCharset UTF-8
+
 # Protéger les fichiers sensibles
 <FilesMatch "\.(sql|md|log|bak|env|json|lock)$">
     Require all denied
