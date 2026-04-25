@@ -509,7 +509,10 @@ $userName = htmlspecialchars($_SESSION['user_prenom'] ?? '');
                 if (data.success && data.reply) {
                     addMessage(data.reply, 'assistant');
                 } else {
-                    addMessage(data.error || 'Désolé, je n\'ai pas pu répondre. Réessaie dans un instant ! 🔄', 'assistant');
+                    if (data.debug) console.error('Expert IA Error:', data.debug);
+                    let errMsg = data.error || 'Désolé, je n\'ai pas pu répondre. Réessaie dans un instant ! 🔄';
+                    if (data.debug && data.debug.includes('HTTP 0')) errMsg += ' (Délai d\'attente dépassé)';
+                    addMessage(errMsg, 'assistant');
                 }
             } catch (err) {
                 typingEl.remove();

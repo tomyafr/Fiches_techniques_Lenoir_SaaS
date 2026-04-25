@@ -345,7 +345,7 @@ $messages[] = ['role' => 'user', 'content' => $userMessage];
 
 // Call Groq API
 if (!defined('GROQ_API_KEY') || empty(GROQ_API_KEY)) {
-    echo json_encode(['success' => false, 'error' => 'Service indisponible']);
+    echo json_encode(['success' => false, 'error' => 'Service indisponible (Clé manquante)']);
     exit;
 }
 
@@ -353,7 +353,7 @@ $payload = [
     'model' => 'llama-3.3-70b-versatile',
     'messages' => $messages,
     'temperature' => 0.5,
-    'max_tokens' => 500,
+    'max_tokens' => 1500, // Augmenté pour permettre de lister tous les clients
     'top_p' => 0.9,
     'frequency_penalty' => 0.1,
     'presence_penalty' => 0.1
@@ -365,18 +365,24 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, [
     'Content-Type: application/json'
 ]);
 curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload, JSON_UNESCAPED_UNICODE));
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+curl_setopt($ch, CURLOPT_TIMEOUT, 50); // Augmenté à 50s pour les réponses longues
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
 $response = curl_exec($ch);
 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$curlError = curl_error($ch);
 curl_close($ch);
 
 if ($httpCode === 200) {
     $result = json_decode($response, true);
     $assistantReply = $result['choices'][0]['message']['content'] ?? '';
+
+    if (empty($assistantReply)) {
+        echo json_encode(['success' => false, 'error' => 'Réponse vide reçue de l\'Expert IA.']);
+        exit;
+    }
 
     // Save to conversation history
     $_SESSION['assistant_history'][] = ['role' => 'user', 'content' => $userMessage];
@@ -389,5 +395,14 @@ if ($httpCode === 200) {
 
     echo json_encode(['success' => true, 'reply' => $assistantReply]);
 } else {
-    echo json_encode(['success' => false, 'error' => 'Je suis momentanément indisponible. Réessaie dans quelques instants ! 🔄']);
+    // Plus de détails pour le débogage (peut être masqué en production)
+    $errorMsg = 'Je suis momentanément indisponible. Réessaie dans quelques instants ! 🔄';
+    if ($httpCode === 429) $errorMsg = 'Trop de requêtes ! Je dois faire une petite pause. Réessaie dans une minute. ⏳';
+    if ($httpCode === 413) $errorMsg = 'Le message est trop long pour moi. Peux-tu simplifier ta question ? 📏';
+    
+    echo json_encode([
+        'success' => false, 
+        'error' => $errorMsg,
+        'debug' => "HTTP $httpCode - " . ($curlError ?: 'No CURL error')
+    ]);
 }
