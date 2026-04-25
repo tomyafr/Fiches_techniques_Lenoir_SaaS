@@ -462,7 +462,7 @@ $userName = htmlspecialchars($_SESSION['user_prenom'] ?? '');
             const typingEl = showTyping();
 
             try {
-                const res = await fetch('/api/assistant_chat.php', {
+                const res = await fetch('/assistant_chat.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: text })
