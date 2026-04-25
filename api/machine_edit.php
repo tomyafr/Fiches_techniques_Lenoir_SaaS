@@ -3305,19 +3305,27 @@ foreach ($recoFreq as $rfk => $rfv) {
                                  style="width:100%; height:auto;" 
                                  alt="Circulaire">
                             
+                            <?php 
+                                $isPdfMode = isset($_GET['pdf']);
+                                $topPole = $isPdfMode ? '28.0%' : '27.2%';
+                                $topNoyau = $isPdfMode ? '32.6%' : '31.8%';
+                                $topEp = $isPdfMode ? '43.9%' : '43.1%';
+                                $extraStyle = $isPdfMode ? 'border:none !important;' : '';
+                            ?>
+                            
                             <!-- Diamètre pôle (AJUSTEMENT FINAL V5) -->
-                            <div style="position:absolute; left:83.8%; top:28.0%; transform:translate(-50%, -50%); font-size:9px;">
-                                <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:75px; border:none !important; background:transparent; text-align:center; font-size:9px; font-weight:bold; outline:none;" autocomplete="off">
+                            <div style="position:absolute; left:83.8%; top:<?= $topPole ?>; transform:translate(-50%, -50%); font-size:9px;">
+                                <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:75px; <?= $extraStyle ?> background:transparent; text-align:center; font-size:9px; font-weight:bold; outline:none;" autocomplete="off">
                             </div>
 
                             <!-- Diamètre noyau (AJUSTEMENT FINAL V5) -->
-                            <div style="position:absolute; left:85.5%; top:32.6%; transform:translate(-50%, -50%); font-size:9px;">
-                                <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['mesures_levage_diam_noyau'] ?? ($mesures['levage_diam_noyau'] ?? '')) ?>" class="pdf-input" style="width:75px; border:none !important; background:transparent; text-align:center; font-size:9px; font-weight:bold; outline:none;" autocomplete="off">
+                            <div style="position:absolute; left:85.5%; top:<?= $topNoyau ?>; transform:translate(-50%, -50%); font-size:9px;">
+                                <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['mesures_levage_diam_noyau'] ?? ($mesures['levage_diam_noyau'] ?? '')) ?>" class="pdf-input" style="width:75px; <?= $extraStyle ?> background:transparent; text-align:center; font-size:9px; font-weight:bold; outline:none;" autocomplete="off">
                             </div>
 
                             <!-- Epaisseur pôle (AJUSTEMENT FINAL V5) -->
-                            <div style="position:absolute; left:85.5%; top:43.9%; transform:translate(-50%, -50%); font-size:9px;">
-                                <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:75px; border:none !important; background:transparent; text-align:center; font-size:9px; font-weight:bold; outline:none;" autocomplete="off">
+                            <div style="position:absolute; left:85.5%; top:<?= $topEp ?>; transform:translate(-50%, -50%); font-size:9px;">
+                                <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:75px; <?= $extraStyle ?> background:transparent; text-align:center; font-size:9px; font-weight:bold; outline:none;" autocomplete="off">
                             </div>
 
                             <!-- Ø ext/int (5.3% / 45.4%) -->
