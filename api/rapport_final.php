@@ -579,6 +579,31 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             100% { transform: rotate(360deg); }
         }
 
+        /* Particles CSS */
+        .particle {
+            position: absolute;
+            background: #ffb300;
+            border-radius: 50%;
+            opacity: 0;
+            filter: blur(2px);
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .p1 { width: 4px; height: 4px; top: 20%; left: 10%; animation: floatParticle 8s infinite ease-in-out; }
+        .p2 { width: 6px; height: 6px; top: 60%; left: 85%; animation: floatParticle 12s infinite ease-in-out 1s; }
+        .p3 { width: 3px; height: 3px; top: 80%; left: 20%; animation: floatParticle 10s infinite ease-in-out 2s; }
+        .p4 { width: 5px; height: 5px; top: 15%; left: 75%; animation: floatParticle 15s infinite ease-in-out 0.5s; }
+        .p5 { width: 4px; height: 4px; top: 40%; left: 5%; animation: floatParticle 9s infinite ease-in-out 3s; }
+
+        @keyframes floatParticle {
+            0% { transform: translate(0, 0) scale(1); opacity: 0; }
+            20% { opacity: 0.15; }
+            50% { transform: translate(20px, -30px) scale(1.2); opacity: 0.25; }
+            80% { opacity: 0.15; }
+            100% { transform: translate(-10px, 10px) scale(1); opacity: 0; }
+        }
+
         .download-status-text {
             font-size: 1.5rem;
             font-weight: 800;
@@ -670,8 +695,15 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 <body>
     <div id="pdfDownloadOverlay">
         <div class="premium-loader-card">
-            <div class="loader-visual" style="width: 280px; height: 160px; margin-bottom: 2rem; display: flex; align-items: center; justify-content: center; overflow: visible;">
-                <video id="loaderVideo" autoplay muted playsinline preload="auto" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: screen; transform: scale(0.9); filter: contrast(1.5) brightness(1.1);">
+            <div class="loader-visual" style="width: 280px; height: 160px; margin-bottom: 2rem; display: flex; align-items: center; justify-content: center; overflow: visible; position: relative;">
+                <!-- Particules douces orange -->
+                <div class="particle p1"></div>
+                <div class="particle p2"></div>
+                <div class="particle p3"></div>
+                <div class="particle p4"></div>
+                <div class="particle p5"></div>
+                
+                <video id="loaderVideo" autoplay muted playsinline preload="auto" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: screen; transform: scale(0.9); filter: contrast(1.5) brightness(1.1); z-index: 2;">
                     <source src="/assets/boucle_aimant.mp4?v=1" type="video/mp4">
                 </video>
             </div>
