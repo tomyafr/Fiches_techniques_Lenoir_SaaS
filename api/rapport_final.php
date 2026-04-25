@@ -671,8 +671,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     <div id="pdfDownloadOverlay">
         <div class="premium-loader-card">
             <div class="loader-visual" style="width: 280px; height: 160px; margin-bottom: 2rem; display: flex; align-items: center; justify-content: center; overflow: visible;">
-                <video autoplay loop muted playsinline preload="auto" style="width: 100%; height: 100%; object-fit: cover; mix-blend-mode: screen; transform: scale(1.4); filter: brightness(1.2);">
-                    <source src="/assets/Animation_PDF1.mp4" type="video/mp4">
+                <video id="loaderVideo" autoplay muted playsinline preload="auto" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: screen; transform: scale(0.9); filter: brightness(1.1);">
+                    <source src="/assets/boucle_aimant.mp4" type="video/mp4">
                 </video>
             </div>
             
@@ -2501,6 +2501,18 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     }
                 }
             };
+        }
+
+        // Gestion du Loop personnalisé pour la vidéo de chargement (coupe 0.5s avant la fin)
+        const loaderVideo = document.getElementById('loaderVideo');
+        if (loaderVideo) {
+            loaderVideo.addEventListener('timeupdate', function() {
+                // On boucle 0.5s avant la fin pour une transition plus fluide selon la demande
+                if (this.currentTime >= this.duration - 0.5) {
+                    this.currentTime = 0;
+                    this.play().catch(e => console.warn("Erreur loop video:", e));
+                }
+            });
         }
 
         // Écouter la reconnexion réseau
