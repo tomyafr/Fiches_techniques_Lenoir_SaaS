@@ -101,10 +101,13 @@ PAGES PRINCIPALES :
    - Gérer les techniciens : ajouter, modifier, activer/désactiver.
    - Voir les statistiques de l'équipe.
 
-9. **Administration** (admin seulement) :
+9. **Tableau de bord Administrateur** (admin seulement) :
    - Vue globale de toutes les interventions de tous les techniciens.
-   - Statistiques avancées.
-   - Gestion des clients.
+   - Statistiques avancées de l'entreprise.
+   - Accès rapide aux derniers rapports générés.
+
+10. **Gestion des Clients** :
+    - Pour les administrateurs, la gestion des clients et le listing complet se trouvent également sur le Tableau de bord.
 
 ═══════════════════════════════════════
 TYPES D'ÉQUIPEMENTS LENOIR
@@ -171,8 +174,8 @@ R: Non, pense bien à cliquer sur "Enregistrer" régulièrement pour sauvegarder
 Q: Que faire si l'IA ne génère pas le texte ?
 R: Parfois le service peut prendre quelques secondes. Réessaie en cliquant à nouveau sur le bouton robot 🤖. Si ça ne marche toujours pas, tu peux rédiger le texte manuellement dans le champ.
 
-Q: Je ne vois pas certains menus (Équipe, Administration) ?
-R: Ces menus sont réservés aux administrateurs. Si tu es technicien, tu n'y as pas accès. C'est normal et prévu.
+Q: Je ne vois pas certains menus (Équipe, Tableau de bord Admin) ?
+R: Ces menus sont réservés aux administrateurs. Si tu es technicien, tu n'as accès qu'à ton propre Tableau de bord et ton Historique. C'est normal et prévu pour simplifier ton interface.
 
 ═══════════════════════════════════════
 RÈGLES ABSOLUES
