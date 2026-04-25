@@ -75,14 +75,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $message = "✓ Statut mis à jour avec succès.";
             $messageType = "success";
         }
+    } elseif ($_POST['action'] === 'update_signature') {
+        $sigBase64 = $_POST['signature_base64'] ?? '';
+        if (!empty($sigBase64)) {
+            $stmt = $db->prepare('UPDATE users SET signature_base64 = ? WHERE id = ?');
+            $stmt->execute([$sigBase64, $userId]);
+            $message = "✓ Signature électronique enregistrée avec succès.";
+            $messageType = "success";
+        } else {
+            $message = "Aucune signature fournie.";
+            $messageType = "error";
+        }
+    } elseif ($_POST['action'] === 'delete_signature') {
+        $stmt = $db->prepare('UPDATE users SET signature_base64 = NULL WHERE id = ?');
+        $stmt->execute([$userId]);
+        $message = "✓ Signature supprimée.";
+        $messageType = "success";
     }
 }
 
 // Fetch current user
-$stmtUser = $db->prepare('SELECT statut FROM users WHERE id = ?');
+$stmtUser = $db->prepare('SELECT statut, signature_base64 FROM users WHERE id = ?');
 $stmtUser->execute([$userId]);
 $userCurrent = $stmtUser->fetch();
 $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
+$currentSignature = $userCurrent ? ($userCurrent['signature_base64'] ?? '') : '';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -552,7 +569,6 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                         reader.onload = function (event) {
                             const img = new Image();
                             img.onload = function () {
-                                // Redimensionner l'image du tel en 300x300 pour pas surcharger la base de données PostgreSQL
                                 const canvas = document.createElement('canvas');
                                 const ctx = canvas.getContext('2d');
 
@@ -578,6 +594,223 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
                         };
                         reader.readAsDataURL(file);
                     });
+                </script>
+
+                <!-- ═══════════════════════════════════════ -->
+                <!-- SIGNATURE ÉLECTRONIQUE -->
+                <!-- ═══════════════════════════════════════ -->
+                <div style="margin-bottom: 2rem; background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--glass-border);">
+                    <h4 style="margin-bottom: 0.5rem; color: var(--primary); display: flex; align-items: center; gap: 8px;">✍️ Signature Électronique</h4>
+                    <p style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 1.5rem;">
+                        Cette signature sera automatiquement ajoutée à chaque rapport que vous générez. Dessinez directement ou importez une image.
+                    </p>
+
+                    <!-- Signature existante -->
+                    <?php if (!empty($currentSignature)): ?>
+                    <div id="existingSignatureBlock" style="margin-bottom: 1.5rem; padding: 1rem; background: #fff; border-radius: 12px; text-align: center; position: relative;">
+                        <p style="font-size: 0.65rem; color: #666; margin-bottom: 0.5rem; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;">Signature actuelle</p>
+                        <img src="<?= htmlspecialchars($currentSignature) ?>" id="currentSigPreview" style="max-height: 100px; max-width: 100%; object-fit: contain;">
+                        <form method="POST" style="position: absolute; top: 8px; right: 8px;">
+                            <?= csrfField() ?>
+                            <input type="hidden" name="action" value="delete_signature">
+                            <button type="submit" onclick="return confirm('Supprimer votre signature ?')" style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #ef4444; padding: 4px 8px; border-radius: 6px; font-size: 0.65rem; cursor: pointer; font-weight: 600;">✕ Supprimer</button>
+                        </form>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- Tabs: Dessiner / Importer -->
+                    <div style="display: flex; gap: 0; margin-bottom: 1rem; border-radius: 8px; overflow: hidden; border: 1px solid var(--glass-border);">
+                        <button type="button" id="tabDraw" onclick="switchSigTab('draw')" style="flex: 1; padding: 0.6rem; font-size: 0.8rem; font-weight: 700; border: none; cursor: pointer; background: var(--primary); color: #fff; transition: 0.2s;">✏️ Dessiner</button>
+                        <button type="button" id="tabUpload" onclick="switchSigTab('upload')" style="flex: 1; padding: 0.6rem; font-size: 0.8rem; font-weight: 700; border: none; cursor: pointer; background: rgba(255,255,255,0.05); color: var(--text-dim); transition: 0.2s;">📁 Importer une image</button>
+                    </div>
+
+                    <!-- Zone Dessin -->
+                    <div id="sigDrawZone">
+                        <div style="position: relative; border-radius: 12px; overflow: hidden; border: 2px solid var(--glass-border); background: #fff;">
+                            <canvas id="sigCanvas" width="500" height="180" style="width: 100%; cursor: crosshair; touch-action: none; display: block;"></canvas>
+                            <button type="button" onclick="clearSignatureCanvas()" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: #fff; border: none; padding: 4px 10px; border-radius: 6px; font-size: 0.7rem; cursor: pointer; font-weight: 600;">Effacer</button>
+                            <!-- Ligne de base pour guider la signature -->
+                            <div style="position: absolute; bottom: 35px; left: 20px; right: 20px; border-bottom: 1px dashed rgba(0,0,0,0.15); pointer-events: none;"></div>
+                        </div>
+                        <p style="font-size: 0.65rem; color: var(--text-dim); margin-top: 0.4rem; text-align: center;">Dessinez votre signature avec la souris ou le doigt</p>
+                    </div>
+
+                    <!-- Zone Upload -->
+                    <div id="sigUploadZone" style="display: none;">
+                        <label for="sigFileInput" style="cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; border: 2px dashed rgba(14, 165, 233, 0.4); border-radius: 12px; background: rgba(14, 165, 233, 0.03); transition: 0.2s; min-height: 120px;">
+                            <span style="font-size: 2rem; margin-bottom: 0.5rem;">📄</span>
+                            <span style="font-size: 0.85rem; font-weight: 600; color: var(--accent-cyan);">Cliquez ou déposez une image</span>
+                            <span style="font-size: 0.7rem; color: var(--text-dim); margin-top: 0.3rem;">PNG, JPG — L'image sera rognée et optimisée</span>
+                        </label>
+                        <input type="file" id="sigFileInput" accept="image/*" style="display: none;">
+                        <div id="sigUploadPreviewWrapper" style="display: none; margin-top: 1rem; text-align: center; background: #fff; padding: 1rem; border-radius: 12px;">
+                            <p style="font-size: 0.65rem; color: #666; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase;">Aperçu</p>
+                            <img id="sigUploadPreview" style="max-height: 120px; max-width: 100%; object-fit: contain;">
+                        </div>
+                    </div>
+
+                    <!-- Bouton Sauvegarder -->
+                    <form method="POST" id="signatureForm">
+                        <?= csrfField() ?>
+                        <input type="hidden" name="action" value="update_signature">
+                        <input type="hidden" name="signature_base64" id="signatureBase64Input">
+                        <button type="submit" id="saveSigBtn" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 0.75rem; font-size: 0.9rem; background: linear-gradient(135deg, #0ea5e9, #6366f1); border: none; display: none;">
+                            💾 Enregistrer ma signature
+                        </button>
+                    </form>
+                </div>
+
+                <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+                <script>
+                    // ── Signature Pad Setup ──
+                    let sigPad;
+                    const sigCanvas = document.getElementById('sigCanvas');
+
+                    function initSigPad() {
+                        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                        const rect = sigCanvas.getBoundingClientRect();
+                        sigCanvas.width = rect.width * ratio;
+                        sigCanvas.height = rect.height * ratio;
+                        sigCanvas.getContext('2d').scale(ratio, ratio);
+                        sigPad = new SignaturePad(sigCanvas, {
+                            penColor: '#1a1a2e',
+                            minWidth: 1.5,
+                            maxWidth: 3,
+                            backgroundColor: 'rgba(255,255,255,0)'
+                        });
+                        sigPad.addEventListener('endStroke', onSigChange);
+                    }
+
+                    function clearSignatureCanvas() {
+                        if (sigPad) sigPad.clear();
+                        document.getElementById('signatureBase64Input').value = '';
+                        document.getElementById('saveSigBtn').style.display = 'none';
+                    }
+
+                    function onSigChange() {
+                        if (sigPad && !sigPad.isEmpty()) {
+                            // Export as trimmed PNG
+                            const dataUrl = sigPad.toDataURL('image/png');
+                            document.getElementById('signatureBase64Input').value = dataUrl;
+                            document.getElementById('saveSigBtn').style.display = 'block';
+                        }
+                    }
+
+                    // ── Tab Switching ──
+                    function switchSigTab(tab) {
+                        const drawZone = document.getElementById('sigDrawZone');
+                        const uploadZone = document.getElementById('sigUploadZone');
+                        const tabDraw = document.getElementById('tabDraw');
+                        const tabUpload = document.getElementById('tabUpload');
+
+                        if (tab === 'draw') {
+                            drawZone.style.display = 'block';
+                            uploadZone.style.display = 'none';
+                            tabDraw.style.background = 'var(--primary)';
+                            tabDraw.style.color = '#fff';
+                            tabUpload.style.background = 'rgba(255,255,255,0.05)';
+                            tabUpload.style.color = 'var(--text-dim)';
+                        } else {
+                            drawZone.style.display = 'none';
+                            uploadZone.style.display = 'block';
+                            tabUpload.style.background = 'var(--primary)';
+                            tabUpload.style.color = '#fff';
+                            tabDraw.style.background = 'rgba(255,255,255,0.05)';
+                            tabDraw.style.color = 'var(--text-dim)';
+                        }
+                    }
+
+                    // ── Upload & Crop ──
+                    document.getElementById('sigFileInput').addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (!file) return;
+
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            const img = new Image();
+                            img.onload = function() {
+                                // Auto-crop: find bounding box of non-white pixels
+                                const tmpCanvas = document.createElement('canvas');
+                                const tmpCtx = tmpCanvas.getContext('2d');
+                                tmpCanvas.width = img.width;
+                                tmpCanvas.height = img.height;
+                                tmpCtx.drawImage(img, 0, 0);
+
+                                const imageData = tmpCtx.getImageData(0, 0, img.width, img.height);
+                                const data = imageData.data;
+                                let top = img.height, bottom = 0, left = img.width, right = 0;
+
+                                for (let y = 0; y < img.height; y++) {
+                                    for (let x = 0; x < img.width; x++) {
+                                        const idx = (y * img.width + x) * 4;
+                                        const r = data[idx], g = data[idx+1], b = data[idx+2], a = data[idx+3];
+                                        // Consider pixel as content if it's not white/transparent
+                                        if (a > 20 && (r < 240 || g < 240 || b < 240)) {
+                                            if (y < top) top = y;
+                                            if (y > bottom) bottom = y;
+                                            if (x < left) left = x;
+                                            if (x > right) right = x;
+                                        }
+                                    }
+                                }
+
+                                // Add padding
+                                const pad = 15;
+                                top = Math.max(0, top - pad);
+                                left = Math.max(0, left - pad);
+                                bottom = Math.min(img.height, bottom + pad);
+                                right = Math.min(img.width, right + pad);
+
+                                const cropW = right - left;
+                                const cropH = bottom - top;
+
+                                if (cropW < 10 || cropH < 10) {
+                                    alert('L\'image semble vide ou trop claire.');
+                                    return;
+                                }
+
+                                // Resize to fit 500x180 proportionally
+                                const targetW = 500;
+                                const targetH = 180;
+                                const scale = Math.min(targetW / cropW, targetH / cropH);
+                                const finalW = Math.round(cropW * scale);
+                                const finalH = Math.round(cropH * scale);
+
+                                const outCanvas = document.createElement('canvas');
+                                outCanvas.width = targetW;
+                                outCanvas.height = targetH;
+                                const outCtx = outCanvas.getContext('2d');
+                                // Transparent background
+                                outCtx.clearRect(0, 0, targetW, targetH);
+                                // Center the signature
+                                const offsetX = (targetW - finalW) / 2;
+                                const offsetY = (targetH - finalH) / 2;
+                                outCtx.drawImage(img, left, top, cropW, cropH, offsetX, offsetY, finalW, finalH);
+
+                                const base64 = outCanvas.toDataURL('image/png');
+                                document.getElementById('signatureBase64Input').value = base64;
+
+                                // Show preview
+                                document.getElementById('sigUploadPreview').src = base64;
+                                document.getElementById('sigUploadPreviewWrapper').style.display = 'block';
+                                document.getElementById('saveSigBtn').style.display = 'block';
+                            };
+                            img.src = event.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    });
+
+                    // ── Form Validation ──
+                    document.getElementById('signatureForm').addEventListener('submit', function(e) {
+                        const val = document.getElementById('signatureBase64Input').value;
+                        if (!val) {
+                            e.preventDefault();
+                            alert('Veuillez dessiner ou importer votre signature avant de sauvegarder.');
+                        }
+                    });
+
+                    // Init signature pad on load
+                    document.addEventListener('DOMContentLoaded', initSigPad);
                 </script>
 
                 <!-- FORM MOT DE PASSE -->
