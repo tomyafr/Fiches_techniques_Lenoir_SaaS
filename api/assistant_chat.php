@@ -206,25 +206,29 @@ if ($role === 'admin') {
         ")->fetch();
         
         $totalMachines = $db->query("SELECT COUNT(*) FROM machines")->fetchColumn();
-        $totalClients = $db->query("SELECT COUNT(*) FROM clients")->fetchColumn();
+        $totalClients = $db->query("SELECT COUNT(DISTINCT UPPER(TRIM(nom_societe))) FROM clients")->fetchColumn();
         $totalTechs = $db->query("SELECT COUNT(*) FROM users WHERE role = 'technicien'")->fetchColumn();
 
         $adminContext .= "STATISTIQUES GLOBALES :\n";
-        $adminContext .= "- {$totalClients} clients enregistrés\n";
+        $adminContext .= "- {$totalClients} clients enregistrés (noms uniques)\n";
         $adminContext .= "- {$stats['total_interventions']} interventions au total ({$stats['brouillons']} brouillons, {$stats['terminees']} terminées, {$stats['envoyees']} envoyées)\n";
         $adminContext .= "- {$totalMachines} fiches machines au total\n";
         $adminContext .= "- {$totalTechs} techniciens dans l'équipe\n\n";
 
-        // 2. Liste des clients avec détails
+        // 2. Liste des clients avec détails (regroupés par nom pour éviter les doublons)
         $clients = $db->query("
-            SELECT c.id, c.nom_societe, c.contact_fonction, c.contact_email, c.contact_telephone,
-                   COUNT(i.id) as nb_interventions,
+            SELECT UPPER(TRIM(c.nom_societe)) as nom_groupe,
+                   MIN(c.nom_societe) as nom_societe,
+                   MAX(c.contact_fonction) as contact_fonction, 
+                   MAX(c.contact_email) as contact_email, 
+                   MAX(c.contact_telephone) as contact_telephone,
+                   COUNT(DISTINCT i.id) as nb_interventions,
                    MAX(i.date_intervention) as derniere_visite,
                    MIN(i.date_intervention) as premiere_visite
             FROM clients c
             LEFT JOIN interventions i ON c.id = i.client_id
-            GROUP BY c.id, c.nom_societe, c.contact_fonction, c.contact_email, c.contact_telephone
-            ORDER BY c.nom_societe
+            GROUP BY UPPER(TRIM(c.nom_societe))
+            ORDER BY nom_groupe
         ")->fetchAll();
 
         $adminContext .= "LISTE COMPLÈTE DES CLIENTS :\n";
@@ -304,10 +308,10 @@ if ($role === 'admin') {
 
         // 6. Clients par nombre d'interventions (top 10)
         $topClients = $db->query("
-            SELECT c.nom_societe, COUNT(i.id) as nb, MAX(i.date_intervention) as derniere
+            SELECT MIN(c.nom_societe) as nom_societe, COUNT(DISTINCT i.id) as nb, MAX(i.date_intervention) as derniere
             FROM clients c
             JOIN interventions i ON c.id = i.client_id
-            GROUP BY c.nom_societe
+            GROUP BY UPPER(TRIM(c.nom_societe))
             ORDER BY nb DESC
             LIMIT 10
         ")->fetchAll();
