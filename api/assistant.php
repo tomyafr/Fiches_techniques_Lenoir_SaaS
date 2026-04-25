@@ -270,6 +270,33 @@ $userName = htmlspecialchars($_SESSION['user_prenom'] ?? '');
             background: rgba(244, 130, 32, 0.02);
         }
 
+        /* Status Dots (Pastilles) */
+        .status-dot {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin: 0 4px;
+            vertical-align: middle;
+            box-shadow: inset 0 -2px 4px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .status-dot::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 3px;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 50%;
+        }
+        .dot-green { background: #22c55e; box-shadow: 0 0 8px rgba(34, 197, 94, 0.4); }
+        .dot-orange { background: #f97316; box-shadow: 0 0 8px rgba(249, 115, 22, 0.4); }
+        .dot-red { background: #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); }
+        .dot-darkred { background: #7f1d1d; box-shadow: 0 0 8px rgba(127, 29, 29, 0.4); }
+        .dot-gray { background: #94a3b8; box-shadow: 0 0 8px rgba(148, 163, 184, 0.4); }
+
         /* Mobile responsive */
         @media (max-width: 1024px) {
             .chat-hero { padding: 1rem 1.25rem; }
@@ -496,9 +523,20 @@ $userName = htmlspecialchars($_SESSION['user_prenom'] ?? '');
             const container = document.getElementById('chatMessages');
             const div = document.createElement('div');
             div.className = 'chat-msg ' + role;
-            div.innerHTML = text
+            
+            // Render Markdown-ish bold and newlines
+            let html = text
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\n/g, '<br>');
+
+            // Replace emojis with beautiful CSS dots
+            html = html.replace(/🟢/g, '<span class="status-dot dot-green"></span>');
+            html = html.replace(/🟠/g, '<span class="status-dot dot-orange"></span>');
+            html = html.replace(/🔴/g, '<span class="status-dot dot-red"></span>');
+            html = html.replace(/⬛/g, '<span class="status-dot dot-darkred"></span>');
+            html = html.replace(/⚪/g, '<span class="status-dot dot-gray"></span>');
+
+            div.innerHTML = html;
             container.appendChild(div);
             container.scrollTop = container.scrollHeight;
         }

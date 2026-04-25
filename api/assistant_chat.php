@@ -139,7 +139,7 @@ Q: Comment prendre des photos ?
 R: Sur chaque ligne de contrôle dans la fiche machine, tu as une icône 📸. Clique dessus pour ouvrir l'appareil photo ou sélectionner une image. Tu peux ajouter jusqu'à 4 photos par point.
 
 Q: Comment utiliser les pastilles (gommettes) ?
-R: Clique sur la pastille de la couleur correspondant à ton évaluation. Vert = OK, Orange = À améliorer, Rouge = Non conforme, Rouge foncé = À remplacer, Gris = Non applicable.
+R: Clique sur la pastille de la couleur correspondant à ton évaluation. Vert 🟢 = OK, Orange 🟠 = À améliorer, Rouge 🔴 = Non conforme, Rouge foncé ⬛ = À remplacer, Gris ⚪ = Non applicable.
 
 Q: Comment générer le texte de l'IA pour les dysfonctionnements et la conclusion ?
 R: Le texte est généré automatiquement quand tu remplis les pastilles. Si tu veux le régénérer, clique sur le bouton avec le robot bleu 🤖 à côté de la section E ou F.
