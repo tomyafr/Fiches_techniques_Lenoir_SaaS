@@ -671,7 +671,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
     <div id="pdfDownloadOverlay">
         <div class="premium-loader-card">
             <div class="loader-visual" style="width: 280px; height: 160px; margin-bottom: 2rem; display: flex; align-items: center; justify-content: center; overflow: visible;">
-                <video id="loaderVideo" autoplay muted playsinline preload="auto" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: screen; transform: scale(0.9); filter: brightness(1.1);">
+                <video id="loaderVideo" autoplay muted playsinline preload="auto" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: screen; transform: scale(0.9); filter: contrast(1.5) brightness(1.1);">
                     <source src="/assets/boucle_aimant.mp4?v=1" type="video/mp4">
                 </video>
             </div>
