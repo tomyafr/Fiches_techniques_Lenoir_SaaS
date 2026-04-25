@@ -232,7 +232,7 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
                 </a>
                 <a href="assistant.php" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span style="font-size: 14px; margin-right: 6px;">🤖</span> Assistant Tom
+                    <img src="/assets/ai_expert.jpg" style="height: 16px; width: 16px; margin-right: 8px; border-radius: 4px;"> Expert IA
                 </a>
             </nav>
 
@@ -495,8 +495,8 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
                 <span class="mobile-nav-label">Équipe</span>
             </a>
             <a href="assistant.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                <span style="font-size: 22px; margin-bottom: 2px;">🤖</span>
-                <span class="mobile-nav-label">Tom</span>
+                <img src="/assets/ai_expert.jpg" style="height: 24px; width: 24px; border-radius: 4px; margin-bottom: 4px;">
+                <span class="mobile-nav-label">Expert IA</span>
             </a>
             <a href="profile.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
                 <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">

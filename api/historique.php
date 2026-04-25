@@ -411,7 +411,7 @@ $nbClients = count($clientsSet);
                 <?php endif; ?>
                 <a href="assistant.php" class="btn btn-ghost sidebar-link"
                     style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
-                    <span style="font-size: 14px; margin-right: 6px;">🤖</span> Assistant Tom
+                    <img src="/assets/ai_expert.jpg" style="height: 16px; width: 16px; margin-right: 8px; border-radius: 4px;"> Expert IA
                 </a>
             </nav>
 

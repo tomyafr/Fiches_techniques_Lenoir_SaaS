@@ -12,7 +12,7 @@ $userName = htmlspecialchars($_SESSION['user_prenom'] ?? '');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Assistant Tom | LM Expert</title>
+    <title>Expert IA | LM Expert</title>
     <link rel="stylesheet" href="/assets/style.css">
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/assets/icon-192.png">
@@ -50,13 +50,18 @@ $userName = htmlspecialchars($_SESSION['user_prenom'] ?? '');
             width: 52px;
             height: 52px;
             border-radius: 16px;
-            background: linear-gradient(135deg, #F48220, #d35400);
+            background: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
             flex-shrink: 0;
-            box-shadow: 0 8px 20px rgba(244, 130, 32, 0.3);
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .chat-hero-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .chat-hero-info h2 {
             margin: 0;
@@ -288,7 +293,7 @@ $userName = htmlspecialchars($_SESSION['user_prenom'] ?? '');
         <button class="mobile-logo-btn" onclick="toggleSidebar()" aria-label="Menu">
             <img src="/assets/lenoir_logo_trans.svg" alt="Raoul Lenoir" class="mobile-header-logo">
         </button>
-        <span class="mobile-header-title">Assistant Tom</span>
+        <span class="mobile-header-title">Expert IA</span>
         <span class="mobile-header-user">
             <?php if (!empty($_SESSION['avatar'])): ?>
                 <img src="<?= htmlspecialchars($_SESSION['avatar']) ?>"
@@ -342,7 +347,7 @@ $userName = htmlspecialchars($_SESSION['user_prenom'] ?? '');
                 <?php endif; ?>
                 <a href="assistant.php" class="btn btn-primary sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <span style="font-size: 14px; margin-right: 6px;">🤖</span> Assistant Tom
+                    <img src="/assets/ai_expert.jpg" style="height: 18px; width: 18px; margin-right: 8px; border-radius: 4px;"> Expert IA
                 </a>
             </nav>
 
@@ -374,9 +379,11 @@ $userName = htmlspecialchars($_SESSION['user_prenom'] ?? '');
             <div class="chat-page-wrapper">
                 <!-- Header -->
                 <div class="chat-hero">
-                    <div class="chat-hero-avatar">🤖</div>
+                    <div class="chat-hero-avatar">
+                        <img src="/assets/ai_expert.jpg" alt="Expert IA">
+                    </div>
                     <div class="chat-hero-info">
-                        <h2>Tom <span style="font-weight: 400; color: var(--text-dim); font-size: 0.85rem;">· Assistant LM Expert</span></h2>
+                        <h2>Expert IA <span style="font-weight: 400; color: var(--text-dim); font-size: 0.85rem;">· Support Intelligence Artificielle</span></h2>
                         <p><span class="chat-hero-status">En ligne</span> · Prêt à t'aider sur l'application</p>
                     </div>
                 </div>
@@ -384,7 +391,7 @@ $userName = htmlspecialchars($_SESSION['user_prenom'] ?? '');
                 <!-- Messages -->
                 <div class="chat-messages" id="chatMessages">
                     <div class="chat-msg assistant" style="animation-delay: 0.1s;">
-                        Salut <?= $userName ?> ! 👋 Je suis <strong>Tom</strong>, ton assistant virtuel LM Expert. Je connais l'application sur le bout des doigts. Pose-moi ta question !
+                        Salut <?= $userName ?> ! 👋 Je suis ton **Expert IA**. Je connais l'application LM Expert sur le bout des doigts. Pose-moi ta question !
                     </div>
                 </div>
 
@@ -421,8 +428,8 @@ $userName = htmlspecialchars($_SESSION['user_prenom'] ?? '');
                 <span class="mobile-nav-label">Historique</span>
             </a>
             <a href="assistant.php" class="mobile-nav-item active" style="color: inherit; text-decoration:none;">
-                <span style="font-size: 22px; margin-bottom: 2px;">🤖</span>
-                <span class="mobile-nav-label">Tom</span>
+                <img src="/assets/ai_expert.jpg" style="height: 24px; width: 24px; border-radius: 4px; margin-bottom: 4px;">
+                <span class="mobile-nav-label">Expert IA</span>
             </a>
             <a href="profile.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
                 <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
