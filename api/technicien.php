@@ -345,29 +345,29 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
         </main>
     </div>
 
-    <!-- Mobile Bottom Nav -->
     <nav class="mobile-bottom-nav">
         <div class="mobile-bottom-nav-inner">
-            <button class="mobile-nav-item <?= $showNewTab ? '' : 'active' ?>" onclick="switchTab('dashboard'); setActiveNav(this)"
-                id="nav-mob-dashboard">
-                                <img src="/assets/icon_dashboard_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
+            <button class="mobile-nav-item <?= $showNewTab ? '' : 'active' ?>" onclick="switchTab('dashboard'); setActiveNav(this)" id="nav-mob-dashboard">
+                <img src="/assets/icon_dashboard_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Dashboard</span>
             </button>
             <button class="mobile-nav-item <?= $showNewTab ? 'active' : '' ?>" onclick="switchTab('nouvelle'); setActiveNav(this)" id="nav-mob-nouvelle">
-                                <img src="/assets/icon_add_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
+                <img src="/assets/icon_add_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">+ Fiche</span>
             </button>
             <a href="historique.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                                <img src="/assets/icon_history_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
+                <img src="/assets/icon_history_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Historique</span>
             </a>
-            <a href="assistant.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                <img src="/assets/ai_expert.jpg" style="height: 24px; width: 24px; border-radius: 4px; margin-bottom: 4px;">
-                <span class="mobile-nav-label">Expert IA</span>
-            </a>
             <a href="profile.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                                <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
+                <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Profil</span>
+            </a>
+            <a href="assistant.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
+                <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px;">
+                    <img src="/assets/ai_expert.jpg" style="height: 22px; width: 22px; border-radius: 4px; object-fit: cover;">
+                </div>
+                <span class="mobile-nav-label">Expert IA</span>
             </a>
         </div>
     </nav>

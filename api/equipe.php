@@ -160,7 +160,6 @@ $equipe = $stmtUsers->fetchAll();
         </main>
     </div>
 
-    <!-- Bottom nav mobile -->
     <nav class="mobile-bottom-nav">
         <div class="mobile-bottom-nav-inner">
             <a href="admin.php" class="mobile-nav-item">
@@ -178,6 +177,12 @@ $equipe = $stmtUsers->fetchAll();
             <a href="profile.php" class="mobile-nav-item">
                 <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Profil</span>
+            </a>
+            <a href="assistant.php" class="mobile-nav-item">
+                <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px;">
+                    <img src="/assets/ai_expert.jpg" style="height: 22px; width: 22px; border-radius: 4px; object-fit: cover;">
+                </div>
+                <span class="mobile-nav-label">Expert IA</span>
             </a>
         </div>
     </nav>

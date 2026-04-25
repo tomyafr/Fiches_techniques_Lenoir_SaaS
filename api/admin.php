@@ -479,7 +479,6 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
         </main>
     </div>
 
-    <!-- Mobile Bottom Nav -->
     <nav class="mobile-bottom-nav">
         <div class="mobile-bottom-nav-inner">
             <a href="admin.php" class="mobile-nav-item active" style="color: inherit; text-decoration:none;">
@@ -494,13 +493,15 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
                 <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Équipe</span>
             </a>
-            <a href="assistant.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
-                <img src="/assets/ai_expert.jpg" style="height: 24px; width: 24px; border-radius: 4px; margin-bottom: 4px;">
-                <span class="mobile-nav-label">Expert IA</span>
-            </a>
             <a href="profile.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
                 <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Profil</span>
+            </a>
+            <a href="assistant.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
+                <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px;">
+                    <img src="/assets/ai_expert.jpg" style="height: 22px; width: 22px; border-radius: 4px; object-fit: cover;">
+                </div>
+                <span class="mobile-nav-label">Expert IA</span>
             </a>
         </div>
     </nav>

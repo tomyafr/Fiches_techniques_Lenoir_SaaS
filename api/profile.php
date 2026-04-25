@@ -957,29 +957,34 @@ $currentSignature = $userCurrent ? ($userCurrent['signature_base64'] ?? '') : ''
         }
     </script>
 
-        <!-- Bottom nav mobile -->
-        <nav class="mobile-bottom-nav">
-            <div class="mobile-bottom-nav-inner">
-                <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>" class="mobile-nav-item">
-                    <img src="/assets/icon_dashboard_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
-                    <span class="mobile-nav-label">Tableau</span>
-                </a>
-                <a href="historique.php" class="mobile-nav-item">
-                    <img src="/assets/icon_history_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
-                    <span class="mobile-nav-label">Historique</span>
-                </a>
-                <?php if ($_SESSION['role'] === 'admin'): ?>
-                <a href="equipe.php" class="mobile-nav-item">
-                    <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
-                    <span class="mobile-nav-label">Équipe</span>
-                </a>
-                <?php endif; ?>
-                <a href="profile.php" class="mobile-nav-item active">
-                    <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
-                    <span class="mobile-nav-label">Profil</span>
-                </a>
-            </div>
-        </nav>
+    <nav class="mobile-bottom-nav">
+        <div class="mobile-bottom-nav-inner">
+            <a href="<?= $_SESSION['role'] === 'admin' ? 'admin.php' : 'technicien.php' ?>" class="mobile-nav-item">
+                <img src="/assets/icon_dashboard_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
+                <span class="mobile-nav-label">Tableau</span>
+            </a>
+            <a href="historique.php" class="mobile-nav-item">
+                <img src="/assets/icon_history_white.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
+                <span class="mobile-nav-label">Historique</span>
+            </a>
+            <?php if ($_SESSION['role'] === 'admin'): ?>
+            <a href="equipe.php" class="mobile-nav-item">
+                <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
+                <span class="mobile-nav-label">Équipe</span>
+            </a>
+            <?php endif; ?>
+            <a href="profile.php" class="mobile-nav-item active">
+                <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
+                <span class="mobile-nav-label">Profil</span>
+            </a>
+            <a href="assistant.php" class="mobile-nav-item">
+                <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px;">
+                    <img src="/assets/ai_expert.jpg" style="height: 22px; width: 22px; border-radius: 4px; object-fit: cover;">
+                </div>
+                <span class="mobile-nav-label">Expert IA</span>
+            </a>
+        </div>
+    </nav>
     <script src="/assets/toast.js"></script>
 </body>
 
