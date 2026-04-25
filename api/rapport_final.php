@@ -703,7 +703,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 <div class="particle p4"></div>
                 <div class="particle p5"></div>
                 
-                <video id="loaderVideo" autoplay muted playsinline preload="auto" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: screen; transform: scale(0.9); filter: contrast(1.5) brightness(1.1); z-index: 2;">
+                <video id="loaderVideo" autoplay muted playsinline preload="auto" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: screen; transform: scale(0.9); filter: contrast(1.5) brightness(1.1); z-index: 2; clip-path: inset(0 0 8% 0);">
                     <source src="/assets/boucle_aimant.mp4?v=1" type="video/mp4">
                 </video>
             </div>
