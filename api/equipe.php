@@ -184,6 +184,7 @@ $equipe = $stmtUsers->fetchAll();
             document.getElementById('sidebarOverlay').classList.toggle('open');
         }
     </script>
+    <?php include __DIR__ . '/../includes/chatbot_widget.php'; ?>
 </body>
 
 </html>

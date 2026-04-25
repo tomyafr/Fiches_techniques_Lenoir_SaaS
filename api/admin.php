@@ -659,6 +659,7 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
         });
     </script>
     <script src="/assets/toast.js"></script>
+    <?php include __DIR__ . '/../includes/chatbot_widget.php'; ?>
 </body>
 
 </html>

@@ -744,6 +744,7 @@ $currentStatut = $userCurrent ? $userCurrent['statut'] : 'actif';
             </div>
         </nav>
     <script src="/assets/toast.js"></script>
+    <?php include __DIR__ . '/../includes/chatbot_widget.php'; ?>
 </body>
 
 </html>

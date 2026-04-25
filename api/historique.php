@@ -695,6 +695,7 @@ $nbClients = count($clientsSet);
             document.body.classList.toggle('sidebar-is-open');
         }
     </script>
+    <?php include __DIR__ . '/../includes/chatbot_widget.php'; ?>
 </body>
 
 </html>
