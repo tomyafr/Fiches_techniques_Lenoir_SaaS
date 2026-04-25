@@ -1187,7 +1187,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </svg>
                             <div style="position:relative; z-index:1; font-size:13px; color:#999; font-weight:bold; text-align:center;">
                                 Aucune photo prise pour la partie B
-                                <br><button type="button" class="btn btn-primary" onclick="capturePhoto(\'desc_materiel\')" style="margin-top:10px; height:32px; font-size:11px;">ðŸ“· Ajouter une photo</button>
+                                <br><button type="button" class="btn btn-primary" onclick="capturePhoto(\'desc_materiel\')" style="margin-top:10px; height:32px; font-size:11px;">📸 Ajouter une photo</button>
                             </div>
                         </div>';
                     } else {
@@ -1197,7 +1197,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             $html .= '
                             <div class="montage-item">
                                 <img src="' . htmlspecialchars($p['data']) . '" alt="Photo Matériel ' . ($i+1) . '" onclick="openLightbox(this.src, \'Photo Matériel ' . ($i+1) . '\')">
-                                <button type="button" class="photo-del-overlay no-print-pdf" onclick="deletePhoto(\'desc_materiel\', ' . $i . ')">Ã—</button>
+                                <button type="button" class="photo-del-overlay no-print-pdf" onclick="deletePhoto(\'desc_materiel\', ' . $i . ')">×</button>
                                 ' . (!empty($p['comment']) ? '<div class="photo-comment-overlay">' . htmlspecialchars($p['comment']) . '</div>' : '') . '
                             </div>';
                         }
@@ -1207,7 +1207,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     if ($count < 4 && !$isPdf) {
                         $html .= '<div style="text-align:center; margin-top:10px;" class="no-print-pdf">
                             <button type="button" class="photo-btn no-print-pdf" onclick="capturePhoto(\'desc_materiel\')" style="padding:6px 12px; font-size:12px;">
-                                <span>ðŸ“·</span> Ajouter une photo (' . $count . '/4)
+                                <span>📸</span> Ajouter une photo (' . $count . '/4)
                             </button>
                         </div>';
                     }
@@ -1275,7 +1275,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     }
 
                     return '<div style="display:flex; align-items:center; gap:4px; margin-top:2px;">
-                        <button type="button" class="photo-btn no-print-pdf" onclick="capturePhoto(\'' . $key . '\')">ðŸ“·</button>
+                        <button type="button" class="photo-btn no-print-pdf" onclick="capturePhoto(\'' . $key . '\')">📸</button>
                         <span class="photo-thumbs" id="thumbs_' . $key . '">' . $thumbsHtml . '</span>
                     </div>';
                 }
@@ -1397,8 +1397,8 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     <?php $etanche_v = $donnees['sgsa_e'.$e.'_etancheite_stat'] ?? ''; ?>
                                     <tr>
                                         <td style="padding:5px; border:1px solid #000;">Étanchéité à la fermeture</td>
-                                        <td style="text-align:center; border:1px solid #000;"><?= ($etanche_v == '1' ? 'â˜‘' : 'â˜') ?></td>
-                                        <td style="text-align:center; border:1px solid #000;"><?= ($etanche_v == '0' ? 'â˜‘' : 'â˜') ?></td>
+                                        <td style="text-align:center; border:1px solid #000;"><?= ($etanche_v == '1' ? '☑' : '☐') ?></td>
+                                        <td style="text-align:center; border:1px solid #000;"><?= ($etanche_v == '0' ? '☑' : '☐') ?></td>
                                     </tr>
                                     <tr style="background:#ccc; text-align:center; font-weight:bold;">
                                         <td colspan="3" style="padding:4px; border:1px solid #000;">BARREAUX (en partant de gauche)</td>
@@ -1419,13 +1419,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                                                 <tr>
                                                     <td style="text-align:left; padding:4px; font-weight:bold; border:1px solid #000;">Correct</td>
                                                     <?php for($i=1; $i<=$nbB; $i++): ?>
-                                                        <td style="border:1px solid #000;"><?= (($mesures['sgsa_e'.$e.'_b'.$i.'_stat'] ?? '') == 'correct' ? 'â˜‘' : 'â˜') ?></td>
+                                                        <td style="border:1px solid #000;"><?= (($mesures['sgsa_e'.$e.'_b'.$i.'_stat'] ?? '') == 'correct' ? '☑' : '☐') ?></td>
                                                     <?php endfor; ?>
                                                 </tr>
                                                 <tr>
                                                     <td style="text-align:left; padding:4px; font-weight:bold; border:1px solid #000;">Faible</td>
                                                     <?php for($i=1; $i<=$nbB; $i++): ?>
-                                                        <td style="border:1px solid #000;"><?= (($mesures['sgsa_e'.$e.'_b'.$i.'_stat'] ?? '') == 'faible' ? 'â˜‘' : 'â˜') ?></td>
+                                                        <td style="border:1px solid #000;"><?= (($mesures['sgsa_e'.$e.'_b'.$i.'_stat'] ?? '') == 'faible' ? '☑' : '☐') ?></td>
                                                     <?php endfor; ?>
                                                 </tr>
                                                 <tr>
@@ -1979,7 +1979,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                             </tr>
                             <tr>
                                 <td style="padding:8px; font-weight:bold;">
-                                    Environnement Atex ? Non â€“ Oui :
+                                    Environnement Atex ? Non – Oui :
                                     <input type="text" name="mesures[sgsa_atex]" value="<?= htmlspecialchars($mesures['sgsa_atex'] ?? '') ?>" style="width:100px; border:none; border-bottom:1px solid #000; text-align:center; margin-left:5px;">
                                 </td>
                                 <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
@@ -2978,7 +2978,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <?= renderAprfRow("Etat d’usure de la virole inox", "paptap_virole", $donnees) ?>
                         <?= renderAprfRow("Revêtement caoutchouc lisse ou losange", "paptap_revetement", $donnees) ?>
                         <?= renderAprfRow("Nombre et taille des tasseaux", "paptap_tasseaux", $donnees) ?>
-                        <?= renderAprfRow("Etat de lâ€™arbre dâ€™entrainement", "paptap_arbre", $donnees) ?>
+                        <?= renderAprfRow("Etat de l—™arbre d—™entrainement", "paptap_arbre", $donnees) ?>
                         <?= renderAprfRow("Etat des paliers et graissage", "paptap_paliers", $donnees) ?>
                         <?= renderAprfRow("Rotation sans difficulté", "paptap_rotation", $donnees) ?>
 
@@ -3401,7 +3401,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         <div class="section-wrapper-pdf" style="padding:0; background: transparent; page-break-inside: avoid; break-inside: avoid;">
                             <div class="pdf-section-title" id="section-e">E) CAUSE DE DYSFONCTIONNEMENT :</div>
                             <?php if (!isset($_GET['pdf'])): ?>
-                                <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette zone est pré-remplie avec les points "Non conformes" ou "Ã€ améliorer" détectés. Vous pouvez éditer le texte ci-dessous.</p>
+                                <p style="font-size:11px; color:#666; margin-bottom:5px;">Cette zone est pré-remplie avec les points "Non conformes" ou "à améliorer" détectés. Vous pouvez éditer le texte ci-dessous.</p>
                                 <textarea name="dysfonctionnements" id="dysfonctionnementsText" class="pdf-textarea" style="min-height:100px; font-size:13px; border: 1px solid #ccc; background:#fff; padding:5px;"><?= htmlspecialchars($machine['dysfonctionnements'] ?? '') ?></textarea>
                                 <button type="button" class="btn-ia-action" onclick="generateDysfunctions(this)" style="margin-top:5px; background:#2980b9; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:11px;">
                                     <img src="/assets/ai_expert.jpg" style="height: 14px; width: 14px; vertical-align: middle; border-radius:3px; margin-right: 4px;"> Actualiser
@@ -3475,7 +3475,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                         <td style="width:60px; vertical-align:middle; padding-bottom:15px;">
                                             <img src="/assets/hazard/no_implants.png" style="height:45px;">
                                         </td>
-                                        <td style="font-size:14px; vertical-align:middle; padding-bottom:15px; font-weight:bold;">Accès interdit aux porteurs dâ€™implants actifs !</td>
+                                        <td style="font-size:14px; vertical-align:middle; padding-bottom:15px; font-weight:bold;">Accès interdit aux porteurs d—™implants actifs !</td>
                                     </tr>
                                 </table>
                             </div>
@@ -3604,7 +3604,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 const serialized = document.getElementById('photosJsonInput').value;
                 const sizeMB = (serialized.length / (1024 * 1024)).toFixed(2);
                 if (serialized.length > 4.5 * 1024 * 1024) {
-                    alert("âš ï¸ Attention : La fiche contient trop de photos (" + sizeMB + " Mo). Vercel limite l'enregistrement à 4.5 Mo.\nVeuillez supprimer une ou deux photos avant d'enregistrer.");
+                    alert("⚠️ Attention : La fiche contient trop de photos (" + sizeMB + " Mo). Vercel limite l'enregistrement à 4.5 Mo.\nVeuillez supprimer une ou deux photos avant d'enregistrer.");
                     e.preventDefault();
                     return false;
                 }
@@ -3637,7 +3637,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             if (file.size < 50 * 1024) { // lowered to 50KB to be safe
                 alert("âŒ Image rejetée : Le fichier est trop petit. Veuillez prendre une photo nette.");
                 if (btn) {
-                    btn.innerHTML = 'ðŸ“·';
+                    btn.innerHTML = '📸';
                     btn.disabled = false;
                     btn.style.opacity = '1';
                     btn.style.pointerEvents = 'auto';
@@ -3664,7 +3664,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                     renderThumbsForKey(currentPhotoKey);
                     renderAnnexes();
                     if (btn) {
-                        btn.innerHTML = 'ðŸ“·';
+                        btn.innerHTML = '📸';
                         btn.disabled = false;
                         btn.style.opacity = '1';
                         btn.style.pointerEvents = 'auto';
@@ -3732,7 +3732,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 
                 wrap.innerHTML = '<img src="' + src + '" title="' + (p.caption || '') + '" onclick="openLightbox(this.src, \'' + (p.caption || '').replace(/'/g, "\\'") + '\')">' +
                     (p.caption ? '<br><i style="font-size:8px; display:block; line-height:1.1; color:#555; margin-top:2px; max-width:45px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + p.caption + '</i>' : '') +
-                    '<button type="button" class="photo-del" onclick="deletePhoto(\'' + key + '\',' + i + ')">Ã—</button>';
+                    '<button type="button" class="photo-del" onclick="deletePhoto(\'' + key + '\',' + i + ')">×</button>';
                 container.appendChild(wrap);
             });
         }
@@ -3769,7 +3769,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 html += `
                     <div class="montage-item">
                         <img src="${src}" alt="Photo Matériel ${i+1}" onclick="openLightbox(this.src, 'Photo Matériel ${i+1}')">
-                        <button type="button" class="photo-del-overlay no-print-pdf" onclick="deletePhoto('desc_materiel', ${i})">Ã—</button>
+                        <button type="button" class="photo-del-overlay no-print-pdf" onclick="deletePhoto('desc_materiel', ${i})">×</button>
                     </div>`;
             });
             
@@ -3779,7 +3779,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             if (count < 4) {
                 html += `<div style="text-align:center; margin-top:10px;">
                     <button type="button" class="photo-btn" onclick="capturePhoto('desc_materiel')" style="padding:6px 12px; font-size:12px;">
-                        <span>ðŸ“·</span> Ajouter une photo (${count}/4)
+                        <span>📸</span> Ajouter une photo (${count}/4)
                     </button>
                 </div>`;
             }
@@ -3846,7 +3846,7 @@ foreach ($recoFreq as $rfk => $rfv) {
         async function generateConclusion(btn) {
             btn = btn || (window.event ? window.event.currentTarget : null);
             const originalText = btn ? btn.innerHTML : '';
-            if (btn) { btn.innerHTML = 'â³ Analyse expert...'; btn.disabled = true; }
+            if (btn) { btn.innerHTML = '⏳ Analyse expert...'; btn.disabled = true; }
 
             try {
                 const form = document.getElementById('machineForm');
@@ -3876,7 +3876,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             if (textarea.value && textarea.value !== "Aucun dysfonctionnement majeur signalé." && !confirm("Voulez-vous écraser le contenu actuel par l'analyse IA ?")) return;
             
             const originalText = btn ? btn.innerHTML : '';
-            if (btn) { btn.innerHTML = 'â³ Analyse expert...'; btn.disabled = true; }
+            if (btn) { btn.innerHTML = '⏳ Analyse expert...'; btn.disabled = true; }
 
             try {
                 const form = document.getElementById('machineForm');
@@ -3973,7 +3973,7 @@ foreach ($recoFreq as $rfk => $rfv) {
             }
         });
 
-        // ========== CHRONOMÃˆTRE & TEMPS ==========
+        // ========== CHRONOMÈTRE & TEMPS ==========
         var chronoRunning = false;
 
         function toggleChrono() {
@@ -3985,7 +3985,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 var now = new Date();
                 debutInput.value = pad2(now.getHours()) + ':' + pad2(now.getMinutes());
                 finInput.value = '';
-                btn.textContent = 'â¹ Stop';
+                btn.textContent = '⏹ Stop';
                 btn.style.background = '#dc3545';
                 chronoRunning = true;
                 calcTemps();
@@ -4038,7 +4038,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                 var mins2 = (now.getHours() * 60 + now.getMinutes()) - (parseInt(dp2[0]) * 60 + parseInt(dp2[1]));
                 if (mins2 < 0) mins2 += 1440;
                 var h2 = Math.floor(mins2 / 60), m2 = mins2 % 60;
-                span.textContent = 'â± ' + h2 + 'h' + pad2(m2);
+                span.textContent = '⏱ ' + h2 + 'h' + pad2(m2);
                 if (realInput) realInput.value = (h2 + (m2/60)).toFixed(1).replace('.0', '');
             } else {
                 span.textContent = '';
@@ -4097,7 +4097,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                         const recoVal = RECO_FREQ[match[1]];
                         if (this.value !== recoVal) {
                             const labels = { q: 'Quotidien', h: 'Hebdomadaire', m: 'Mensuel', a: 'Annuel' };
-                            alert("âš ï¸ Recommandation Lenoir-Mec :\nLa fréquence préconisée pour ce contrôle est : " + labels[recoVal] + ".\nVous avez sélectionné : " + labels[this.value] + ".");
+                            alert("⚠️ Recommandation Lenoir-Mec :\nLa fréquence préconisée pour ce contrôle est : " + labels[recoVal] + ".\nVous avez sélectionné : " + labels[this.value] + ".");
                         }
                     }
                 });
