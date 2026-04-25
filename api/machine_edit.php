@@ -1329,7 +1329,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                             </tbody>
                                         </table>
                                     <?php else: ?>
-                                        <img src="/assets/machines/frequences_tableau.png" style="width:100%; height:auto; border:2px solid #5b9bd5; display: block; page-break-inside: avoid !important;">
+                                        <img src="/assets/machines/frequences_tableau.png" style="width:100%; height:auto; border:none; display: block; page-break-inside: avoid !important;">
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -1394,11 +1394,11 @@ foreach ($recoFreq as $rfk => $rfv) {
                                         <td style="border:1px solid #000;"></td>
                                         <td style="border:1px solid #000;"></td>
                                     </tr>
-                                    <?php $etanche_v = $donnees['sgsa_e'.$e.'_etancheite_stat'] ?? ''; ?>
+                                    <?php $etanche_v = $donnees['sgsa_e'.$e.'_etancheite'] ?? ''; ?>
                                     <tr>
                                         <td style="padding:5px; border:1px solid #000;">Étanchéité à la fermeture</td>
-                                        <td style="text-align:center; border:1px solid #000;"><?= ($etanche_v == '1' ? '☑' : '☐') ?></td>
-                                        <td style="text-align:center; border:1px solid #000;"><?= ($etanche_v == '0' ? '☑' : '☐') ?></td>
+                                        <td style="text-align:center; border:1px solid #000;"><?= ($etanche_v == 'bon' ? '☑' : '☐') ?></td>
+                                        <td style="text-align:center; border:1px solid #000;"><?= ($etanche_v == 'hs' ? '☑' : '☐') ?></td>
                                     </tr>
                                     <tr style="background:#ccc; text-align:center; font-weight:bold;">
                                         <td colspan="3" style="padding:4px; border:1px solid #000;">BARREAUX (en partant de gauche)</td>
@@ -1486,6 +1486,27 @@ foreach ($recoFreq as $rfk => $rfv) {
                     return '<tr>
                         <td style="font-weight:bold; font-size:11px; width:35%;">' . htmlspecialchars($label) . '</td>
                         <td style="padding:0; vertical-align:middle; text-align:center; width:140px;">' . renderEtatRadios($key, $donnees, 3) . '</td>
+                        <td style="padding:0; width:35%;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
+                    </tr>';
+                }
+                function renderEtancheiteRow($label, $key, $donnees)
+                {
+                    $val = $donnees[$key] ?? '';
+                    $items = [
+                        ['bon', 'p-ok', 'Correct'],
+                        ['hs', 'p-nc', 'HS']
+                    ];
+                    $radios = '<div class="pastille-group">';
+                    foreach ($items as $item) {
+                        $radios .= '<div style="width:70px; display:flex; justify-content:center; align-items:center;">'
+                                 . pastille($key, $item[0], $item[1], $item[2], $val)
+                                 . '</div>';
+                    }
+                    $radios .= '</div>';
+                    
+                    return '<tr>
+                        <td style="font-weight:bold; font-size:11px; width:35%;">' . htmlspecialchars($label) . '</td>
+                        <td style="padding:0; vertical-align:middle; text-align:center; width:140px;">' . $radios . '</td>
                         <td style="padding:0; width:35%;"><textarea name="donnees[' . $key . '_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;" oninput="autoGrow(this)">' . htmlspecialchars($donnees[$key . "_comment"] ?? '') . '</textarea>' . photoCamBtn($key, $label) . '</td>
                     </tr>';
                 }
@@ -2064,7 +2085,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     </td>
                                 </tr>
                                 <?= renderAprfRow("Coulissement des tiroirs", "sgsa_e".$e."_coulissement", $donnees) ?>
-                                <?= renderAprfRow("Étanchéité du tiroir à la fermeture", "sgsa_e".$e."_etancheite", $donnees) ?>
+                                <?= renderEtancheiteRow("Étanchéité du tiroir à la fermeture", "sgsa_e".$e."_etancheite", $donnees) ?>
                             <?php endfor; ?>
                         </tbody>
                     </table>
@@ -3285,18 +3306,18 @@ foreach ($recoFreq as $rfk => $rfv) {
                                  alt="Circulaire">
                             
                             <!-- Diamètre pôle (AJUSTEMENT FINAL V5) -->
-                            <div style="position:absolute; left:83.8%; top:27.2%; transform:translate(-50%, -50%); font-size:9px;">
-                                <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:75px; border:none; background:transparent; text-align:center; font-size:9px; font-weight:bold;" autocomplete="off">
+                            <div style="position:absolute; left:83.8%; top:28.0%; transform:translate(-50%, -50%); font-size:9px;">
+                                <input type="text" name="mesures[levage_diam_pole]" value="<?= htmlspecialchars($mesures['levage_diam_pole'] ?? '') ?>" class="pdf-input" style="width:75px; border:none !important; background:transparent; text-align:center; font-size:9px; font-weight:bold; outline:none;" autocomplete="off">
                             </div>
 
                             <!-- Diamètre noyau (AJUSTEMENT FINAL V5) -->
-                            <div style="position:absolute; left:85.5%; top:31.8%; transform:translate(-50%, -50%); font-size:9px;">
-                                <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['mesures_levage_diam_noyau'] ?? ($mesures['levage_diam_noyau'] ?? '')) ?>" class="pdf-input" style="width:75px; border:none; background:transparent; text-align:center; font-size:9px; font-weight:bold;" autocomplete="off">
+                            <div style="position:absolute; left:85.5%; top:32.6%; transform:translate(-50%, -50%); font-size:9px;">
+                                <input type="text" name="mesures[levage_diam_noyau]" value="<?= htmlspecialchars($mesures['mesures_levage_diam_noyau'] ?? ($mesures['levage_diam_noyau'] ?? '')) ?>" class="pdf-input" style="width:75px; border:none !important; background:transparent; text-align:center; font-size:9px; font-weight:bold; outline:none;" autocomplete="off">
                             </div>
 
                             <!-- Epaisseur pôle (AJUSTEMENT FINAL V5) -->
-                            <div style="position:absolute; left:85.5%; top:43.1%; transform:translate(-50%, -50%); font-size:9px;">
-                                <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:75px; border:none; background:transparent; text-align:center; font-size:9px; font-weight:bold;" autocomplete="off">
+                            <div style="position:absolute; left:85.5%; top:43.9%; transform:translate(-50%, -50%); font-size:9px;">
+                                <input type="text" name="mesures[levage_ep_pole]" value="<?= htmlspecialchars($mesures['levage_ep_pole'] ?? '') ?>" class="pdf-input" style="width:75px; border:none !important; background:transparent; text-align:center; font-size:9px; font-weight:bold; outline:none;" autocomplete="off">
                             </div>
 
                             <!-- Ø ext/int (5.3% / 45.4%) -->
