@@ -230,6 +230,10 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
                     <img src="/assets/icon_profile_blue.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Équipe
                 </a>
+                <a href="assistant.php" class="btn btn-ghost sidebar-link"
+                    style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
+                    <span style="font-size: 14px; margin-right: 6px;">🤖</span> Assistant Tom
+                </a>
             </nav>
 
             <div style="margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--glass-border);">
@@ -490,6 +494,10 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
                 <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Équipe</span>
             </a>
+            <a href="assistant.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
+                <span style="font-size: 22px; margin-bottom: 2px;">🤖</span>
+                <span class="mobile-nav-label">Tom</span>
+            </a>
             <a href="profile.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
                 <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Profil</span>
@@ -659,7 +667,6 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
         });
     </script>
     <script src="/assets/toast.js"></script>
-    <?php include __DIR__ . '/../includes/chatbot_widget.php'; ?>
 </body>
 
 </html>

@@ -4198,4 +4198,3 @@ foreach ($recoFreq as $rfk => $rfv) {
             }
         }
     </script>
-    <?php include __DIR__ . '/../includes/chatbot_widget.php'; ?>

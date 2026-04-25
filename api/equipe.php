@@ -71,6 +71,10 @@ $equipe = $stmtUsers->fetchAll();
                     style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
                     <img src="/assets/icon_profile_blue.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Équipe
                 </a>
+                <a href="assistant.php" class="btn btn-ghost sidebar-link"
+                    style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
+                    <span style="font-size: 14px; margin-right: 6px;">🤖</span> Assistant Tom
+                </a>
             </nav>
 
             <div style="margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--glass-border);">
@@ -184,7 +188,6 @@ $equipe = $stmtUsers->fetchAll();
             document.getElementById('sidebarOverlay').classList.toggle('open');
         }
     </script>
-    <?php include __DIR__ . '/../includes/chatbot_widget.php'; ?>
 </body>
 
 </html>
