@@ -231,15 +231,49 @@ if ($role === 'admin') {
             ORDER BY nom_groupe
         ")->fetchAll();
 
-        $adminContext .= "LISTE CLIENTS (Format: Nom|Interventions|Dernière Visite|Email|Tél) :\n";
+        // 2. Liste des clients avec détails (DÉDOUBLONNÉS par nom)
+        $clients = $db->query("
+            SELECT UPPER(TRIM(c.nom_societe)) as nom_groupe,
+                   MAX(c.nom_societe) as nom_societe,
+                   MAX(c.contact_email) as contact_email,
+                   MAX(c.contact_telephone) as contact_telephone,
+                   MAX(c.contact_fonction) as contact_fonction,
+                   COUNT(i.id) as nb_interventions,
+                   MAX(i.date_intervention) as derniere_visite,
+                   MIN(i.date_intervention) as premiere_visite
+            FROM clients c
+            LEFT JOIN interventions i ON c.id = i.client_id
+            GROUP BY UPPER(TRIM(c.nom_societe))
+            ORDER BY nom_groupe
+        ")->fetchAll();
+
+        $adminContext .= "LISTE COMPLÈTE DES CLIENTS :\n";
         foreach ($clients as $c) {
-            $last = $c['derniere_visite'] ? date('d/m/Y', strtotime($c['derniere_visite'])) : '-';
-            $adminContext .= "• {$c['nom_societe']}|{$c['nb_interventions']}|{$last}|{$c['contact_email']}|{$c['contact_telephone']}\n";
+            $adminContext .= "• {$c['nom_societe']}";
+            $adminContext .= " — {$c['nb_interventions']} intervention(s)";
+            if ($c['derniere_visite']) {
+                $adminContext .= " — Dernière visite : " . date('d/m/Y', strtotime($c['derniere_visite']));
+            }
+            if ($c['premiere_visite'] && $c['premiere_visite'] !== $c['derniere_visite']) {
+                $adminContext .= " — Première visite : " . date('d/m/Y', strtotime($c['premiere_visite']));
+            }
+            if (!empty($c['contact_email'])) {
+                $adminContext .= " — Email : {$c['contact_email']}";
+            }
+            if (!empty($c['contact_telephone'])) {
+                $adminContext .= " — Tél : {$c['contact_telephone']}";
+            }
+            if (!empty($c['contact_fonction'])) {
+                $adminContext .= " — Contact : {$c['contact_fonction']}";
+            }
+            $adminContext .= "\n";
         }
 
         // 3. Techniciens
         $techs = $db->query("
-            SELECT u.prenom, u.nom, u.actif, COUNT(i.id) as nb, MAX(i.date_intervention) as derniere
+            SELECT u.id, u.nom, u.prenom, u.actif,
+                   COUNT(i.id) as nb_interventions,
+                   MAX(i.date_intervention) as derniere_activite
             FROM users u
             LEFT JOIN interventions i ON u.id = i.technicien_id
             WHERE u.role = 'technicien'
@@ -247,28 +281,31 @@ if ($role === 'admin') {
             ORDER BY u.nom
         ")->fetchAll();
 
-        $adminContext .= "\nÉQUIPE (Format: Nom|Statut|Nb Int|Dernière Activité) :\n";
+        $adminContext .= "\nÉQUIPE TECHNICIENS :\n";
         foreach ($techs as $t) {
-            $s = $t['actif'] ? 'Actif' : 'Inactif';
-            $d = $t['derniere'] ? date('d/m/Y', strtotime($t['derniere'])) : '-';
-            $adminContext .= "• {$t['prenom']} {$t['nom']}|{$s}|{$t['nb']}|{$d}\n";
+            $statut = $t['actif'] ? 'Actif' : 'Inactif';
+            $adminContext .= "• {$t['prenom']} {$t['nom']} ({$statut}) — {$t['nb_interventions']} intervention(s)";
+            if ($t['derniere_activite']) {
+                $adminContext .= " — Dernière activité : " . date('d/m/Y', strtotime($t['derniere_activite']));
+            }
+            $adminContext .= "\n";
         }
 
-        // 4. Dernières interventions (10 plus récentes au lieu de 20 pour économiser des tokens)
+        // 4. Dernières interventions (20 plus récentes)
         $recentInts = $db->query("
-            SELECT i.numero_arc, i.statut, i.date_intervention, c.nom_societe, u.prenom,
-                   (SELECT COUNT(*) FROM machines m WHERE m.intervention_id = i.id) as nb_m
+            SELECT i.numero_arc, i.statut, i.date_intervention, c.nom_societe, u.prenom || ' ' || u.nom as technicien,
+                   (SELECT COUNT(*) FROM machines m WHERE m.intervention_id = i.id) as nb_machines
             FROM interventions i
             JOIN clients c ON i.client_id = c.id
             JOIN users u ON i.technicien_id = u.id
             ORDER BY i.date_intervention DESC, i.id DESC
-            LIMIT 10
+            LIMIT 20
         ")->fetchAll();
 
-        $adminContext .= "\n10 DERNIÈRES INTERVENTIONS (ARC|Client|Date|Statut|Machines|Tech) :\n";
+        $adminContext .= "\n20 DERNIÈRES INTERVENTIONS :\n";
         foreach ($recentInts as $ri) {
-            $date = date('d/m/Y', strtotime($ri['date_intervention']));
-            $adminContext .= "• {$ri['numero_arc']}|{$ri['nom_societe']}|{$date}|{$ri['statut']}|{$ri['nb_m']}|{$ri['prenom']}\n";
+            $dateFormatted = date('d/m/Y', strtotime($ri['date_intervention']));
+            $adminContext .= "• ARC {$ri['numero_arc']} — {$ri['nom_societe']} — {$dateFormatted} — Statut: {$ri['statut']} — {$ri['nb_machines']} machine(s) — Tech: {$ri['technicien']}\n";
         }
 
         // 5. Machines les plus contrôlées (types populaires)
