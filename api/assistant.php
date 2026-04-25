@@ -347,7 +347,7 @@ $userName = htmlspecialchars($_SESSION['user_prenom'] ?? '');
                 <?php endif; ?>
                 <a href="assistant.php" class="btn btn-primary sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/ai_expert.jpg" style="height: 18px; width: 18px; margin-right: 8px; border-radius: 4px;"> Expert IA
+                    <img src="/assets/ai_expert.jpg" style="height: 22px; width: 22px; margin-right: 8px; border-radius: 4px;"> Expert IA
                 </a>
             </nav>
 
@@ -391,7 +391,7 @@ $userName = htmlspecialchars($_SESSION['user_prenom'] ?? '');
                 <!-- Messages -->
                 <div class="chat-messages" id="chatMessages">
                     <div class="chat-msg assistant" style="animation-delay: 0.1s;">
-                        Salut <?= $userName ?> ! 👋 Je suis ton **Expert IA**. Je connais l'application LM Expert sur le bout des doigts. Pose-moi ta question !
+                        Salut <?= $userName ?> ! 👋 Je suis ton <strong>Expert IA</strong>. Je connais l'application LM Expert sur le bout des doigts. Pose-moi ta question !
                     </div>
                 </div>
 

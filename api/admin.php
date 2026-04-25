@@ -232,7 +232,7 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
                 </a>
                 <a href="assistant.php" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/ai_expert.jpg" style="height: 16px; width: 16px; margin-right: 8px; border-radius: 4px;"> Expert IA
+                    <img src="/assets/ai_expert.jpg" style="height: 20px; width: 20px; margin-right: 8px; border-radius: 4px;"> Expert IA
                 </a>
             </nav>
 
