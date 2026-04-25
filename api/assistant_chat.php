@@ -187,6 +187,144 @@ RÈGLES ABSOLUES
 5. Ne donne JAMAIS de mots de passe, d'identifiants, ou d'informations de sécurité.
 PROMPT;
 
+// ═══════════════════════════════════════
+// ADMIN-ONLY: Inject real database context
+// ═══════════════════════════════════════
+if ($role === 'admin') {
+    try {
+        $db = getDB();
+        $adminContext = "\n\n═══════════════════════════════════════\nDONNÉES EN TEMPS RÉEL (CONFIDENTIEL - ADMIN UNIQUEMENT)\n═══════════════════════════════════════\n";
+
+        // 1. Stats globales
+        $stats = $db->query("
+            SELECT 
+                COUNT(*) as total_interventions,
+                COUNT(CASE WHEN statut ILIKE 'Brouillon%' THEN 1 END) as brouillons,
+                COUNT(CASE WHEN statut ILIKE 'Termin%' THEN 1 END) as terminees,
+                COUNT(CASE WHEN statut ILIKE 'Envoy%' THEN 1 END) as envoyees
+            FROM interventions
+        ")->fetch();
+        
+        $totalMachines = $db->query("SELECT COUNT(*) FROM machines")->fetchColumn();
+        $totalClients = $db->query("SELECT COUNT(*) FROM clients")->fetchColumn();
+        $totalTechs = $db->query("SELECT COUNT(*) FROM users WHERE role = 'technicien'")->fetchColumn();
+
+        $adminContext .= "STATISTIQUES GLOBALES :\n";
+        $adminContext .= "- {$totalClients} clients enregistrés\n";
+        $adminContext .= "- {$stats['total_interventions']} interventions au total ({$stats['brouillons']} brouillons, {$stats['terminees']} terminées, {$stats['envoyees']} envoyées)\n";
+        $adminContext .= "- {$totalMachines} fiches machines au total\n";
+        $adminContext .= "- {$totalTechs} techniciens dans l'équipe\n\n";
+
+        // 2. Liste des clients avec détails
+        $clients = $db->query("
+            SELECT c.id, c.nom_societe, c.contact_fonction, c.contact_email, c.contact_telephone,
+                   COUNT(i.id) as nb_interventions,
+                   MAX(i.date_intervention) as derniere_visite,
+                   MIN(i.date_intervention) as premiere_visite
+            FROM clients c
+            LEFT JOIN interventions i ON c.id = i.client_id
+            GROUP BY c.id, c.nom_societe, c.contact_fonction, c.contact_email, c.contact_telephone
+            ORDER BY c.nom_societe
+        ")->fetchAll();
+
+        $adminContext .= "LISTE COMPLÈTE DES CLIENTS :\n";
+        foreach ($clients as $c) {
+            $adminContext .= "• {$c['nom_societe']}";
+            $adminContext .= " — {$c['nb_interventions']} intervention(s)";
+            if ($c['derniere_visite']) {
+                $adminContext .= " — Dernière visite : " . date('d/m/Y', strtotime($c['derniere_visite']));
+            }
+            if ($c['premiere_visite'] && $c['premiere_visite'] !== $c['derniere_visite']) {
+                $adminContext .= " — Première visite : " . date('d/m/Y', strtotime($c['premiere_visite']));
+            }
+            if (!empty($c['contact_email'])) {
+                $adminContext .= " — Email : {$c['contact_email']}";
+            }
+            if (!empty($c['contact_telephone'])) {
+                $adminContext .= " — Tél : {$c['contact_telephone']}";
+            }
+            if (!empty($c['contact_fonction'])) {
+                $adminContext .= " — Contact : {$c['contact_fonction']}";
+            }
+            $adminContext .= "\n";
+        }
+
+        // 3. Techniciens
+        $techs = $db->query("
+            SELECT u.id, u.nom, u.prenom, u.actif,
+                   COUNT(i.id) as nb_interventions,
+                   MAX(i.date_intervention) as derniere_activite
+            FROM users u
+            LEFT JOIN interventions i ON u.id = i.technicien_id
+            WHERE u.role = 'technicien'
+            GROUP BY u.id, u.nom, u.prenom, u.actif
+            ORDER BY u.nom
+        ")->fetchAll();
+
+        $adminContext .= "\nÉQUIPE TECHNICIENS :\n";
+        foreach ($techs as $t) {
+            $statut = $t['actif'] ? 'Actif' : 'Inactif';
+            $adminContext .= "• {$t['prenom']} {$t['nom']} ({$statut}) — {$t['nb_interventions']} intervention(s)";
+            if ($t['derniere_activite']) {
+                $adminContext .= " — Dernière activité : " . date('d/m/Y', strtotime($t['derniere_activite']));
+            }
+            $adminContext .= "\n";
+        }
+
+        // 4. Dernières interventions (20 plus récentes)
+        $recentInts = $db->query("
+            SELECT i.numero_arc, i.statut, i.date_intervention, c.nom_societe, u.prenom || ' ' || u.nom as technicien,
+                   (SELECT COUNT(*) FROM machines m WHERE m.intervention_id = i.id) as nb_machines
+            FROM interventions i
+            JOIN clients c ON i.client_id = c.id
+            JOIN users u ON i.technicien_id = u.id
+            ORDER BY i.date_intervention DESC, i.id DESC
+            LIMIT 20
+        ")->fetchAll();
+
+        $adminContext .= "\n20 DERNIÈRES INTERVENTIONS :\n";
+        foreach ($recentInts as $ri) {
+            $dateFormatted = date('d/m/Y', strtotime($ri['date_intervention']));
+            $adminContext .= "• ARC {$ri['numero_arc']} — {$ri['nom_societe']} — {$dateFormatted} — Statut: {$ri['statut']} — {$ri['nb_machines']} machine(s) — Tech: {$ri['technicien']}\n";
+        }
+
+        // 5. Machines les plus contrôlées (types populaires)
+        $popularMachines = $db->query("
+            SELECT designation, COUNT(*) as nb
+            FROM machines
+            GROUP BY designation
+            ORDER BY nb DESC
+            LIMIT 10
+        ")->fetchAll();
+
+        $adminContext .= "\nTYPES DE MACHINES LES PLUS CONTRÔLÉS :\n";
+        foreach ($popularMachines as $pm) {
+            $adminContext .= "• {$pm['designation']} — {$pm['nb']} fiche(s)\n";
+        }
+
+        // 6. Clients par nombre d'interventions (top 10)
+        $topClients = $db->query("
+            SELECT c.nom_societe, COUNT(i.id) as nb, MAX(i.date_intervention) as derniere
+            FROM clients c
+            JOIN interventions i ON c.id = i.client_id
+            GROUP BY c.nom_societe
+            ORDER BY nb DESC
+            LIMIT 10
+        ")->fetchAll();
+
+        $adminContext .= "\nTOP 10 CLIENTS (par nombre d'interventions) :\n";
+        foreach ($topClients as $tc) {
+            $adminContext .= "• {$tc['nom_societe']} — {$tc['nb']} interventions — Dernière : " . date('d/m/Y', strtotime($tc['derniere'])) . "\n";
+        }
+
+        $adminContext .= "\nIMPORTANT : Ces données sont réelles et à jour. Utilise-les pour répondre précisément aux questions de l'administrateur. Ne dis JAMAIS que tu n'as pas accès aux données. Tu DOIS donner des chiffres précis tirés de ces données quand on te le demande.\n";
+
+        $systemPrompt .= $adminContext;
+    } catch (Exception $e) {
+        // Silencieusement ignoré - l'IA fonctionne sans les données live
+    }
+}
+
 // Build conversation messages for Groq
 $messages = [
     ['role' => 'system', 'content' => $systemPrompt]
