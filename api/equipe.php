@@ -73,7 +73,7 @@ $equipe = $stmtUsers->fetchAll();
                 </a>
                 <a href="assistant.php" class="btn btn-ghost sidebar-link"
                     style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
-                    <img src="/assets/ai_expert.png" style="height: 18px; width: 18px; margin-right: 8px; margin-left: -2px;"> Expert IA
+                    <img src="/assets/ai_expert.jpg" style="height: 18px; width: 18px; margin-right: 8px; margin-left: -2px; mix-blend-mode: screen;"> Expert IA
                 </a>
             </nav>
 
@@ -180,7 +180,7 @@ $equipe = $stmtUsers->fetchAll();
             </a>
             <a href="assistant.php" class="mobile-nav-item">
                 <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px;">
-                    <img src="/assets/ai_expert.png" style="height: 22px; width: 22px; object-fit: cover;">
+                    <img src="/assets/ai_expert.jpg" style="height: 22px; width: 22px; object-fit: cover; mix-blend-mode: screen;">
                 </div>
                 <span class="mobile-nav-label">Expert IA</span>
             </a>
