@@ -50,7 +50,7 @@ $userName = htmlspecialchars($_SESSION['user_prenom'] ?? '');
             width: 52px;
             height: 52px;
             border-radius: 16px;
-            background: #fff;
+            background: #000;
             display: flex;
             align-items: center;
             justify-content: center;
