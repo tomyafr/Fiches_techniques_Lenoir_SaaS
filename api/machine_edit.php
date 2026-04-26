@@ -1387,11 +1387,13 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <table style="width:100%; border-collapse:collapse; margin-bottom:20px; border:1px solid #000; font-size:10px; page-break-inside:avoid;">
                                     <tr style="background:#5b9bd5; color:white; font-weight:bold;">
                                         <td style="padding:6px; width:60%; font-size:12px; border:1px solid #000;">ETAGE <?= $e ?></td>
-                                        <td style="padding:6px; text-align:center; width:20%; border:1px solid #000;">Correct</td>
-                                        <td style="padding:6px; text-align:center; width:20%; border:1px solid #000;">HS</td>
+                                        <td style="padding:6px; text-align:center; width:13.3%; border:1px solid #000;">Correct</td>
+                                        <td style="padding:6px; text-align:center; width:13.3%; border:1px solid #000;"></td>
+                                        <td style="padding:6px; text-align:center; width:13.3%; border:1px solid #000;">HS</td>
                                     </tr>
                                     <tr>
                                         <td style="padding:5px; border:1px solid #000;">Nombre de barreaux : <?= $nbB ?></td>
+                                        <td style="border:1px solid #000;"></td>
                                         <td style="border:1px solid #000;"></td>
                                         <td style="border:1px solid #000;"></td>
                                     </tr>
@@ -1399,13 +1401,14 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     <tr>
                                         <td style="padding:5px; border:1px solid #000;">Étanchéité à la fermeture</td>
                                         <td style="text-align:center; border:1px solid #000;"><?= ($etanche_v == 'bon' ? '☑' : '☐') ?></td>
+                                        <td style="text-align:center; border:1px solid #000;">☐</td>
                                         <td style="text-align:center; border:1px solid #000;"><?= ($etanche_v == 'hs' ? '☑' : '☐') ?></td>
                                     </tr>
                                     <tr style="background:#ccc; text-align:center; font-weight:bold;">
                                         <td colspan="3" style="padding:4px; border:1px solid #000;">BARREAUX (en partant de gauche)</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="3" style="padding:0; border:1px solid #000;">
+                                        <td colspan="4" style="padding:0; border:1px solid #000;">
                                             <table style="width:100%; border-collapse:collapse; text-align:center; table-layout:fixed;">
                                                 <tr style="font-weight:bold; background:#eee;">
                                                     <td style="width:140px; text-align:left; padding:4px; border:1px solid #000;">Relevés d'induction :</td>
@@ -1493,16 +1496,21 @@ foreach ($recoFreq as $rfk => $rfv) {
                 function renderEtancheiteRow($label, $key, $donnees)
                 {
                     $val = $donnees[$key] ?? '';
-                    $items = [
-                        ['bon', 'p-ok', 'Correct'],
-                        ['hs', 'p-nc', 'HS']
-                    ];
+                    // On aligne sur 3 colonnes comme demandé par l'utilisateur
+                    // 1: Bon, 2: Vide (orange), 3: HS
+                    $p_w = '46.6px'; 
+                    
                     $radios = '<div class="pastille-group">';
-                    foreach ($items as $item) {
-                        $radios .= '<div style="width:70px; display:flex; justify-content:center; align-items:center;">'
-                                 . pastille($key, $item[0], $item[1], $item[2], $val)
-                                 . '</div>';
-                    }
+                    // Colonne 1: Bon
+                    $radios .= '<div style="width:'.$p_w.'; display:flex; justify-content:center; align-items:center;">'
+                             . pastille($key, 'bon', 'p-ok', 'Correct', $val)
+                             . '</div>';
+                    // Colonne 2: Vide (Orange)
+                    $radios .= '<div style="width:'.$p_w.';"></div>';
+                    // Colonne 3: HS
+                    $radios .= '<div style="width:'.$p_w.'; display:flex; justify-content:center; align-items:center;">'
+                             . pastille($key, 'hs', 'p-nc', 'HS', $val)
+                             . '</div>';
                     $radios .= '</div>';
                     
                     return '<tr>
@@ -1619,7 +1627,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 Granulométrie : 
                                 <input type="text" name="mesures[aprf_granu]" value="<?= htmlspecialchars($mesures['aprf_granu'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;"> mm
                             </td>
-                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                 <?= renderAprfEtatRadios("aprf_granu_stat", $donnees) ?>
                             </td>
                             <td style="padding:0;"><textarea name="donnees[aprf_granu_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_granu_comment"] ?? '') ?></textarea></td>
@@ -1630,7 +1638,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <input type="text" name="mesures[aprf_dist_min]" value="<?= htmlspecialchars($mesures['aprf_dist_min'] ?? '') ?>" class="pdf-input" style="width:40px; text-align:center;"> à 
                                 <input type="text" name="mesures[aprf_dist_max]" value="<?= htmlspecialchars($mesures['aprf_dist_max'] ?? '') ?>" class="pdf-input" style="width:40px; text-align:center;"> mm
                             </td>
-                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                 <?= renderAprfEtatRadios("aprf_dist_stat", $donnees) ?>
                             </td>
                             <td style="padding:0;"><textarea name="donnees[aprf_dist_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_dist_comment"] ?? '') ?></textarea></td>
@@ -1640,7 +1648,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 Hauteur de la couche : 
                                 <input type="text" name="mesures[aprf_H_couche]" value="<?= htmlspecialchars($mesures['aprf_H_couche'] ?? '') ?>" class="pdf-input" style="width:80px; text-align:center;"> mm
                             </td>
-                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                 <?= renderAprfEtatRadios("aprf_H_stat", $donnees) ?>
                             </td>
                             <td style="padding:0;"><textarea name="donnees[aprf_H_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;"><?= htmlspecialchars($donnees["aprf_H_comment"] ?? '') ?></textarea></td>
@@ -1650,7 +1658,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 Débit : 
                                 <input type="text" name="mesures[aprf_debit]" value="<?= htmlspecialchars($mesures['aprf_debit'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;"> t/h
                             </td>
-                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                 <?= renderAprfEtatRadios("aprf_debit_stat", $donnees) ?>
                             </td>
                             <td style="padding:4px;">
@@ -1767,7 +1775,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     Granulométrie : 
                                     <input type="text" name="mesures[pm_granulo]" value="<?= htmlspecialchars($mesures['pm_granulo'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;" autocomplete="off"> mm
                                 </td>
-                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                     <?= renderEtatRadios("pm_granulo_stat", $donnees, 3) ?>
                                 </td>
                                 <td style="padding:0;"><textarea name="donnees[pm_granulo_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($donnees["pm_granulo_comment"] ?? '') ?></textarea></td>
@@ -1777,7 +1785,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     Débit : 
                                     <input type="text" name="mesures[pm_debit]" value="<?= htmlspecialchars($mesures['pm_debit'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;" autocomplete="off"> t/h
                                 </td>
-                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                     <?= renderEtatRadios("pm_debit_stat", $donnees, 3) ?>
                                 </td>
                                 <td style="padding:4px; font-size:11px; color:#555;">
@@ -2586,21 +2594,21 @@ foreach ($recoFreq as $rfk => $rfv) {
                             <?= renderSectionHeader("Contrôle d'induction :", 3) ?>
                             <tr>
                                 <td style="padding:4px; font-weight:bold;">➤ P1 = <input type="text" name="mesures[srm_induction_p1]" value="<?= htmlspecialchars($mesures['srm_induction_p1'] ?? '') ?>" class="pdf-input" style="width:100px; text-align:center;" autocomplete="off"> Gauss</td>
-                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                     <?= renderEtatRadios("srm_induction_p1_stat", $donnees, 3) ?>
                                 </td>
                                 <td style="padding:0;"><textarea name="donnees[srm_induction_p1_stat_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($donnees["srm_induction_p1_stat_comment"] ?? '') ?></textarea></td>
                             </tr>
                             <tr>
                                 <td style="padding:4px; font-weight:bold;">➤ P2 = <input type="text" name="mesures[srm_induction_p2]" value="<?= htmlspecialchars($mesures['srm_induction_p2'] ?? '') ?>" class="pdf-input" style="width:100px; text-align:center;" autocomplete="off"> Gauss</td>
-                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                     <?= renderEtatRadios("srm_induction_p2_stat", $donnees, 3) ?>
                                 </td>
                                 <td style="padding:0;"><textarea name="donnees[srm_induction_p2_stat_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($donnees["srm_induction_p2_stat_comment"] ?? '') ?></textarea></td>
                             </tr>
                             <tr>
                                 <td style="padding:4px; font-weight:bold;">➤ P3 = <input type="text" name="mesures[srm_induction_p3]" value="<?= htmlspecialchars($mesures['srm_induction_p3'] ?? '') ?>" class="pdf-input" style="width:100px; text-align:center;" autocomplete="off"> Gauss</td>
-                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                     <?= renderEtatRadios("srm_induction_p3_stat", $donnees, 3) ?>
                                 </td>
                                 <td style="padding:0;"><textarea name="donnees[srm_induction_p3_stat_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($donnees["srm_induction_p3_stat_comment"] ?? '') ?></textarea></td>
@@ -2648,7 +2656,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     Granulométrie : 
                                     <input type="text" name="mesures[srm_granulo]" value="<?= htmlspecialchars($mesures['srm_granulo'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;" autocomplete="off"> mm
                                 </td>
-                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                     <?= renderEtatRadios("srm_granulo_stat", $donnees, 3) ?>
                                 </td>
                                 <td style="padding:0;"><textarea name="donnees[srm_granulo_comment]" class="pdf-textarea" style="height:30px; border:none; width:100%; box-sizing:border-box; padding:4px;" autocomplete="off"><?= htmlspecialchars($donnees["srm_granulo_comment"] ?? '') ?></textarea></td>
@@ -2658,7 +2666,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                     Débit : 
                                     <input type="text" name="mesures[srm_debit]" value="<?= htmlspecialchars($mesures['srm_debit'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;" autocomplete="off"> t/h
                                 </td>
-                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                                <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                     <?= renderEtatRadios("srm_debit_stat", $donnees, 3) ?>
                                 </td>
                                 <td style="padding:4px; font-size:11px; color:#555;">
@@ -2954,7 +2962,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 Type de produit : 
                                 <input type="text" name="mesures[paptap_produit]" value="<?= htmlspecialchars($mesures['paptap_produit'] ?? '') ?>" class="pdf-input" style="width:100px;">
                             </td>
-                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:70px;">
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                 <?= renderAprfEtatRadios("paptap_produit_stat", $donnees) ?>
                             </td>
                             <td style="padding:4px;">
@@ -2968,7 +2976,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 <input type="text" name="mesures[paptap_granu_min]" value="<?= htmlspecialchars($mesures['paptap_granu_min'] ?? '') ?>" class="pdf-input" style="width:40px; text-align:center;"> à 
                                 <input type="text" name="mesures[paptap_granu_max]" value="<?= htmlspecialchars($mesures['paptap_granu_max'] ?? '') ?>" class="pdf-input" style="width:40px; text-align:center;"> mm
                             </td>
-                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                 <?= renderAprfEtatRadios("paptap_granu_stat", $donnees) ?>
                             </td>
                             <td style="padding:0;"><textarea name="donnees[paptap_granu_comment]" class="pdf-textarea" style="border:none; width:100%; padding:4px;"><?= htmlspecialchars($donnees['paptap_granu_comment'] ?? '') ?></textarea></td>
@@ -2978,7 +2986,7 @@ foreach ($recoFreq as $rfk => $rfv) {
                                 Débit : 
                                 <input type="text" name="mesures[paptap_debit]" value="<?= htmlspecialchars($mesures['paptap_debit'] ?? '') ?>" class="pdf-input" style="width:60px; text-align:center;"> t/h
                             </td>
-                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle;">
+                            <td style="border:1px solid #000; text-align:center; padding:0; vertical-align:middle; width:140px;">
                                 <?= renderAprfEtatRadios("paptap_debit_stat", $donnees) ?>
                             </td>
                             <td style="padding:4px;">
