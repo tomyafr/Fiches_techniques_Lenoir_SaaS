@@ -53,7 +53,7 @@ PAGES PRINCIPALES :
    - Affiche les fiches techniques en cours (brouillons) et l'historique récent.
    - Permet de voir d'un coup d'œil combien de fiches sont en cours.
 
-2. **Nouvelle Fiche** :
+2. **Nouveau Rapport** :
    - Pour démarrer une nouvelle intervention.
    - Champs obligatoires : N° A.R.C. (référence unique de l'intervention) et Client (société).
    - Champs optionnels : Prénom/Nom du contact sur site, Date de l'intervention.
@@ -130,7 +130,7 @@ QUESTIONS FRÉQUENTES ET RÉPONSES
 ═══════════════════════════════════════
 
 Q: Comment créer une nouvelle intervention ?
-R: Va sur "Nouvelle Fiche" dans le menu à gauche. Remplis le N° A.R.C. et le nom du client, puis clique sur "Créer l'Intervention". Tu seras redirigé vers la fiche d'intervention où tu pourras ajouter les machines.
+R: Va sur "Nouveau Rapport" dans le menu à gauche. Remplis le N° A.R.C. et le nom du client, puis clique sur "Créer l'Intervention". Tu seras redirigé vers la fiche d'intervention où tu pourras ajouter les machines.
 
 Q: Comment ajouter un équipement/une machine ?
 R: Depuis la fiche d'intervention, clique sur "Ajouter un Équipement" en bas. Sélectionne le type de machine et remplis la désignation. La fiche technique correspondante sera créée automatiquement.

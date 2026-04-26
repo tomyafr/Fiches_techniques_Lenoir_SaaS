@@ -220,7 +220,7 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
                 <button onclick="document.getElementById('newInterventionModal').style.display='flex'"
                     class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/icon_add_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Nouvelle Fiche
+                    <img src="/assets/icon_add_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Nouveau Rapport
                 </button>
                 <a href="historique.php" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
@@ -323,7 +323,7 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
                     style="width:100%; max-width:500px; padding:2rem; position:relative;">
                     <button type="button" onclick="document.getElementById('newInterventionModal').style.display='none'"
                         style="position:absolute; top:1rem; right:1.5rem; background:none; border:none; color:var(--text-dim); font-size:1.5rem; cursor:pointer;">&times;</button>
-                    <h3 style="margin-bottom: 1.5rem;">Nouvelle Fiche Technique</h3>
+                    <h3 style="margin-bottom: 1.5rem;">Nouveau Rapport Technique</h3>
                     <form method="POST" autocomplete="off">
                         <input type="hidden" name="action" value="nouvelle_intervention">
                         <?= csrfField() ?>

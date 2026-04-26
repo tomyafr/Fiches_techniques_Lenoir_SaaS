@@ -143,7 +143,7 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
                 </button>
                 <button class="btn <?= $showNewTab ? 'btn-primary' : 'btn-ghost' ?> sidebar-link" onclick="switchTab('nouvelle')" id="nav-nouvelle"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/icon_add_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Nouvelle Fiche
+                    <img src="/assets/icon_add_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Nouveau Rapport
                 </button>
                 <a href="historique.php" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; text-decoration: none; color: inherit;">
@@ -290,7 +290,7 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
                 <?php endif; ?>
             </div>
 
-            <!-- Tab Nouvelle Fiche -->
+            <!-- Tab Nouveau Rapport -->
             <div id="tab-nouvelle" style="<?= $showNewTab ? 'display: block;' : 'display: none;' ?>" class="animate-in">
                 <form method="POST" class="card glass" style="margin-bottom: 1.5rem;" autocomplete="off">
                     <input type="hidden" name="action" value="nouvelle_intervention">

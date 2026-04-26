@@ -197,7 +197,7 @@ function generateDysfunctionsAI($machine, $type = 'E') {
 
         $systemPrompt = "Tu es le rédacteur technique officiel des rapports d'expertise Lenoir-Mec (séparation magnétique et levage industriel, groupe Delachaux).
 
-CONTEXTE : Tu rédiges la section \"E) CAUSE DE DYSFONCTIONNEMENT\" d'une fiche d'inspection terrain. Cette section apparaît dans un rapport PDF envoyé au client final. Le technicien a inspecté un équipement et relevé des anomalies.
+CONTEXTE : Tu rédiges la section \"E) CAUSE DE DYSFONCTIONNEMENT\" d'un rapport d'inspection terrain. Cette section apparaît dans un rapport PDF envoyé au client final. Le technicien a inspecté un équipement et relevé des anomalies.
 
 ÉTATS D'ÉVALUATION :
 - N/A = Non applicable (le point ne concerne pas cette machine)
@@ -230,9 +230,10 @@ RÈGLES DE RÉDACTION STRICTES :
             'frequency_penalty' => 0.1,
             'presence_penalty' => 0.0
         ]) ?: "";
+    } else {
         $systemPrompt = "Tu es le rédacteur technique officiel des rapports d'expertise Lenoir-Mec (séparation magnétique et levage industriel, groupe Delachaux).
 
-CONTEXTE : Tu rédiges la section \"F) CONCLUSION\" d'une fiche d'inspection terrain. Cette conclusion apparaît dans un rapport PDF envoyé au client final. Elle synthétise le bilan technique de l'équipement inspecté.
+CONTEXTE : Tu rédiges la section \"F) CONCLUSION\" d'un rapport d'inspection terrain. Cette conclusion apparaît dans un rapport PDF envoyé au client final. Elle synthétise le bilan technique de l'équipement inspecté.
 
 TYPES D'ÉQUIPEMENTS LENOIR-MEC :
 - OVAP / OV : Overband (séparation magnétique à bande)
@@ -324,7 +325,7 @@ foreach ($recoFreq as $rfk => $rfv) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fiche <?= htmlspecialchars($machine['designation']) ?></title>
+    <title>Rapport <?= htmlspecialchars($machine['designation']) ?></title>
     <!-- On charge quand même le style de base, mais on le surcharge pour la page A4 -->
     <link rel="stylesheet" href="/assets/style.css">
     <?php renderSentryJS(); ?>

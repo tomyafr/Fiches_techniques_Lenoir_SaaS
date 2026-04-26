@@ -354,12 +354,12 @@ $userName = htmlspecialchars($_SESSION['user_prenom'] ?? '');
                 <?php if ($isAdmin): ?>
                 <a href="admin.php?new=1#" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/icon_add_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Nouvelle Fiche
+                    <img src="/assets/icon_add_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Nouveau Rapport
                 </a>
                 <?php else: ?>
                 <a href="technicien.php?new=1#" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/icon_add_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Nouvelle Fiche
+                    <img src="/assets/icon_add_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Nouveau Rapport
                 </a>
                 <?php endif; ?>
                 <a href="historique.php" class="btn btn-ghost sidebar-link"

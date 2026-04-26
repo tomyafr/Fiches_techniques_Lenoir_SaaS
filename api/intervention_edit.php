@@ -152,7 +152,7 @@ $machines = $stmtMach->fetchAll();
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
             RETOUR
         </button>
-        <span class="mobile-header-title">Fiche ARC</span>
+        <span class="mobile-header-title">Rapport ARC</span>
         <span class="mobile-header-user"></span>
     </header>
 
@@ -213,7 +213,7 @@ $machines = $stmtMach->fetchAll();
             <div class="card glass"
                 style="text-align: center; padding: 2.5rem 1rem; border: 1px dashed var(--glass-border); background: transparent;">
                 <div style="margin-bottom: 1.5rem; text-align:center; opacity:0.1;"><img src="/assets/icon_gear_orange.svg" style="height: 80px; width: 80px;"></div>
-                <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Aucune machine n'a encore été ajoutée à cette fiche.</p>
+                <p style="color: var(--text-dim); margin-bottom: 1.5rem;">Aucune machine n'a encore été ajoutée à ce rapport.</p>
                 
                 <div style="display:flex; flex-direction:column; gap:1rem; max-width:320px; margin:0 auto;">
                     <button onclick="document.getElementById('modalNewMachine').style.display='flex'" class="btn btn-primary">Ajouter manuellement</button>

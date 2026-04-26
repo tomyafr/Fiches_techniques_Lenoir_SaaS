@@ -59,9 +59,9 @@ $equipe = $stmtUsers->fetchAll();
                     style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
                     <img src="/assets/icon_dashboard_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Tableau de bord
                 </a>
-                <a href="admin.php?new=1#" class="btn btn-ghost sidebar-link"
-                    style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/icon_add_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Nouvelle Fiche
+                <a href="admin.php?tab=nouvelle" class="btn btn-ghost sidebar-link"
+                    style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; text-decoration: none; color: inherit;">
+                    <img src="/assets/icon_add_white.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Nouveau Rapport
                 </a>
                 <a href="historique.php" class="btn btn-ghost sidebar-link"
                     style="justify-content:flex-start;padding:0.7rem 1.1rem;font-size:0.8rem;">
