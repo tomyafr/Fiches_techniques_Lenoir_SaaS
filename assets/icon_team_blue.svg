@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#63B3ED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Personne Arrière Gauche -->
+  <circle cx="8" cy="9" r="3" opacity="0.6"/>
+  <path d="M12 21v-2a3 3 0 0 0-3-3H4a3 3 0 0 0-3 3v2" opacity="0.6"/>
+  
+  <!-- Personne Arrière Droite -->
+  <circle cx="16" cy="9" r="3" opacity="0.6"/>
+  <path d="M23 21v-2a3 3 0 0 0-3-3h-5a3 3 0 0 0-3 3v2" opacity="0.6"/>
+  
+  <!-- Personne Devant Centre -->
+  <circle cx="12" cy="7" r="4" fill="#0a0e1b"/>
+  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" fill="#0a0e1b"/>
+</svg>

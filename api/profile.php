@@ -304,7 +304,7 @@ $currentSignature = $userCurrent ? ($userCurrent['signature_base64'] ?? '') : ''
                     <?php if ($_SESSION['role'] === 'admin'): ?>
                     <a href="equipe.php" class="btn btn-ghost sidebar-link"
                         style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                        <img src="/assets/icon_profile_blue.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Équipe
+                        <img src="/assets/icon_team_blue.svg" style="height: 16px; width: 16px; margin-right: 8px;"> Équipe
                     </a>
                     <?php endif; ?>
                     <a href="assistant.php" class="btn btn-ghost sidebar-link"
@@ -969,7 +969,7 @@ $currentSignature = $userCurrent ? ($userCurrent['signature_base64'] ?? '') : ''
             </a>
             <?php if ($_SESSION['role'] === 'admin'): ?>
             <a href="equipe.php" class="mobile-nav-item">
-                <img src="/assets/icon_profile_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
+                <img src="/assets/icon_team_blue.svg" style="height: 24px; width: 24px; margin-bottom: 4px; opacity: 0.7;">
                 <span class="mobile-nav-label">Équipe</span>
             </a>
             <?php endif; ?>

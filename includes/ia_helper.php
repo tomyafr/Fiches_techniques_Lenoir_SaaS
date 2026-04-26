@@ -257,7 +257,7 @@ function callGroqIA($systemPrompt, $userPrompt, $options = []) {
     $presence_penalty = $options['presence_penalty'] ?? 0.0;
 
     $payload = [
-        'model' => 'llama-3.3-70b-versatile',
+        'model' => 'llama-3.1-8b-instant',
         'messages' => [
             ['role' => 'system', 'content' => $systemPrompt],
             ['role' => 'user', 'content' => $userPrompt]
