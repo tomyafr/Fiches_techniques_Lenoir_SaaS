@@ -304,7 +304,7 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
                                 style="color: var(--error);">*</span></label>
                         <p style="font-size: 0.7rem; color: var(--text-dim); margin: 0 0 0.5rem 0;">Référence centrale
                             de l'intervention – reportée sur toutes les fiches</p>
-                        <input type="text" name="numero_arc" class="input" placeholder="ex: 2600182" 
+                        <input type="text" name="numero_arc" class="input" placeholder="ex: 2600333" 
                             style="text-transform: uppercase; font-size: 1.1rem; font-weight: bold; border: 2px solid var(--primary); padding: 1rem;"
                             required autofocus maxlength="50">
                     </div>

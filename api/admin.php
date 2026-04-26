@@ -329,7 +329,7 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
                         <?= csrfField() ?>
                         <div class="form-group">
                             <label class="label">Numéro ARC *</label>
-                            <input type="text" name="numero_arc" class="input" required placeholder="Ex: 2026-001"
+                            <input type="text" name="numero_arc" class="input" required placeholder="Ex: 2600333"
                                 maxlength="50" style="text-transform:uppercase;">
                         </div>
                         <div class="form-group">
