@@ -151,7 +151,7 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
                 </a>
                 <a href="assistant.php" class="btn btn-ghost sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem; text-decoration: none; color: inherit;">
-                    <img src="/assets/ai_expert.jpg" style="height: 20px; width: 20px; margin-right: 8px; border-radius: 4px;"> Expert IA
+                    <img src="/assets/ai_expert.png" style="height: 18px; width: 18px; margin-right: 8px; margin-left: -2px;"> Expert IA
                 </a>
             </nav>
 
@@ -365,7 +365,7 @@ $showNewTab = isset($_GET['new']) && $_GET['new'] == '1';
             </a>
             <a href="assistant.php" class="mobile-nav-item" style="color: inherit; text-decoration:none;">
                 <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px;">
-                    <img src="/assets/ai_expert.jpg" style="height: 22px; width: 22px; border-radius: 4px; object-fit: cover;">
+                    <img src="/assets/ai_expert.png" style="height: 22px; width: 22px; object-fit: cover;">
                 </div>
                 <span class="mobile-nav-label">Expert IA</span>
             </a>

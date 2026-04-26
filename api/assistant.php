@@ -374,7 +374,7 @@ $userName = htmlspecialchars($_SESSION['user_prenom'] ?? '');
                 <?php endif; ?>
                 <a href="assistant.php" class="btn btn-primary sidebar-link"
                     style="justify-content: flex-start; padding: 0.7rem 1.1rem; font-size: 0.8rem;">
-                    <img src="/assets/ai_expert.jpg" style="height: 22px; width: 22px; margin-right: 8px; border-radius: 4px;"> Expert IA
+                    <img src="/assets/ai_expert.png" style="height: 18px; width: 18px; margin-right: 8px; margin-left: -2px;"> Expert IA
                 </a>
             </nav>
 
@@ -407,7 +407,7 @@ $userName = htmlspecialchars($_SESSION['user_prenom'] ?? '');
                 <!-- Header -->
                 <div class="chat-hero">
                     <div class="chat-hero-avatar">
-                        <img src="/assets/ai_expert.jpg" alt="Expert IA">
+                        <img src="/assets/ai_expert.png" alt="Expert IA">
                     </div>
                     <div class="chat-hero-info">
                         <h2>Expert IA <span style="font-weight: 400; color: var(--text-dim); font-size: 0.85rem;">· Support Intelligence Artificielle</span></h2>
@@ -456,7 +456,7 @@ $userName = htmlspecialchars($_SESSION['user_prenom'] ?? '');
             </a>
             <a href="assistant.php" class="mobile-nav-item active" style="color: inherit; text-decoration:none;">
                 <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px;">
-                    <img src="/assets/ai_expert.jpg" style="height: 22px; width: 22px; border-radius: 4px; object-fit: cover;">
+                    <img src="/assets/ai_expert.png" style="height: 22px; width: 22px; object-fit: cover;">
                 </div>
                 <span class="mobile-nav-label">Expert IA</span>
             </a>

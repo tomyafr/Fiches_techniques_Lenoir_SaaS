@@ -847,7 +847,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <div id="ai-synthesis-block" class="card" style="background: rgba(255, 179, 0, 0.1); border: 2px solid var(--primary); padding: 1.5rem; margin-bottom: 2rem; border-radius: 12px; position: relative;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <img src="/assets/ai_expert.jpg" style="height: 48px; width: 48px; object-fit: cover; border-radius: 8px; border: 2px solid rgba(255,255,255,0.2);">
+                        <img src="/assets/ai_expert.png" style="height: 48px; width: 48px; object-fit: cover; border-radius: 8px; border: 2px solid rgba(255,255,255,0.2);">
                         <h2 style="color: var(--primary); margin: 0; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px;">Analyse Intelligente Globale</h2>
                     </div>
                     <button type="button" onclick="generateAllIA()" id="btnGenerateAllIa" class="btn btn-primary" style="background: var(--primary); color: #000; font-weight: 700; font-size: 0.8rem; padding: 0.5rem 1rem; border-radius: 8px; display: flex; align-items: center; gap: 8px;">
