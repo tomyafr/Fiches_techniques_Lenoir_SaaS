@@ -74,94 +74,99 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ip = trim(explode(',', $ip)[0]);
 
     // Protection Brute Force
-    $stmt = $db->prepare('SELECT attempts, last_attempt FROM login_attempts WHERE ip_address = ?');
-    $stmt->execute([$ip]);
-    $throttle = $stmt->fetch();
+    try {
+        $stmt = $db->prepare('SELECT attempts, last_attempt FROM login_attempts WHERE ip_address = ?');
+        $stmt->execute([$ip]);
+        $throttle = $stmt->fetch();
 
-    if ($throttle && $throttle['attempts'] >= 5) {
-        $last = strtotime($throttle['last_attempt']);
-        if (time() - $last < 900) { // 15 minutes
-            $minutesLeft = ceil((900 - (time() - $last)) / 60);
-            $error = "Trop de tentatives échouées. Réessayez dans {$minutesLeft} minute(s).";
-        } else {
-            $db->prepare('DELETE FROM login_attempts WHERE ip_address = ?')->execute([$ip]);
-            $throttle = null;
-        }
-    }
-
-    if (!$error) {
-        $nom = strtoupper(trim($_POST['nom'] ?? ''));
-        $password = $_POST['password'] ?? '';
-
-        if (empty($nom) || empty($password)) {
-            $error = 'Veuillez remplir tous les champs.';
-        } else {
-            // Pas d'énumération : message identique que le compte existe ou non
-            $stmt = $db->prepare('SELECT id, nom, prenom, password_hash, role, must_change_password, avatar_base64 FROM users WHERE nom = ? AND actif IS TRUE');
-            $stmt->execute([$nom]);
-            $user = $stmt->fetch();
-
-            if ($user && password_verify($password, $user['password_hash'])) {
-                // Connexion réussie : supprimer les tentatives et régénérer l'ID de session
+        if ($throttle && $throttle['attempts'] >= 5) {
+            $last = strtotime($throttle['last_attempt']);
+            if (time() - $last < 900) { // 15 minutes
+                $minutesLeft = ceil((900 - (time() - $last)) / 60);
+                $error = "Trop de tentatives échouées. Réessayez dans {$minutesLeft} minute(s).";
+            } else {
                 $db->prepare('DELETE FROM login_attempts WHERE ip_address = ?')->execute([$ip]);
-
-                // Régénérer l'ID de session pour prévenir la fixation de session
-                session_regenerate_id(true);
-
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['user_nom'] = $user['nom'];
-                $_SESSION['user_prenom'] = $user['prenom'];
-                $_SESSION['role'] = $user['role'];
-                $_SESSION['login_time'] = time();
-                $_SESSION['must_change_password'] = !empty($user['must_change_password']);
-                $_SESSION['avatar'] = $user['avatar_base64'] ?? '';
-                setSessionBackup();
-
-                logAudit('LOGIN_SUCCESS', "User: $nom, IP: $ip");
-                session_write_close();
-
-                // Redirection selon rôle (ou vers profil si changement de MDP obligatoire)
-                if (!empty($user['must_change_password'])) {
-                    header('Location: profile.php?force=1');
-                } else {
-                    header('Location: ' . ($user['role'] === 'admin' ? 'admin.php' : 'technicien.php'));
-                }
-                exit;
-            } else {
-                // Échec : incrémenter les tentatives
-                if ($throttle) {
-                    $db->prepare('UPDATE login_attempts SET attempts = attempts + 1, last_attempt = NOW() WHERE ip_address = ?')->execute([$ip]);
-                } else {
-                    $db->prepare('INSERT INTO login_attempts (ip_address) VALUES (?)')->execute([$ip]);
-                }
-                logAudit('LOGIN_FAILED', "IP: $ip, Identifiant: $nom");
-                // Délai artificiel pour ralentir les attaques bruteforce (0.5s)
-                usleep(500000);
-                $error = "Accès refusé. Vérifiez vos identifiants.";
+                $throttle = null;
             }
         }
-    } elseif ($_POST['action'] === 'forgot_password') {
-        $nom = strtoupper(trim($_POST['nom_oubli'] ?? ''));
-        $newPass = $_POST['new_pass_oubli'] ?? '';
-        if (empty($nom) || empty($newPass)) {
-            $error = 'Veuillez remplir tous les champs.';
-        } else {
-            // Find user
-            $stmt = $db->prepare('SELECT id FROM users WHERE nom = ? AND actif IS TRUE');
-            $stmt->execute([$nom]);
-            $u = $stmt->fetch();
-            if ($u) {
-                // Delete previous pending requests for this user to avoid spam
-                $db->prepare("DELETE FROM password_requests WHERE user_id = ? AND status = 'pending'")->execute([$u['id']]);
 
-                $hash = password_hash($newPass, PASSWORD_BCRYPT, ['cost' => 12]);
-                $db->prepare("INSERT INTO password_requests (user_id, new_password_hash) VALUES (?, ?)")->execute([$u['id'], $hash]);
-                $pendingReqId = $db->lastInsertId();
+        if (!$error) {
+            $nom = strtoupper(trim($_POST['nom'] ?? ''));
+            $password = $_POST['password'] ?? '';
+
+            if (empty($nom) || empty($password)) {
+                $error = 'Veuillez remplir tous les champs.';
             } else {
-                $error = "Identifiant introuvable.";
-                $showForgotModal = true;
+                // Pas d'énumération : message identique que le compte existe ou non
+                $stmt = $db->prepare('SELECT id, nom, prenom, password_hash, role, must_change_password, avatar_base64 FROM users WHERE nom = ? AND actif IS TRUE');
+                $stmt->execute([$nom]);
+                $user = $stmt->fetch();
+
+                if ($user && password_verify($password, $user['password_hash'])) {
+                    // Connexion réussie : supprimer les tentatives et régénérer l'ID de session
+                    $db->prepare('DELETE FROM login_attempts WHERE ip_address = ?')->execute([$ip]);
+
+                    // Régénérer l'ID de session pour prévenir la fixation de session
+                    session_regenerate_id(true);
+
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['user_nom'] = $user['nom'];
+                    $_SESSION['user_prenom'] = $user['prenom'];
+                    $_SESSION['role'] = $user['role'];
+                    $_SESSION['login_time'] = time();
+                    $_SESSION['must_change_password'] = !empty($user['must_change_password']);
+                    $_SESSION['avatar'] = $user['avatar_base64'] ?? '';
+                    setSessionBackup();
+
+                    logAudit('LOGIN_SUCCESS', "User: $nom, IP: $ip");
+                    session_write_close();
+
+                    // Redirection selon rôle (ou vers profil si changement de MDP obligatoire)
+                    if (!empty($user['must_change_password'])) {
+                        header('Location: profile.php?force=1');
+                    } else {
+                        header('Location: ' . ($user['role'] === 'admin' ? 'admin.php' : 'technicien.php'));
+                    }
+                    exit;
+                } else {
+                    // Échec : incrémenter les tentatives
+                    if ($throttle) {
+                        $db->prepare('UPDATE login_attempts SET attempts = attempts + 1, last_attempt = NOW() WHERE ip_address = ?')->execute([$ip]);
+                    } else {
+                        $db->prepare('INSERT INTO login_attempts (ip_address) VALUES (?)')->execute([$ip]);
+                    }
+                    logAudit('LOGIN_FAILED', "IP: $ip, Identifiant: $nom");
+                    // Délai artificiel pour ralentir les attaques bruteforce (0.5s)
+                    usleep(500000);
+                    $error = "Accès refusé. Vérifiez vos identifiants.";
+                }
+            }
+        } elseif ($_POST['action'] === 'forgot_password') {
+            $nom = strtoupper(trim($_POST['nom_oubli'] ?? ''));
+            $newPass = $_POST['new_pass_oubli'] ?? '';
+            if (empty($nom) || empty($newPass)) {
+                $error = 'Veuillez remplir tous les champs.';
+            } else {
+                // Find user
+                $stmt = $db->prepare('SELECT id FROM users WHERE nom = ? AND actif IS TRUE');
+                $stmt->execute([$nom]);
+                $u = $stmt->fetch();
+                if ($u) {
+                    // Delete previous pending requests for this user to avoid spam
+                    $db->prepare("DELETE FROM password_requests WHERE user_id = ? AND status = 'pending'")->execute([$u['id']]);
+
+                    $hash = password_hash($newPass, PASSWORD_BCRYPT, ['cost' => 12]);
+                    $db->prepare("INSERT INTO password_requests (user_id, new_password_hash) VALUES (?, ?)")->execute([$u['id'], $hash]);
+                    $pendingReqId = $db->lastInsertId();
+                } else {
+                    $error = "Identifiant introuvable.";
+                    $showForgotModal = true;
+                }
             }
         }
+    } catch (Exception $e) {
+        error_log("Erreur inattendue à la connexion: " . $e->getMessage());
+        $error = "Une erreur de connexion au serveur est survenue. L'équipe technique a été notifiée.";
     }
 }
 ?>

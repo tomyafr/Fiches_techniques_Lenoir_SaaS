@@ -97,7 +97,7 @@ function getDB()
             $pdo = new PDO($dsn, $user, $pass, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => false,
+                PDO::ATTR_EMULATE_PREPARES => true, // Requis pour PgBouncer / Vercel Postgres
             ]);
 
             // AUTO-FIX: Mise à jour des contraintes pour les accents et renommage admin
