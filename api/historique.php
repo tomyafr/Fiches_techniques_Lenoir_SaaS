@@ -64,14 +64,14 @@ if ($isAdmin) {
 }
 
 // ── Requête principale : toutes les interventions de la période ────────────
-$query = '
+$query = "
     SELECT i.*, c.nom_societe, u.nom as tech_nom, u.prenom as tech_prenom, u.avatar_base64,
     (SELECT string_agg(m.mesures::text, '|||') FROM machines m WHERE m.intervention_id = i.id) as mesures_raw
     FROM interventions i
     JOIN clients c ON i.client_id = c.id
     JOIN users u ON i.technicien_id = u.id
     WHERE i.date_intervention >= ? AND i.date_intervention <= ?
-';
+";
 $params = [$dateDebut, $dateFin];
 
 if (!$isAdmin) {
