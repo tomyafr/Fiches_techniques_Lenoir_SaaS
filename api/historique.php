@@ -66,7 +66,7 @@ if ($isAdmin) {
 // ── Requête principale : toutes les interventions de la période ────────────
 $query = '
     SELECT i.*, c.nom_societe, u.nom as tech_nom, u.prenom as tech_prenom, u.avatar_base64,
-    (SELECT json_agg(m.mesures->>'temps_realise') FROM machines m WHERE m.intervention_id = i.id) as temps_array
+    (SELECT string_agg(m.mesures::text, '|||') FROM machines m WHERE m.intervention_id = i.id) as mesures_raw
     FROM interventions i
     JOIN clients c ON i.client_id = c.id
     JOIN users u ON i.technicien_id = u.id
@@ -599,18 +599,21 @@ $nbClients = count($clientsSet);
                                         <td style="color:var(--text-dim); font-size:0.85rem; font-weight:500;">
                                             <?php
                                             $tempsTotalMinutes = 0;
-                                            $tempsArr = json_decode($i['temps_array'] ?? '[]', true);
-                                            if (is_array($tempsArr)) {
-                                                foreach ($tempsArr as $t) {
-                                                    $t = trim($t ?? '');
-                                                    if (empty($t)) continue;
-                                                    if (strpos($t, 'h') !== false) {
-                                                        $parts = explode('h', $t);
-                                                        $h = (int)$parts[0];
-                                                        $m = (int)($parts[1] ?? 0);
-                                                        $tempsTotalMinutes += ($h * 60) + $m;
-                                                    } else {
-                                                        $tempsTotalMinutes += round((float)$t * 60);
+                                            if (!empty($i['mesures_raw'])) {
+                                                $machinesMesures = explode('|||', $i['mesures_raw']);
+                                                foreach ($machinesMesures as $mRaw) {
+                                                    $mArr = json_decode($mRaw, true);
+                                                    if (is_array($mArr) && isset($mArr['temps_realise'])) {
+                                                        $t = trim($mArr['temps_realise']);
+                                                        if (empty($t)) continue;
+                                                        if (strpos($t, 'h') !== false) {
+                                                            $parts = explode('h', $t);
+                                                            $h = (int)$parts[0];
+                                                            $m = (int)($parts[1] ?? 0);
+                                                            $tempsTotalMinutes += ($h * 60) + $m;
+                                                        } else {
+                                                            $tempsTotalMinutes += round((float)$t * 60);
+                                                        }
                                                     }
                                                 }
                                             }

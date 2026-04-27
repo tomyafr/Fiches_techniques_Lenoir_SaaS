@@ -15,7 +15,7 @@ if ($viewId) {
     if ($viewUser) {
         $stmtReports = $db->prepare("
             SELECT i.id, i.numero_arc, c.nom_societe, i.date_intervention, i.statut,
-            (SELECT json_agg(m.mesures->>'temps_realise') FROM machines m WHERE m.intervention_id = i.id) as temps_array
+            (SELECT string_agg(m.mesures::text, '|||') FROM machines m WHERE m.intervention_id = i.id) as mesures_raw
             FROM interventions i
             JOIN clients c ON i.client_id = c.id
             WHERE i.technicien_id = ?
@@ -195,16 +195,19 @@ if (!$viewUser) {
                             <?php foreach ($viewReports as $i): ?>
                                 <?php
                                 $tMins = 0;
-                                $tArr = json_decode($i['temps_array'] ?? '[]', true);
-                                if (is_array($tArr)) {
-                                    foreach ($tArr as $t) {
-                                        $t = trim($t ?? '');
-                                        if (empty($t)) continue;
-                                        if (strpos($t, 'h') !== false) {
-                                            $parts = explode('h', $t);
-                                            $tMins += ((int)$parts[0] * 60) + (int)($parts[1] ?? 0);
-                                        } else {
-                                            $tMins += round((float)$t * 60);
+                                if (!empty($i['mesures_raw'])) {
+                                    $machinesMesures = explode('|||', $i['mesures_raw']);
+                                    foreach ($machinesMesures as $mRaw) {
+                                        $mArr = json_decode($mRaw, true);
+                                        if (is_array($mArr) && isset($mArr['temps_realise'])) {
+                                            $t = trim($mArr['temps_realise']);
+                                            if (empty($t)) continue;
+                                            if (strpos($t, 'h') !== false) {
+                                                $parts = explode('h', $t);
+                                                $tMins += ((int)$parts[0] * 60) + (int)($parts[1] ?? 0);
+                                            } else {
+                                                $tMins += round((float)$t * 60);
+                                            }
                                         }
                                     }
                                 }
