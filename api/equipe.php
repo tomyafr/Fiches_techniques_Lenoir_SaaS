@@ -3,23 +3,49 @@ require_once __DIR__ . '/../includes/config.php';
 requireAuth('admin');
 $db = getDB();
 
-$stmtUsers = $db->prepare('
-    SELECT 
-        u.id, 
-        u.nom, 
-        u.prenom, 
-        u.role,
-        u.actif,
-        u.created_at,
-        u.avatar_base64,
-        (SELECT COUNT(*) FROM interventions i WHERE i.technicien_id = u.id) as total_interventions,
-        (SELECT date_intervention FROM interventions i WHERE i.technicien_id = u.id ORDER BY date_intervention DESC LIMIT 1) as derniere_intervention
-    FROM users u
-    WHERE u.actif = TRUE
-    ORDER BY u.role DESC, u.nom ASC
-');
-$stmtUsers->execute();
-$equipe = $stmtUsers->fetchAll();
+$viewId = isset($_GET['id']) ? (int)$_GET['id'] : null;
+$viewUser = null;
+$viewReports = [];
+
+if ($viewId) {
+    $stmtUser = $db->prepare('SELECT id, nom, prenom, role, actif, avatar_base64 FROM users WHERE id = ?');
+    $stmtUser->execute([$viewId]);
+    $viewUser = $stmtUser->fetch();
+    
+    if ($viewUser) {
+        $stmtReports = $db->prepare("
+            SELECT i.id, i.numero_arc, c.nom_societe, i.date_intervention, i.statut,
+            (SELECT json_agg(m.mesures->>'temps_realise') FROM machines m WHERE m.intervention_id = i.id) as temps_array
+            FROM interventions i
+            JOIN clients c ON i.client_id = c.id
+            WHERE i.technicien_id = ?
+            ORDER BY i.date_intervention DESC
+        ");
+        $stmtReports->execute([$viewId]);
+        $viewReports = $stmtReports->fetchAll();
+    }
+}
+
+$equipe = [];
+if (!$viewUser) {
+    $stmtUsers = $db->prepare('
+        SELECT 
+            u.id, 
+            u.nom, 
+            u.prenom, 
+            u.role,
+            u.actif,
+            u.created_at,
+            u.avatar_base64,
+            (SELECT COUNT(*) FROM interventions i WHERE i.technicien_id = u.id) as total_interventions,
+            (SELECT date_intervention FROM interventions i WHERE i.technicien_id = u.id ORDER BY date_intervention DESC LIMIT 1) as derniere_intervention
+        FROM users u
+        WHERE u.actif = TRUE
+        ORDER BY u.role DESC, u.nom ASC
+    ');
+    $stmtUsers->execute();
+    $equipe = $stmtUsers->fetchAll();
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -103,10 +129,129 @@ $equipe = $stmtUsers->fetchAll();
         </aside>
 
         <main class="main-content">
+            <?php if ($viewUser): ?>
+                <?php
+                // Calculer les totaux pour le résumé
+                $totalTimeMinutesAll = 0;
+                $totalReports = count($viewReports);
+                foreach ($viewReports as $r) {
+                    $arr = json_decode($r['temps_array'] ?? '[]', true);
+                    if (is_array($arr)) {
+                        foreach ($arr as $t) {
+                            $t = trim($t ?? '');
+                            if (empty($t)) continue;
+                            if (strpos($t, 'h') !== false) {
+                                $parts = explode('h', $t);
+                                $totalTimeMinutesAll += ((int)$parts[0] * 60) + (int)($parts[1] ?? 0);
+                            } else {
+                                $totalTimeMinutesAll += round((float)$t * 60);
+                            }
+                        }
+                    }
+                }
+                $th = floor($totalTimeMinutesAll / 60);
+                $tm = $totalTimeMinutesAll % 60;
+                $totalTimeString = $th > 0 || $tm > 0 ? $th . 'h' . str_pad((string)$tm, 2, '0', STR_PAD_LEFT) : '0h00';
+                ?>
+                <div class="animate-in">
+                    <a href="equipe.php" class="btn btn-ghost" style="margin-bottom: 1.5rem; color: var(--text-dim); display: inline-flex; padding: 0.5rem 1rem;">
+                        ← Retour à l'équipe
+                    </a>
+                    
+                    <div class="card glass" style="padding: 2rem; margin-bottom: 2.5rem; border-top: 4px solid var(--primary);">
+                        <div style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                            <?php if (!empty($viewUser['avatar_base64'])): ?>
+                                <img src="<?= htmlspecialchars($viewUser['avatar_base64']) ?>" style="width: 80px; height: 80px; border-radius: 16px; object-fit: cover; border: 2px solid var(--glass-border);">
+                            <?php else: ?>
+                                <div style="width: 80px; height: 80px; border-radius: 16px; background: linear-gradient(135deg, #0ea5e9, #6366f1); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; color: #fff; box-shadow: 0 8px 16px rgba(0,0,0,0.2);">
+                                    <?= strtoupper(substr($viewUser['prenom'], 0, 1) . substr($viewUser['nom'], 0, 1)) ?>
+                                </div>
+                            <?php endif; ?>
+                            <div>
+                                <h2 style="font-size: 1.8rem; margin-bottom: 0.3rem;"><?= htmlspecialchars($viewUser['prenom'] . ' ' . $viewUser['nom']) ?></h2>
+                                <span style="font-size: 0.8rem; padding: 0.3rem 0.8rem; border-radius: 6px; background: rgba(255, 179, 0, 0.2); color: var(--primary); font-weight: 700;">
+                                    <?= htmlspecialchars(strtoupper($viewUser['role'])) ?>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                            <div style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; text-align: center; border: 1px solid var(--glass-border);">
+                                <div style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 0.5rem;">Total des Rapports</div>
+                                <div style="font-size: 2.5rem; font-weight: bold; color: var(--primary); text-shadow: 0 0 15px rgba(244,130,32,0.3);"><?= $totalReports ?></div>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 12px; text-align: center; border: 1px solid var(--glass-border);">
+                                <div style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 0.5rem;">Temps Total Cumulé</div>
+                                <div style="font-size: 2.5rem; font-weight: bold; color: #10b981; text-shadow: 0 0 15px rgba(16,185,129,0.3);"><?= $totalTimeString ?></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-bottom: 1.5rem; color: var(--text-dim); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Historique de ses rapports</h3>
+                    <?php if (empty($viewReports)): ?>
+                        <div class="card glass" style="padding: 3rem; text-align: center; color: var(--text-dim); border-radius: 12px;">Aucun rapport trouvé pour ce technicien.</div>
+                    <?php else: ?>
+                        <div class="table-scroll-wrapper" style="overflow-x:auto;">
+                            <table class="hist-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>N° ARC</th>
+                                        <th>Client</th>
+                                        <th>Durée</th>
+                                        <th style="text-align:center;">Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($viewReports as $i): ?>
+                                        <tr onclick="window.location.href='intervention_edit.php?id=<?= $i['id'] ?>';" style="cursor: pointer;" class="hover-row">
+                                            <td style="font-family:var(--font-mono);font-size:0.85rem;color:var(--text-muted);">
+                                                <?= date('d/m/Y', strtotime($i['date_intervention'])) ?>
+                                            </td>
+                                            <td><span class="tag-arc"><?= htmlspecialchars($i['numero_arc']) ?></span></td>
+                                            <td style="font-weight:600; font-size: 0.95rem;"><?= htmlspecialchars($i['nom_societe']) ?></td>
+                                            <td style="color:var(--text-dim); font-size:0.9rem; font-weight:500;">
+                                                <?php
+                                                $tMins = 0;
+                                                $tArr = json_decode($i['temps_array'] ?? '[]', true);
+                                                if (is_array($tArr)) {
+                                                    foreach ($tArr as $t) {
+                                                        $t = trim($t ?? '');
+                                                        if (empty($t)) continue;
+                                                        if (strpos($t, 'h') !== false) {
+                                                            $parts = explode('h', $t);
+                                                            $tMins += ((int)$parts[0] * 60) + (int)($parts[1] ?? 0);
+                                                        } else {
+                                                            $tMins += round((float)$t * 60);
+                                                        }
+                                                    }
+                                                }
+                                                if ($tMins > 0) {
+                                                    $h = floor($tMins / 60);
+                                                    $m = $tMins % 60;
+                                                    echo $h . 'h' . str_pad((string)$m, 2, '0', STR_PAD_LEFT);
+                                                } else {
+                                                    echo '--';
+                                                }
+                                                ?>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <span class="status-badge <?= in_array(strtolower($i['statut']), ['terminee', 'terminée', 'envoyee', 'envoyée']) ? 'status-terminee' : 'status-brouillon' ?>">
+                                                    <?= htmlspecialchars($i['statut']) ?>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php else: ?>
             <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;"
                 class="animate-in">
                 <?php foreach ($equipe as $membre): ?>
-                    <div class="card glass" style="padding: 1.5rem; display: flex; flex-direction: column;">
+                    <a href="equipe.php?id=<?= $membre['id'] ?>" class="card glass" style="padding: 1.5rem; display: flex; flex-direction: column; text-decoration: none; color: inherit; transition: transform 0.2s, border-color 0.2s; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='var(--primary)'" onmouseout="this.style.transform='none'; this.style.borderColor='var(--glass-border)'">
                         <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
                             <?php if (!empty($membre['avatar_base64'])): ?>
                                 <img src="<?= htmlspecialchars($membre['avatar_base64']) ?>" 
@@ -154,9 +299,10 @@ $equipe = $stmtUsers->fetchAll();
                                     style="font-size:0.8rem;"><?= $membre['derniere_intervention'] ? date('d/m/Y', strtotime($membre['derniere_intervention'])) : 'Aucune' ?></span>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 <?php endforeach; ?>
             </div>
+            <?php endif; ?>
         </main>
     </div>
 

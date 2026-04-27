@@ -65,7 +65,8 @@ if ($isAdmin) {
 
 // ── Requête principale : toutes les interventions de la période ────────────
 $query = '
-    SELECT i.*, c.nom_societe, u.nom as tech_nom, u.prenom as tech_prenom, u.avatar_base64
+    SELECT i.*, c.nom_societe, u.nom as tech_nom, u.prenom as tech_prenom, u.avatar_base64,
+    (SELECT json_agg(m.mesures->>'temps_realise') FROM machines m WHERE m.intervention_id = i.id) as temps_array
     FROM interventions i
     JOIN clients c ON i.client_id = c.id
     JOIN users u ON i.technicien_id = u.id
@@ -550,6 +551,7 @@ $nbClients = count($clientsSet);
                                     <th>Date</th>
                                     <th>N° ARC</th>
                                     <th>Client</th>
+                                    <th>Durée</th>
                                     <th style="text-align:center;">Statut</th>
                                     <th style="text-align:center;">Action</th>
                                 </tr>
@@ -593,6 +595,33 @@ $nbClients = count($clientsSet);
                                             </span></td>
                                         <td style="font-weight:600;">
                                             <?= htmlspecialchars($i['nom_societe']) ?>
+                                        </td>
+                                        <td style="color:var(--text-dim); font-size:0.85rem; font-weight:500;">
+                                            <?php
+                                            $tempsTotalMinutes = 0;
+                                            $tempsArr = json_decode($i['temps_array'] ?? '[]', true);
+                                            if (is_array($tempsArr)) {
+                                                foreach ($tempsArr as $t) {
+                                                    $t = trim($t ?? '');
+                                                    if (empty($t)) continue;
+                                                    if (strpos($t, 'h') !== false) {
+                                                        $parts = explode('h', $t);
+                                                        $h = (int)$parts[0];
+                                                        $m = (int)($parts[1] ?? 0);
+                                                        $tempsTotalMinutes += ($h * 60) + $m;
+                                                    } else {
+                                                        $tempsTotalMinutes += round((float)$t * 60);
+                                                    }
+                                                }
+                                            }
+                                            if ($tempsTotalMinutes > 0) {
+                                                $h = floor($tempsTotalMinutes / 60);
+                                                $m = $tempsTotalMinutes % 60;
+                                                echo $h . 'h' . str_pad((string)$m, 2, '0', STR_PAD_LEFT);
+                                            } else {
+                                                echo '--';
+                                            }
+                                            ?>
                                         </td>
                                         <td style="text-align:center;">
                                             <span
