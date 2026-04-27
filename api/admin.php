@@ -154,7 +154,77 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
             border-left: 4px solid var(--success);
         }
         .stat-card.premium {
-            border-left: 4px solid #a855f7;
+            border-left: 4px solid var(--primary);
+            background: linear-gradient(135deg, rgba(244, 130, 32, 0.05), rgba(0,0,0,0));
+        }
+
+        /* Tooltips d'information */
+        .info-container {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        .info-icon {
+            width: 16px;
+            height: 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--glass-border);
+            color: var(--text-dim);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-family: serif;
+            font-style: italic;
+            cursor: help;
+            transition: all 0.2s;
+        }
+        .info-icon:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+        .tooltip-text {
+            visibility: hidden;
+            width: 220px;
+            background-color: rgba(15, 23, 42, 0.98);
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px;
+            position: absolute;
+            z-index: 100;
+            bottom: 135%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            font-size: 0.75rem;
+            line-height: 1.4;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            pointer-events: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            font-weight: 400;
+        }
+        .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: rgba(15, 23, 42, 0.98) transparent transparent transparent;
+        }
+        .info-container:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
         }
         .stat-header {
             display: flex;
@@ -278,7 +348,13 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
                 <div class="stat-card glass cockpit-pulse">
                     <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                         <div>
-                            <span class="stat-title">Conformité Globale</span>
+                            <div style="display: flex; align-items: center;">
+                                <span class="stat-title">Conformité Globale</span>
+                                <div class="info-container">
+                                    <div class="info-icon">i</div>
+                                    <span class="tooltip-text">Pourcentage moyen de machines sans défaut (pastille bleue) sur l'ensemble de vos rapports. Reflète l'état général du parc machine expertisé.</span>
+                                </div>
+                            </div>
                             <div class="stat-value" id="complianceValue">--</div>
                         </div>
                         <span class="premium-badge">Score</span>
@@ -291,7 +367,13 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
                 <!-- 2. Volume Expertises -->
                 <div class="stat-card glass info">
                     <div>
-                        <span class="stat-title">Volume d'Expertises</span>
+                        <div style="display: flex; align-items: center;">
+                            <span class="stat-title">Volume d'Expertises</span>
+                            <div class="info-container">
+                                <div class="info-icon">i</div>
+                                <span class="tooltip-text">Nombre total d'interventions réalisées chaque mois sur l'année en cours. Permet de piloter la charge de travail de l'équipe.</span>
+                            </div>
+                        </div>
                         <div class="stat-value" id="monthlyTotal">--</div>
                     </div>
                     <div class="chart-container" style="height: 140px;">
@@ -301,7 +383,13 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
 
                 <!-- 3. Répartition Statuts -->
                 <div class="stat-card glass success">
-                    <span class="stat-title">Répartition Statuts</span>
+                    <div style="display: flex; align-items: center;">
+                        <span class="stat-title">Répartition Statuts</span>
+                        <div class="info-container">
+                            <div class="info-icon">i</div>
+                            <span class="tooltip-text">Proportion des dossiers en attente (Brouillon) vs finalisés (Signés/Envoyés). Aide à suivre l'avancement administratif.</span>
+                        </div>
+                    </div>
                     <div class="chart-container" style="height: 140px; margin-top: 0.5rem;">
                         <canvas id="statusChart"></canvas>
                     </div>
@@ -309,7 +397,13 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
 
                 <!-- 4. Top Clients -->
                 <div class="stat-card glass premium">
-                    <span class="stat-title">Top 5 Clients</span>
+                    <div style="display: flex; align-items: center;">
+                        <span class="stat-title">Top 5 Clients</span>
+                        <div class="info-container">
+                            <div class="info-icon">i</div>
+                            <span class="tooltip-text">Classement des entreprises ayant reçu le plus grand nombre d'expertises. Identifie vos comptes les plus actifs.</span>
+                        </div>
+                    </div>
                     <div class="chart-container" style="height: 140px; margin-top: 0.5rem;">
                         <canvas id="clientsChart"></canvas>
                     </div>
