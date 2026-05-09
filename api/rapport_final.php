@@ -2506,8 +2506,23 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 
                 if (label) label.textContent = 'Upload sécurisé...';
                 
-                // 2. Convertir en Blob pour l'upload direct
-                const pdfBlob = await (await fetch('data:application/pdf;base64,' + pdfBase64)).blob();
+                // 2. Convertir en Blob pour l'upload direct (sans limite de taille de data URI)
+                function b64toBlob(b64Data, contentType='application/pdf', sliceSize=512) {
+                    const byteCharacters = atob(b64Data);
+                    const byteArrays = [];
+                    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                        const slice = byteCharacters.slice(offset, offset + sliceSize);
+                        const byteNumbers = new Array(slice.length);
+                        for (let i = 0; i < slice.length; i++) {
+                            byteNumbers[i] = slice.charCodeAt(i);
+                        }
+                        const byteArray = new Uint8Array(byteNumbers);
+                        byteArrays.push(byteArray);
+                    }
+                    return new Blob(byteArrays, {type: contentType});
+                }
+                
+                const pdfBlob = b64toBlob(pdfBase64);
                 
                 // 3. Upload DIRECT vers Supabase Storage (contourne la limite Vercel de 4.5MB)
                 const supabaseUrl = 'https://lrshutesrhmjdkblpoqc.supabase.co';
