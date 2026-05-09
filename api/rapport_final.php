@@ -2485,12 +2485,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         }
 
         // ══════════════════════════════════════════════════════════════════
-        // OUVRIR DANS OUTLOOK (Mailto natif)
+        // OUVRIR DANS OUTLOOK (Mailto natif avec Lien Public)
         // ══════════════════════════════════════════════════════════════════
         async function ouvrirDansOutlook() {
             if (!window.LM_RAPPORT) return;
 
-            const { clientEmail, nomSociete, techName, dateInt } = window.LM_RAPPORT;
+            const { interventionId, clientEmail, nomSociete, techName, dateInt, csrfToken, pdfFilename } = window.LM_RAPPORT;
 
             const btn = document.getElementById('btnSendEmail');
             const icon = document.getElementById('btnSendEmailIcon');
@@ -2498,33 +2498,54 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             if (btn) btn.disabled = true;
             if (icon) icon.textContent = '⏳';
-            if (label) label.textContent = 'Préparation...';
+            if (label) label.textContent = 'Génération du PDF...';
 
             try {
-                // 1. Lancer le téléchargement automatique du PDF
-                afficherToast('⏳ Génération et téléchargement du PDF...', 'success');
-                await generateUltimatePDF('download');
+                // 1. Générer le PDF en mémoire (Base64)
+                const pdfBase64 = await generateUltimatePDF('base64');
                 
-                // 2. Préparer le lien Mailto (Outlook/Mail)
+                if (label) label.textContent = 'Création du lien sécurisé...';
+                
+                // 2. Envoyer le PDF sur Supabase via notre API backend
+                const formData = new FormData();
+                formData.append('intervention_id', interventionId);
+                formData.append('pdf_data', pdfBase64);
+                formData.append('filename', pdfFilename || 'rapport.pdf');
+                formData.append('csrf_token', csrfToken);
+                
+                const response = await fetch('upload_pdf.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.message || 'Erreur lors de la création du lien');
+                }
+                
+                const pdfLienPublic = result.url;
+                
+                // 3. Préparer le lien Mailto (Outlook/Mail)
                 const destinataire = clientEmail || '';
                 const enCopie = 'contact@raoul-lenoir.com';
                 const objet = `Rapport d'intervention Lenoir-Mec - ${nomSociete} - ${dateInt}`;
                 
-                const corpsMsg = `Bonjour,\n\nVeuillez trouver ci-joint le rapport d'intervention suite à notre passage du ${dateInt}.\n\n⚠️ IMPORTANT POUR LE TECHNICIEN : N'oubliez pas de glisser-déposer le PDF qui vient de se télécharger dans cet email !\n\nCordialement,\n${techName}\nL'équipe Lenoir-Mec`;
+                const corpsMsg = `Bonjour,\n\nVeuillez trouver ci-dessous le lien pour télécharger de manière sécurisée votre rapport d'intervention suite à notre passage du ${dateInt} :\n\n👉 Télécharger le rapport (PDF) :\n${pdfLienPublic}\n\nCordialement,\n${techName}\nL'équipe Lenoir-Mec`;
                 
                 const mailtoLink = `mailto:${destinataire}?cc=${enCopie}&subject=${encodeURIComponent(objet)}&body=${encodeURIComponent(corpsMsg)}`;
                 
-                // 3. Ouvrir l'application email
+                // 4. Ouvrir l'application email
                 window.location.href = mailtoLink;
                 
-                afficherToast('✅ Messagerie ouverte ! Pensez à attacher le PDF téléchargé.', 'success');
+                afficherToast('✅ Messagerie ouverte avec le lien sécurisé !', 'success');
                 
                 if (icon) icon.textContent = '✅';
                 if (label) label.textContent = 'Ouvert dans Outlook';
             } catch (e) {
                 afficherToast('❌ Erreur : ' + e.message, 'error');
                 if (icon) icon.innerHTML = '<img src="/assets/icon_email_send.svg" style="height: 18px; width: 18px; vertical-align: middle;">';
-                if (label) label.textContent = 'Envoyer par email (Outlook)';
+                if (label) label.textContent = 'Envoyer via Outlook/Mail';
             } finally {
                 if (btn) btn.disabled = false;
             }
