@@ -78,6 +78,15 @@ function getDB()
             $pass = getenv('POSTGRES_PASSWORD') ?: getenv('PGPASSWORD');
 
             if ($host) {
+                // AUTO-FIX pour Supabase (variables individuelles)
+                if (strpos($host, 'pooler.supabase.com') !== false && strpos($user, '.') !== false) {
+                    $userParts = explode('.', $user);
+                    if (count($userParts) === 2) {
+                        $user = $userParts[0];
+                        $projectRef = $userParts[1];
+                        $host = $projectRef . '.pooler.supabase.com';
+                    }
+                }
                 $dsn = "pgsql:host=$host;port=5432;dbname=$db;sslmode=require";
             } else {
                 $dbUrl = getenv('DATABASE_URL') ?: getenv('POSTGRES_URL');
@@ -88,6 +97,19 @@ function getDB()
                     $user = $parts['user'];
                     $pass = $parts['pass'];
                     $port = isset($parts['port']) ? $parts['port'] : '5432';
+
+                    // AUTO-FIX pour Supabase: Convertir l'ancienne URL PgBouncer vers le nouveau Supavisor
+                    // Ancien: user = postgres.project_ref, host = aws-0-eu-west-3.pooler.supabase.com
+                    // Nouveau: user = postgres, host = project_ref.pooler.supabase.com
+                    if (strpos($host, 'pooler.supabase.com') !== false && strpos($user, '.') !== false) {
+                        $userParts = explode('.', $user);
+                        if (count($userParts) === 2) {
+                            $user = $userParts[0]; // 'postgres'
+                            $projectRef = $userParts[1]; // 'lrshutesrhmjdkblpoqc'
+                            $host = $projectRef . '.pooler.supabase.com';
+                        }
+                    }
+
                     $dsn = "pgsql:host=$host;port=$port;dbname=$db;sslmode=require";
                 } else {
                     die('Erreur : Variables de base de données non trouvées.');
