@@ -2528,7 +2528,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 
                 // 4. Upload vers Supabase Storage
                 const supabaseUrl = 'https://lrshutesrhmjdkblpoqc.supabase.co';
-                const supabaseAnonKey = 'sb_publishable_SxGIO7vrL44lKMct4WV7KA_r3oShuIr';
+                const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxyc2h1dGVzcmhtamRrYmxwb3FjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI3NjUzNjYsImV4cCI6MjA4ODM0MTM2Nn0.FM77dUV58l2yFvACUvZ642cZMrdh1gW4MIuhmxH9X0c';
                 const bucketName = 'rapports-pdf';
                 const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
                 
