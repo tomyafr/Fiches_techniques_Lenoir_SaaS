@@ -764,10 +764,10 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
                     <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
                         <!-- Bouton Envoyer PDF par email -->
-                        <button type="button" id="btnSendEmail" onclick="lancerEnvoiEmail()"
+                        <button type="button" id="btnSendEmail" onclick="ouvrirDansOutlook()"
                             style="padding:0.7rem 1.5rem; background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer; font-size:0.9rem; display:flex; align-items:center; gap:0.5rem;">
                             <span id="btnSendEmailIcon"><img src="/assets/icon_email_send.svg" style="height: 18px; width: 18px; vertical-align: middle;"></span>
-                            <span id="btnSendEmailLabel">Envoyer PDF par email</span>
+                            <span id="btnSendEmailLabel">Envoyer via Outlook/Mail</span>
                         </button>
                         <!-- Bouton Télécharger PDF -->
                         <button type="button" id="btnDownloadPDF" onclick="telechargerPDF()"
@@ -2485,105 +2485,12 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         }
 
         // ══════════════════════════════════════════════════════════════════
-        // FILE D'ATTENTE HORS-LIGNE (IndexedDB)
+        // OUVRIR DANS OUTLOOK (Mailto natif)
         // ══════════════════════════════════════════════════════════════════
-        const DB_NAME = 'LMEmailQueue';
-        const DB_VERSION = 1;
-        const STORE_NAME = 'pendingEmails';
-
-        function ouvrirIDB() {
-            return new Promise((resolve, reject) => {
-                const req = indexedDB.open(DB_NAME, DB_VERSION);
-                req.onupgradeneeded = e => {
-                    e.target.result.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
-                };
-                req.onsuccess = e => resolve(e.target.result);
-                req.onerror = e => reject(e.target.error);
-            });
-        }
-
-        async function sauvegarderEnFile(payload) {
-            const db = await ouvrirIDB();
-            const tx = db.transaction(STORE_NAME, 'readwrite');
-            const store = tx.objectStore(STORE_NAME);
-            store.add({ ...payload, queued_at: Date.now() });
-            return new Promise((res, rej) => {
-                tx.oncomplete = res;
-                tx.onerror = rej;
-            });
-        }
-
-        async function rejouerFileDAttente() {
-            const db = await ouvrirIDB();
-            const tx = db.transaction(STORE_NAME, 'readwrite');
-            const store = tx.objectStore(STORE_NAME);
-            const req = store.getAll();
-            req.onsuccess = async () => {
-                const items = req.result;
-                for (const item of items) {
-                    try {
-                        const res = await envoyerParAPI(item.intervention_id, item.pdf_data, item.client_email, item.csrf_token);
-                        if (res.success) {
-                            // Supprimer de la file
-                            db.transaction(STORE_NAME, 'readwrite').objectStore(STORE_NAME).delete(item.id);
-                            console.log('[LM] Email rejoué avec succès :', item.client_email);
-                        }
-                    } catch (e) {
-                        console.warn('[LM] Rejouer échoué :', e);
-                    }
-                }
-            };
-        }
-
-        // Gestion du Loop personnalisé pour la vidéo de chargement (coupe 0.5s avant la fin)
-        const loaderVideo = document.getElementById('loaderVideo');
-        if (loaderVideo) {
-            loaderVideo.addEventListener('timeupdate', function() {
-                // On boucle 0.5s avant la fin pour une transition plus fluide selon la demande
-                if (this.currentTime >= this.duration - 0.5) {
-                    this.currentTime = 0;
-                    this.play().catch(e => console.warn("Erreur loop video:", e));
-                }
-            });
-        }
-
-        // Écouter la reconnexion réseau
-        window.addEventListener('online', () => {
-            console.log('[LM] Connexion rétablie – rejouer la file d\'attente email');
-            rejouerFileDAttente();
-        });
-
-        // ══════════════════════════════════════════════════════════════════
-        // APPEL API ENVOI EMAIL
-        // ══════════════════════════════════════════════════════════════════
-        async function envoyerParAPI(interventionId, pdfBase64, clientEmail, csrfToken) {
-            const formData = new FormData();
-            formData.append('intervention_id', interventionId);
-            formData.append('pdf_data', pdfBase64);
-            formData.append('client_email', clientEmail);
-            formData.append('csrf_token', csrfToken);
-
-            const resp = await fetch('/envoyer_rapport.php', {
-                method: 'POST',
-                body: formData,
-                credentials: 'same-origin',
-            });
-            if (!resp.ok) throw new Error('HTTP ' + resp.status);
-            return resp.json();
-        }
-
-        // ══════════════════════════════════════════════════════════════════
-        // FONCTION PRINCIPALE : LANCER L'ENVOI EMAIL
-        // ══════════════════════════════════════════════════════════════════
-        async function lancerEnvoiEmail(auto = false) {
+        async function ouvrirDansOutlook() {
             if (!window.LM_RAPPORT) return;
 
-            const { interventionId, clientEmail, csrfToken, nomSociete } = window.LM_RAPPORT;
-
-            if (!clientEmail) {
-                afficherToast('⚠️ Aucun email client renseigné. Veuillez reprendre le formulaire.', 'error');
-                return;
-            }
+            const { clientEmail, nomSociete, techName, dateInt } = window.LM_RAPPORT;
 
             const btn = document.getElementById('btnSendEmail');
             const icon = document.getElementById('btnSendEmailIcon');
@@ -2591,86 +2498,35 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
 
             if (btn) btn.disabled = true;
             if (icon) icon.textContent = '⏳';
-            if (label) label.textContent = 'génération du PDF…';
+            if (label) label.textContent = 'Préparation...';
 
-            let pdfBase64;
             try {
-                pdfBase64 = await genererPDFBase64();
+                // 1. Lancer le téléchargement automatique du PDF
+                afficherToast('⏳ Génération et téléchargement du PDF...', 'success');
+                await generateUltimatePDF('download');
+                
+                // 2. Préparer le lien Mailto (Outlook/Mail)
+                const destinataire = clientEmail || '';
+                const enCopie = 'contact@raoul-lenoir.com';
+                const objet = `Rapport d'intervention Lenoir-Mec - ${nomSociete} - ${dateInt}`;
+                
+                const corpsMsg = `Bonjour,\n\nVeuillez trouver ci-joint le rapport d'intervention suite à notre passage du ${dateInt}.\n\n⚠️ IMPORTANT POUR LE TECHNICIEN : N'oubliez pas de glisser-déposer le PDF qui vient de se télécharger dans cet email !\n\nCordialement,\n${techName}\nL'équipe Lenoir-Mec`;
+                
+                const mailtoLink = `mailto:${destinataire}?cc=${enCopie}&subject=${encodeURIComponent(objet)}&body=${encodeURIComponent(corpsMsg)}`;
+                
+                // 3. Ouvrir l'application email
+                window.location.href = mailtoLink;
+                
+                afficherToast('✅ Messagerie ouverte ! Pensez à attacher le PDF téléchargé.', 'success');
+                
+                if (icon) icon.textContent = '✅';
+                if (label) label.textContent = 'Ouvert dans Outlook';
             } catch (e) {
+                afficherToast('❌ Erreur : ' + e.message, 'error');
+                if (icon) icon.innerHTML = '<img src="/assets/icon_email_send.svg" style="height: 18px; width: 18px; vertical-align: middle;">';
+                if (label) label.textContent = 'Envoyer par email (Outlook)';
+            } finally {
                 if (btn) btn.disabled = false;
-                if (icon) icon.textContent = '📧';
-                if (label) label.textContent = 'Envoyer PDF par email';
-                afficherToast('❌ Erreur génération PDF : ' + e.message, 'error');
-                return;
-            }
-
-            if (icon) icon.textContent = '📤';
-            if (label) label.textContent = 'Envoi en cours…';
-
-            // Hors-ligne : mettre en file d'attente
-            if (!navigator.onLine) {
-                try {
-                    await sauvegarderEnFile({
-                        intervention_id: interventionId,
-                        pdf_data: pdfBase64,
-                        client_email: clientEmail,
-                        csrf_token: csrfToken,
-                    });
-                    afficherToast('Connexion hors-ligne – email mis en file d\'attente. Il sera envoyé automatiquement à la reconnexion.', 'warning');
-                } catch (e) {
-                    afficherToast('❌ Impossible de mettre l\'email en file d\'attente.', 'error');
-                }
-                if (btn) btn.disabled = false;
-                if (icon) icon.textContent = '📧';
-                if (label) label.textContent = 'Envoyer PDF par email';
-                return;
-            }
-
-            // En ligne : envoi direct
-            try {
-                const result = await envoyerParAPI(interventionId, pdfBase64, clientEmail, csrfToken);
-                if (result.success) {
-                    if (result.simulation_html) {
-                        afficherToast('🧪 ' + result.message, 'warning');
-                        if (btn) {
-                            btn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
-                            btn.innerHTML = '<span>👁️</span> Voir la Simulation';
-                            btn.onclick = () => {
-                                const sw = window.open('', '_blank');
-                                sw.document.write(result.simulation_html);
-                                sw.document.close();
-                            };
-                            btn.disabled = false;
-                        }
-                    } else {
-                        afficherToast('✅ Rapport envoyé avec succès à ' + result.email, 'success');
-                        if (btn) btn.style.background = 'linear-gradient(135deg,#10b981,#059669)';
-                        if (icon) icon.textContent = '✅';
-                        if (label) label.textContent = 'Email envoyé !';
-                        btn.disabled = true; // Ne pas renvoyer
-                    }
-                } else {
-                    afficherToast('❌ ' + (result.message || 'Erreur envoi email'), 'error');
-                    if (btn) btn.disabled = false;
-                    if (icon) icon.textContent = '🔄';
-                    if (label) label.textContent = 'Réessayer l\'envoi';
-                }
-            } catch (e) {
-                // Réseau coupé pendant l'envoi
-                try {
-                    await sauvegarderEnFile({
-                        intervention_id: interventionId,
-                        pdf_data: pdfBase64,
-                        client_email: clientEmail,
-                        csrf_token: csrfToken,
-                    });
-                    afficherToast('Connexion affaiblie – email mis en file d\'attente. Il sera envoyé automatiquement dès que possible.', 'warning');
-                } catch (qe) {
-                    afficherToast('❌ Erreur réseau et impossible de mettre en file : ' + e.message, 'error');
-                }
-                if (btn) btn.disabled = false;
-                if (icon) icon.textContent = '🔄';
-                if (label) label.textContent = 'Réessayer l\'envoi';
             }
         }
 
