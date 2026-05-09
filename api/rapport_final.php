@@ -2485,7 +2485,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
         }
 
         // ══════════════════════════════════════════════════════════════════
-        // OUVRIR DANS OUTLOOK (Mailto natif avec Lien Public - Upload Direct)
+        // OUVRIR DANS OUTLOOK (Lien Public via Supabase SDK)
         // ══════════════════════════════════════════════════════════════════
         async function ouvrirDansOutlook() {
             if (!window.LM_RAPPORT) return;
@@ -2501,57 +2501,55 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             if (label) label.textContent = 'Génération du PDF...';
 
             try {
-                // 1. Générer le PDF en mémoire (Base64)
+                // 1. Générer le PDF (Base64)
                 const pdfBase64 = await generateUltimatePDF('base64');
                 
                 if (label) label.textContent = 'Upload sécurisé...';
                 
-                // 2. Convertir en Blob pour l'upload direct (sans limite de taille de data URI)
-                function b64toBlob(b64Data, contentType='application/pdf', sliceSize=512) {
-                    const byteCharacters = atob(b64Data);
-                    const byteArrays = [];
-                    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-                        const slice = byteCharacters.slice(offset, offset + sliceSize);
-                        const byteNumbers = new Array(slice.length);
-                        for (let i = 0; i < slice.length; i++) {
-                            byteNumbers[i] = slice.charCodeAt(i);
-                        }
-                        const byteArray = new Uint8Array(byteNumbers);
-                        byteArrays.push(byteArray);
-                    }
-                    return new Blob(byteArrays, {type: contentType});
+                // 2. Extraire la donnée pure et convertir en Blob proprement
+                const cleanB64 = pdfBase64.includes(',') ? pdfBase64.split(',')[1] : pdfBase64;
+                const byteCharacters = atob(cleanB64);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const pdfBlob = new Blob([new Uint8Array(byteNumbers)], {type: 'application/pdf'});
+                
+                // 3. Charger le SDK Supabase dynamiquement si non présent
+                if (!window.supabase) {
+                    await new Promise((resolve, reject) => {
+                        const script = document.createElement('script');
+                        script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+                        script.onload = resolve;
+                        script.onerror = () => reject(new Error('Impossible de charger Supabase SDK'));
+                        document.head.appendChild(script);
+                    });
                 }
                 
-                const pdfBlob = b64toBlob(pdfBase64);
-                
-                // 3. Upload DIRECT vers Supabase Storage (contourne la limite Vercel de 4.5MB)
+                // 4. Upload vers Supabase Storage
                 const supabaseUrl = 'https://lrshutesrhmjdkblpoqc.supabase.co';
                 const supabaseAnonKey = 'sb_publishable_SxGIO7vrL44lKMct4WV7KA_r3oShuIr';
                 const bucketName = 'rapports-pdf';
-                // On nettoie le nom de fichier pour éviter les erreurs d'URL
+                const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+                
                 const safeFilename = (pdfFilename || 'rapport.pdf').replace(/[^a-zA-Z0-9_\-\.]/g, '_');
                 const uniqueFilename = `${interventionId}/${Date.now()}_${safeFilename}`;
                 
-                const uploadResponse = await fetch(`${supabaseUrl}/storage/v1/object/${bucketName}/${uniqueFilename}`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${supabaseAnonKey}`,
-                        'apikey': supabaseAnonKey,
-                        'Content-Type': 'application/pdf',
-                        'Cache-Control': '36000',
-                        'x-upsert': 'true'
-                    },
-                    body: pdfBlob
-                });
-                
-                if (!uploadResponse.ok) {
-                    const err = await uploadResponse.json();
-                    throw new Error(err.message || 'Erreur lors de l\'envoi vers le serveur');
+                const { data, error } = await supabaseClient.storage
+                    .from(bucketName)
+                    .upload(uniqueFilename, pdfBlob, {
+                        contentType: 'application/pdf',
+                        cacheControl: '36000',
+                        upsert: true
+                    });
+                    
+                if (error) {
+                    throw new Error(error.message || 'Erreur Supabase SDK');
                 }
                 
                 const pdfLienPublic = `${supabaseUrl}/storage/v1/object/public/${bucketName}/${uniqueFilename}?download=`;
                 
-                // 4. Préparer le lien Mailto (Outlook/Mail)
+                // 5. Préparer le lien Mailto
                 const destinataire = clientEmail || '';
                 const enCopie = 'contact@raoul-lenoir.com';
                 const objet = `Rapport d'intervention Lenoir-Mec - ${nomSociete} - ${dateInt}`;
@@ -2560,7 +2558,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 
                 const mailtoLink = `mailto:${destinataire}?cc=${enCopie}&subject=${encodeURIComponent(objet)}&body=${encodeURIComponent(corpsMsg)}`;
                 
-                // 5. Ouvrir l'application email
+                // 6. Ouvrir l'application email
                 window.location.href = mailtoLink;
                 
                 afficherToast('✅ Messagerie ouverte avec le lien sécurisé !', 'success');
@@ -2568,7 +2566,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 if (icon) icon.textContent = '✅';
                 if (label) label.textContent = 'Ouvert dans Outlook';
             } catch (e) {
-                console.error("Erreur Upload Supabase Direct:", e);
+                console.error("Erreur Upload Supabase SDK:", e);
                 afficherToast('❌ Erreur : ' + e.message, 'error');
                 if (icon) icon.innerHTML = '<img src="/assets/icon_email_send.svg" style="height: 18px; width: 18px; vertical-align: middle;">';
                 if (label) label.textContent = 'Envoyer via Outlook/Mail';
