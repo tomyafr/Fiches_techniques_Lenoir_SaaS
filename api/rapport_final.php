@@ -2550,14 +2550,15 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 }
                 
                 // Lien propre via notre propre domaine (masque l'URL Supabase)
-                const pdfLienPublic = `${window.location.origin}/api/rapport-pdf.php?id=${interventionId}&doc=${encodeURIComponent(safeFilename)}&t=${uploadTimestamp}`;
+                // Note: pas de /api/ car vercel.json redirige automatiquement /*.php → /api/*.php
+                const pdfLienPublic = `${window.location.origin}/rapport-pdf.php?id=${interventionId}&doc=${encodeURIComponent(safeFilename)}&t=${uploadTimestamp}`;
                 
                 // 5. Préparer le lien Mailto
                 const destinataire = clientEmail || '';
                 const enCopie = 'contact@raoul-lenoir.com';
                 const objet = `Rapport d'intervention Lenoir-Mec - ${nomSociete} - ${dateInt}`;
                 
-                const corpsMsg = `Bonjour,\n\nVeuillez trouver ci-dessous le lien pour télécharger de manière sécurisée votre rapport d'intervention suite à notre passage du ${dateInt} :\n\n👉 Télécharger le rapport (PDF) :\n${pdfLienPublic}\n\nCordialement,\n${techName}\nL'équipe Lenoir-Mec`;
+                const corpsMsg = `Bonjour,\n\nSuite à notre intervention du ${dateInt}, veuillez trouver ci-dessous le lien sécurisé pour télécharger votre rapport :\n\n${pdfLienPublic}\n\nCe lien vous permet de télécharger directement le document au format PDF.\n\nCordialement,\n${techName}\nLenoir-Mec`;
                 
                 const mailtoLink = `mailto:${destinataire}?cc=${enCopie}&subject=${encodeURIComponent(objet)}&body=${encodeURIComponent(corpsMsg)}`;
                 
