@@ -2446,40 +2446,41 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const toast = document.getElementById('emailToast');
             if (!toast) return;
             
-            let icon = '🔔';
-            let bg = 'rgba(16,185,129,0.1)';
-            let border = 'rgba(16,185,129,0.3)';
+            let iconSrc = '/assets/check_success.svg';
+            let bg = 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15))';
+            let border = 'rgba(16, 185, 129, 0.4)';
             let color = '#10b981';
 
             if (type === 'success') {
-                icon = '✅';
+                iconSrc = '/assets/check_success.svg';
                 bg = 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15))';
                 border = 'rgba(16, 185, 129, 0.4)';
                 color = '#10b981';
             } else if (type === 'warning') {
-                icon = '📶';
+                iconSrc = '/assets/icon_edit_orange.svg';
                 bg = 'linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.15))';
                 border = 'rgba(245, 158, 11, 0.4)';
                 color = '#f59e0b';
             } else {
-                icon = '❌';
+                iconSrc = '/assets/icon_close_red.svg';
                 bg = 'linear-gradient(135deg, rgba(244, 63, 94, 0.15), rgba(225, 29, 72, 0.15))';
                 border = 'rgba(244, 63, 94, 0.4)';
                 color = '#f43f5e';
             }
 
-            toast.innerHTML = `<div style="display:flex; align-items:center; gap:12px; text-align:left;">
-                <span style="font-size:1.4rem;">${icon}</span>
-                <span style="flex:1;">${message}</span>
+            toast.innerHTML = `<div style="display:flex; align-items:center; gap:16px; text-align:left;">
+                <img src="${iconSrc}" style="height: 32px; width: 32px; flex-shrink: 0;">
+                <span style="flex:1; font-size: 0.95rem; line-height: 1.4;">${message}</span>
             </div>`;
             
             toast.style.display = 'block';
             toast.style.background = bg;
             toast.style.border = `1px solid ${border}`;
             toast.style.color = color;
-            toast.style.padding = '1.25rem';
+            toast.style.padding = '1.25rem 1.5rem';
             toast.style.backdropFilter = 'blur(10px)';
             toast.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+            toast.style.borderRadius = '16px';
             
             toast.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
@@ -2497,7 +2498,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             const label = document.getElementById('btnSendEmailLabel');
 
             if (btn) btn.disabled = true;
-            if (icon) icon.textContent = '⏳';
+            if (icon) icon.innerHTML = '<img src="/assets/icon_gear_orange.svg" class="spin" style="height: 18px; width: 18px; vertical-align: middle;">';
             if (label) label.textContent = 'Génération du PDF...';
 
             try {
@@ -2561,13 +2562,13 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 // 6. Ouvrir l'application email
                 window.location.href = mailtoLink;
                 
-                afficherToast('✅ Messagerie ouverte avec le lien sécurisé !', 'success');
+                afficherToast('Messagerie ouverte avec le lien sécurisé !', 'success');
                 
-                if (icon) icon.textContent = '✅';
+                if (icon) icon.innerHTML = '<img src="/assets/check_success.svg" style="height: 18px; width: 18px; vertical-align: middle;">';
                 if (label) label.textContent = 'Ouvert dans Outlook';
             } catch (e) {
                 console.error("Erreur Upload Supabase SDK:", e);
-                afficherToast('❌ Erreur : ' + e.message, 'error');
+                afficherToast('Erreur : ' + e.message, 'error');
                 if (icon) icon.innerHTML = '<img src="/assets/icon_email_send.svg" style="height: 18px; width: 18px; vertical-align: middle;">';
                 if (label) label.textContent = 'Envoyer via Outlook/Mail';
             } finally {
@@ -2590,7 +2591,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             }
 
             btn.disabled = true;
-            btn.innerHTML = '<span>⚙️</span> Analyse en cours...';
+            btn.innerHTML = '<span><img src="/assets/icon_gear_orange.svg" class="spin" style="height: 18px; width: 18px; vertical-align: middle; margin-right: 8px;"></span> Analyse en cours...';
             progressZone.style.display = 'block';
 
             const machines = window.LM_RAPPORT.machinesData;

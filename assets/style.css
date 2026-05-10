@@ -1471,3 +1471,12 @@ html.light-mode .active-status {
 .cockpit-pulse {
     animation: pulse-glow 3s infinite ease-in-out;
 }
+
+/* --- LOADING ANIMATION --- */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.spin {
+    animation: spin 1s linear infinite;
+}
