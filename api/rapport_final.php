@@ -2534,7 +2534,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
                 
                 const safeFilename = (pdfFilename || 'rapport.pdf').replace(/[^a-zA-Z0-9_\-\.]/g, '_');
-                const uniqueFilename = `${interventionId}/${Date.now()}_${safeFilename}`;
+                const uploadTimestamp = Date.now();
+                const uniqueFilename = `${interventionId}/${uploadTimestamp}_${safeFilename}`;
                 
                 const { data, error } = await supabaseClient.storage
                     .from(bucketName)
@@ -2548,7 +2549,8 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     throw new Error(error.message || 'Erreur Supabase SDK');
                 }
                 
-                const pdfLienPublic = `${supabaseUrl}/storage/v1/object/public/${bucketName}/${uniqueFilename}?download=`;
+                // Lien propre via notre propre domaine (masque l'URL Supabase)
+                const pdfLienPublic = `${window.location.origin}/api/rapport-pdf.php?id=${interventionId}&doc=${encodeURIComponent(safeFilename)}&t=${uploadTimestamp}`;
                 
                 // 5. Préparer le lien Mailto
                 const destinataire = clientEmail || '';
