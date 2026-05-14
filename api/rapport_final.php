@@ -788,6 +788,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <script>
                 window.LM_RAPPORT = {
                     interventionId: <?= (int) $id ?>,
+                    contactNom: <?= json_encode(trim(($intervention['contact_nom'] ?? '') . ' ' . ($intervention['contact_prenom'] ?? ''))) ?>,
                     clientEmail: <?= json_encode($intervention['contact_email'] ?? $intervention['c_email'] ?? '') ?>,
                     nomSociete: <?= json_encode($intervention['nom_societe'] ?? '') ?>,
                     legal: {
@@ -1054,8 +1055,30 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                     <div class="form-group" style="margin-bottom: 0.5rem;">
                         <input type="text" name="nom_signataire" class="input"
                             placeholder="NOM Prénom du signataire (ex: DUPONT Jean)"
-                            value="<?= htmlspecialchars($intervention['nom_signataire_client'] ?? '') ?>" required>
+                            value="<?= htmlspecialchars($intervention['nom_signataire_client'] ?: trim(($intervention['contact_nom'] ?? '') . ' ' . ($intervention['contact_prenom'] ?? ''))) ?>" required>
                     </div>
+                    <script>
+                        // Synchronisation en temps réel du nom de contact vers la signature
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const inputNom = document.querySelector('[name="contact_nom"]');
+                            const inputPrenom = document.querySelector('[name="contact_prenom"]');
+                            const inputSig = document.querySelector('[name="nom_signataire"]');
+                            
+                            function syncSignatureName() {
+                                // Ne synchronise que si le champ de signature est vide ou correspondait à l'ancienne valeur
+                                if (inputSig && (!inputSig.value || inputSig.dataset.autoFilled === '1' || inputSig.value === inputSig.dataset.lastAutoValue)) {
+                                    const val = ((inputNom?.value || '') + ' ' + (inputPrenom?.value || '')).trim();
+                                    inputSig.value = val;
+                                    inputSig.dataset.autoFilled = '1';
+                                    inputSig.dataset.lastAutoValue = val;
+                                }
+                            }
+                            
+                            if(inputNom) inputNom.addEventListener('input', syncSignatureName);
+                            if(inputPrenom) inputPrenom.addEventListener('input', syncSignatureName);
+                            if(inputSig && !inputSig.value) syncSignatureName();
+                        });
+                    </script>
                     <canvas id="canvasClient" width="600" height="200"></canvas>
                     <input type="hidden" name="sigClient" id="sigClientInput">
                 </div>
@@ -2555,12 +2578,15 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 
                 // 5. Préparer le lien Mailto
                 const destinataire = clientEmail || '';
-                const enCopie = 'contact@raoul-lenoir.com';
+                const enCopie = 'sophie.niay@raoul-lenoir.com';
+                const enCopieCachee = 'soufyane.salah@raoul-lenoir.com';
                 const objet = `Rapport d'intervention Lenoir-Mec - ${nomSociete} - ${dateInt}`;
                 
-                const corpsMsg = `Bonjour,\n\nSuite à notre intervention du ${dateInt}, veuillez trouver ci-dessous le lien sécurisé pour télécharger votre rapport :\n\n${pdfLienPublic}\n\nCe lien vous permet de télécharger directement le document au format PDF.\n\nCordialement,\n${techName}\nLenoir-Mec`;
+                const nomContactClient = window.LM_RAPPORT.contactNom ? ` monsieur ${window.LM_RAPPORT.contactNom}` : '';
+                const corpsMsg = `Bonjour${nomContactClient},\n\nMerci pour votre accueil lors de notre intervention du ${dateInt}. Je vous prie de trouver ci-dessous le lien pour télécharger votre rapport :\n\n${pdfLienPublic}\n\nMeilleures salutations.\n${techName}\nTechnicien de contrôle\nLENOIR-MEC.`;
                 
-                const mailtoLink = `mailto:${destinataire}?cc=${enCopie}&subject=${encodeURIComponent(objet)}&body=${encodeURIComponent(corpsMsg)}`;
+                // On ajoute un BOM UTF-8 (%EF%BB%BF) pour forcer les vieux clients Outlook (Windows) à lire le corps en UTF-8
+                const mailtoLink = `mailto:${destinataire}?cc=${enCopie}&bcc=${enCopieCachee}&subject=${encodeURIComponent(objet)}&body=%EF%BB%BF${encodeURIComponent(corpsMsg)}`;
                 
                 // 6. Ouvrir l'application email
                 window.location.href = mailtoLink;
