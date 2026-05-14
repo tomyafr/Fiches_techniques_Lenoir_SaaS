@@ -30,6 +30,10 @@
     {
       "src": "/",
       "dest": "/api/index.php"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/error.php?code=404"
     }
   ]
 }

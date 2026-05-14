@@ -234,7 +234,7 @@ function requireAuth($role = null)
         $allowedRoles = is_array($role) ? $role : [$role];
         if (!in_array($_SESSION['role'], $allowedRoles)) {
             logAudit('UNAUTHORIZED_ACCESS', "Role requis: " . implode(',', $allowedRoles) . ", Role actuel: " . ($_SESSION['role'] ?? 'none'));
-            header('Location: index.php');
+            header('Location: /api/error.php?code=403');
             exit;
         }
     }
@@ -274,8 +274,8 @@ function verifyCsrfToken(): void
     $submitted = $_POST['csrf_token'] ?? ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? '');
     $stored = $_COOKIE['csrf_token'] ?? '';
     if (empty($stored) || empty($submitted) || !hash_equals($stored, $submitted)) {
-        http_response_code(403);
-        die('Erreur de sécurité : token CSRF invalide.');
+        header('Location: /api/error.php?code=403');
+        exit;
     }
 }
 
@@ -300,7 +300,8 @@ define('SENTRY_DSN', 'https://7efbff412929d364019e77c9dc028264@o4511253315977216
 function renderSentryJS() {
     if (!defined('SENTRY_DSN') || !SENTRY_DSN) return;
     ?>
-    <script src="https://browser.sentry-cdn.com/7.114.0/bundle.min.js" integrity="sha384-S3Mo7YvV3y95NueYf4uPlsS9/WpA+58tM9E9b5vU/3F/xW1I/u4oF9G/x9Z4fV2" crossorigin="anonymous"></script>
+    <!-- Utilisation du bundle tracing pour inclure l'intégration BrowserTracing -->
+    <script src="https://browser.sentry-cdn.com/7.114.0/bundle.tracing.min.js" crossorigin="anonymous"></script>
     <script>
         Sentry.init({
             dsn: "<?= SENTRY_DSN ?>",

@@ -4154,9 +4154,9 @@ foreach ($recoFreq as $rfk => $rfv) {
     </div>
     <script>
         // Scroll Tracking for Stepper
-        window.addEventListener(\'scroll\', () => {
-            const sections = [\'section-a\', \'section-b\', \'section-c\', \'section-d\', \'section-e\', \'section-f\'];
-            let current = \'section-a\';
+        window.addEventListener('scroll', () => {
+            const sections = ['section-a', 'section-b', 'section-c', 'section-d', 'section-e', 'section-f'];
+            let current = 'section-a';
             
             sections.forEach(id => {
                 const section = document.getElementById(id);
@@ -4168,10 +4168,10 @@ foreach ($recoFreq as $rfk => $rfv) {
                 }
             });
 
-            document.querySelectorAll(\'.stepper-nav a\').forEach(a => {
-                a.classList.remove(\'active\');
-                if (a.getAttribute(\'href\') === \'#\' + current) {
-                    a.classList.add(\'active\');
+            document.querySelectorAll('.stepper-nav a').forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href') === '#' + current) {
+                    a.classList.add('active');
                 }
             });
         });

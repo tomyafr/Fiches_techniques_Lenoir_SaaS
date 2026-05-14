@@ -114,7 +114,7 @@ $envoyees = array_filter($interventions, fn($i) => in_array(strtolower($i['statu
     <link rel="apple-touch-icon" href="/assets/icon-192.png">
     <meta name="theme-color" content="#020617">
     <?php renderSentryJS(); ?>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <script>if (localStorage.getItem('theme') === 'light') document.documentElement.classList.add('light-mode');</script>
     <style>
         .dashboard-grid {
