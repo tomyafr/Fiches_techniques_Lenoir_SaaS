@@ -2558,7 +2558,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
                 const enCopie = 'contact@raoul-lenoir.com';
                 const objet = `Rapport d'intervention Lenoir-Mec - ${nomSociete} - ${dateInt}`;
                 
-                const corpsMsg = `Bonjour,\n\nSuite à notre intervention du ${dateInt}, veuillez trouver ci-dessous le lien sécurisé pour télécharger votre rapport :\n\n${pdfLienPublic}\n\nCe lien vous permet de télécharger directement le document au format PDF.\n\nCordialement,\n${techName}\nLenoir-Mec\n\n--\nRéf: INT-${interventionId}-${uploadTimestamp}`;
+                const corpsMsg = `Bonjour,\n\nSuite à notre intervention du ${dateInt}, veuillez trouver ci-dessous le lien sécurisé pour télécharger votre rapport :\n\n${pdfLienPublic}\n\nCe lien vous permet de télécharger directement le document au format PDF.\n\nCordialement,\n${techName}\nLenoir-Mec`;
                 
                 const mailtoLink = `mailto:${destinataire}?cc=${enCopie}&subject=${encodeURIComponent(objet)}&body=${encodeURIComponent(corpsMsg)}`;
                 
