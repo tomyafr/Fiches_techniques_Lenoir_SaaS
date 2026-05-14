@@ -788,7 +788,7 @@ $scoreConformite = $denom > 0 ? round(($totalOk / $denom) * 100) : 0;
             <script>
                 window.LM_RAPPORT = {
                     interventionId: <?= (int) $id ?>,
-                    contactNom: <?= json_encode(trim(($intervention['contact_nom'] ?? '') . ' ' . ($intervention['contact_prenom'] ?? ''))) ?>,
+                    contactNom: <?= json_encode(trim($intervention['contact_nom'] ?? '')) ?>,
                     clientEmail: <?= json_encode($intervention['contact_email'] ?? $intervention['c_email'] ?? '') ?>,
                     nomSociete: <?= json_encode($intervention['nom_societe'] ?? '') ?>,
                     legal: {
